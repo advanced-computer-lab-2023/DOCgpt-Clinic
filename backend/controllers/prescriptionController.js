@@ -71,7 +71,7 @@ const updatePrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.updatePrescription = updatePrescription;
-// Get a single prescription by patient's username
+// Get patients prescription by patient's username
 const getpatientsPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("im hererrrr");
     try {

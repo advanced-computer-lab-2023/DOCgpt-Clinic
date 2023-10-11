@@ -39,7 +39,6 @@ exports.getPatients = getPatients;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));
 const getpatientsPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("im here");
     try {
         const { username } = req.params;
         const patient = yield patientModel_2.default.findOne({ username });

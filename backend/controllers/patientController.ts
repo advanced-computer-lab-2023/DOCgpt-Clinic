@@ -37,7 +37,6 @@ import Patient from '../models/patientModel';
 
 
 export const getpatientsPrescription = async (req: Request, res: Response) => {
-  console.log("im here");
 
   try {
     const { username } = req.params;

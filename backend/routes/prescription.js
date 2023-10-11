@@ -12,6 +12,4 @@ router.post('/prescriptions', prescriptionController_1.createPrescription);
 router.get('/prescriptions', prescriptionController_1.getAllPrescriptions);
 // Update a prescription
 router.put('/prescriptions/:id', prescriptionController_1.updatePrescription);
-// Get a single prescription by patient's username
-router.get('/prescriptions/patient/:username', prescriptionController_1.getpatientsPrescription);
 exports.default = router;
