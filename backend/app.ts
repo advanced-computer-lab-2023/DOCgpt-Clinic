@@ -1,48 +1,44 @@
-// This is a TypeScript file
+import express, { Request, Response, NextFunction } from 'express';
+import { config as dotenvConfig } from 'dotenv';
+const mongoose = require('mongoose')
+import patientRoutes from './routes/patientRoute';
+import appointmentRoutes from './routes/appointment';
 
-// Import the required modules
-import dotenv from 'dotenv';
+dotenvConfig();
 
-import express from 'express'
-import mongoose from 'mongoose'
-import PatientRoutes from './routes/patient'
-import DoctorRoutes from './routes/doctor'
-import PrescriptionRoutes from './routes/prescription'
-
-require('dotenv').config();
-// Express app
-const app: express.Application = express()
+const app = express();
 
 // Middleware
-app.use(express.json())
+app.use(express.json());
 
-app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.log('Request received for', req.path) 
-  console.log(req.path, req.method)
-  next()
+app.use((req: Request, res: Response, next: NextFunction) => {
+    console.log(req.path, req.method);
+    next();
+});
+
+// Get routes
+// app.get('/', (req: Request, res: Response) => {
+//     res.json({ mssg: 'welcome to DOCgpt' });
+// });
+app.use('/routes', patientRoutes);
+app.use('/routes/appointments', appointmentRoutes);
+app.get('/routes', patientRoutes);
+
+
+
+
+//app.get();
+
+//connect to db
+mongoose.connect(process.env.MONGO_URI)
+.then(() => {
+    // Listen
+// app.listen(4000, () => {
+app.listen(process.env.PORT, () => {
+    console.log('connected to db & listening on port', process.env.PORT);
+});
+})
+.catch((error: any) => {
+    console.log(error)
 })
 
-// Routes
-app.use('/routes',  PatientRoutes)
-app.get('/routes',PatientRoutes)
-app.use('/routes',  DoctorRoutes)
-app.get('/routes',DoctorRoutes)
-app.use('/routes',  PrescriptionRoutes)
-app.get('/routes',PrescriptionRoutes)
-
-console.log('Routes mounted!')
-
-
-// Connect to the database
-mongoose.connect(process.env.MONGO_URI!)
-  .then(() => {
-    console.log('Connected to database')
-
-    // Listen to the port
-    app.listen(process.env.PORT, () => {
-      console.log(`Listening for requests on port ${process.env.PORT}`)
-    })
-  })
-  .catch((err) => {
-    console.log(err)
-  })
