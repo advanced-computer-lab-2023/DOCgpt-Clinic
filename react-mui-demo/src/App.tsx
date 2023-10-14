@@ -6,6 +6,10 @@ import Package from './components/Package'
 import PackageList from './components/PackageList';
 import Packageupdate from './components/updatePackagess'; // Correct the import statement
 import Patientview from './components/PatientsList';
+import RemoveDoc from './components/RemoveDoc';
+import RemovePatient from './components/RemovePatient';
+import RemoveAdmin from './components/RemoveAdmin';
+import RemovePackages from './components/RemovePackages';
 function App() {
   return (
     <div>
@@ -17,6 +21,13 @@ function App() {
       <PackageList/>                  <Packageupdate/>
 
       <Patientview/>
+      <RemoveAdmin/>
+
+      <RemoveDoc/>
+
+      <RemovePatient/>
+
+      <RemovePackages/>
       
 
     </div>
