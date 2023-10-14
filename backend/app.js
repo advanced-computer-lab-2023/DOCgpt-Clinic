@@ -4,15 +4,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
+// src/app.ts
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
-const app = (0, express_1.default)();
-const admin_1 = __importDefault(require("./routes/admin"));
+const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const admin_1 = __importDefault(require("./routes/admin"));
 const patient_1 = __importDefault(require("./routes/patient"));
+const app = (0, express_1.default)();
+const allowedOrigin = 'http://localhost:3000';
 // Load environment variables from .env file
 dotenv_1.default.config();
-const mongooseUrl = (_a = process.env.MONGO_URI) !== null && _a !== void 0 ? _a : 'defaultConnection';
 // Middleware to parse JSON requests
 app.use(express_1.default.json());
 // Middleware to log request path and method
@@ -20,31 +22,35 @@ app.use((req, res, next) => {
     console.log(req.path, req.method);
     next();
 });
-//express app
+// Configure CORS
+app.use((0, cors_1.default)({
+    origin: allowedOrigin,
+    // Add other CORS configurations if needed
+}));
+// Express app routes
 app.use('/routes', admin_1.default);
-app.get('/routes', admin_1.default);
 app.use('/routes', patient_1.default);
-app.get('/routes', patient_1.default);
 // Define a POST route
-app.post('/api/posts', (req, res) => {
+app.post('/api/addadmin', (req, res) => {
     // Handle the POST request here
     const postData = req.body;
     // Process the postData and send a response
-    res.json({ mssg: 'welcome' });
     res.json({ message: 'POST request received', data: postData });
 });
-mongoose_1.default.connect(mongooseUrl).then(() => {
-    app.listen(process.env.PORT, () => {
-        console.log("listenining on port", process.env.PORT);
+// Connect to MongoDB and start the server
+const mongooseUrl = (_a = process.env.MONGO_URI) !== null && _a !== void 0 ? _a : 'defaultConnection';
+mongoose_1.default.connect(mongooseUrl)
+    .then(() => {
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+        console.log("Listening on port", port);
     });
 })
     .catch((error) => {
-    console.log(error);
+    console.error(error);
 });
-require('dotenv').config();
-;
+// Define a default route
 app.get('/', (req, res) => {
-    res.json(`welcome`);
+    res.json(`Welcome`);
 });
-// Start the server
-;
+exports.default = app;

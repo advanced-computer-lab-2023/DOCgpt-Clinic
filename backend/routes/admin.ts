@@ -1,8 +1,9 @@
 import express,{Router} from 'express';
 
 
-import {deleteAdminByUsername, getAdmins} from '../controllers/adminController';
-import {addAdmin,deletePatientByUsername,deleteDoctorByUsername,viewDoctorInfo} from '../controllers/adminController';
+import {deleteAdminByUsername, getAdmins, getPackageNAME} from '../controllers/adminController';
+import {addAdmin,deletePatientByUsername,deleteDoctorByUsername,viewDoctorInfo,addPackage,deletePackageByName,updatePackage,getPackage,getdoctorsR,getPatients} from '../controllers/adminController';
+
 
 const router = Router();
 
@@ -11,21 +12,39 @@ const router = Router();
 
 
 //post a new admin 
-router.post('/',addAdmin);
+router.post('/addAdmin',addAdmin);
 
 //get all admins
-router.get('/',getAdmins);
-
+router.get('/viewAdmin',getAdmins);
+ 
+//getdoctors
+ 
 //delete admins
-router.delete('/', deleteAdminByUsername);
+router.delete('/delete', deleteAdminByUsername);
 
 //delete patient
-router.delete('/', deletePatientByUsername);
+router.delete('/deletepatient', deletePatientByUsername);
 
 //delete doctor
-router.delete('/', deleteDoctorByUsername);
+router.delete('/deletedoc', deleteDoctorByUsername);
 
 //view doctor data
-router.get('/doc',viewDoctorInfo);
+router.get('/doctor',viewDoctorInfo);
+//add package
+router.post('/addPackage',addPackage)
 
+//delete package
+router.delete('/deletePa',deletePackageByName)
+ //update package 
+ router.patch('/updatePackage',updatePackage)
+
+ //get package 
+ router.get('/getpack',getPackage);
+ router.get('/getpackname',getPackageNAME);
+ router.get('/getdoc',getdoctorsR);
+
+
+
+ //get patients
+ router.get('/getpati',getPatients);
 export default router;

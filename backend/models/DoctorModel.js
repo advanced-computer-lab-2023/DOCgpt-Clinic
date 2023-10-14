@@ -3,8 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.doctorSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-const doctorSchema = new mongoose_1.default.Schema({
+exports.doctorSchema = new mongoose_1.default.Schema({
     username: {
         type: String,
         required: true,
@@ -44,5 +45,5 @@ const doctorSchema = new mongoose_1.default.Schema({
 function validatePassword(password) {
     return password.length >= 8; // Minimum password length of 8 characters
 }
-const doctorModel = mongoose_1.default.model('doctor', doctorSchema);
+const doctorModel = mongoose_1.default.model('doctor', exports.doctorSchema);
 exports.default = doctorModel;

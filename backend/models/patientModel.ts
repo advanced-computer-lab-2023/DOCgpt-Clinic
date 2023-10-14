@@ -3,21 +3,7 @@ import mongoose, { Document, Model, Schema } from 'mongoose';
 
 
 
-const prescriptionSchema = new mongoose.Schema({
-  doctorId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Doctor',
-    required: true,
-  },
-  date: {
-    type: Date,
-    required: true,
-  },
-  filled: {
-    type: Boolean,
-    default: false,
-  },
-});
+
 
 export const patientSchema = new mongoose.Schema({
   username: {

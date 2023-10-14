@@ -6,15 +6,28 @@ const adminController_2 = require("../controllers/adminController");
 const router = (0, express_1.Router)();
 // Define your routes and middleware here
 //post a new admin 
-router.post('/', adminController_2.addAdmin);
+router.post('/addAdmin', adminController_2.addAdmin);
 //get all admins
-router.get('/', adminController_1.getAdmins);
+router.get('/viewAdmin', adminController_1.getAdmins);
+//getdoctors
 //delete admins
-router.delete('/', adminController_1.deleteAdminByUsername);
+router.delete('/delete', adminController_1.deleteAdminByUsername);
 //delete patient
-router.delete('/', adminController_2.deletePatientByUsername);
+router.delete('/deletepatient', adminController_2.deletePatientByUsername);
 //delete doctor
-router.delete('/', adminController_2.deleteDoctorByUsername);
+router.delete('/deletedoc', adminController_2.deleteDoctorByUsername);
 //view doctor data
-router.get('/doc', adminController_2.viewDoctorInfo);
+router.get('/doctor', adminController_2.viewDoctorInfo);
+//add package
+router.post('/addPackage', adminController_2.addPackage);
+//delete package
+router.delete('/deletePa', adminController_2.deletePackageByName);
+//update package 
+router.patch('/updatePackage', adminController_2.updatePackage);
+//get package 
+router.get('/getpack', adminController_2.getPackage);
+router.get('/getpackname', adminController_1.getPackageNAME);
+router.get('/getdoc', adminController_2.getdoctorsR);
+//get patients
+router.get('/getpati', adminController_2.getPatients);
 exports.default = router;
