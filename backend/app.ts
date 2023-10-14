@@ -1,48 +1,30 @@
-// This is a TypeScript file
+import "dotenv/config";
+import mongoose from "mongoose";
+import express from "express";
+import DoctorModel from "./models/doctorModel";
+import DoctorRouter from "./routes/doctor";
+import PatientRouter from "./routes/patient";
+import AppointmentRouter from "./routes/appointment";
+import HealthRecordRouter from "./routes/healthRecord";
 
-// Import the required modules
-import dotenv from 'dotenv';
 
-import express from 'express'
-import mongoose from 'mongoose'
-import PatientRoutes from './routes/patient'
-import DoctorRoutes from './routes/doctor'
-import PrescriptionRoutes from './routes/prescription'
+const app = express();
+const port = process.env.PORT;
 
-require('dotenv').config();
-// Express app
-const app: express.Application = express()
+app.use(express.json());
+app.use("/api/doctors", DoctorRouter);
+app.use("/api/appointment", AppointmentRouter);
+app.use("/routes/patients", PatientRouter);
+app.use("/routes/healthRecord", HealthRecordRouter);
 
-// Middleware
-app.use(express.json())
 
-app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
-    console.log('Request received for', req.path) 
-  console.log(req.path, req.method)
-  next()
+mongoose.connect(process.env.MONGO_URI as string)
+.then(() => {
+    console.log("MONGOOSE CONNECTED!!!");
+    app.listen(port, () => {
+        console.log("Server running on port: " + port);    
+    });
+    
 })
 
-// Routes
-app.use('/routes',  PatientRoutes)
-app.get('/routes',PatientRoutes)
-app.use('/routes',  DoctorRoutes)
-app.get('/routes',DoctorRoutes)
-app.use('/routes',  PrescriptionRoutes)
-app.get('/routes',PrescriptionRoutes)
-
-console.log('Routes mounted!')
-
-
-// Connect to the database
-mongoose.connect(process.env.MONGO_URI!)
-  .then(() => {
-    console.log('Connected to database')
-
-    // Listen to the port
-    app.listen(process.env.PORT, () => {
-      console.log(`Listening for requests on port ${process.env.PORT}`)
-    })
-  })
-  .catch((err) => {
-    console.log(err)
-  })
+.catch(console.error);
