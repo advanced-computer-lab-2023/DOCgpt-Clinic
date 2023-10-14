@@ -1,82 +1,77 @@
-import { Request, Response, Router } from 'express';
-import Patientmodel from '../models/patientModel';
-import mongoose from 'mongoose';
-// create a new workout
-export const createPatient = async (req: Request, res: Response) => {
-    console.log('Request reached controller')
+import {Request,Response,Router} from 'express';
+import patientModel from '../models/patientModel';
 
+import { patientSchema } from '../models/patientModel';
+
+
+import { Document } from 'mongodb';
+import mongoose, {  Model, Schema, Types } from 'mongoose';
+
+
+
+
+// Define a method to add a family member to a patient's record
+
+// Define a method to add a family member to a patient's record
+export const addFamilyMember = async (req: Request, res: Response) => {
   try {
-    const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact } = req.body;
-    const patient = await Patientmodel.create({ username,name,email,password,dateofbirth,mobilenumber,emergencyContact });
-console.log('Patient created!', patient)
+    const { username } = req.query;
 
-    res.status(200).json(patient);
+    if (!username) {
+      return res.status(404).json({ error: 'No such patient' });
+    }
+
+    // Assuming you have a route parameter for the patient's ID
+    const familyMemberData = req.body; // Assuming family member data is sent in the request body
+
+    // Find the patient by ID
+    const patient= await patientModel.findOne({ username });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    // Add the new family member object to the patient's record
+    patient.familyMembers.push({
+      name: familyMemberData.name,
+      nationalId: familyMemberData.nationalId,
+      age: familyMemberData.age,
+      gender: familyMemberData.gender,
+      relationToPatient: familyMemberData.relationToPatient,
+    });
+
+    await patient.save();
+
+    return res.status(201).json({ message: 'Family member added successfully', patient });
   } catch (error) {
-    
-    const err = error as Error;
-console.log('Error creating patient') 
-
-    res.status(400).json({ error: err.message });
+    console.error('Error adding family member:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 
 
 
-// get all workouts 
+//view family members 
 
-export const getPatients = async (req: Request, res: Response) => {
-  const Patients = await Patientmodel.find({}).sort({createdAt: -1})
-  res.status(200).json(Patients)
-
-}
-
-
-
-import Prescription from '../models/perscriptionModel';
-import Patient from '../models/patientModel';
-
-
-export const getpatientsPrescription = async (req: Request, res: Response) => {
-
+export const viewFamilyMembers = async (req: Request, res: Response) => {
   try {
-    const { username } = req.params;
+    const { username } = req.query;
 
-    const patient = await Patient.findOne({ username });
+    if (!username) {
+      return res.status(404).json({ error: 'user name is required' });
+    }
+
+    // Find the patient by ID
+    const patient= await patientModel.findOne({ username });
+
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
     }
 
-    const { date, doctorUsername, filled } = req.query;
-
-    const filters: any = { patientUsername: username };
-
-    if (date) {
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
-
-      if (date === 'currentMonth') {
-        filters.date = {
-          $gte: new Date(currentYear, currentMonth, 1),
-          $lte: currentDate,
-        };
-      } else if (date === 'earlier') {
-        filters.date = { $lt: new Date(currentYear, currentMonth, 1) };
-      }
-    }
-
-    if (doctorUsername) {
-      filters.doctorUsername = doctorUsername;
-    }
-
-    if (filled === 'true' || filled === 'false') {
-      filters.filled = filled === 'true';
-    }
-    console.log(filters);
-
-    const prescriptions = await Prescription.find(filters);
-    res.json(prescriptions);
+    // Return the family members array
+    return res.status(200).json({ familyMembers: patient.familyMembers });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch prescription' });
+    console.error('Error viewing family members:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };

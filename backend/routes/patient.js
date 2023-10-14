@@ -7,16 +7,9 @@ const express_1 = __importDefault(require("express"));
 const patientController_1 = require("../controllers/patientController");
 const patientController_2 = require("../controllers/patientController");
 const router = express_1.default.Router();
-// GET all patients
-router.get('/getP', patientController_1.getPatients);
-// GET a single patient
-// router.get('/:id', getPatient);
-// POST a new patient
-router.post('/postP', patientController_1.createPatient);
-// DELETE a patient
-// router.delete('/:id', deletePatient);
-// UPDATE a patient
-// router.patch('/:id', updatePatient);
-// get patient's prescriptions
-router.get('/:username/prescriptions', patientController_2.getpatientsPrescription);
+router.use(express_1.default.json());
+// Add family member
+router.put('/addfammember', patientController_1.addFamilyMember);
+// view family members
+router.get('/view', patientController_2.viewFamilyMembers);
 exports.default = router;

@@ -22,30 +22,27 @@ const doctorSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
         validate: [validatePassword, 'Password must be at least 8 characters long'],
+        // You may want to add additional password validation logic here
     },
-    dateOfBirth: {
+    dateofbirth: {
         type: Date,
         required: true,
     },
-    hourlyRate: {
+    hourlyrate: {
         type: Number,
-        required: true,
+        requied: true
     },
     affiliation: {
         type: String,
-        required: true,
-    },
-    speciality: {
-        type: String,
-        required: true,
+        required: true
     },
     educationalBackground: {
         type: String,
-        required: true,
-    },
+        required: true
+    }
 });
 function validatePassword(password) {
     return password.length >= 8; // Minimum password length of 8 characters
 }
-const Doctor = mongoose_1.default.model('Doctor', doctorSchema);
-exports.default = Doctor;
+const doctorModel = mongoose_1.default.model('doctor', doctorSchema);
+exports.default = doctorModel;
