@@ -15,9 +15,9 @@ import mongoose, {  Model, Schema, Types } from 'mongoose';
 // Define a method to add a family member to a patient's record
 export const addFamilyMember = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { username } = req.query;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!username) {
       return res.status(404).json({ error: 'No such patient' });
     }
 
@@ -25,7 +25,7 @@ export const addFamilyMember = async (req: Request, res: Response) => {
     const familyMemberData = req.body; // Assuming family member data is sent in the request body
 
     // Find the patient by ID
-    const patient: Document | null = await patientModel.findById(id);
+    const patient= await patientModel.findOne({ username });
 
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
@@ -55,14 +55,14 @@ export const addFamilyMember = async (req: Request, res: Response) => {
 
 export const viewFamilyMembers = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { username } = req.query;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(404).json({ error: 'No such patient' });
+    if (!username) {
+      return res.status(404).json({ error: 'user name is required' });
     }
 
     // Find the patient by ID
-    const patient: Document | null = await patientModel.findById(id);
+    const patient= await patientModel.findOne({ username });
 
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });

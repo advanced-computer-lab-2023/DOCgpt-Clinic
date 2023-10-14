@@ -9,7 +9,7 @@ const patientController_2 = require("../controllers/patientController");
 const router = express_1.default.Router();
 router.use(express_1.default.json());
 // Add family member
-router.put('/:id', patientController_1.addFamilyMember);
+router.put('/addfammember', patientController_1.addFamilyMember);
 // view family members
-router.get('/:id', patientController_2.viewFamilyMembers);
+router.get('/view', patientController_2.viewFamilyMembers);
 exports.default = router;

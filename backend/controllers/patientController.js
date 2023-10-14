@@ -14,19 +14,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.viewFamilyMembers = exports.addFamilyMember = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
-const mongoose_1 = __importDefault(require("mongoose"));
 // Define a method to add a family member to a patient's record
 // Define a method to add a family member to a patient's record
 const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
+        const { username } = req.query;
+        if (!username) {
             return res.status(404).json({ error: 'No such patient' });
         }
         // Assuming you have a route parameter for the patient's ID
         const familyMemberData = req.body; // Assuming family member data is sent in the request body
         // Find the patient by ID
-        const patient = yield patientModel_1.default.findById(id);
+        const patient = yield patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
@@ -50,12 +49,12 @@ exports.addFamilyMember = addFamilyMember;
 //view family members 
 const viewFamilyMembers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { id } = req.params;
-        if (!mongoose_1.default.Types.ObjectId.isValid(id)) {
-            return res.status(404).json({ error: 'No such patient' });
+        const { username } = req.query;
+        if (!username) {
+            return res.status(404).json({ error: 'user name is required' });
         }
         // Find the patient by ID
-        const patient = yield patientModel_1.default.findById(id);
+        const patient = yield patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }

@@ -7,9 +7,9 @@ const router = express.Router();
 router.use(express.json());
 
 // Add family member
-router.put('/:id', addFamilyMember);
+router.put('/addfammember', addFamilyMember);
 
 // view family members
-router.get('/:id', viewFamilyMembers);
+router.get('/view', viewFamilyMembers);
 
 export default router;
