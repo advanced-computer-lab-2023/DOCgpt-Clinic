@@ -9,14 +9,15 @@ const patientController_2 = require("../controllers/patientController");
 const router = express_1.default.Router();
 // GET all patients
 router.get('/getP', patientController_1.getPatients);
+router.put('/addfammember', patientController_1.addFamilyMember);
 // GET a single patient
 // router.get('/:id', getPatient);
-// POST a new patient
 router.post('/postP', patientController_1.createPatient);
-// DELETE a patient
-// router.delete('/:id', deletePatient);
-// UPDATE a patient
-// router.patch('/:id', updatePatient);
-// get patient's prescriptions
-router.get('/:username/prescriptions', patientController_2.getpatientsPrescription);
+router.get('/viewFam', patientController_1.viewFamilyMembers);
+router.get('/getPatientprescriptions', patientController_2.getpatientsPrescription);
+router.get('/doctors', patientController_1.getDoctor);
+router.get('/doctors/search', patientController_1.searchDoctors);
+router.get('/doctors/filter', patientController_1.filterDoctors);
+router.get('/doctors/view', patientController_1.getDoctorDetails);
+router.get('/doctors/select', patientController_1.selectDoctors);
 exports.default = router;

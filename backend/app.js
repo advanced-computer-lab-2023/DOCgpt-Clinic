@@ -9,6 +9,9 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const patient_1 = __importDefault(require("./routes/patient"));
 const doctor_1 = __importDefault(require("./routes/doctor"));
 const prescription_1 = __importDefault(require("./routes/prescription"));
+const admin_1 = __importDefault(require("./routes/admin"));
+const appointment_1 = __importDefault(require("./routes/appointment"));
+const healthRecord_1 = __importDefault(require("./routes/healthRecord"));
 require('dotenv').config();
 // Express app
 const app = (0, express_1.default)();
@@ -22,10 +25,16 @@ app.use((req, res, next) => {
 // Routes
 app.use('/routes', patient_1.default);
 app.get('/routes', patient_1.default);
-app.use('/routes', doctor_1.default);
-app.get('/routes', doctor_1.default);
+app.use('/routes/doctors', doctor_1.default);
+app.get('/routes/doctors', doctor_1.default);
 app.use('/routes', prescription_1.default);
 app.get('/routes', prescription_1.default);
+app.use('/routes', admin_1.default);
+app.get('/routes', admin_1.default);
+app.use('/routes/appointments', appointment_1.default);
+app.get('/routes/appointments', appointment_1.default);
+app.use('/routes/healthRecord', healthRecord_1.default);
+app.get('/routes/healthRecord', healthRecord_1.default);
 console.log('Routes mounted!');
 // Connect to the database
 mongoose_1.default.connect(process.env.MONGO_URI)

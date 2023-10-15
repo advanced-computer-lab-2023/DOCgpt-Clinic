@@ -2,12 +2,16 @@
 
 // Import the required modules
 import dotenv from 'dotenv';
-
+import adminModel from './models/adminModel';
 import express from 'express'
 import mongoose from 'mongoose'
 import PatientRoutes from './routes/patient'
 import DoctorRoutes from './routes/doctor'
 import PrescriptionRoutes from './routes/prescription'
+import adminrouter from './routes/admin';
+import appointment from './routes/appointment'
+import Healthrecords from './routes/healthRecord'
+
 
 require('dotenv').config();
 // Express app
@@ -25,10 +29,16 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 // Routes
 app.use('/routes',  PatientRoutes)
 app.get('/routes',PatientRoutes)
-app.use('/routes',  DoctorRoutes)
-app.get('/routes',DoctorRoutes)
+app.use('/routes/doctors',  DoctorRoutes)
+app.get('/routes/doctors',DoctorRoutes)
 app.use('/routes',  PrescriptionRoutes)
 app.get('/routes',PrescriptionRoutes)
+app.use('/routes',  adminrouter)
+app.get('/routes',adminrouter)
+app.use('/routes/appointments',  appointment)
+app.get('/routes/appointments',appointment)
+app.use('/routes/healthRecord', Healthrecords)
+app.get('/routes/healthRecord', Healthrecords)
 
 console.log('Routes mounted!')
 

@@ -2,6 +2,13 @@ import express, { Router } from 'express';
 import {
   getPatients,
   createPatient,
+  addFamilyMember,
+  viewFamilyMembers,
+  searchDoctors,
+  getDoctor,
+  filterDoctors,
+  getDoctorDetails,
+  selectDoctors,
 } from '../controllers/patientController';
 
 import{
@@ -13,20 +20,30 @@ const router: Router = express.Router();
 // GET all patients
 router.get('/getP', getPatients);
 
+router.put('/addfammember', addFamilyMember);
+
+
 // GET a single patient
 // router.get('/:id', getPatient);
 
-// POST a new patient
+
 router.post('/postP', createPatient);
 
-// DELETE a patient
-// router.delete('/:id', deletePatient);
+router.get('/viewFam', viewFamilyMembers);
 
-// UPDATE a patient
-// router.patch('/:id', updatePatient);
+router.get('/getPatientprescriptions', getpatientsPrescription);
+
+router.get('/doctors', getDoctor)
 
 
-// get patient's prescriptions
-router.get('/:username/prescriptions', getpatientsPrescription);
+router.get('/doctors/search', searchDoctors);
+
+router.get('/doctors/filter', filterDoctors);
+
+
+router.get('/doctors/view', getDoctorDetails);
+
+router.get('/doctors/select', selectDoctors);
 
 export default router;
+
