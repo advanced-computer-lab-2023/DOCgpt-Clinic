@@ -1,10 +1,10 @@
 :root{
     --navy: #01031a;
-    --green: #1aac83;
+    --blue: #42a5f5;
 }
 
 .doctorCard {
-    padding: 4rem;
+    padding: 2rem;
 }
 
 .cardHeadr{
@@ -12,7 +12,7 @@
 }
 
 .cardSubtitles{
-    color: var(--green);
+    color: var(--blue);
     font-weight: bold;
 }
 
