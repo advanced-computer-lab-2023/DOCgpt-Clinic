@@ -39,48 +39,80 @@ import patientModel from '../models/patientModel';
 import Doctor from '../models/doctorModel';
 
 
-export const getpatientsPrescription = async (req: Request, res: Response) => {
-
+ 
+export const getPatientAppointments = async (req: Request, res: Response) => {
+  console.log("im in");
   try {
-    const { username } = req.query;
+    const patientUsername = req.query.username; // Extract username from route parameters
 
-    const patient = await Patient.findOne({ username });
-    if (!patient) {
-      return res.status(404).json({ error: 'Patient not found' });
+    const dateString = req.query.date as string; // Assert the type as string
+    const status = req.query.status;
+
+    const filters: any = { patient: patientUsername };
+
+    if (dateString) {
+      // Parse the date string into a JavaScript Date object
+      const dateParts = dateString.split('_');
+      if (dateParts.length === 3) {
+        const year = parseInt(dateParts[0], 10);
+        const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
+        const day = parseInt(dateParts[2], 10);
+        const dateObject = new Date(year, month, day);
+
+        // Filter appointments that match the provided date
+        filters.date = dateObject;
+      }
     }
 
-    const { date, doctorUsername, filled } = req.query;
+    if (status) {
+      filters.status = status;
+    }
 
-    const filters: any = { patientUsername: username };
+    const appointments = await AppointmentModel.find(filters).exec();
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 
-    if (date) {
-      const currentDate = new Date();
-      const currentYear = currentDate.getFullYear();
-      const currentMonth = currentDate.getMonth();
+export const getPrescriptionsByUser = async (req: Request, res: Response) => {
+  try {
+    const username= req.query.username;
+    const dateString = req.query.date as string; // Assert the type as string
 
-      if (date === 'currentMonth') {
-        filters.date = {
-          $gte: new Date(currentYear, currentMonth, 1),
-          $lte: currentDate,
-        };
-      } else if (date === 'earlier') {
-        filters.date = { $lt: new Date(currentYear, currentMonth, 1) };
-      }
+    const filled=req.query.filled;
+    const doctorUsername= req.query.doctorUsername
+        const filters: any = { patientUsername: username };
+
+
+        if (dateString) {
+          // Parse the date string into a JavaScript Date object
+          const dateParts = dateString.split('_');
+          if (dateParts.length === 3) {
+            const year = parseInt(dateParts[0], 10);
+            const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
+            const day = parseInt(dateParts[2], 10);
+            const dateObject = new Date(year, month, day);
+    
+            // Filter appointments that match the provided date
+            filters.date = dateObject;
+          }
+        }
+
+    if (filled) {
+      filters.filled = filled;
     }
 
     if (doctorUsername) {
       filters.doctorUsername = doctorUsername;
     }
 
-    if (filled === 'true' || filled === 'false') {
-      filters.filled = filled === 'true';
-    }
-    console.log(filters);
-
-    const prescriptions = await Prescription.find(filters);
-    res.json(prescriptions);
+    const prescriptions = await Prescription.find(filters).exec();
+    res.status(200).json(prescriptions);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch prescription' });
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
@@ -270,3 +302,8 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
       const appoinments = await AppointmentModel.find({ patient: patientUsername, status: status}).exec();
       res.status(200).json(appoinments);
   };
+
+
+ 
+ 
+  

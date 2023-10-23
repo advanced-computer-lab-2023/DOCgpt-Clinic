@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getpatientsPrescription = exports.getPatients = exports.createPatient = void 0;
+exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatientAppointments = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 // create a new workout
@@ -39,46 +39,72 @@ const getPatients = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getPatients = getPatients;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));
-const patientModel_3 = __importDefault(require("../models/patientModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
-const getpatientsPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPatientAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("im in");
     try {
-        const { username } = req.query;
-        const patient = yield patientModel_2.default.findOne({ username });
-        if (!patient) {
-            return res.status(404).json({ error: 'Patient not found' });
+        const patientUsername = req.query.username; // Extract username from route parameters
+        const dateString = req.query.date; // Assert the type as string
+        const status = req.query.status;
+        const filters = { patient: patientUsername };
+        if (dateString) {
+            // Parse the date string into a JavaScript Date object
+            const dateParts = dateString.split('_');
+            if (dateParts.length === 3) {
+                const year = parseInt(dateParts[0], 10);
+                const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
+                const day = parseInt(dateParts[2], 10);
+                const dateObject = new Date(year, month, day);
+                // Filter appointments that match the provided date
+                filters.date = dateObject;
+            }
         }
-        const { date, doctorUsername, filled } = req.query;
+        if (status) {
+            filters.status = status;
+        }
+        const appointments = yield appointmentModel_2.default.find(filters).exec();
+        res.status(200).json(appointments);
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getPatientAppointments = getPatientAppointments;
+const getPrescriptionsByUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.query.username;
+        const dateString = req.query.date; // Assert the type as string
+        const filled = req.query.filled;
+        const doctorUsername = req.query.doctorUsername;
         const filters = { patientUsername: username };
-        if (date) {
-            const currentDate = new Date();
-            const currentYear = currentDate.getFullYear();
-            const currentMonth = currentDate.getMonth();
-            if (date === 'currentMonth') {
-                filters.date = {
-                    $gte: new Date(currentYear, currentMonth, 1),
-                    $lte: currentDate,
-                };
+        if (dateString) {
+            // Parse the date string into a JavaScript Date object
+            const dateParts = dateString.split('_');
+            if (dateParts.length === 3) {
+                const year = parseInt(dateParts[0], 10);
+                const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
+                const day = parseInt(dateParts[2], 10);
+                const dateObject = new Date(year, month, day);
+                // Filter appointments that match the provided date
+                filters.date = dateObject;
             }
-            else if (date === 'earlier') {
-                filters.date = { $lt: new Date(currentYear, currentMonth, 1) };
-            }
+        }
+        if (filled) {
+            filters.filled = filled;
         }
         if (doctorUsername) {
             filters.doctorUsername = doctorUsername;
         }
-        if (filled === 'true' || filled === 'false') {
-            filters.filled = filled === 'true';
-        }
-        console.log(filters);
-        const prescriptions = yield perscriptionModel_1.default.find(filters);
-        res.json(prescriptions);
+        const prescriptions = yield perscriptionModel_1.default.find(filters).exec();
+        res.status(200).json(prescriptions);
     }
     catch (error) {
-        res.status(500).json({ error: 'Failed to fetch prescription' });
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
-exports.getpatientsPrescription = getpatientsPrescription;
+exports.getPrescriptionsByUser = getPrescriptionsByUser;
 const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { username } = req.query;
@@ -88,7 +114,7 @@ const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function
         // Assuming you have a route parameter for the patient's ID
         const familyMemberData = req.body; // Assuming family member data is sent in the request body
         // Find the patient by ID
-        const patient = yield patientModel_3.default.findOne({ username });
+        const patient = yield patientModel_2.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
@@ -118,7 +144,7 @@ const viewFamilyMembers = (req, res) => __awaiter(void 0, void 0, void 0, functi
             return res.status(404).json({ error: 'user name is required' });
         }
         // Find the patient by ID
-        const patient = yield patientModel_3.default.findOne({ username });
+        const patient = yield patientModel_2.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }

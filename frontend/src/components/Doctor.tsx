@@ -13,9 +13,17 @@ interface DoctorProps {
 
 
 const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
-    const {
-        name,
+    
+    const [showUpdateEmailDialog, setshowUpdateEmailDialog] = useState(false);
+    const [showUpdateRateDialog, setshowUpdateRateDialog] = useState(false);
+    const [showUpdateHospitalDialog, setshowUpdateHospitalDialog] = useState(false);
+    // You can render an empty state, an error message, or return null
+    if (!doctor) {
+        return null; // Or render an empty state or error message
+    }
+    const {      
         username,
+        name,
         speciality,
         affiliation,
         hourlyRate,
@@ -24,9 +32,6 @@ const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
         email
     } = doctor;
 
-    const [showUpdateEmailDialog, setshowUpdateEmailDialog] = useState(false);
-    const [showUpdateRateDialog, setshowUpdateRateDialog] = useState(false);
-    const [showUpdateHospitalDialog, setshowUpdateHospitalDialog] = useState(false);
 
     return(
         <Card className={styles.doctorCard}>

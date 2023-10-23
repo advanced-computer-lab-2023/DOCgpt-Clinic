@@ -43,7 +43,6 @@ const PatientHome = () => {
 
   const handleViewFam = () => {
       navigate(`/patient/ViewFamilyMembers/${username}`);
-    
   };
   const handleapp = () => {
     navigate(`/patient/Viewapp/${username}`);
@@ -84,8 +83,8 @@ const PatientHome = () => {
       </button>
 
 
-      <Link to="/patient/main" style={buttonStyle}>
-        view Doctors
+      <Link to="/patient/main/patients" style={buttonStyle}>
+        view All
       </Link>
 
       <Link to="/patient/main" style={buttonStyle}>

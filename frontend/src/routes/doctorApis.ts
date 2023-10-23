@@ -14,7 +14,9 @@ async function fetchData(input: RequestInfo, init?: RequestInit) {
 
 export async function fetchDoctor(doctorUsername: string | undefined): Promise<Doctor[]>{
     const response = await fetchData(`/routes/doctors/getDoctor?doctorUsername=${doctorUsername}`, { method: "GET"});
+    
     const doctors = [await response.json()]; 
+    console.log("doctors fetched:"+doctors);
     return doctors;
 }
 
@@ -29,7 +31,7 @@ export interface DoctorHospital {
 }
 
 export async function updateEmail(doctorEmail: DoctorEmail, doctorUsername: string): Promise<Doctor> {
-    const response = await fetchData(`/routes/updateEmail?doctorUsername=${doctorUsername}`, {
+    const response = await fetch(`/routes/doctors/updateEmail?doctorUsername=${doctorUsername}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -40,7 +42,7 @@ export async function updateEmail(doctorEmail: DoctorEmail, doctorUsername: stri
 }
 
 export async function updateRate(doctorRate: DoctorRate, doctorUsername: string): Promise<Doctor> {
-    const response = await fetchData(`/routes/updateRate?doctorUsername=${doctorUsername}`, {
+    const response = await fetch(`/routes/doctors/updateRate?doctorUsername=${doctorUsername}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -52,7 +54,7 @@ export async function updateRate(doctorRate: DoctorRate, doctorUsername: string)
 
 export async function updateAffiliation(doctorHospital: DoctorHospital, doctorUsername: string): Promise<Doctor> {
 
-    const response = await fetchData(`/routes/updateAffiliation?doctorUsername=${doctorUsername}`, {
+    const response = await fetch(`/routes/doctors/updateAffiliation?doctorUsername=${doctorUsername}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",

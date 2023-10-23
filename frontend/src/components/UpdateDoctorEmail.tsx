@@ -18,6 +18,8 @@ const UpdateDoctorEmail = ({onDismiss, onSaved, doctorUsername}: UpdateDoctorEma
     async function onSubmit(email: DoctorEmail) {
         try {
             const doctorResponse = await DoctorApi.updateEmail(email, doctorUsername);
+            console.log("updated doctor is"+ doctorResponse);
+            
             onSaved(doctorResponse);
         } catch (error) {
             console.error(error);

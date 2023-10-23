@@ -25,6 +25,7 @@ exports.getDoctors = getDoctors;
 const getDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.query.doctorUsername;
     const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+    console.log(doctor);
     res.status(200).json(doctor);
 });
 exports.getDoctor = getDoctor;
@@ -86,9 +87,9 @@ const updateDoctorHourlyRate = (req, res) => __awaiter(void 0, void 0, void 0, f
 });
 exports.updateDoctorHourlyRate = updateDoctorHourlyRate;
 const updateDoctorAffiliation = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorId = req.query.doctorId;
+    const doctorUsername = req.query.doctorUsername;
     const newAffiliation = req.body.affiliation;
-    const doctor = yield doctorModel_1.default.findById(doctorId).exec();
+    const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
     if (doctor != null) {
         doctor.affiliation = newAffiliation;
         const updatedDoctor = yield doctor.save();

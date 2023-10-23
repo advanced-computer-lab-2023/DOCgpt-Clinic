@@ -87,3 +87,5 @@ function validatePassword(password: string) {
 
 
 export default patientModel;
+
+

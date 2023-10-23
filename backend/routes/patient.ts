@@ -9,11 +9,11 @@ import {
   filterDoctors,
   getDoctorDetails,
   selectDoctors,
+  getPatientAppointments,
+  getPrescriptionsByUser 
 } from '../controllers/patientController';
 
-import{
-  getpatientsPrescription
-} from '../controllers/patientController';
+
 
 const router: Router = express.Router();
 
@@ -31,7 +31,7 @@ router.post('/postP', createPatient);
 
 router.get('/viewFam', viewFamilyMembers);
 
-router.get('/getPatientprescriptions', getpatientsPrescription);
+router.get('/getPatientprescriptions',getPrescriptionsByUser);
 
 router.get('/doctors', getDoctor)
 
@@ -44,6 +44,8 @@ router.get('/doctors/filter', filterDoctors);
 router.get('/doctors/view', getDoctorDetails);
 
 router.get('/doctors/select', selectDoctors);
+
+router.get('/getPP',getPatientAppointments)
 
 export default router;
 

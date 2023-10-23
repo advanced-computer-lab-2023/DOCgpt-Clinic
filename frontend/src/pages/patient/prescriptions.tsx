@@ -1,120 +1,101 @@
-
-
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 interface Prescription {
-  _id: string;
-  doctorUsername: string;
-  patientUsername: string;
   date: string;
-  filled: string;
+  filled: boolean;
+  doctorUsername: string;
+  // Add other prescription properties
 }
 
-const PatientPrescriptions = () => {
-  const { username } = useParams();
-  const navigate = useNavigate();
-
+const Prescriptions: React.FC = () => {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
-  const [filter, setFilter] = useState<Prescription>({
-    _id:'',
-    doctorUsername:'',
-    patientUsername:'',
-    date:'',
-    filled:'',
-  });
-  
-  const [selectedPrescription, setSelectedPrescription] = useState<string | null>(null);
+  const [filteredPrescriptions, setFilteredPrescriptions] = useState<Prescription[]>([]);
+  const [filterFilled, setFilterFilled] = useState<boolean | null>(null);
+  const [filterDate, setFilterDate] = useState<string>('');
+  const [filterDoctorUsername, setFilterDoctorUsername] = useState<string>('');
+
+  const { username } = useParams(); // Get username from URL params
 
   useEffect(() => {
-    const queryParams = new URLSearchParams();
-    queryParams.set('username', username || '');
-    if (filter.doctorUsername) queryParams.set('doctorUsername', filter.doctorUsername);
-       queryParams.set('date', filter.date);
-       console.log(filter.date)
-    if (filter.filled !== 'all') queryParams.set('filled', filter.filled);
-      console.log(filter);
-    fetch(`/routes/getPatientprescriptions?${queryParams}`)
+    // Fetch the patient's prescriptions using the 'username' variable
+    // Replace this with your actual API call
+    fetch(`/routes/getPatientprescriptions?username=${username}`)
       .then((response) => response.json())
-      .then((data) => setPrescriptions(data))
-      .catch((error) => console.error(error));
-  }, [username, filter]);
+      .then((data: Prescription[]) => {
+        setPrescriptions(data);
+        setFilteredPrescriptions(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching prescriptions:', error);
+      });
+  }, [username]); // Include 'username' in the dependency array
 
-  const handleFilterChange = (newFilter: Partial<typeof filter>) => {
-    setFilter({
-      ...filter,
-      ...newFilter,
+  useEffect(() => {
+    const filtered = prescriptions.filter((prescription) => {
+      return (
+        (filterFilled === null || prescription.filled === filterFilled) &&
+        (filterDate === '' || prescription.date.includes(filterDate)) &&
+        (filterDoctorUsername === '' || prescription.doctorUsername.includes(filterDoctorUsername))
+      );
     });
-  };
-
-  const handlePrescriptionSelect = (prescriptionId: string) => {
-    setSelectedPrescription(prescriptionId);
-  };
-
-  const buttonStyle: React.CSSProperties = {
-    display: 'block',
-    width: '200px',
-    padding: '10px',
-    backgroundColor: 'blue',
-    color: 'white',
-    border: 'none',
-    borderRadius: '5px',
-    margin: '10px auto',
-    textAlign: 'center',
-    textDecoration: 'none',
-  };
+    setFilteredPrescriptions(filtered);
+  }, [filterFilled, filterDate, filterDoctorUsername, prescriptions]);
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <h2>Welcome, {username}!</h2>
-
-      <input
-        type="text"
-        placeholder="Filter by Doctor's Username"
-        value={filter.doctorUsername}
-        onChange={(e) => handleFilterChange({ doctorUsername: e.target.value })}
-        style={buttonStyle}
-      />
-
-      <input
-         type="string"
-        value={filter.date}
-        onChange={(e) => handleFilterChange({ date: e.target.value })}
-        style={buttonStyle}
-      />
-
-      <select
-        value={filter.filled}
-        onChange={(e) => handleFilterChange({ filled: e.target.value })}
-        style={buttonStyle}
-      >
-        <option value="all">All Prescriptions</option>
-        <option value="true">Filled Prescriptions</option>
-        <option value="false">Unfilled Prescriptions</option>
-      </select>
-
+    <div>
+      <h1>My Prescriptions</h1>
       <div>
-        {prescriptions.map((prescription) => (
-          <div
-            key={prescription._id}
-            style={{
-              border: '1px solid #ccc',
-              padding: '10px',
-              margin: '10px',
-              backgroundColor: selectedPrescription === prescription._id ? 'lightgray' : 'white',
-            }}
-            onClick={() => handlePrescriptionSelect(prescription._id)}
-          >
-            <h3>Prescription</h3>
-            <p>Date: {prescription.date}</p>
-            <p>Doctor: {prescription.doctorUsername}</p>
-            <p>  filled:
-            {prescription.filled.toString()}</p>
-          </div>
-        ))}
+        <label>Filled:</label>
+        <select
+          value={filterFilled === null ? '' : filterFilled.toString()}
+          onChange={(e) =>
+            setFilterFilled(e.target.value === '' ? null : e.target.value === 'true')
+          }
+        >
+          <option value="">All</option>
+          <option value="true">Filled</option>
+          <option value="false">Unfilled</option>
+        </select>
       </div>
+      <div>
+        <label>Date:</label>
+        <input
+          type="text"
+          value={filterDate}
+          onChange={(e) => setFilterDate(e.target.value)}
+        />
+      </div>
+      <div>
+        <label>Doctor Username:</label>
+        <input
+          type="text"
+          value={filterDoctorUsername}
+          onChange={(e) => setFilterDoctorUsername(e.target.value)}
+        />
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Filled</th>
+            <th>Doctor Username</th>
+            {/* Add other table headers for prescription properties */}
+          </tr>
+        </thead>
+        <tbody>
+          {filteredPrescriptions.map((prescription, index) => (
+            <tr key={index}>
+              <td>{prescription.date}</td>
+              <td>{prescription.filled ? 'Yes' : 'No'}</td>
+              <td>{prescription.doctorUsername}</td>
+              {/* Add other table cells for prescription properties */}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
 
-export default PatientPrescriptions;
+export default Prescriptions;

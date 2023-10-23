@@ -13,6 +13,7 @@ export const getDoctor = async (req: Request, res: Response) => {
 
     const doctorUsername = req.query.doctorUsername;
     const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
+    console.log(doctor)
     res.status(200).json(doctor);
 };
 
@@ -79,9 +80,9 @@ export const updateDoctorHourlyRate = async (req: Request, res: Response) => {
 };
 
 export const updateDoctorAffiliation = async (req: Request, res: Response) => {
-    const doctorId = req.query.doctorId;
+    const doctorUsername = req.query.doctorUsername;
     const newAffiliation = req.body.affiliation;
-    const doctor = await DoctorModel.findById(doctorId).exec();
+    const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
     if(doctor!=null){
         doctor.affiliation = newAffiliation;
         const updatedDoctor = await doctor.save();

@@ -89,9 +89,8 @@ const SignupDoctor = () => {
         .then((response) => response.json())
         .then((data) => {
           // Handle the response from the server
-          console.log(data);
-         
-            navigate(`/doctor/main?doctorUsername=${data.username}?doctorId=${data._id}`);
+          console.log("object posted is" + data);
+            navigate(`/doctor/login`);
           
         })
         .catch((error) => {

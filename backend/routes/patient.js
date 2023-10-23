@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const patientController_1 = require("../controllers/patientController");
-const patientController_2 = require("../controllers/patientController");
 const router = express_1.default.Router();
 // GET all patients
 router.get('/getP', patientController_1.getPatients);
@@ -14,10 +13,11 @@ router.put('/addfammember', patientController_1.addFamilyMember);
 // router.get('/:id', getPatient);
 router.post('/postP', patientController_1.createPatient);
 router.get('/viewFam', patientController_1.viewFamilyMembers);
-router.get('/getPatientprescriptions', patientController_2.getpatientsPrescription);
+router.get('/getPatientprescriptions', patientController_1.getPrescriptionsByUser);
 router.get('/doctors', patientController_1.getDoctor);
 router.get('/doctors/search', patientController_1.searchDoctors);
 router.get('/doctors/filter', patientController_1.filterDoctors);
 router.get('/doctors/view', patientController_1.getDoctorDetails);
 router.get('/doctors/select', patientController_1.selectDoctors);
+router.get('/getPP', patientController_1.getPatientAppointments);
 exports.default = router;

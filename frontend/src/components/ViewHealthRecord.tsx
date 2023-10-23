@@ -40,10 +40,23 @@ const  ViewHealthRecord: React.FC<ViewHealthRecordProps> = ({doctorUsername}) =>
                     }}
                 >
                 {/* <Typography variant="h6"> {JSON.stringify(healthRecord)}</Typography> */}
-                <Typography variant="h6"> Username: {JSON.stringify(healthRecord.patientId.username)}</Typography>
+                {/* <Typography variant="h6"> Username: {JSON.stringify(healthRecord.patientId.username)}</Typography>
                 <Typography variant="h6"> MedicalHistory: {JSON.stringify(healthRecord.MedicalHistory)}</Typography>
                 <Typography variant="h6"> MedicationList: {JSON.stringify(healthRecord.MedicationList)}</Typography>
-                <Typography variant="h6"> VitalSigns: {JSON.stringify(healthRecord.VitalSigns)}</Typography>
+                <Typography variant="h6"> VitalSigns: {JSON.stringify(healthRecord.VitalSigns)}</Typography> */}
+
+<Typography variant="h6">
+  Username: {healthRecord && healthRecord.patientId && healthRecord.patientId.username}
+</Typography>
+<Typography variant="h6">
+  MedicalHistory: {healthRecord && healthRecord.MedicalHistory ? JSON.stringify(healthRecord.MedicalHistory) : ''}
+</Typography>
+<Typography variant="h6">
+  MedicationList: {healthRecord && healthRecord.MedicationList ? JSON.stringify(healthRecord.MedicationList) : ''}
+</Typography>
+<Typography variant="h6">
+  VitalSigns: {healthRecord && healthRecord.VitalSigns ? JSON.stringify(healthRecord.VitalSigns) : ''}
+</Typography>
                 
                 
                 </Box>
