@@ -22,5 +22,5 @@ router.get('/doctors/select', patientController_1.selectDoctors);
 router.get('/getPP', patientController_1.getPatientAppointments);
 //sprint 2
 router.get('/viewHealthPackage', patientController_1.viewHealthPackages);
-router.get('/viewPackageDetails', patientController_1.viewHealthPackageDetails);
+//router.get('/viewPackageDetails',viewHealthPackageDetails);
 exports.default = router;

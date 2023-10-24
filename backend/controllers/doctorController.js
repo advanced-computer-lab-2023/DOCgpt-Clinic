@@ -12,7 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewHealthRecord = exports.viewHealthRecords = exports.selectPatient = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.uploadAndSubmitReqDocs = exports.viewHealthRecord = exports.viewHealthRecords = exports.selectPatient = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+const multer_1 = __importDefault(require("multer"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -179,3 +180,24 @@ const viewHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, functio
     res.status(200).json(healthRecord);
 });
 exports.viewHealthRecord = viewHealthRecord;
+const storage = multer_1.default.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + file.originalname);
+    },
+});
+const upload = (0, multer_1.default)({ storage });
+const uploadAndSubmitReqDocs = (req, res) => {
+    upload.array('documents', 3)(req, res, (err) => {
+        if (err) {
+            return res.status(500).json({ error: 'File upload failed.' });
+        }
+        const uploadedFiles = req.files;
+        console.log('Uploaded Files:', uploadedFiles);
+        // Handle saving file information and associating it with the doctor's registration here
+        res.json({ message: 'Documents uploaded and submitted successfully.' });
+    });
+};
+exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;

@@ -274,7 +274,6 @@ const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (healthPackages.length === 0) {
             return res.status(404).json({ message: 'No health packages found' });
         }
-        console.log('zzzzz');
         // Return the health packages to the patient
         res.status(200).json({ healthPackages });
     }
