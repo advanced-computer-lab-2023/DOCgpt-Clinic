@@ -54,6 +54,11 @@ export const patientSchema = new mongoose.Schema({
     mobileNumber: String,
     relation: String,
   },
+  healthPackageSubscription: {
+    type: String,
+    default: null, // You can set a default value, like null, to indicate no subscription initially
+  },
+
   familyMembers:[{ name: {
     type: String,
     required: true,
@@ -74,6 +79,10 @@ export const patientSchema = new mongoose.Schema({
     type: String,
     enum: ['wife','husband','child'],
     required: true,
+  },
+  healthPackageSubscription: {
+    type: String,
+    default: null, // You can set a default value, like null, to indicate no subscription initially
   }}]
 });
 
