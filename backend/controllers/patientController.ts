@@ -1,6 +1,7 @@
 import { Request, Response, Router } from 'express';
 import Patientmodel from '../models/patientModel';
 import packageModel from '../models/packageModel'; 
+import doctorModel, { IDoctor } from '../models/doctorModel'; 
 import appointmentModel from '../models/appointmentModel';
 import mongoose from 'mongoose';
 // create a new workout
@@ -321,6 +322,27 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
       res.status(500).json({ error: 'Internal server error' });
     }
   };
+
+
+  export const viewDoctorAppointments = async (req: Request, res: Response) => {
+    const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
+
+    try {
+        const doctor: IDoctor | null = await doctorModel.findOne({ username: doctorUsername }).exec();
+
+        if (doctor) {
+            // Retrieve the doctor's timeslots (available appointments)
+            const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
+
+            res.status(200).json(doctorAppointments);
+        } else {
+            res.status(404).json({ message: 'Doctor not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+};
+
 
   // export const viewHealthPackageDetails = async (req: Request, res: Response) => {
   //   try {
