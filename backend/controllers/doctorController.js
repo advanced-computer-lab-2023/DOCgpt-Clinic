@@ -12,8 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadAndSubmitReqDocs = exports.viewHealthRecord = exports.viewHealthRecords = exports.selectPatient = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
-const multer_1 = __importDefault(require("multer"));
+exports.createfollowUp = exports.viewHealthRecord = exports.addTimeSlots = exports.viewHealthRecords = exports.selectPatient = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -60,7 +59,7 @@ const createDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         hourlyRate: hourlyRate,
         affiliation: affiliation,
         speciality: speciality,
-        educationalBackground: educationalBackground
+        educationalBackground: educationalBackground,
     });
     res.status(201).json(doctor);
 });
@@ -174,30 +173,49 @@ const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, functi
     res.status(200).json(healthRecords);
 });
 exports.viewHealthRecords = viewHealthRecords;
+const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername;
+    const { dates } = req.body;
+    try {
+        // Find the doctor by username
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+        if (doctor) {
+            // Use push to add new time slots to the existing array
+            dates.forEach((date) => {
+                doctor.timeslots.push({ date });
+            });
+            // Save the updated doctor
+            const updatedDoctor = yield doctor.save();
+            res.status(200).json(updatedDoctor);
+        }
+        else {
+            res.status(404).json({ message: 'Doctor not found' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+});
+exports.addTimeSlots = addTimeSlots;
 const viewHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const patientId = req.query.patientId;
     const healthRecord = yield healthRecordModel_1.default.findById(patientId);
     res.status(200).json(healthRecord);
 });
 exports.viewHealthRecord = viewHealthRecord;
-const storage = multer_1.default.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + file.originalname);
-    },
-});
-const upload = (0, multer_1.default)({ storage });
-const uploadAndSubmitReqDocs = (req, res) => {
-    upload.array('documents', 3)(req, res, (err) => {
-        if (err) {
-            return res.status(500).json({ error: 'File upload failed.' });
-        }
-        const uploadedFiles = req.files;
-        console.log('Uploaded Files:', uploadedFiles);
-        // Handle saving file information and associating it with the doctor's registration here
-        res.json({ message: 'Documents uploaded and submitted successfully.' });
+const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.body.doctor;
+    const patientUsername = req.body.patient;
+    const date = req.body.date;
+    const status = req.body.status;
+    const type = req.body.type;
+    const appoinment = yield appointmentModel_1.default.create({
+        status: status,
+        doctor: doctorUsername,
+        patient: patientUsername,
+        date: date,
+        type: type
     });
-};
-exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;
+    res.status(201).json(appoinment);
+});
+exports.createfollowUp = createfollowUp;

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatientAppointments = exports.getPatients = exports.createPatient = void 0;
+exports.viewHealthPackages = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatientAppointments = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -20,8 +20,8 @@ const appointmentModel_1 = __importDefault(require("../models/appointmentModel")
 const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Request reached controller');
     try {
-        const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact } = req.body;
-        const patient = yield patientModel_1.default.create({ username, name, email, password, dateofbirth, mobilenumber, emergencyContact });
+        const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription } = req.body;
+        const patient = yield patientModel_1.default.create({ username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription });
         console.log('Patient created!', patient);
         res.status(200).json(patient);
     }
@@ -127,6 +127,7 @@ const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function
             age: familyMemberData.age,
             gender: familyMemberData.gender,
             relationToPatient: familyMemberData.relationToPatient,
+            healthPackageSubscription: familyMemberData.healthPackageSubscription
         });
         yield patient.save();
         return res.status(201).json({ message: 'Family member added successfully', patient });
@@ -283,20 +284,18 @@ const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.viewHealthPackages = viewHealthPackages;
-const viewHealthPackageDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const packageName = req.params.name; // Assuming the package name is passed as a route parameter
-        // Find the health package by its name
-        const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
-        if (!healthPackage) {
-            return res.status(404).json({ message: 'Health package not found' });
-        }
-        // Return the health package details to the patient
-        res.status(200).json({ healthPackage });
-    }
-    catch (error) {
-        console.error('Error fetching health package details:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-exports.viewHealthPackageDetails = viewHealthPackageDetails;
+// export const viewHealthPackageDetails = async (req: Request, res: Response) => {
+//   try {
+//     const packageName = req.params.name; // Assuming the package name is passed as a route parameter
+//     // Find the health package by its name
+//     const healthPackage = await packageModel.findOne({ name: packageName });
+//     if (!healthPackage) {
+//       return res.status(404).json({ message: 'Health package not found' });
+//     }
+//     // Return the health package details to the patient
+//     res.status(200).json({ healthPackage });
+//   } catch (error) {
+//     console.error('Error fetching health package details:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// };

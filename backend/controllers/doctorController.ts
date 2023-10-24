@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import multer from 'multer';
 import path from 'path';
-import DoctorModel from "../models/doctorModel";
+import DoctorModel, { IDoctor } from "../models/doctorModel";
 import AppointmentModel from "../models/appointmentModel";
 import PatientModel from "../models/patientModel";
 import HealthRecordModel from "../models/healthRecordModel";
@@ -53,7 +53,8 @@ export const createDoctors = async (req: Request, res: Response) => {
         hourlyRate: hourlyRate,
         affiliation: affiliation,
         speciality: speciality,
-        educationalBackground: educationalBackground
+        educationalBackground: educationalBackground,
+        
     });
     res.status(201).json(doctor);
     
@@ -170,103 +171,51 @@ export const viewHealthRecords = async (req: Request, res: Response) => {
     res.status(200).json(healthRecords);
 };
 
+export const addTimeSlots = async (req: Request, res: Response) => {
+    const doctorUsername = req.query.doctorUsername;
+    const { dates } = req.body;
 
+    try {
+        // Find the doctor by username
+        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+
+        if (doctor) {
+            // Use push to add new time slots to the existing array
+            dates.forEach((date: Date) => {
+                doctor.timeslots.push({ date });
+            });
+
+            // Save the updated doctor
+            const updatedDoctor = await doctor.save();
+
+            res.status(200).json(updatedDoctor);
+        } else {
+            res.status(404).json({ message: 'Doctor not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+};
 export const viewHealthRecord = async (req: Request, res: Response) => {
     const patientId = req.query.patientId;
     const healthRecord = await HealthRecordModel.findById(patientId);
     res.status(200).json(healthRecord);
 };  
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + file.originalname);
-    },
-  });
-  const upload = multer({ storage });
-  
-  export const uploadAndSubmitReqDocs = (req: Request, res: Response) => {
-    upload.array('documents', 3)(req, res, (err) => {
-      if (err) {
-        return res.status(500).json({ error: 'File upload failed.' });
-      }
-      const uploadedFiles = req.files as Express.Multer.File[];
-      console.log('Uploaded Files:', uploadedFiles);
-  
-      // Handle saving file information and associating it with the doctor's registration here
-  
-      res.json({ message: 'Documents uploaded and submitted successfully.' });
+export const createfollowUp = async (req: Request, res: Response) => {
+    const doctorUsername = req.body.doctor;
+    const patientUsername = req.body.patient;
+    const date = req.body.date;
+    const status = req.body.status;
+    const type=req.body.type;
+    
+    const appoinment = await AppointmentModel.create({
+        status: status,
+        doctor: doctorUsername,
+        patient: patientUsername,
+        date: date,
+        type:type
     });
-  };
+    res.status(201).json(appoinment);
+    
+};
