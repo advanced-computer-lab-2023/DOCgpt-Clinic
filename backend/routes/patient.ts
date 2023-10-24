@@ -12,6 +12,7 @@ import {
   getPatientAppointments,
   getPrescriptionsByUser,
   viewHealthPackages,
+  viewDoctorAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 
@@ -36,7 +37,8 @@ router.get('/viewFam', viewFamilyMembers);
 
 router.get('/getPatientprescriptions',getPrescriptionsByUser);
 
-router.get('/doctors', getDoctor)
+router.get('/doctors', getDoctor);
+router.get('/getDRslots', viewDoctorAppointments);
 
 
 router.get('/doctors/search', searchDoctors);

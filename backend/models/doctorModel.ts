@@ -1,5 +1,11 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
+enum DoctorStatus {
+  Rejected = 'rejected',
+  Accepted = 'accepted',
+  Pending = 'pending',
+}
+
 const doctorSchema: Schema = new mongoose.Schema({
   username: {
     type: String,
@@ -39,6 +45,20 @@ const doctorSchema: Schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  timeslots: [
+    {
+      date: {
+        type: Date,
+        required: false,
+      },
+      
+    },
+  ],
+  status: {
+    type: String,
+    enum: Object.values(DoctorStatus),
+    default: DoctorStatus.Pending,
+},
 });
 
 function validatePassword(password: string) {
@@ -55,6 +75,11 @@ export interface IDoctor extends Document {
   affiliation: string;
   speciality: string;
   educationalBackground: string;
+  timeslots: Array<{
+    date: Date;
+  
+  }>;
+  status: DoctorStatus;
 }
 
 const Doctor: Model<IDoctor> = mongoose.model<IDoctor>('Doctor', doctorSchema);

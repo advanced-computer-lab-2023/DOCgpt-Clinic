@@ -1,5 +1,5 @@
 import express from "express";
-import { createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming } from "../controllers/doctorController";
+import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming } from "../controllers/doctorController";
 
 const router = express.Router();
 
@@ -19,7 +19,7 @@ router.post("/postDoctor", createDoctors);
 router.patch("/updateEmail", updateDoctorEmail);
 router.patch("/updateRate", updateDoctorHourlyRate);
 router.patch("/updateAffiliation", updateDoctorAffiliation);
-
+router.patch("/addtimeslot",addTimeSlots);
 
 
 
