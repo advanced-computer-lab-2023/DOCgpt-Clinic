@@ -322,24 +322,24 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
     }
   };
 
-  export const viewHealthPackageDetails = async (req: Request, res: Response) => {
-    try {
-      const packageName = req.params.name; // Assuming the package name is passed as a route parameter
+  // export const viewHealthPackageDetails = async (req: Request, res: Response) => {
+  //   try {
+  //     const packageName = req.params.name; // Assuming the package name is passed as a route parameter
   
-      // Find the health package by its name
-      const healthPackage = await packageModel.findOne({ name: packageName });
+  //     // Find the health package by its name
+  //     const healthPackage = await packageModel.findOne({ name: packageName });
   
-      if (!healthPackage) {
-        return res.status(404).json({ message: 'Health package not found' });
-      }
+  //     if (!healthPackage) {
+  //       return res.status(404).json({ message: 'Health package not found' });
+  //     }
   
-      // Return the health package details to the patient
-      res.status(200).json({ healthPackage });
-    } catch (error) {
-      console.error('Error fetching health package details:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
-  };
+  //     // Return the health package details to the patient
+  //     res.status(200).json({ healthPackage });
+  //   } catch (error) {
+  //     console.error('Error fetching health package details:', error);
+  //     res.status(500).json({ error: 'Internal server error' });
+  //   }
+  // };
  
  
   

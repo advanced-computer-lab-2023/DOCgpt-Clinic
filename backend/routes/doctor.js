@@ -20,4 +20,5 @@ router.post("/postDoctor", doctorController_1.createDoctors);
 router.patch("/updateEmail", doctorController_1.updateDoctorEmail);
 router.patch("/updateRate", doctorController_1.updateDoctorHourlyRate);
 router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
+router.patch("/addtimeslot", doctorController_1.addTimeSlots);
 exports.default = router;
