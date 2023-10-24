@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.addAdmin = void 0;
+exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.addfafAdmin = exports.addAdmin = void 0;
 const adminModel_1 = __importDefault(require("../models/adminModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -29,6 +29,18 @@ const addAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.addAdmin = addAdmin;
+const addfafAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username, password } = req.body;
+        const admin = yield adminModel_1.default.create({ username, password });
+        res.status(200).json(admin);
+    }
+    catch (error) {
+        const err = error;
+        res.status(400).json({ error: err.message });
+    }
+});
+exports.addfafAdmin = addfafAdmin;
 //delete admin
 const deleteAdminByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

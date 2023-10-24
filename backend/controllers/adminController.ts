@@ -20,6 +20,20 @@ export const addAdmin = async (req:Request,res: Response) =>
 
     }};
 
+    export const addfafAdmin = async (req:Request,res: Response) => 
+{
+    try{
+        const {username ,password} = req.body
+        const admin = await adminModel.create({username, password});
+        res.status(200).json(admin);
+    }
+    catch(error)
+    {
+        const err = error as Error;
+        res.status(400).json({error:err.message});
+
+    }};
+
 
     //delete admin
     export const deleteAdminByUsername = async (req: Request, res: Response) => {
