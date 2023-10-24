@@ -1,7 +1,6 @@
 import { Request, Response, Router } from 'express';
 import Patientmodel from '../models/patientModel';
 import packageModel from '../models/packageModel'; 
-import doctorModel, { IDoctor } from '../models/doctorModel'; 
 import appointmentModel from '../models/appointmentModel';
 import mongoose from 'mongoose';
 // create a new workout
@@ -9,8 +8,8 @@ export const createPatient = async (req: Request, res: Response) => {
     console.log('Request reached controller')
 
   try {
-    const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact } = req.body;
-    const patient = await Patientmodel.create({ username,name,email,password,dateofbirth,mobilenumber,emergencyContact });
+    const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription } = req.body;
+    const patient = await Patientmodel.create({ username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription });
 console.log('Patient created!', patient)
 
     res.status(200).json(patient);
@@ -38,7 +37,7 @@ export const getPatients = async (req: Request, res: Response) => {
 import Prescription from '../models/perscriptionModel';
 import Patient from '../models/patientModel';
 import patientModel from '../models/patientModel';
-import Doctor from '../models/doctorModel';
+import Doctor, { IDoctor } from '../models/doctorModel';
 
 
  
@@ -145,6 +144,7 @@ export const addFamilyMember = async (req: Request, res: Response) => {
       age: familyMemberData.age,
       gender: familyMemberData.gender,
       relationToPatient: familyMemberData.relationToPatient,
+      healthPackageSubscription:familyMemberData.healthPackageSubscription
     });
 
     await patient.save();
@@ -290,6 +290,7 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
 
 
   import AppointmentModel from "../models/appointmentModel";
+import doctorModel from '../models/doctorModel';
 
   export const getAppointmentByDate = async (req: Request, res: Response) => {
       const patientUsername = req.query.patientUsername;
@@ -325,24 +326,6 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   export const viewDoctorAppointments = async (req: Request, res: Response) => {
     const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
 
@@ -363,5 +346,24 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
 };
 
 
+  // export const viewHealthPackageDetails = async (req: Request, res: Response) => {
+  //   try {
+  //     const packageName = req.params.name; // Assuming the package name is passed as a route parameter
+  
+  //     // Find the health package by its name
+  //     const healthPackage = await packageModel.findOne({ name: packageName });
+  
+  //     if (!healthPackage) {
+  //       return res.status(404).json({ message: 'Health package not found' });
+  //     }
+  
+  //     // Return the health package details to the patient
+  //     res.status(200).json({ healthPackage });
+  //   } catch (error) {
+  //     console.error('Error fetching health package details:', error);
+  //     res.status(500).json({ error: 'Internal server error' });
+  //   }
+  // };
+ 
  
   

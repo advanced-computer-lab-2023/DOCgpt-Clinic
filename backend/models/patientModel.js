@@ -52,6 +52,10 @@ exports.patientSchema = new mongoose_1.default.Schema({
         mobileNumber: String,
         relation: String,
     },
+    healthPackageSubscription: {
+        type: String,
+        default: null, // You can set a default value, like null, to indicate no subscription initially
+    },
     familyMembers: [{ name: {
                 type: String,
                 required: true,
@@ -72,6 +76,10 @@ exports.patientSchema = new mongoose_1.default.Schema({
                 type: String,
                 enum: ['wife', 'husband', 'child'],
                 required: true,
+            },
+            healthPackageSubscription: {
+                type: String,
+                default: null, // You can set a default value, like null, to indicate no subscription initially
             } }]
 });
 function validatePassword(password) {

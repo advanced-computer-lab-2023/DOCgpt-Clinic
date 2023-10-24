@@ -12,17 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewDoctorAppointments = exports.viewHealthPackages = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatientAppointments = exports.getPatients = exports.createPatient = void 0;
+exports.viewHealthPackages = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatientAppointments = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
-const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 // create a new workout
 const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Request reached controller');
     try {
-        const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact } = req.body;
-        const patient = yield patientModel_1.default.create({ username, name, email, password, dateofbirth, mobilenumber, emergencyContact });
+        const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription } = req.body;
+        const patient = yield patientModel_1.default.create({ username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription });
         console.log('Patient created!', patient);
         res.status(200).json(patient);
     }
@@ -41,7 +40,7 @@ const getPatients = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
 exports.getPatients = getPatients;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));
-const doctorModel_2 = __importDefault(require("../models/doctorModel"));
+const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const getPatientAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("im in");
     try {
@@ -128,6 +127,7 @@ const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function
             age: familyMemberData.age,
             gender: familyMemberData.gender,
             relationToPatient: familyMemberData.relationToPatient,
+            healthPackageSubscription: familyMemberData.healthPackageSubscription
         });
         yield patient.save();
         return res.status(201).json({ message: 'Family member added successfully', patient });
@@ -161,7 +161,7 @@ const viewFamilyMembers = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.viewFamilyMembers = viewFamilyMembers;
 const getDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const doctors = yield doctorModel_2.default.find({}, 'name speciality hourlyRate');
+        const doctors = yield doctorModel_1.default.find({}, 'name speciality hourlyRate');
         const doctorsWithSessionPrice = [];
         for (const doctor of doctors) {
             //const hourlyRate = doctor.hourlyRate;
@@ -182,10 +182,10 @@ const filterDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     let doctors = [];
     const date = req.query.date;
     if (speciality) {
-        doctors = yield doctorModel_2.default.find({ speciality: speciality }).exec();
+        doctors = yield doctorModel_1.default.find({ speciality: speciality }).exec();
     }
     else {
-        doctors = yield doctorModel_2.default.find();
+        doctors = yield doctorModel_1.default.find();
     }
     const resultDoctors = [];
     for (const doctor of doctors) {
@@ -200,7 +200,7 @@ exports.filterDoctors = filterDoctors;
 const getDoctorDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { _id } = req.query;
-        const doctor = yield doctorModel_2.default.findById(_id);
+        const doctor = yield doctorModel_1.default.findById(_id);
         if (!doctor) {
             res.status(404).json({ error: 'Doctor not found' });
             return;
@@ -223,7 +223,7 @@ const searchDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (speciality) {
             query.speciality = { $regex: new RegExp(speciality, 'i') };
         }
-        const doctors = yield doctorModel_2.default.find(query);
+        const doctors = yield doctorModel_1.default.find(query);
         if (doctors.length === 0) {
             res.status(404).json({ error: 'No doctors found' });
             return;
@@ -239,7 +239,7 @@ exports.searchDoctors = searchDoctors;
 const selectDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { _id } = req.query;
-        const doctor = yield doctorModel_2.default.findById(_id);
+        const doctor = yield doctorModel_1.default.findById(_id);
         if (!doctor) {
             res.status(404).json({ error: 'Doctor not found' });
             return;
@@ -284,24 +284,6 @@ const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.viewHealthPackages = viewHealthPackages;
-const viewDoctorAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
-    try {
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
-        if (doctor) {
-            // Retrieve the doctor's timeslots (available appointments)
-            const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
-            res.status(200).json(doctorAppointments);
-        }
-        else {
-            res.status(404).json({ message: 'Doctor not found' });
-        }
-    }
-    catch (error) {
-        res.status(500).json({ message: 'An error occurred', error });
-    }
-});
-exports.viewDoctorAppointments = viewDoctorAppointments;
 // export const viewHealthPackageDetails = async (req: Request, res: Response) => {
 //   try {
 //     const packageName = req.params.name; // Assuming the package name is passed as a route parameter
