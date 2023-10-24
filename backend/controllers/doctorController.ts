@@ -219,3 +219,29 @@ export const createfollowUp = async (req: Request, res: Response) => {
     res.status(201).json(appoinment);
     
 };
+
+
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + file.originalname);
+    },
+  });
+  const upload = multer({ storage });
+  
+  export const uploadAndSubmitReqDocs = (req: Request, res: Response) => {
+    upload.array('documents', 3)(req, res, (err) => {
+      if (err) {
+        return res.status(500).json({ error: 'File upload failed.' });
+      }
+      const uploadedFiles = req.files as Express.Multer.File[];
+      console.log('Uploaded Files:', uploadedFiles);
+  
+      // Handle saving file information and associating it with the doctor's registration here
+  
+      res.json({ message: 'Documents uploaded and submitted successfully.' });
+    });
+  };

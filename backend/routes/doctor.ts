@@ -27,5 +27,21 @@ router.patch("/updateAffiliation", updateDoctorAffiliation);
 
 //create follow up
 router.post("/followup",createfollowUp);
+router.patch("/addtimeslot",addTimeSlots);
+
+// Set up Multer for file uploads
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname)); // Rename file with a timestamp
+    },
+  });
+  const upload = multer({ storage });
+  
+  // Create a route for uploading and submitting required documents
+  router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
+
 
 export default router;
