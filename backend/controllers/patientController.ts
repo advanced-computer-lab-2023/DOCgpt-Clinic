@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express';
 import Patientmodel from '../models/patientModel';
+import packageModel from '../models/packageModel'; 
 import appointmentModel from '../models/appointmentModel';
 import mongoose from 'mongoose';
 // create a new workout
@@ -303,7 +304,42 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
       res.status(200).json(appoinments);
   };
 
+  export const viewHealthPackages = async (req: Request, res: Response) => {
+    try {
 
+      // Retrieve all health packages from the database
+      const healthPackages = await packageModel.find();
+  
+      if (healthPackages.length === 0) {
+        return res.status(404).json({ message: 'No health packages found' });
+      }
+
+      // Return the health packages to the patient
+      res.status(200).json({ healthPackages });
+    } catch (error) {
+      console.error('Error fetching health packages:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+  export const viewHealthPackageDetails = async (req: Request, res: Response) => {
+    try {
+      const packageName = req.params.name; // Assuming the package name is passed as a route parameter
+  
+      // Find the health package by its name
+      const healthPackage = await packageModel.findOne({ name: packageName });
+  
+      if (!healthPackage) {
+        return res.status(404).json({ message: 'Health package not found' });
+      }
+  
+      // Return the health package details to the patient
+      res.status(200).json({ healthPackage });
+    } catch (error) {
+      console.error('Error fetching health package details:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
  
  
   

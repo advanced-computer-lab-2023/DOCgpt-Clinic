@@ -20,4 +20,7 @@ router.get('/doctors/filter', patientController_1.filterDoctors);
 router.get('/doctors/view', patientController_1.getDoctorDetails);
 router.get('/doctors/select', patientController_1.selectDoctors);
 router.get('/getPP', patientController_1.getPatientAppointments);
+//sprint 2
+router.get('/viewHealthPackage', patientController_1.viewHealthPackages);
+router.get('/viewPackageDetails', patientController_1.viewHealthPackageDetails);
 exports.default = router;

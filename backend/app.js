@@ -24,17 +24,11 @@ app.use((req, res, next) => {
 });
 // Routes
 app.use('/routes', patient_1.default);
-app.get('/routes', patient_1.default);
 app.use('/routes/doctors', doctor_1.default);
-app.get('/routes/doctors', doctor_1.default);
 app.use('/routes', prescription_1.default);
-app.get('/routes', prescription_1.default);
 app.use('/routes', admin_1.default);
-app.get('/routes', admin_1.default);
 app.use('/routes/appointments', appointment_1.default);
-app.get('/routes/appointments', appointment_1.default);
 app.use('/routes/healthRecord', healthRecord_1.default);
-app.get('/routes/healthRecord', healthRecord_1.default);
 console.log('Routes mounted!');
 // Connect to the database
 mongoose_1.default.connect(process.env.MONGO_URI)

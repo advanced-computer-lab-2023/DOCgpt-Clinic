@@ -10,7 +10,9 @@ import {
   getDoctorDetails,
   selectDoctors,
   getPatientAppointments,
-  getPrescriptionsByUser 
+  getPrescriptionsByUser,
+  viewHealthPackages,
+  //viewHealthPackageDetails
 } from '../controllers/patientController';
 
 
@@ -21,6 +23,7 @@ const router: Router = express.Router();
 router.get('/getP', getPatients);
 
 router.put('/addfammember', addFamilyMember);
+
 
 
 // GET a single patient
@@ -45,7 +48,12 @@ router.get('/doctors/view', getDoctorDetails);
 
 router.get('/doctors/select', selectDoctors);
 
-router.get('/getPP',getPatientAppointments)
+router.get('/getPP',getPatientAppointments);
+
+//sprint 2
+
+router.get('/viewHealthPackage', viewHealthPackages);
+//router.get('/viewPackageDetails',viewHealthPackageDetails);
 
 export default router;
 
