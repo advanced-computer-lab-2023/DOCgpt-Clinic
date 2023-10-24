@@ -26,6 +26,11 @@ export const appointmentSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
+    type:{
+        type: String,
+        enum: ['new appointement', 'Follow up'],
+        required: false
+    },
 
 });
 

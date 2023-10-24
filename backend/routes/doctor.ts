@@ -1,5 +1,5 @@
 import express from "express";
-import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming } from "../controllers/doctorController";
+import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp } from "../controllers/doctorController";
 
 const router = express.Router();
 
@@ -22,5 +22,8 @@ router.patch("/updateAffiliation", updateDoctorAffiliation);
 router.patch("/addtimeslot",addTimeSlots);
 
 
+
+//create follow up
+router.post("/followup",createfollowUp);
 
 export default router;

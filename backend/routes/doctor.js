@@ -21,4 +21,6 @@ router.patch("/updateEmail", doctorController_1.updateDoctorEmail);
 router.patch("/updateRate", doctorController_1.updateDoctorHourlyRate);
 router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
 router.patch("/addtimeslot", doctorController_1.addTimeSlots);
+//create follow up
+router.post("/followup", doctorController_1.createfollowUp);
 exports.default = router;

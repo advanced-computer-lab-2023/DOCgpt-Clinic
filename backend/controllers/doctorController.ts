@@ -199,3 +199,21 @@ export const viewHealthRecord = async (req: Request, res: Response) => {
     const healthRecord = await HealthRecordModel.findById(patientId);
     res.status(200).json(healthRecord);
 };  
+
+export const createfollowUp = async (req: Request, res: Response) => {
+    const doctorUsername = req.body.doctor;
+    const patientUsername = req.body.patient;
+    const date = req.body.date;
+    const status = req.body.status;
+    const type=req.body.type;
+    
+    const appoinment = await AppointmentModel.create({
+        status: status,
+        doctor: doctorUsername,
+        patient: patientUsername,
+        date: date,
+        type:type
+    });
+    res.status(201).json(appoinment);
+    
+};
