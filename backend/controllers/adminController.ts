@@ -119,7 +119,23 @@ export const addAdmin = async (req:Request,res: Response) =>
         res.status(500).json({ message: 'Internal server error' });
       }
     };
-
+    export const deletePatientBySmsomaa = async (req: Request, res: Response) => {
+      try {
+        const { username } = req.body;
+    
+        // Find and delete the Doctor by username
+        const deletedPatient = await patientModel.findOneAndDelete({ username });
+    
+        if (!deletedPatient) {
+          return res.status(404).json({ message: 'Patient not found' });
+        }
+    
+        res.status(200).json({ message: 'Patient deleted successfully' });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+    };
     export const viewDoctorInfo = async (req: Request, res: Response): Promise<void> => {
       try {
         const { username } = req.query;
