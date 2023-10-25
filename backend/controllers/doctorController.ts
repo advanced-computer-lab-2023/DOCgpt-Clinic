@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import multer from 'multer';
+import path from 'path';
 import DoctorModel, { IDoctor } from "../models/doctorModel";
 import AppointmentModel from "../models/appointmentModel";
 import PatientModel from "../models/patientModel";
@@ -199,3 +201,47 @@ export const viewHealthRecord = async (req: Request, res: Response) => {
     const healthRecord = await HealthRecordModel.findById(patientId);
     res.status(200).json(healthRecord);
 };  
+
+export const createfollowUp = async (req: Request, res: Response) => {
+    const doctorUsername = req.body.doctor;
+    const patientUsername = req.body.patient;
+    const date = req.body.date;
+    const status = req.body.status;
+    const type=req.body.type;
+    
+    const appoinment = await AppointmentModel.create({
+        status: status,
+        doctor: doctorUsername,
+        patient: patientUsername,
+        date: date,
+        type:type
+    });
+    res.status(201).json(appoinment);
+    
+};
+
+
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + file.originalname);
+    },
+  });
+  const upload = multer({ storage });
+  
+  export const uploadAndSubmitReqDocs = (req: Request, res: Response) => {
+    upload.array('documents', 3)(req, res, (err) => {
+      if (err) {
+        return res.status(500).json({ error: 'File upload failed.' });
+      }
+      const uploadedFiles = req.files as Express.Multer.File[];
+      console.log('Uploaded Files:', uploadedFiles);
+  
+      // Handle saving file information and associating it with the doctor's registration here
+  
+      res.json({ message: 'Documents uploaded and submitted successfully.' });
+    });
+  };
