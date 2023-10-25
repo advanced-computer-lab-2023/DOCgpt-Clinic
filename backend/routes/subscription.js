@@ -9,4 +9,5 @@ const router = express_1.default.Router();
 // Define the subscription route
 router.post('/subscribe', subscriptionController_1.subscribeToHealthPackage);
 router.post('/subscribeFamilyMem', subscriptionController_1.subscribeToHealthPackageForFamily);
+router.get('/viewSubscription', subscriptionController_1.viewSubscribedHealthPackages);
 exports.default = router;

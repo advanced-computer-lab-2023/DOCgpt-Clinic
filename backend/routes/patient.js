@@ -15,7 +15,6 @@ router.post('/postP', patientController_1.createPatient);
 router.get('/viewFam', patientController_1.viewFamilyMembers);
 router.get('/getPatientprescriptions', patientController_1.getPrescriptionsByUser);
 router.get('/doctors', patientController_1.getDoctor);
-router.get('/getDRslots', patientController_1.viewDoctorAppointments);
 router.get('/doctors/search', patientController_1.searchDoctors);
 router.get('/doctors/filter', patientController_1.filterDoctors);
 router.get('/doctors/view', patientController_1.getDoctorDetails);
