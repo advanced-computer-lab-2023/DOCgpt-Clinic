@@ -11,6 +11,7 @@ import PrescriptionRoutes from './routes/prescription'
 import adminrouter from './routes/admin';
 import appointment from './routes/appointment'
 import Healthrecords from './routes/healthRecord'
+import subscription from './routes/subscription'
 
 
 require('dotenv').config();
@@ -33,6 +34,7 @@ app.use('/routes',  PrescriptionRoutes);
 app.use('/routes',  adminrouter);
 app.use('/routes/appointments',  appointment);
 app.use('/routes/healthRecord', Healthrecords);
+app.use('/routes',subscription);
 
 console.log('Routes mounted!')
 

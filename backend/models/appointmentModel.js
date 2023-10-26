@@ -24,6 +24,11 @@ exports.appointmentSchema = new mongoose_1.default.Schema({
         type: Date,
         required: true
     },
+    type: {
+        type: String,
+        enum: ['new appointement', 'Follow up'],
+        required: false
+    },
 });
 const appointmentModel = mongoose_1.default.model('appoinment', exports.appointmentSchema);
 exports.default = appointmentModel;

@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.createfollowUp = exports.viewHealthRecord = exports.addTimeSlots = exports.viewHealthRecords = exports.selectPatient = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -59,7 +60,7 @@ const createDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         hourlyRate: hourlyRate,
         affiliation: affiliation,
         speciality: speciality,
-        educationalBackground: educationalBackground
+        educationalBackground: educationalBackground,
     });
     res.status(201).json(doctor);
 });
@@ -156,6 +157,30 @@ const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, functi
 });
 exports.viewHealthRecords = viewHealthRecords;
 //VIEW A HEALTH RECORD FOR A SPECIFIC PATIENT
+const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername;
+    const { dates } = req.body;
+    try {
+        // Find the doctor by username
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+        if (doctor) {
+            // Use push to add new time slots to the existing array
+            dates.forEach((date) => {
+                doctor.timeslots.push({ date });
+            });
+            // Save the updated doctor
+            const updatedDoctor = yield doctor.save();
+            res.status(200).json(updatedDoctor);
+        }
+        else {
+            res.status(404).json({ message: 'Doctor not found' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+});
+exports.addTimeSlots = addTimeSlots;
 const viewHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const patientUsername = req.query.patientUsername;
     const healthRecord = yield healthRecordModel_1.default.find({ patient: patientUsername });
@@ -251,3 +276,19 @@ const getAppointmentByStatus = (req, res) => __awaiter(void 0, void 0, void 0, f
     res.status(200).json(appointments);
 });
 exports.getAppointmentByStatus = getAppointmentByStatus;
+const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.body.doctor;
+    const patientUsername = req.body.patient;
+    const date = req.body.date;
+    const status = req.body.status;
+    const type = req.body.type;
+    const appoinment = yield appointmentModel_1.default.create({
+        status: status,
+        doctor: doctorUsername,
+        patient: patientUsername,
+        date: date,
+        type: type
+    });
+    res.status(201).json(appoinment);
+});
+exports.createfollowUp = createfollowUp;

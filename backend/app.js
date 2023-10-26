@@ -12,6 +12,7 @@ const prescription_1 = __importDefault(require("./routes/prescription"));
 const admin_1 = __importDefault(require("./routes/admin"));
 const appointment_1 = __importDefault(require("./routes/appointment"));
 const healthRecord_1 = __importDefault(require("./routes/healthRecord"));
+const subscription_1 = __importDefault(require("./routes/subscription"));
 require('dotenv').config();
 // Express app
 const app = (0, express_1.default)();
@@ -29,6 +30,7 @@ app.use('/routes', prescription_1.default);
 app.use('/routes', admin_1.default);
 app.use('/routes/appointments', appointment_1.default);
 app.use('/routes/healthRecord', healthRecord_1.default);
+app.use('/routes', subscription_1.default);
 console.log('Routes mounted!');
 // Connect to the database
 mongoose_1.default.connect(process.env.MONGO_URI)

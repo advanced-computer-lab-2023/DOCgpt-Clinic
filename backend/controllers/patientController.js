@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
+exports.viewDoctorAppointments = exports.viewHealthPackages = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatientAppointments = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -20,8 +21,8 @@ const appointmentModel_1 = __importDefault(require("../models/appointmentModel")
 const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Request reached controller');
     try {
-        const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact } = req.body;
-        const patient = yield patientModel_1.default.create({ username, name, email, password, dateofbirth, mobilenumber, emergencyContact });
+        const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription } = req.body;
+        const patient = yield patientModel_1.default.create({ username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription });
         console.log('Patient created!', patient);
         res.status(200).json(patient);
     }
@@ -96,6 +97,7 @@ const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function
             age: familyMemberData.age,
             gender: familyMemberData.gender,
             relationToPatient: familyMemberData.relationToPatient,
+            healthPackageSubscription: familyMemberData.healthPackageSubscription
         });
         yield patient.save();
         return res.status(201).json({ message: 'Family member added successfully', patient });
@@ -223,6 +225,8 @@ const selectDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 exports.selectDoctors = selectDoctors;
 const appointmentModel_2 = __importDefault(require("../models/appointmentModel"));
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
+const doctorModel_2 = __importDefault(require("../models/doctorModel"));
+
 const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Retrieve all health packages from the database
@@ -239,20 +243,21 @@ const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.viewHealthPackages = viewHealthPackages;
-const viewHealthPackageDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const viewDoctorAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
     try {
-        const packageName = req.params.name; // Assuming the package name is passed as a route parameter
-        // Find the health package by its name
-        const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
-        if (!healthPackage) {
-            return res.status(404).json({ message: 'Health package not found' });
+        const doctor = yield doctorModel_2.default.findOne({ username: doctorUsername }).exec();
+        if (doctor) {
+            // Retrieve the doctor's timeslots (available appointments)
+            const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
+            res.status(200).json(doctorAppointments);
         }
-        // Return the health package details to the patient
-        res.status(200).json({ healthPackage });
+        else {
+            res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
+        }
     }
     catch (error) {
-        console.error('Error fetching health package details:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ message: 'An error occurred', error });
     }
 });
 exports.viewHealthPackageDetails = viewHealthPackageDetails;
@@ -354,3 +359,19 @@ const viewMyHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.viewMyHealthRecord = viewMyHealthRecord;
+exports.viewDoctorAppointments = viewDoctorAppointments;
+// export const viewHealthPackageDetails = async (req: Request, res: Response) => {
+//   try {
+//     const packageName = req.params.name; // Assuming the package name is passed as a route parameter
+//     // Find the health package by its name
+//     const healthPackage = await packageModel.findOne({ name: packageName });
+//     if (!healthPackage) {
+//       return res.status(404).json({ message: 'Health package not found' });
+//     }
+//     // Return the health package details to the patient
+//     res.status(200).json({ healthPackage });
+//   } catch (error) {
+//     console.error('Error fetching health package details:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
