@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.healthRecordSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 exports.healthRecordSchema = new mongoose_1.default.Schema({
-    patientId: {
-        type: mongoose_1.default.Schema.Types.ObjectId,
+    patient: {
+        type: String,
         required: true,
         ref: "patient"
     },

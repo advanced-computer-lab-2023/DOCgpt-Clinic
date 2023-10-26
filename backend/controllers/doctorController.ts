@@ -124,19 +124,6 @@ export const viewPatientsUpcoming = async (req: Request, res: Response) => {
     res.status(200).json(patients);
 };
 
-export const getAppointmentByDate = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername;
-    const date = req.query.date;
-    const appoinments = await AppointmentModel.find({ doctor: doctorUsername, date: date}).exec();
-    res.status(200).json(appoinments);
-};
-
-export const getAppointmentByStatus = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername;
-    const status = req.query.status;
-    const appoinments = await AppointmentModel.find({ doctor: doctorUsername, status: status}).exec();
-    res.status(200).json(appoinments);
-};
 
 export const selectPatient = async (req: Request, res: Response) => {
     const patientId = req.query.patientId;
@@ -144,6 +131,9 @@ export const selectPatient = async (req: Request, res: Response) => {
     res.status(200).json(patient);
 };
 
+// HEALTH RECORDS
+
+//VIEW ALL MY PATIENTS HEALTH RECORDS
 export const viewHealthRecords = async (req: Request, res: Response) => {
     const doctorUsername = req.query.doctorUsername;
     const appointments = await AppointmentModel.find({ doctor: doctorUsername}).exec();
@@ -151,26 +141,116 @@ export const viewHealthRecords = async (req: Request, res: Response) => {
     const usernames: any[] = [];
     for (const appoinment of appointments) {
         const username = appoinment.patient;
-        const patient = await PatientModel.findOne({ username: username }).exec();
-        console.log(patient);
-        
-        if(patient!=null){
-            const patientId = patient._id;
-            console.log(patientId);
-            
-            const healthRecord = await HealthRecordModel.findOne({ patientId: patientId}).populate('patientId').exec();
-            if(!usernames.includes(username)){
-                healthRecords.push(healthRecord);
-                usernames.push(username);
-            }
+        const healthRecord = await HealthRecordModel.findOne({ patient: username}).exec();
+        if(!usernames.includes(username)){
+            healthRecords.push(healthRecord);
+            usernames.push(username);
         }
     }
     res.status(200).json(healthRecords);
 };
 
-
+//VIEW A HEALTH RECORD FOR A SPECIFIC PATIENT
 export const viewHealthRecord = async (req: Request, res: Response) => {
-    const patientId = req.query.patientId;
-    const healthRecord = await HealthRecordModel.findById(patientId);
+    const patientUsername = req.query.patientUsername;
+    const healthRecord = await HealthRecordModel.find({ patient: patientUsername});
     res.status(200).json(healthRecord);
 };  
+
+//ADD A HEALTH RECORD FOR CHOSEN PATIENT
+export const addHealthRecord = async (req: Request, res: Response) => {
+    const patient = req.query.patientUsername;
+    const MedicalHistory = req.body.MedicalHistory;
+    const MedicationList = req.body.MedicationList;
+    const VitalSigns = req.body.VitalSigns;
+
+    const healthRecord = await HealthRecordModel.create({
+        patient: patient,
+        MedicalHistory: MedicalHistory,
+        MedicationList: MedicationList,
+        VitalSigns: VitalSigns
+    });
+    res.status(200).json(healthRecord);
+};
+
+
+
+// APPOINTMENTS
+
+// VIEW ALL MY APPOINTMENTS
+export const viewMyAppointments = async (req: Request, res: Response) => {
+    try{
+        const doctorUsername = req.query.doctorUsername;
+        const appointments = await AppointmentModel.find({ doctor: doctorUsername }).exec();
+        if(!appointments){
+            return res.status(404).json({ message: 'You Have No Appointments Yet!'});
+        }
+        res.status(200).json({ appointments });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+// VIEW UPCOMING APPOINTMENTS
+export const viewUpcomingAppointments = async (req: Request, res: Response) => {
+    try{
+        const doctorUsername = req.query.doctorUsername;
+        const appointments = await AppointmentModel.find({ doctor: doctorUsername, status: 'upcoming' });
+        if(!appointments){
+            return res.status(404).json({ message: 'You Have No Upcoming Appointments Yet!'});
+        }
+        
+        res.status(200).json( { appointments });
+
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+// VIEW PAST APPOINTMENTS 
+export const viewPastAppointments = async (req: Request, res: Response) => {
+    try{
+        const doctorUsername = req.query.doctorUsername;
+        const appointments = await AppointmentModel.find({ doctor: doctorUsername, status: { $in: ['cancelled', 'completed', 'rescheduled'] } });
+        if(!appointments){
+            return res.status(404).json({ message: 'You Have No Past Appointments Yet!'});
+        }
+        
+        res.status(200).json({ appointments });
+        
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
+
+
+// FILTER APPOINTMENTS BY DATE
+export const getAppointmentByDate = async (req: Request, res: Response) => {
+    try{
+        const doctorUsername = req.query.doctorUsername;
+        const date = req.query.date;
+        const appointments = await AppointmentModel.find({ doctor: doctorUsername, date: date}).exec();
+
+        if(!appointments){
+            return res.status(404).json({ message: 'You Have No Appointments On this date!'});
+        }
+        res.status(200).json(appointments);
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// FILTER APPOINTMENTS BY STATUS
+export const getAppointmentByStatus = async (req: Request, res: Response) => {
+    const doctorUsername = req.query.doctorUsername;
+    const status = req.query.status;
+    const appointments = await AppointmentModel.find({ doctor: doctorUsername, status: status}).exec();
+    res.status(200).json(appointments);
+};

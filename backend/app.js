@@ -23,7 +23,7 @@ app.use((req, res, next) => {
     next();
 });
 // Routes
-app.use('/routes', patient_1.default);
+app.use('/routes/patient', patient_1.default);
 app.use('/routes/doctors', doctor_1.default);
 app.use('/routes', prescription_1.default);
 app.use('/routes', admin_1.default);

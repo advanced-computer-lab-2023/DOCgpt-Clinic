@@ -15,12 +15,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.createHealthRecord = void 0;
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
 const createHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const patientId = req.body.patientId;
+    const patient = req.body.patient;
     const MedicalHistory = req.body.MedicalHistory;
     const MedicationList = req.body.MedicationList;
     const VitalSigns = req.body.VitalSigns;
     const healthRecord = yield healthRecordModel_1.default.create({
-        patientId: patientId,
+        patient: patient,
         MedicalHistory: MedicalHistory,
         MedicationList: MedicationList,
         VitalSigns: VitalSigns

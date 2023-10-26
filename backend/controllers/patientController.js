@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatientAppointments = exports.getPatients = exports.createPatient = void 0;
+exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -41,37 +41,6 @@ exports.getPatients = getPatients;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
-const getPatientAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("im in");
-    try {
-        const patientUsername = req.query.username; // Extract username from route parameters
-        const dateString = req.query.date; // Assert the type as string
-        const status = req.query.status;
-        const filters = { patient: patientUsername };
-        if (dateString) {
-            // Parse the date string into a JavaScript Date object
-            const dateParts = dateString.split('_');
-            if (dateParts.length === 3) {
-                const year = parseInt(dateParts[0], 10);
-                const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
-                const day = parseInt(dateParts[2], 10);
-                const dateObject = new Date(year, month, day);
-                // Filter appointments that match the provided date
-                filters.date = dateObject;
-            }
-        }
-        if (status) {
-            filters.status = status;
-        }
-        const appointments = yield appointmentModel_2.default.find(filters).exec();
-        res.status(200).json(appointments);
-    }
-    catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-exports.getPatientAppointments = getPatientAppointments;
 const getPrescriptionsByUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const username = req.query.username;
@@ -253,20 +222,7 @@ const selectDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.selectDoctors = selectDoctors;
 const appointmentModel_2 = __importDefault(require("../models/appointmentModel"));
-const getAppointmentByDate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const patientUsername = req.query.patientUsername;
-    const date = req.query.date;
-    const appoinments = yield appointmentModel_2.default.find({ patient: patientUsername, date: date }).exec();
-    res.status(200).json(appoinments);
-});
-exports.getAppointmentByDate = getAppointmentByDate;
-const getAppointmentByStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const patientUsername = req.query.patientUsername;
-    const status = req.query.status;
-    const appoinments = yield appointmentModel_2.default.find({ patient: patientUsername, status: status }).exec();
-    res.status(200).json(appoinments);
-});
-exports.getAppointmentByStatus = getAppointmentByStatus;
+const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
 const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Retrieve all health packages from the database
@@ -274,7 +230,6 @@ const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, funct
         if (healthPackages.length === 0) {
             return res.status(404).json({ message: 'No health packages found' });
         }
-        console.log('zzzzz');
         // Return the health packages to the patient
         res.status(200).json({ healthPackages });
     }
@@ -301,3 +256,101 @@ const viewHealthPackageDetails = (req, res) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.viewHealthPackageDetails = viewHealthPackageDetails;
+// APPOINTMENTS 
+//VIEW ALL MY APPOINTMENTS
+const getPatientAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("im in");
+    try {
+        const patientUsername = req.query.patientUsername; // Extract username from route parameters
+        const dateString = req.query.date; // Assert the type as string
+        const status = req.query.status;
+        const filters = { patient: patientUsername };
+        if (dateString) {
+            // Parse the date string into a JavaScript Date object
+            const dateParts = dateString.split('_');
+            if (dateParts.length === 3) {
+                const year = parseInt(dateParts[0], 10);
+                const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
+                const day = parseInt(dateParts[2], 10);
+                const dateObject = new Date(year, month, day);
+                // Filter appointments that match the provided date
+                filters.date = dateObject;
+            }
+        }
+        if (status) {
+            filters.status = status;
+        }
+        const appointments = yield appointmentModel_2.default.find(filters).exec();
+        res.status(200).json(appointments);
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getPatientAppointments = getPatientAppointments;
+//VIEW PAST APPOINTMENTS
+const viewPastAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const patientUsername = req.query.patientUsername;
+        const appointments = yield appointmentModel_2.default.find({ patient: patientUsername, status: { $in: ['cancelled', 'completed', 'rescheduled'] } });
+        if (!appointments) {
+            return res.status(404).json({ message: 'You Have No Past Appointments Yet!' });
+        }
+        res.status(200).json({ appointments });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.viewPastAppointments = viewPastAppointments;
+//VIEW UPCOMING APPOINTMENTS
+const viewUpcomingAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const patientUsername = req.query.patientUsername;
+        const appointments = yield appointmentModel_2.default.find({ patient: patientUsername, status: 'upcoming' });
+        if (!appointments) {
+            return res.status(404).json({ message: 'You Have No Upcoming Appointments Yet!' });
+        }
+        res.status(200).json({ appointments });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.viewUpcomingAppointments = viewUpcomingAppointments;
+// FILTER APPOINTMENTS BY DATE 
+const getAppointmentByDate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const patientUsername = req.query.patientUsername;
+    const date = req.query.date;
+    const appointments = yield appointmentModel_2.default.find({ patient: patientUsername, date: date }).exec();
+    res.status(200).json({ appointments });
+});
+exports.getAppointmentByDate = getAppointmentByDate;
+//FILTER APPOINTMENTS BY STATUS
+const getAppointmentByStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const patientUsername = req.query.patientUsername;
+    const status = req.query.status;
+    const appointments = yield appointmentModel_2.default.find({ patient: patientUsername, status: status }).exec();
+    res.status(200).json({ appointments });
+});
+exports.getAppointmentByStatus = getAppointmentByStatus;
+//HEALTH RECORD 
+//VIEW MY HEALTH RECORD (ONE AND ONLY)
+const viewMyHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const patientUsername = req.query.patientUsername;
+        const healthRecord = yield healthRecordModel_1.default.find({ patient: patientUsername });
+        if (!healthRecord) {
+            return res.status(404).json({ message: 'You Have No healthRecord Yet!' });
+        }
+        res.status(200).json({ healthRecord });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.viewMyHealthRecord = viewMyHealthRecord;

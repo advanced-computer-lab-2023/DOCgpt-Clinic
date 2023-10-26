@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewHealthRecord = exports.viewHealthRecords = exports.selectPatient = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -131,26 +131,14 @@ const viewPatientsUpcoming = (req, res) => __awaiter(void 0, void 0, void 0, fun
     res.status(200).json(patients);
 });
 exports.viewPatientsUpcoming = viewPatientsUpcoming;
-const getAppointmentByDate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
-    const date = req.query.date;
-    const appoinments = yield appointmentModel_1.default.find({ doctor: doctorUsername, date: date }).exec();
-    res.status(200).json(appoinments);
-});
-exports.getAppointmentByDate = getAppointmentByDate;
-const getAppointmentByStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
-    const status = req.query.status;
-    const appoinments = yield appointmentModel_1.default.find({ doctor: doctorUsername, status: status }).exec();
-    res.status(200).json(appoinments);
-});
-exports.getAppointmentByStatus = getAppointmentByStatus;
 const selectPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const patientId = req.query.patientId;
     const patient = yield patientModel_1.default.findById(patientId);
     res.status(200).json(patient);
 });
 exports.selectPatient = selectPatient;
+// HEALTH RECORDS
+//VIEW ALL MY PATIENTS HEALTH RECORDS
 const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.query.doctorUsername;
     const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
@@ -158,24 +146,108 @@ const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, functi
     const usernames = [];
     for (const appoinment of appointments) {
         const username = appoinment.patient;
-        const patient = yield patientModel_1.default.findOne({ username: username }).exec();
-        console.log(patient);
-        if (patient != null) {
-            const patientId = patient._id;
-            console.log(patientId);
-            const healthRecord = yield healthRecordModel_1.default.findOne({ patientId: patientId }).populate('patientId').exec();
-            if (!usernames.includes(username)) {
-                healthRecords.push(healthRecord);
-                usernames.push(username);
-            }
+        const healthRecord = yield healthRecordModel_1.default.findOne({ patient: username }).exec();
+        if (!usernames.includes(username)) {
+            healthRecords.push(healthRecord);
+            usernames.push(username);
         }
     }
     res.status(200).json(healthRecords);
 });
 exports.viewHealthRecords = viewHealthRecords;
+//VIEW A HEALTH RECORD FOR A SPECIFIC PATIENT
 const viewHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const patientId = req.query.patientId;
-    const healthRecord = yield healthRecordModel_1.default.findById(patientId);
+    const patientUsername = req.query.patientUsername;
+    const healthRecord = yield healthRecordModel_1.default.find({ patient: patientUsername });
     res.status(200).json(healthRecord);
 });
 exports.viewHealthRecord = viewHealthRecord;
+//ADD A HEALTH RECORD FOR CHOSEN PATIENT
+const addHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const patient = req.query.patientUsername;
+    const MedicalHistory = req.body.MedicalHistory;
+    const MedicationList = req.body.MedicationList;
+    const VitalSigns = req.body.VitalSigns;
+    const healthRecord = yield healthRecordModel_1.default.create({
+        patient: patient,
+        MedicalHistory: MedicalHistory,
+        MedicationList: MedicationList,
+        VitalSigns: VitalSigns
+    });
+    res.status(200).json(healthRecord);
+});
+exports.addHealthRecord = addHealthRecord;
+// APPOINTMENTS
+// VIEW ALL MY APPOINTMENTS
+const viewMyAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const doctorUsername = req.query.doctorUsername;
+        const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
+        if (!appointments) {
+            return res.status(404).json({ message: 'You Have No Appointments Yet!' });
+        }
+        res.status(200).json({ appointments });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.viewMyAppointments = viewMyAppointments;
+// VIEW UPCOMING APPOINTMENTS
+const viewUpcomingAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const doctorUsername = req.query.doctorUsername;
+        const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername, status: 'upcoming' });
+        if (!appointments) {
+            return res.status(404).json({ message: 'You Have No Upcoming Appointments Yet!' });
+        }
+        res.status(200).json({ appointments });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.viewUpcomingAppointments = viewUpcomingAppointments;
+// VIEW PAST APPOINTMENTS 
+const viewPastAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const doctorUsername = req.query.doctorUsername;
+        const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername, status: { $in: ['cancelled', 'completed', 'rescheduled'] } });
+        if (!appointments) {
+            return res.status(404).json({ message: 'You Have No Past Appointments Yet!' });
+        }
+        res.status(200).json({ appointments });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.viewPastAppointments = viewPastAppointments;
+// FILTER APPOINTMENTS BY DATE
+const getAppointmentByDate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const doctorUsername = req.query.doctorUsername;
+        const date = req.query.date;
+        const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername, date: date }).exec();
+        if (!appointments) {
+            return res.status(404).json({ message: 'You Have No Appointments On this date!' });
+        }
+        res.status(200).json(appointments);
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getAppointmentByDate = getAppointmentByDate;
+// FILTER APPOINTMENTS BY STATUS
+const getAppointmentByStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername;
+    const status = req.query.status;
+    const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername, status: status }).exec();
+    res.status(200).json(appointments);
+});
+exports.getAppointmentByStatus = getAppointmentByStatus;

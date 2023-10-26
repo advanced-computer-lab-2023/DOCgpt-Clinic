@@ -41,61 +41,26 @@ import Doctor from '../models/doctorModel';
 
 
  
-export const getPatientAppointments = async (req: Request, res: Response) => {
-  console.log("im in");
-  try {
-    const patientUsername = req.query.username; // Extract username from route parameters
-
-    const dateString = req.query.date as string; // Assert the type as string
-    const status = req.query.status;
-
-    const filters: any = { patient: patientUsername };
-
-    if (dateString) {
-      // Parse the date string into a JavaScript Date object
-      const dateParts = dateString.split('_');
-      if (dateParts.length === 3) {
-        const year = parseInt(dateParts[0], 10);
-        const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
-        const day = parseInt(dateParts[2], 10);
-        const dateObject = new Date(year, month, day);
-
-        // Filter appointments that match the provided date
-        filters.date = dateObject;
-      }
-    }
-
-    if (status) {
-      filters.status = status;
-    }
-
-    const appointments = await AppointmentModel.find(filters).exec();
-    res.status(200).json(appointments);
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
 
 export const getPrescriptionsByUser = async (req: Request, res: Response) => {
   try {
     const username= req.query.username;
     const dateString = req.query.date as string; // Assert the type as string
-
+    
     const filled=req.query.filled;
     const doctorUsername= req.query.doctorUsername
-        const filters: any = { patientUsername: username };
-
-
-        if (dateString) {
-          // Parse the date string into a JavaScript Date object
-          const dateParts = dateString.split('_');
+    const filters: any = { patientUsername: username };
+    
+    
+    if (dateString) {
+      // Parse the date string into a JavaScript Date object
+      const dateParts = dateString.split('_');
           if (dateParts.length === 3) {
             const year = parseInt(dateParts[0], 10);
             const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
             const day = parseInt(dateParts[2], 10);
             const dateObject = new Date(year, month, day);
-    
+            
             // Filter appointments that match the provided date
             filters.date = dateObject;
           }
@@ -104,11 +69,11 @@ export const getPrescriptionsByUser = async (req: Request, res: Response) => {
     if (filled) {
       filters.filled = filled;
     }
-
+    
     if (doctorUsername) {
       filters.doctorUsername = doctorUsername;
     }
-
+    
     const prescriptions = await Prescription.find(filters).exec();
     res.status(200).json(prescriptions);
   } catch (error) {
@@ -122,22 +87,22 @@ export const getPrescriptionsByUser = async (req: Request, res: Response) => {
 export const addFamilyMember = async (req: Request, res: Response) => {
   try {
     const { username } = req.query;
-  
+    
     if (!username) {
       return res.status(404).json({ error: 'No such patient' });
     }
 
     // Assuming you have a route parameter for the patient's ID
     const familyMemberData = req.body; // Assuming family member data is sent in the request body
-
+    
     // Find the patient by ID
     const patient= await patientModel.findOne({ username });
-
+    
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
     }
             console.log(patient);
-    // Add the new family member object to the patient's record
+            // Add the new family member object to the patient's record
     patient.familyMembers.push({
       name: familyMemberData.name,
       nationalId: familyMemberData.nationalId,
@@ -145,9 +110,9 @@ export const addFamilyMember = async (req: Request, res: Response) => {
       gender: familyMemberData.gender,
       relationToPatient: familyMemberData.relationToPatient,
     });
-
+    
     await patient.save();
-
+    
     return res.status(201).json({ message: 'Family member added successfully', patient });
   } catch (error) {
     console.error('Error adding family member:', error);
@@ -162,18 +127,18 @@ export const addFamilyMember = async (req: Request, res: Response) => {
 export const viewFamilyMembers = async (req: Request, res: Response) => {
   try {
     const { username } = req.query;
-
+    
     if (!username) {
       return res.status(404).json({ error: 'user name is required' });
     }
-
+    
     // Find the patient by ID
     const patient= await patientModel.findOne({ username });
-
+    
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
     }
-
+    
     // Return the family members array
     return res.status(200).json({ familyMembers: patient.familyMembers });
   } catch (error) {
@@ -193,7 +158,7 @@ export const getDoctor = async (req: Request, res: Response): Promise<void> => {
       const doctorWithSessionPrice = { ...doctor.toObject(), sessionPrice };
       doctorsWithSessionPrice.push(doctorWithSessionPrice);
     }
-
+    
     res.status(200).json(doctorsWithSessionPrice);
   } catch (error) {
     console.error(error);
@@ -205,25 +170,25 @@ export const filterDoctors = async (req: Request, res: Response) => {
   let doctors = [];
   const date = req.query.date;
   if(speciality){
-       doctors = await Doctor.find({speciality: speciality}).exec();
+    doctors = await Doctor.find({speciality: speciality}).exec();
   }
   else{
-     doctors = await Doctor.find();
+    doctors = await Doctor.find();
   }
-
+  
   const resultDoctors: any[] = []; 
-    for (const doctor of doctors) {
+  for (const doctor of doctors) {
       const appointments = await appointmentModel.find({date: date, doctor: doctor.username});
       if(appointments.length === 0){
         resultDoctors.push(doctor);
       }
     }
-
-  res.status(200).json(resultDoctors);
-};
-
-export const getDoctorDetails = async (req: Request, res: Response): Promise<void> => {
-  try {
+    
+    res.status(200).json(resultDoctors);
+  };
+  
+  export const getDoctorDetails = async (req: Request, res: Response): Promise<void> => {
+    try {
     const { _id } = req.query;
 
     const doctor = await Doctor.findById(_id);
@@ -255,7 +220,7 @@ export const searchDoctors = async (req: Request, res: Response): Promise<void> 
     }
 
     const doctors = await Doctor.find(query);
-
+    
     if (doctors.length === 0) {
       res.status(404).json({ error: 'No doctors found' });
       return;
@@ -289,21 +254,9 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
 
 
   import AppointmentModel from "../models/appointmentModel";
+import healthRecordModel from '../models/healthRecordModel';
 
-  export const getAppointmentByDate = async (req: Request, res: Response) => {
-      const patientUsername = req.query.patientUsername;
-      const date = req.query.date;
-      const appoinments = await AppointmentModel.find({ patient: patientUsername, date: date}).exec();
-      res.status(200).json(appoinments);
-  };
   
-  export const getAppointmentByStatus = async (req: Request, res: Response) => {
-      const patientUsername = req.query.patientUsername;
-      const status = req.query.status;
-      const appoinments = await AppointmentModel.find({ patient: patientUsername, status: status}).exec();
-      res.status(200).json(appoinments);
-  };
-
   export const viewHealthPackages = async (req: Request, res: Response) => {
     try {
 
@@ -321,18 +274,18 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
       res.status(500).json({ error: 'Internal server error' });
     }
   };
-
+  
   export const viewHealthPackageDetails = async (req: Request, res: Response) => {
     try {
       const packageName = req.params.name; // Assuming the package name is passed as a route parameter
-  
+      
       // Find the health package by its name
       const healthPackage = await packageModel.findOne({ name: packageName });
-  
+      
       if (!healthPackage) {
         return res.status(404).json({ message: 'Health package not found' });
       }
-  
+      
       // Return the health package details to the patient
       res.status(200).json({ healthPackage });
     } catch (error) {
@@ -340,6 +293,117 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
       res.status(500).json({ error: 'Internal server error' });
     }
   };
- 
- 
   
+
+  // APPOINTMENTS 
+  
+
+  //VIEW ALL MY APPOINTMENTS
+  export const getPatientAppointments = async (req: Request, res: Response) => {
+    console.log("im in");
+    try {
+      const patientUsername = req.query.patientUsername; // Extract username from route parameters
+      
+      const dateString = req.query.date as string; // Assert the type as string
+      const status = req.query.status;
+      
+      const filters: any = { patient: patientUsername };
+  
+      if (dateString) {
+        // Parse the date string into a JavaScript Date object
+        const dateParts = dateString.split('_');
+        if (dateParts.length === 3) {
+          const year = parseInt(dateParts[0], 10);
+          const month = parseInt(dateParts[1], 10) - 1; // Months are zero-based
+          const day = parseInt(dateParts[2], 10);
+          const dateObject = new Date(year, month, day);
+          
+          // Filter appointments that match the provided date
+          filters.date = dateObject;
+        }
+      }
+      
+      if (status) {
+        filters.status = status;
+      }
+      
+      const appointments = await AppointmentModel.find(filters).exec();
+      res.status(200).json(appointments);
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+  
+  //VIEW PAST APPOINTMENTS
+  export const viewPastAppointments = async (req: Request, res: Response) => {
+    try{
+      const patientUsername = req.query.patientUsername;
+      const appointments = await AppointmentModel.find({ patient: patientUsername, status: { $in: ['cancelled', 'completed', 'rescheduled'] } });
+      if(!appointments){
+        return res.status(404).json({ message: 'You Have No Past Appointments Yet!'});
+      }
+      
+      res.status(200).json({ appointments });
+      
+    }
+    catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+
+  //VIEW UPCOMING APPOINTMENTS
+  export const viewUpcomingAppointments = async (req: Request, res: Response) => {
+    try{
+      const patientUsername = req.query.patientUsername;
+      const appointments = await AppointmentModel.find({ patient: patientUsername, status: 'upcoming' });
+      if(!appointments){
+        return res.status(404).json({ message: 'You Have No Upcoming Appointments Yet!'});
+      }
+      
+      res.status(200).json( { appointments });
+
+    }
+    catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }
+  
+  // FILTER APPOINTMENTS BY DATE 
+  export const getAppointmentByDate = async (req: Request, res: Response) => {
+    const patientUsername = req.query.patientUsername;
+    const date = req.query.date;
+      const appointments = await AppointmentModel.find({ patient: patientUsername, date: date}).exec();
+      res.status(200).json({appointments});
+  };
+  
+  //FILTER APPOINTMENTS BY STATUS
+  export const getAppointmentByStatus = async (req: Request, res: Response) => {
+      const patientUsername = req.query.patientUsername;
+      const status = req.query.status;
+      const appointments = await AppointmentModel.find({ patient: patientUsername, status: status}).exec();
+      res.status(200).json({appointments});
+  };
+
+
+  //HEALTH RECORD 
+
+  //VIEW MY HEALTH RECORD (ONE AND ONLY)
+  export const viewMyHealthRecord = async (req: Request, res: Response) => {
+    try{
+      const patientUsername = req.query.patientUsername;
+      const healthRecord = await healthRecordModel.find({ patient: patientUsername});
+      if(!healthRecord){
+        return res.status(404).json({ message: 'You Have No healthRecord Yet!'});
+      }
+      
+      res.status(200).json( { healthRecord });
+
+    }
+    catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  }

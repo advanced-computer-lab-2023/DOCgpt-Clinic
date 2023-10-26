@@ -27,7 +27,7 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
 })
 
 // Routes
-app.use('/routes',  PatientRoutes);
+app.use('/routes/patient',  PatientRoutes);
 app.use('/routes/doctors',  DoctorRoutes);
 app.use('/routes',  PrescriptionRoutes);
 app.use('/routes',  adminrouter);

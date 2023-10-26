@@ -2,8 +2,8 @@ import mongoose, { Document, Model, Schema } from 'mongoose';
 import patientModel from './patientModel';
 
 export const healthRecordSchema = new mongoose.Schema({
-    patientId: {
-        type: mongoose.Schema.Types.ObjectId,
+    patient: {
+        type: String,
         required: true,
         ref: "patient"        
     },

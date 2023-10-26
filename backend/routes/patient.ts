@@ -12,9 +12,14 @@ import {
   getPatientAppointments,
   getPrescriptionsByUser,
   viewHealthPackages,
+  viewUpcomingAppointments,
+  getAppointmentByDate,
+  getAppointmentByStatus,
+  viewMyHealthRecord,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 
+import { viewPastAppointments } from "../controllers/patientController";
 
 
 const router: Router = express.Router();
@@ -48,7 +53,17 @@ router.get('/doctors/view', getDoctorDetails);
 
 router.get('/doctors/select', selectDoctors);
 
-router.get('/getPP',getPatientAppointments);
+
+//APPOINTMENTS 
+router.get('/getMyAppointments',getPatientAppointments);
+router.get("/pastApp", viewPastAppointments);
+router.get("/upcomingApp", viewUpcomingAppointments);
+router.get("/getAppByDate", getAppointmentByDate);
+router.get("/getAppByStatus", getAppointmentByStatus);
+
+//HEALTH RECORD
+router.get("/healthRecord", viewMyHealthRecord);
+
 
 //sprint 2
 
