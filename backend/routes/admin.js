@@ -30,4 +30,7 @@ router.get('/getpackname', adminController_1.getPackageNAME);
 router.get('/getdoc', adminController_2.getdoctorsR);
 //get patients
 router.get('/getpati', adminController_2.getPatients);
+router.get('/loginAdmin', adminController_2.loginAdmin);
+router.delete('/logoutAdmin', adminController_2.logout);
+router.post('/changePassAdmin', adminController_2.changePassword);
 exports.default = router;

@@ -23,8 +23,13 @@ router.get("/appointmentsByStatus", doctorController_1.getAppointmentByStatus);
 //HEALTH RECORDS
 router.get("/HealthRecords", doctorController_1.viewHealthRecords);
 router.get("/HealthRecord", doctorController_1.viewHealthRecord);
-router.post("/addHealthRecord", doctorController_1.addHealthRecord);
 router.post("/postDoctor", doctorController_1.createDoctors);
+router.patch("/updateEmail", doctorController_1.updateDoctorEmail);
+router.patch("/updateRate", doctorController_1.updateDoctorHourlyRate);
+router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
+//create follow up
+router.post("/followup", doctorController_1.createfollowUp);
+router.patch("/addtimeslot", doctorController_1.addTimeSlots);
 // Set up Multer for file uploads
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
@@ -37,10 +42,7 @@ const storage = multer_1.default.diskStorage({
 const upload = (0, multer_1.default)({ storage });
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorController_1.uploadAndSubmitReqDocs);
-router.patch("/updateEmail", doctorController_1.updateDoctorEmail);
-router.patch("/updateRate", doctorController_1.updateDoctorHourlyRate);
-router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
-router.patch("/addtimeslot", doctorController_1.addTimeSlots);
-//create follow up
-router.post("/followup", doctorController_1.createfollowUp);
+router.get('/loginDoctor', doctorController_1.loginDoctor);
+router.delete('/logoutDoctor', doctorController_1.logout);
+router.post('/changePassDoc', doctorController_1.changePassword);
 exports.default = router;

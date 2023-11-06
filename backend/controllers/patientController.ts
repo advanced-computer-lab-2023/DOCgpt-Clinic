@@ -1,15 +1,48 @@
-import { Request, Response, Router } from 'express';
+import { NextFunction, Request, Response, Router } from 'express';
 import Patientmodel from '../models/patientModel';
 import packageModel from '../models/packageModel'; 
 import appointmentModel from '../models/appointmentModel';
 import mongoose from 'mongoose';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 // create a new workout
 export const createPatient = async (req: Request, res: Response) => {
     console.log('Request reached controller')
 
   try {
     const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription } = req.body;
-    const patient = await Patientmodel.create({ username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription });
+    const emailExists=await Patientmodel.findOne({email}) ;
+    const emailExists2=await doctorModel.findOne({email})
+    const emailExists3=await adminModel.findOne({email})
+    const usernameExists=await Patientmodel.findOne({username});
+    const usernameExists2=await doctorModel.findOne({username});
+    const usernameExists3=await adminModel.findOne({username});
+    if(emailExists){
+    
+      return res.status(401).json({ message: 'email exists' });
+    
+    }
+    if(emailExists2){
+      return res.status(401).json({ message: 'email exists' });
+    }
+    if(emailExists3){
+      return res.status(401).json({ message: 'email exists' });
+    }
+    if(usernameExists){
+      return res.status(401).json({ message: 'username exists' });
+    }
+    if(usernameExists2){
+      return res.status(401).json({ message: 'username exists' });
+    }
+    if(usernameExists3){
+      return res.status(401).json({ message: 'username exists' });
+    }
+    const salt =await bcrypt.genSalt(10)
+    const hash=await bcrypt.hash(password,salt)
+    if (!validatePassword(password)) {
+      return res.status(400).json({ message: 'Invalid password' });
+    }
+    const patient = await Patientmodel.create({ username,name,email,password:hash,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription });
 console.log('Patient created!', patient)
 
     res.status(200).json(patient);
@@ -257,6 +290,8 @@ export const selectDoctors = async (req: Request, res: Response): Promise<void> 
   import AppointmentModel from "../models/appointmentModel";
 import healthRecordModel from '../models/healthRecordModel';
 import doctorModel from '../models/doctorModel';
+import tokenModel from '../models/tokenModel';
+import adminModel from '../models/adminModel';
 
   
   export const viewHealthPackages = async (req: Request, res: Response) => {
@@ -452,3 +487,164 @@ import doctorModel from '../models/doctorModel';
       res.status(500).json({ error: 'Internal server error' });
     }
   }
+
+
+  function validatePassword(password: string) {
+    // Minimum password length of 8 characters
+    if (password.length < 8) {
+      return false;
+    }
+  
+    // Regular expression pattern to check for at least one capital letter and one number
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+  
+    // Use the test method to check if the password matches the pattern
+    if (!pattern.test(password)) {
+      return false;
+    }
+  
+    // All requirements are met
+    return true;
+  }
+  export const createToken = (_id: string): string => {
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+      throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+    const token = jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3d' });
+    return token;
+  };
+  export const loginPatient=async (req:Request, res:Response) => {
+    try{
+       const {username , password}=req.body
+       if(!username || !password){
+        throw Error ('all fields must be filled')
+       }
+       const patient=await Patientmodel.findOne({username})
+       if(! patient){
+        throw Error ('invalid username')
+       }
+       const match=await bcrypt.compare(password,patient.password)
+  
+       if(!match){
+        throw Error('incorrect password')
+       }
+       const token = createToken(patient.id);
+       const tokenn = await tokenModel.create({token,username,role:'patient'})
+       res.status(200).json({patient,token})}
+       catch(error){
+        const err = error as Error;
+        res.status(400).json({ error: err.message });
+       }
+  }
+
+  export const logout =async (req:Request,res:Response) =>{
+    try{
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+    
+      if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+      }
+    
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err: jwt.JsonWebTokenError | null, user: any) => {
+        if (err) {
+          return res.status(403).json({ message: 'Token is not valid' });
+        }
+        const tokenDB= await tokenModel.findOneAndDelete({token:token})
+        res.json(tokenDB);
+      });
+    }
+      catch(error){
+        const err = error as Error;
+        res.status(400).json({ error: err.message });
+       }
+  }
+  export const changePassword = async (req: Request, res: Response) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+  
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+  
+      if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+  
+      if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+      }
+  
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err: jwt.JsonWebTokenError | null, user: any) => {
+        if (err) {
+          return res.status(403).json({ message: 'Token is not valid' });
+        }
+  
+        const tokenDB = await tokenModel.findOne({ token });
+  
+        if (!tokenDB) {
+          return res.status(404).json({ message: 'Token not found' });
+        }
+  
+        const patient = await Patientmodel.findOne({ username: tokenDB.username });
+  
+        if (!patient) {
+          return res.status(404).json({ message: 'Patient not found' });
+        }
+  
+        const isPasswordValid = await bcrypt.compare(currentPassword, patient.password);
+  
+        if (!isPasswordValid) {
+          return res.status(400).json({ message: 'Current password is incorrect' });
+        }
+  
+        // Validate the new password using the validatePassword function
+        if (!validatePassword(newPassword)) {
+          return res.status(400).json({ message: 'Invalid new password' });
+        }
+  
+        // Hash and update the new password
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+  
+        patient.password = hashedNewPassword;
+        await patient.save();
+  
+        return res.status(200).json({ message: 'Password changed successfully' });
+      });
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  export const verifyTokenPatient =(req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+      throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+  
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err: jwt.JsonWebTokenError | null, user: any) => {
+      if (err) {
+        return res.status(403).json({ message: 'Token is not valid' });
+      }
+      const tokenDB = await tokenModel.findOne({token})
+      if(tokenDB){
+        if(tokenDB.role === 'patient'){
+          next();
+        }
+        else{
+          return res.status(403).json({ message: 'Token is not authorized' });
+        }
+      }
+      else{
+        return res.status(403).json({ message: 'Token is not valid 2' });
+      }
+     // req.user = user;
+      
+    });
+  };

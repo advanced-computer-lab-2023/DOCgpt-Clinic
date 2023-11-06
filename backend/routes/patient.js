@@ -31,4 +31,7 @@ router.get("/healthRecord", patientController_1.viewMyHealthRecord);
 //sprint 2
 router.get('/viewHealthPackage', patientController_1.viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
+router.get('/loginPatient', patientController_1.loginPatient);
+router.delete('/logoutPatient', patientController_1.logout);
+router.post('/changePassPatient', patientController_1.changePassword);
 exports.default = router;

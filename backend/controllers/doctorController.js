@@ -12,12 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
-exports.createfollowUp = exports.viewHealthRecord = exports.addTimeSlots = exports.viewHealthRecords = exports.selectPatient = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.loginDoctor = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.uploadAndSubmitReqDocs = exports.createfollowUp = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+const multer_1 = __importDefault(require("multer"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const tokenModel_1 = __importDefault(require("../models/tokenModel"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const adminModel_1 = __importDefault(require("../models/adminModel"));
 const getDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctors = yield doctorModel_1.default.find().exec();
     res.status(200).json(doctors);
@@ -51,11 +55,40 @@ const createDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const affiliation = req.body.affiliation;
     const speciality = req.body.speciality;
     const educationalBackground = req.body.educationalBackground;
+    const emailExists = yield patientModel_1.default.findOne({ email });
+    const emailExists2 = yield doctorModel_1.default.findOne({ email });
+    const emailExists3 = yield adminModel_1.default.findOne({ email });
+    const usernameExists = yield patientModel_1.default.findOne({ username });
+    const usernameExists2 = yield doctorModel_1.default.findOne({ username });
+    const usernameExists3 = yield adminModel_1.default.findOne({ username });
+    if (emailExists) {
+        return res.status(401).json({ message: 'email exists' });
+    }
+    if (emailExists2) {
+        return res.status(401).json({ message: 'email exists' });
+    }
+    if (emailExists3) {
+        return res.status(401).json({ message: 'email exists' });
+    }
+    if (usernameExists) {
+        return res.status(401).json({ message: 'username exists' });
+    }
+    if (usernameExists2) {
+        return res.status(401).json({ message: 'username exists' });
+    }
+    if (usernameExists3) {
+        return res.status(401).json({ message: 'username exists' });
+    }
+    const salt = yield bcrypt_1.default.genSalt(10);
+    const hash = yield bcrypt_1.default.hash(password, salt);
+    if (!validatePassword(password)) {
+        return res.status(400).json({ message: 'Invalid password' });
+    }
     const doctor = yield doctorModel_1.default.create({
         username: username,
         name: name,
         email: email,
-        password: password,
+        password: hash,
         dateOfBirth: dateOfBirth,
         hourlyRate: hourlyRate,
         affiliation: affiliation,
@@ -138,25 +171,6 @@ const selectPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     res.status(200).json(patient);
 });
 exports.selectPatient = selectPatient;
-// HEALTH RECORDS
-//VIEW ALL MY PATIENTS HEALTH RECORDS
-const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
-    const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
-    const healthRecords = [];
-    const usernames = [];
-    for (const appoinment of appointments) {
-        const username = appoinment.patient;
-        const healthRecord = yield healthRecordModel_1.default.findOne({ patient: username }).exec();
-        if (!usernames.includes(username)) {
-            healthRecords.push(healthRecord);
-            usernames.push(username);
-        }
-    }
-    res.status(200).json(healthRecords);
-});
-exports.viewHealthRecords = viewHealthRecords;
-//VIEW A HEALTH RECORD FOR A SPECIFIC PATIENT
 const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.query.doctorUsername;
     const { dates } = req.body;
@@ -181,6 +195,62 @@ const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.addTimeSlots = addTimeSlots;
+const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.body.doctor;
+    const patientUsername = req.body.patient;
+    const date = req.body.date;
+    const status = req.body.status;
+    const type = req.body.type;
+    const appoinment = yield appointmentModel_1.default.create({
+        status: status,
+        doctor: doctorUsername,
+        patient: patientUsername,
+        date: date,
+        type: type
+    });
+    res.status(201).json(appoinment);
+});
+exports.createfollowUp = createfollowUp;
+const storage = multer_1.default.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + file.originalname);
+    },
+});
+const upload = (0, multer_1.default)({ storage });
+const uploadAndSubmitReqDocs = (req, res) => {
+    upload.array('documents', 3)(req, res, (err) => {
+        if (err) {
+            return res.status(500).json({ error: 'File upload failed.' });
+        }
+        const uploadedFiles = req.files;
+        console.log('Uploaded Files:', uploadedFiles);
+        // Handle saving file information and associating it with the doctor's registration here
+        res.json({ message: 'Documents uploaded and submitted successfully.' });
+    });
+};
+exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;
+// HEALTH RECORDS
+//VIEW ALL MY PATIENTS HEALTH RECORDS
+const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername;
+    const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
+    const healthRecords = [];
+    const usernames = [];
+    for (const appoinment of appointments) {
+        const username = appoinment.patient;
+        const healthRecord = yield healthRecordModel_1.default.findOne({ patient: username }).exec();
+        if (!usernames.includes(username)) {
+            healthRecords.push(healthRecord);
+            usernames.push(username);
+        }
+    }
+    res.status(200).json(healthRecords);
+});
+exports.viewHealthRecords = viewHealthRecords;
+//VIEW A HEALTH RECORD FOR A SPECIFIC PATIENT
 const viewHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const patientUsername = req.query.patientUsername;
     const healthRecord = yield healthRecordModel_1.default.find({ patient: patientUsername });
@@ -276,19 +346,150 @@ const getAppointmentByStatus = (req, res) => __awaiter(void 0, void 0, void 0, f
     res.status(200).json(appointments);
 });
 exports.getAppointmentByStatus = getAppointmentByStatus;
-const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.body.doctor;
-    const patientUsername = req.body.patient;
-    const date = req.body.date;
-    const status = req.body.status;
-    const type = req.body.type;
-    const appoinment = yield appointmentModel_1.default.create({
-        status: status,
-        doctor: doctorUsername,
-        patient: patientUsername,
-        date: date,
-        type: type
-    });
-    res.status(201).json(appoinment);
+function validatePassword(password) {
+    // Minimum password length of 8 characters
+    if (password.length < 8) {
+        return false;
+    }
+    // Regular expression pattern to check for at least one capital letter and one number
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+    // Use the test method to check if the password matches the pattern
+    if (!pattern.test(password)) {
+        return false;
+    }
+    // All requirements are met
+    return true;
+}
+const createToken = (_id) => {
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+    console.log("dkhlt hena");
+    const token = jsonwebtoken_1.default.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3d' });
+    return token;
+};
+exports.createToken = createToken;
+//login doctor
+const loginDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { username, password } = req.body;
+        if (!username || !password) {
+            throw Error('all fields must be filled');
+        }
+        const doctor = yield doctorModel_1.default.findOne({ username });
+        if (!doctor) {
+            throw Error('invalid username');
+        }
+        const match = yield bcrypt_1.default.compare(password, doctor.password);
+        if (!match) {
+            throw Error('incorrect password');
+        }
+        const token = (0, exports.createToken)(doctor.id);
+        const tokenn = yield tokenModel_1.default.create({ token, username, role: 'doctor' });
+        res.status(200).json({ doctor, token });
+    }
+    catch (error) {
+        const err = error;
+        res.status(400).json({ error: err.message });
+    }
 });
-exports.createfollowUp = createfollowUp;
+exports.loginDoctor = loginDoctor;
+//logout
+const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        if (!process.env.ACCESS_TOKEN_SECRET) {
+            throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+        }
+        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+            if (err) {
+                return res.status(403).json({ message: 'Token is not valid' });
+            }
+            const tokenDB = yield tokenModel_1.default.findOneAndDelete({ token: token });
+            res.json(tokenDB);
+        }));
+    }
+    catch (error) {
+        const err = error;
+        res.status(400).json({ error: err.message });
+    }
+});
+exports.logout = logout;
+//change password
+const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        if (!process.env.ACCESS_TOKEN_SECRET) {
+            throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+        }
+        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+            if (err) {
+                return res.status(403).json({ message: 'Token is not valid' });
+            }
+            const tokenDB = yield tokenModel_1.default.findOne({ token });
+            if (!tokenDB) {
+                return res.status(404).json({ message: 'Token not found' });
+            }
+            const doctor = yield doctorModel_1.default.findOne({ username: tokenDB.username });
+            if (!doctor) {
+                return res.status(404).json({ message: 'Patient not found' });
+            }
+            const isPasswordValid = yield bcrypt_1.default.compare(currentPassword, doctor.password);
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: 'Current password is incorrect' });
+            }
+            // Validate the new password using the validatePassword function
+            if (!validatePassword(newPassword)) {
+                return res.status(400).json({ message: 'Invalid new password' });
+            }
+            // Hash and update the new password
+            const hashedNewPassword = yield bcrypt_1.default.hash(newPassword, 10);
+            doctor.password = hashedNewPassword;
+            yield doctor.save();
+            return res.status(200).json({ message: 'Password changed successfully' });
+        }));
+    }
+    catch (error) {
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+exports.changePassword = changePassword;
+// verify token doctor
+const verifyTokenDoctor = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+    jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err) {
+            return res.status(403).json({ message: 'Token is not valid' });
+        }
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        if (tokenDB) {
+            if (tokenDB.role === 'doctor') {
+                next();
+            }
+            else {
+                return res.status(403).json({ message: 'Token is not authorized' });
+            }
+        }
+        else {
+            return res.status(403).json({ message: 'Token is not valid 2' });
+        }
+        // req.user = user;
+    }));
+};
+exports.verifyTokenDoctor = verifyTokenDoctor;

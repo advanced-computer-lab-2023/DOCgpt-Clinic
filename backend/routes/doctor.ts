@@ -1,5 +1,5 @@
 import express from "express";
-import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments} from "../controllers/doctorController";
+import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,loginDoctor,logout,changePassword} from "../controllers/doctorController";
 import multer from "multer";
 import path from 'path';
 
@@ -50,5 +50,9 @@ const storage = multer.diskStorage({
   // Create a route for uploading and submitting required documents
   router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
 
+
+  router.get('/loginDoctor',loginDoctor)
+  router.delete('/logoutDoctor',logout)
+  router.post('/changePassDoc',changePassword)
 
 export default router;
