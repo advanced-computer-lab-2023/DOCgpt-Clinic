@@ -1,10 +1,6 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
-enum DoctorStatus {
-  Rejected = 'rejected',
-  Accepted = 'accepted',
-  Pending = 'pending',
-}
+
 
 const doctorSchema: Schema = new mongoose.Schema({
   username: {
@@ -55,9 +51,15 @@ const doctorSchema: Schema = new mongoose.Schema({
   ],
   status: {
     type: String,
-    enum: Object.values(DoctorStatus),
-    default: DoctorStatus.Pending,
-},
+    enum:[
+    'rejected',
+      'accepted',
+      'pending'
+    ],
+    default: 'pending'
+
+}
+,
 });
 
 
@@ -76,7 +78,6 @@ export interface IDoctor extends Document {
     date: Date;
   
   }>;
-  status: DoctorStatus;
 }
 
 const Doctor: Model<IDoctor> = mongoose.model<IDoctor>('Doctor', doctorSchema);

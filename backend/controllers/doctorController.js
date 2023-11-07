@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.uploadAndSubmitReqDocs = exports.createfollowUp = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.uploadAndSubmitReqDocs = exports.createfollowUp = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const multer_1 = __importDefault(require("multer"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -467,3 +467,35 @@ const verifyTokenDoctor = (req, res, next) => {
     }));
 };
 exports.verifyTokenDoctor = verifyTokenDoctor;
+const acceptDoctorRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername;
+    try {
+        const doctor = yield doctorModel_1.default.findOneAndUpdate({ username: doctorUsername, status: 'pending' }, { status: 'accepted' }, { new: true }).exec();
+        res.json(doctor);
+    }
+    catch (error) {
+        console.error('Error accepting doctor request:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        throw error;
+    }
+});
+exports.acceptDoctorRequest = acceptDoctorRequest;
+const rejecttDoctorRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername;
+    try {
+        const doctor = yield doctorModel_1.default.findOneAndUpdate({ username: doctorUsername, status: 'pending' }, { status: 'rejected' }, { new: true }).exec();
+        res.json(doctor);
+    }
+    catch (error) {
+        console.error('Error Rejecting doctor request:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+        throw error;
+    }
+});
+exports.rejecttDoctorRequest = rejecttDoctorRequest;
+const getPendingDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctor = yield doctorModel_1.default.find({ status: 'pending' }).exec();
+    console.log(doctor);
+    res.status(200).json(doctor);
+});
+exports.getPendingDoctor = getPendingDoctor;

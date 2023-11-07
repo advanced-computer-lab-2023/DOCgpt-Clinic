@@ -508,3 +508,43 @@ export const changePassword = async (req: Request, res: Response) => {
       
     });
   };
+
+  export const  acceptDoctorRequest = async (req: Request, res: Response) =>{
+    const doctorUsername = req.query.doctorUsername;
+try{
+      const doctor = await DoctorModel.findOneAndUpdate(
+        { username: doctorUsername, status: 'pending' },
+        { status: 'accepted' },
+        { new: true }
+      ).exec();
+      res.json(doctor);
+    } catch (error) {
+        console.error('Error accepting doctor request:', error);
+        res.status(500).json({ error: 'Internal Server Error' })
+      throw error;
+    }
+  }
+
+  export const  rejecttDoctorRequest = async (req: Request, res: Response) =>{
+    const doctorUsername = req.query.doctorUsername;
+try{
+      const doctor = await DoctorModel.findOneAndUpdate(
+        { username: doctorUsername, status: 'pending' },
+        { status: 'rejected' },
+        { new: true }
+      ).exec();
+      res.json(doctor);
+    } catch (error) {
+        console.error('Error Rejecting doctor request:', error);
+        res.status(500).json({ error: 'Internal Server Error' })
+      throw error;
+    }
+  }
+
+
+  export const getPendingDoctor = async (req: Request, res: Response) => {
+
+    const doctor = await DoctorModel.find({status: 'pending'}).exec();
+    console.log(doctor)
+    res.status(200).json(doctor);
+};

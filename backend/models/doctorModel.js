@@ -4,12 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
-var DoctorStatus;
-(function (DoctorStatus) {
-    DoctorStatus["Rejected"] = "rejected";
-    DoctorStatus["Accepted"] = "accepted";
-    DoctorStatus["Pending"] = "pending";
-})(DoctorStatus || (DoctorStatus = {}));
 const doctorSchema = new mongoose_1.default.Schema({
     username: {
         type: String,
@@ -58,8 +52,12 @@ const doctorSchema = new mongoose_1.default.Schema({
     ],
     status: {
         type: String,
-        enum: Object.values(DoctorStatus),
-        default: DoctorStatus.Pending,
+        enum: [
+            'rejected',
+            'accepted',
+            'pending'
+        ],
+        default: 'pending'
     },
 });
 const Doctor = mongoose_1.default.model('Doctor', doctorSchema);
