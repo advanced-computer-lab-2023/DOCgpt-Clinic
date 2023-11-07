@@ -15,15 +15,39 @@ export const healthRecordSchema = new mongoose.Schema({
         PastMedicalConditions: {
             type: String,
             required: false
-        }
+        },
+        Comments: {
+            type: [String],
+            required: false
+        } 
     },
     MedicationList: {
         CurrentMedications: {
-            type: String,
+            Name: {
+                type: String,
+                required: true
+            },
+             //IMAGE URL
+            Prescription: {
+                type: String,
+                required: false
+            },
             required: false
         },
         PastMedications: {
-            type: String,
+            Name: {
+                type: String,
+                required: true
+            },
+            //IMAGE URL
+            Prescription: {
+                type: String,
+                required: false
+            },
+            required: false
+        },
+        Comments: {
+            type: [String],
             required: false
         } 
     },
@@ -35,7 +59,46 @@ export const healthRecordSchema = new mongoose.Schema({
         HeartRate: {
             type: Number,
             required: false
+        }, 
+        Height:{
+            type: Number,
+            required: false
+        },
+        Weight: {
+            type: Number,
+            required: false
+        },
+        Comments: {
+            type: [String],
+            required: false
         }
+    },
+    Laboratory: {
+        //IMAGES URI
+        BloodTests: {
+            type: [String],
+            required : false
+        },
+        XRays: {
+            type: [String],
+            required : false
+        },
+        Other: {
+            type: [String],
+            required: false
+        },
+        Comments: {
+            type: [String],
+            required: false
+        }
+    },
+    GeneralComments: {
+        type: [String],
+        required: false
+    },
+    GeneralImages: {
+        type: [String],
+        required: false
     }
 });
 
