@@ -8,38 +8,81 @@ const mongoose_1 = __importDefault(require("mongoose"));
 exports.healthRecordSchema = new mongoose_1.default.Schema({
     patient: {
         type: String,
-        required: true,
         ref: "patient"
     },
     MedicalHistory: {
         Allergies: {
-            type: String,
-            required: false
+            type: [String],
         },
         PastMedicalConditions: {
-            type: String,
-            required: false
+            type: [String],
+        },
+        Comments: {
+            type: [String],
         }
     },
     MedicationList: {
         CurrentMedications: {
-            type: String,
-            required: false
+            Names: {
+                type: [String],
+                required: true
+            },
+            //IMAGE URL
+            Prescriptions: {
+                type: [String],
+            },
         },
         PastMedications: {
-            type: String,
-            required: false
+            Names: {
+                type: [String],
+                required: true
+            },
+            //IMAGE URL
+            Prescriptions: {
+                type: [String],
+            },
+        },
+        Comments: {
+            type: [String],
         }
     },
     VitalSigns: {
         BloodPressure: {
             type: Number,
-            required: false
         },
         HeartRate: {
             type: Number,
-            required: false
+        },
+        Height: {
+            type: Number,
+        },
+        Weight: {
+            type: Number,
+        },
+        Comments: {
+            type: [String],
         }
+    },
+    Laboratory: {
+        //IMAGES URI
+        BloodTests: {
+            type: [String],
+        },
+        XRays: {
+            type: [String],
+        },
+        Other: {
+            type: [String],
+        },
+        Comments: {
+            type: [String],
+        }
+    },
+    GeneralComments: {
+        type: [String]
+    },
+    GeneralImages: {
+        type: [String]
     }
 });
 const healthRecordModel = mongoose_1.default.model('healthRecord', exports.healthRecordSchema);

@@ -24,6 +24,7 @@ router.get("/appointmentsByStatus", doctorController_1.getAppointmentByStatus);
 router.get("/HealthRecords", doctorController_1.viewHealthRecords);
 router.get("/HealthRecord", doctorController_1.viewHealthRecord);
 router.post("/postDoctor", doctorController_1.createDoctors);
+router.post("/addHealthRecord", doctorController_1.addHealthRecord);
 router.patch("/updateEmail", doctorController_1.updateDoctorEmail);
 router.patch("/updateRate", doctorController_1.updateDoctorHourlyRate);
 router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);

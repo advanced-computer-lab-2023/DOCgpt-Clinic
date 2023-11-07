@@ -270,18 +270,18 @@ export const viewHealthRecord = async (req: Request, res: Response) => {
 
 //ADD A HEALTH RECORD FOR CHOSEN PATIENT
 export const addHealthRecord = async (req: Request, res: Response) => {
-    const patient = req.query.patientUsername;
-    const MedicalHistory = req.body.MedicalHistory;
-    const MedicationList = req.body.MedicationList;
-    const VitalSigns = req.body.VitalSigns;
+  try{
+    const newRecord = new HealthRecordModel({ ...req.body });
 
-    const healthRecord = await HealthRecordModel.create({
-        patient: patient,
-        MedicalHistory: MedicalHistory,
-        MedicationList: MedicationList,
-        VitalSigns: VitalSigns
-    });
-    res.status(200).json(healthRecord);
+    // Save the new document to the database
+    await newRecord.save();
+
+    res.status(201).json({ message: 'Record created successfully', record: newRecord });
+
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+}
 };
 
 

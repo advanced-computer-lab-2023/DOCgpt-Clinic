@@ -259,17 +259,16 @@ const viewHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.viewHealthRecord = viewHealthRecord;
 //ADD A HEALTH RECORD FOR CHOSEN PATIENT
 const addHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const patient = req.query.patientUsername;
-    const MedicalHistory = req.body.MedicalHistory;
-    const MedicationList = req.body.MedicationList;
-    const VitalSigns = req.body.VitalSigns;
-    const healthRecord = yield healthRecordModel_1.default.create({
-        patient: patient,
-        MedicalHistory: MedicalHistory,
-        MedicationList: MedicationList,
-        VitalSigns: VitalSigns
-    });
-    res.status(200).json(healthRecord);
+    try {
+        const newRecord = new healthRecordModel_1.default(Object.assign({}, req.body));
+        // Save the new document to the database
+        yield newRecord.save();
+        res.status(201).json({ message: 'Record created successfully', record: newRecord });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 exports.addHealthRecord = addHealthRecord;
 // APPOINTMENTS

@@ -1,5 +1,5 @@
 import express from "express";
-import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword} from "../controllers/doctorController";
+import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord} from "../controllers/doctorController";
 import multer from "multer";
 import path from 'path';
 
@@ -24,7 +24,7 @@ router.get("/HealthRecord", viewHealthRecord);
 
 
 router.post("/postDoctor", createDoctors);
-  
+router.post("/addHealthRecord", addHealthRecord);
 
 router.patch("/updateEmail", updateDoctorEmail);
 router.patch("/updateRate", updateDoctorHourlyRate);

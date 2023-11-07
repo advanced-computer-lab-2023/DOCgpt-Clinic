@@ -14,17 +14,28 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createHealthRecord = void 0;
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
+const multer_1 = __importDefault(require("multer")); // For handling file uploads
+// Multer configuration to handle file uploads
+const storage = multer_1.default.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/'); // Store uploaded files in the 'uploads' directory
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, file.fieldname + '-' + uniqueSuffix);
+    },
+});
+const upload = (0, multer_1.default)({ storage: storage });
 const createHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const patient = req.body.patient;
-    const MedicalHistory = req.body.MedicalHistory;
-    const MedicationList = req.body.MedicationList;
-    const VitalSigns = req.body.VitalSigns;
-    const healthRecord = yield healthRecordModel_1.default.create({
-        patient: patient,
-        MedicalHistory: MedicalHistory,
-        MedicationList: MedicationList,
-        VitalSigns: VitalSigns
-    });
-    res.status(200).json(healthRecord);
+    try {
+        const newRecord = new healthRecordModel_1.default(Object.assign({}, req.body));
+        // Save the new document to the database
+        yield newRecord.save();
+        res.status(201).json({ message: 'Record created successfully', record: newRecord });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
 exports.createHealthRecord = createHealthRecord;

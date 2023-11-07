@@ -4,101 +4,83 @@ import patientModel from './patientModel';
 export const healthRecordSchema = new mongoose.Schema({
     patient: {
         type: String,
-        required: true,
         ref: "patient"        
     },
     MedicalHistory: {
         Allergies:  {
-            type: String,
-            required: false
+            type: [String],
         },
         PastMedicalConditions: {
-            type: String,
-            required: false
+            type: [String],
         },
         Comments: {
             type: [String],
-            required: false
         } 
     },
     MedicationList: {
         CurrentMedications: {
-            Name: {
-                type: String,
+            Names: {
+                type: [String],
                 required: true
             },
              //IMAGE URL
-            Prescription: {
-                type: String,
-                required: false
+            Prescriptions: {
+                type: [String],
+
             },
-            required: false
         },
         PastMedications: {
-            Name: {
-                type: String,
+            Names: {
+                type: [String],
                 required: true
             },
             //IMAGE URL
-            Prescription: {
-                type: String,
-                required: false
+            Prescriptions: {
+                type: [String],
+
             },
-            required: false
         },
         Comments: {
             type: [String],
-            required: false
         } 
     },
     VitalSigns:{
         BloodPressure: {
             type: Number,
-            required: false
         },
         HeartRate: {
             type: Number,
-            required: false
         }, 
         Height:{
             type: Number,
-            required: false
         },
         Weight: {
             type: Number,
-            required: false
         },
         Comments: {
             type: [String],
-            required: false
         }
     },
     Laboratory: {
         //IMAGES URI
         BloodTests: {
             type: [String],
-            required : false
         },
         XRays: {
             type: [String],
-            required : false
         },
         Other: {
             type: [String],
-            required: false
         },
         Comments: {
             type: [String],
-            required: false
         }
     },
     GeneralComments: {
-        type: [String],
-        required: false
+        type: [String]
     },
     GeneralImages: {
-        type: [String],
-        required: false
+        type: [String]
     }
 });
 
