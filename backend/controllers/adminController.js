@@ -12,35 +12,43 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientBySmsomaa = exports.deletePatientByrota = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.addfafAdmin = exports.addAdmin = void 0;
+exports.verifyTokenAdmin = exports.changePassword = exports.logout = exports.createToken = exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientBySmsomaa = exports.deletePatientByrota = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.addAdmin = void 0;
 const adminModel_1 = __importDefault(require("../models/adminModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel")); // Import your package model
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const tokenModel_1 = __importDefault(require("../models/tokenModel"));
 const addAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, password } = req.body;
+    const usernameExists = yield patientModel_1.default.findOne({ username });
+    const usernameExists2 = yield doctorModel_1.default.findOne({ username });
+    const usernameExists3 = yield adminModel_1.default.findOne({ username });
+    if (usernameExists) {
+        return res.status(401).json({ message: 'username exists' });
+    }
+    if (usernameExists2) {
+        return res.status(401).json({ message: 'username exists' });
+    }
+    if (usernameExists3) {
+        return res.status(401).json({ message: 'username exists' });
+    }
+    const salt = yield bcrypt_1.default.genSalt(10);
+    const hash = yield bcrypt_1.default.hash(password, salt);
+    if (!validatePassword(password)) {
+        return res.status(400).json({ message: 'Invalid password' });
+    }
     try {
-        const { username, password } = req.body;
-        const admin = yield adminModel_1.default.create({ username, password });
+        const admin = yield adminModel_1.default.create({ username, password: hash });
         res.status(200).json(admin);
     }
     catch (error) {
-        const err = error;
+        const err = error; // Type assertion to specify the type as 'Error'
         res.status(400).json({ error: err.message });
     }
 });
 exports.addAdmin = addAdmin;
-const addfafAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { username, password } = req.body;
-        const admin = yield adminModel_1.default.create({ username, password });
-        res.status(200).json(admin);
-    }
-    catch (error) {
-        const err = error;
-        res.status(400).json({ error: err.message });
-    }
-});
-exports.addfafAdmin = addfafAdmin;
 //delete admin
 const deleteAdminByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -271,3 +279,125 @@ const getPackageNAME = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.getPackageNAME = getPackageNAME;
+function validatePassword(password) {
+    // Minimum password length of 8 characters
+    if (password.length < 8) {
+        return false;
+    }
+    // Regular expression pattern to check for at least one capital letter and one number
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+    // Use the test method to check if the password matches the pattern
+    if (!pattern.test(password)) {
+        return false;
+    }
+    // All requirements are met
+    return true;
+}
+// create token
+const createToken = (_id) => {
+    console.log("dkhlt hena");
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+    const token = jsonwebtoken_1.default.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3d' });
+    return token;
+};
+exports.createToken = createToken;
+//login admin
+const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        if (!process.env.ACCESS_TOKEN_SECRET) {
+            throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+        }
+        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+            if (err) {
+                return res.status(403).json({ message: 'Token is not valid' });
+            }
+            const tokenDB = yield tokenModel_1.default.findOneAndDelete({ token: token });
+            res.json(tokenDB);
+        }));
+    }
+    catch (error) {
+        const err = error;
+        res.status(400).json({ error: err.message });
+    }
+});
+exports.logout = logout;
+//change password
+const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        if (!process.env.ACCESS_TOKEN_SECRET) {
+            throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+        }
+        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+            if (err) {
+                return res.status(403).json({ message: 'Token is not valid' });
+            }
+            const tokenDB = yield tokenModel_1.default.findOne({ token });
+            if (!tokenDB) {
+                return res.status(404).json({ message: 'Token not found' });
+            }
+            const admin = yield adminModel_1.default.findOne({ username: tokenDB.username });
+            if (!admin) {
+                return res.status(404).json({ message: 'admin not found' });
+            }
+            const isPasswordValid = yield bcrypt_1.default.compare(currentPassword, admin.password);
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: 'Current password is incorrect' });
+            }
+            // Validate the new password using the validatePassword function
+            if (!validatePassword(newPassword)) {
+                return res.status(400).json({ message: 'Invalid new password' });
+            }
+            // Hash and update the new password
+            const hashedNewPassword = yield bcrypt_1.default.hash(newPassword, 10);
+            admin.password = hashedNewPassword;
+            yield admin.save();
+            return res.status(200).json({ message: 'Password changed successfully' });
+        }));
+    }
+    catch (error) {
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+exports.changePassword = changePassword;
+const verifyTokenAdmin = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+    jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err) {
+            return res.status(403).json({ message: 'Token is not valid' });
+        }
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        if (tokenDB) {
+            if (tokenDB.role === 'admin') {
+                next();
+            }
+            else {
+                return res.status(403).json({ message: 'Token is not authorized' });
+            }
+        }
+        else {
+            return res.status(403).json({ message: 'Token is not valid 2' });
+        }
+        // req.user = user;
+    }));
+};
+exports.verifyTokenAdmin = verifyTokenAdmin;

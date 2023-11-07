@@ -31,13 +31,8 @@ const adminschema = new mongoose_1.Schema({
     },
     password: {
         type: String,
-        required: true,
-        validate: [validatePassword, 'Password must be at least 8 characters long'],
-        // You may want to add additional password validation logic here
+        required: true
     }
 });
-function validatePassword(password) {
-    return password.length >= 8; // Minimum password length of 8 characters
-}
 const adminModel = mongoose_1.default.model('admin', adminschema);
 exports.default = adminModel;

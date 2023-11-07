@@ -1,10 +1,14 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import multer from 'multer';
 import path from 'path';
 import DoctorModel, { IDoctor } from "../models/doctorModel";
 import AppointmentModel from "../models/appointmentModel";
 import PatientModel from "../models/patientModel";
 import HealthRecordModel from "../models/healthRecordModel";
+import bcrypt from 'bcrypt';
+import tokenModel from "../models/tokenModel";
+import jwt from 'jsonwebtoken';
+import adminModel from "../models/adminModel";
 
 export const getDoctors = async (req: Request, res: Response) => {
     const doctors = await DoctorModel.find().exec();
@@ -44,11 +48,44 @@ export const createDoctors = async (req: Request, res: Response) => {
     const speciality = req.body.speciality;
     const educationalBackground = req.body.educationalBackground;
     
+
+    const emailExists=await PatientModel.findOne({email}) ;
+    const emailExists2=await DoctorModel.findOne({email});
+    const emailExists3=await adminModel.findOne({email})
+    const usernameExists=await PatientModel.findOne({username});
+    const usernameExists2=await DoctorModel.findOne({username});
+    const usernameExists3=await adminModel.findOne({username});
+
+    if(emailExists){
+    
+        return res.status(401).json({ message: 'email exists' });
+      
+      }
+      if(emailExists2){
+        return res.status(401).json({ message: 'email exists' });
+      }
+      if(emailExists3){
+        return res.status(401).json({ message: 'email exists' });
+      }
+      if(usernameExists){
+        return res.status(401).json({ message: 'username exists' });
+      }
+      if(usernameExists2){
+        return res.status(401).json({ message: 'username exists' });
+      }
+      if(usernameExists3){
+        return res.status(401).json({ message: 'username exists' });
+      }
+      const salt =await bcrypt.genSalt(10)
+    const hash=await bcrypt.hash(password,salt)
+    if (!validatePassword(password)) {
+      return res.status(400).json({ message: 'Invalid password' });
+    }
     const doctor = await DoctorModel.create({
         username: username,
         name: name,
         email: email,
-        password: password,
+        password:hash,
         dateOfBirth: dateOfBirth,
         hourlyRate: hourlyRate,
         affiliation: affiliation,
@@ -328,3 +365,146 @@ export const getAppointmentByStatus = async (req: Request, res: Response) => {
     const appointments = await AppointmentModel.find({ doctor: doctorUsername, status: status}).exec();
     res.status(200).json(appointments);
 };
+
+function validatePassword(password: string) {
+    // Minimum password length of 8 characters
+    if (password.length < 8) {
+      return false;
+    }
+  
+    // Regular expression pattern to check for at least one capital letter and one number
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+  
+    // Use the test method to check if the password matches the pattern
+    if (!pattern.test(password)) {
+      return false;
+    }
+  
+    // All requirements are met
+    return true;
+  }
+  export const createToken = (_id: string): string => {
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+      throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+      console.log("dkhlt hena")
+    const token = jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3d' });
+    return token;
+  };
+  
+
+  //logout
+  export const logout =async (req:Request,res:Response) =>{
+    try{
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+    
+      if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+      if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+      }
+    
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err: jwt.JsonWebTokenError | null, user: any) => {
+        if (err) {
+          return res.status(403).json({ message: 'Token is not valid' });
+        }
+        const tokenDB= await tokenModel.findOneAndDelete({token:token})
+        res.json(tokenDB);
+      });
+    }
+      catch(error){
+        const err = error as Error;
+        res.status(400).json({ error: err.message });
+       }
+  }
+  //change password
+
+export const changePassword = async (req: Request, res: Response) => {
+    try {
+      const { currentPassword, newPassword } = req.body;
+  
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+  
+      if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+      }
+  
+      if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+      }
+  
+      jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err: jwt.JsonWebTokenError | null, user: any) => {
+        if (err) {
+          return res.status(403).json({ message: 'Token is not valid' });
+        }
+  
+        const tokenDB = await tokenModel.findOne({ token });
+  
+        if (!tokenDB) {
+          return res.status(404).json({ message: 'Token not found' });
+        }
+  
+        const doctor = await DoctorModel.findOne({ username: tokenDB.username });
+  
+        if (!doctor) {
+          return res.status(404).json({ message: 'Patient not found' });
+        }
+  
+        const isPasswordValid = await bcrypt.compare(currentPassword, doctor.password);
+  
+        if (!isPasswordValid) {
+          return res.status(400).json({ message: 'Current password is incorrect' });
+        }
+  
+        // Validate the new password using the validatePassword function
+        if (!validatePassword(newPassword)) {
+          return res.status(400).json({ message: 'Invalid new password' });
+        }
+  
+        // Hash and update the new password
+        const hashedNewPassword = await bcrypt.hash(newPassword, 10);
+  
+        doctor.password = hashedNewPassword;
+        await doctor.save();
+  
+        return res.status(200).json({ message: 'Password changed successfully' });
+      });
+    } catch (error) {
+      return res.status(500).json({ message: 'Internal server error' });
+    }
+  };
+  // verify token doctor
+  export const verifyTokenDoctor =(req: Request, res: Response, next: NextFunction) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+  
+    if (!token) {
+      return res.status(401).json({ message: 'Unauthorized' });
+    }
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+      throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+  
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err: jwt.JsonWebTokenError | null, user: any) => {
+      if (err) {
+        return res.status(403).json({ message: 'Token is not valid' });
+      }
+      const tokenDB = await tokenModel.findOne({token})
+      if(tokenDB){
+        if(tokenDB.role === 'doctor'){
+          next();
+        }
+        else{
+          return res.status(403).json({ message: 'Token is not authorized' });
+        }
+      }
+      else{
+        return res.status(403).json({ message: 'Token is not valid 2' });
+      }
+     // req.user = user;
+      
+    });
+  };

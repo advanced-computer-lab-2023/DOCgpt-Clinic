@@ -12,17 +12,47 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
-exports.viewDoctorAppointments = exports.viewHealthPackages = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatientAppointments = exports.getPatients = exports.createPatient = void 0;
+exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 // create a new workout
 const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Request reached controller');
     try {
         const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription } = req.body;
-        const patient = yield patientModel_1.default.create({ username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription });
+        const emailExists = yield patientModel_1.default.findOne({ email });
+        const emailExists2 = yield doctorModel_2.default.findOne({ email });
+        const emailExists3 = yield adminModel_1.default.findOne({ email });
+        const usernameExists = yield patientModel_1.default.findOne({ username });
+        const usernameExists2 = yield doctorModel_2.default.findOne({ username });
+        const usernameExists3 = yield adminModel_1.default.findOne({ username });
+        if (emailExists) {
+            return res.status(401).json({ message: 'email exists' });
+        }
+        if (emailExists2) {
+            return res.status(401).json({ message: 'email exists' });
+        }
+        if (emailExists3) {
+            return res.status(401).json({ message: 'email exists' });
+        }
+        if (usernameExists) {
+            return res.status(401).json({ message: 'username exists' });
+        }
+        if (usernameExists2) {
+            return res.status(401).json({ message: 'username exists' });
+        }
+        if (usernameExists3) {
+            return res.status(401).json({ message: 'username exists' });
+        }
+        const salt = yield bcrypt_1.default.genSalt(10);
+        const hash = yield bcrypt_1.default.hash(password, salt);
+        if (!validatePassword(password)) {
+            return res.status(400).json({ message: 'Invalid password' });
+        }
+        const patient = yield patientModel_1.default.create({ username, name, email, password: hash, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription });
         console.log('Patient created!', patient);
         res.status(200).json(patient);
     }
@@ -226,7 +256,8 @@ exports.selectDoctors = selectDoctors;
 const appointmentModel_2 = __importDefault(require("../models/appointmentModel"));
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
 const doctorModel_2 = __importDefault(require("../models/doctorModel"));
-
+const tokenModel_1 = __importDefault(require("../models/tokenModel"));
+const adminModel_1 = __importDefault(require("../models/adminModel"));
 const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // Retrieve all health packages from the database
@@ -243,6 +274,22 @@ const viewHealthPackages = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.viewHealthPackages = viewHealthPackages;
+const viewHealthPackageDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const packageName = req.params.name; // Assuming the package name is passed as a route parameter
+        // Find the health package by its name
+        const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
+        if (!healthPackage) {
+            return res.status(404).json({ message: 'Health package not found' });
+        }
+        // Return the health package details to the patient
+        res.status(200).json({ healthPackage });
+    }
+    catch (error) {
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+});
+exports.viewHealthPackageDetails = viewHealthPackageDetails;
 const viewDoctorAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
     try {
@@ -260,7 +307,22 @@ const viewDoctorAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
         res.status(500).json({ message: 'An error occurred', error });
     }
 });
-exports.viewHealthPackageDetails = viewHealthPackageDetails;
+exports.viewDoctorAppointments = viewDoctorAppointments;
+// export const viewHealthPackageDetails = async (req: Request, res: Response) => {
+//   try {
+//     const packageName = req.params.name; // Assuming the package name is passed as a route parameter
+//     // Find the health package by its name
+//     const healthPackage = await packageModel.findOne({ name: packageName });
+//     if (!healthPackage) {
+//       return res.status(404).json({ message: 'Health package not found' });
+//     }
+//     // Return the health package details to the patient
+//     res.status(200).json({ healthPackage });
+//   } catch (error) {
+//     console.error('Error fetching health package details:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
 // APPOINTMENTS 
 //VIEW ALL MY APPOINTMENTS
 const getPatientAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -359,19 +421,121 @@ const viewMyHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.viewMyHealthRecord = viewMyHealthRecord;
-exports.viewDoctorAppointments = viewDoctorAppointments;
-// export const viewHealthPackageDetails = async (req: Request, res: Response) => {
-//   try {
-//     const packageName = req.params.name; // Assuming the package name is passed as a route parameter
-//     // Find the health package by its name
-//     const healthPackage = await packageModel.findOne({ name: packageName });
-//     if (!healthPackage) {
-//       return res.status(404).json({ message: 'Health package not found' });
-//     }
-//     // Return the health package details to the patient
-//     res.status(200).json({ healthPackage });
-//   } catch (error) {
-//     console.error('Error fetching health package details:', error);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
+function validatePassword(password) {
+    // Minimum password length of 8 characters
+    if (password.length < 8) {
+        return false;
+    }
+    // Regular expression pattern to check for at least one capital letter and one number
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+    // Use the test method to check if the password matches the pattern
+    if (!pattern.test(password)) {
+        return false;
+    }
+    // All requirements are met
+    return true;
+}
+const createToken = (_id) => {
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+    const token = jsonwebtoken_1.default.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3d' });
+    return token;
+};
+exports.createToken = createToken;
+const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        if (!process.env.ACCESS_TOKEN_SECRET) {
+            throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+        }
+        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+            if (err) {
+                return res.status(403).json({ message: 'Token is not valid' });
+            }
+            const tokenDB = yield tokenModel_1.default.findOneAndDelete({ token: token });
+            res.json(tokenDB);
+        }));
+    }
+    catch (error) {
+        const err = error;
+        res.status(400).json({ error: err.message });
+    }
+});
+exports.logout = logout;
+const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { currentPassword, newPassword } = req.body;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        if (!token) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        if (!process.env.ACCESS_TOKEN_SECRET) {
+            throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+        }
+        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+            if (err) {
+                return res.status(403).json({ message: 'Token is not valid' });
+            }
+            const tokenDB = yield tokenModel_1.default.findOne({ token });
+            if (!tokenDB) {
+                return res.status(404).json({ message: 'Token not found' });
+            }
+            const patient = yield patientModel_1.default.findOne({ username: tokenDB.username });
+            if (!patient) {
+                return res.status(404).json({ message: 'Patient not found' });
+            }
+            const isPasswordValid = yield bcrypt_1.default.compare(currentPassword, patient.password);
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: 'Current password is incorrect' });
+            }
+            // Validate the new password using the validatePassword function
+            if (!validatePassword(newPassword)) {
+                return res.status(400).json({ message: 'Invalid new password' });
+            }
+            // Hash and update the new password
+            const hashedNewPassword = yield bcrypt_1.default.hash(newPassword, 10);
+            patient.password = hashedNewPassword;
+            yield patient.save();
+            return res.status(200).json({ message: 'Password changed successfully' });
+        }));
+    }
+    catch (error) {
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+});
+exports.changePassword = changePassword;
+const verifyTokenPatient = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+    if (!process.env.ACCESS_TOKEN_SECRET) {
+        throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
+    }
+    jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+        if (err) {
+            return res.status(403).json({ message: 'Token is not valid' });
+        }
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        if (tokenDB) {
+            if (tokenDB.role === 'patient') {
+                next();
+            }
+            else {
+                return res.status(403).json({ message: 'Token is not authorized' });
+            }
+        }
+        else {
+            return res.status(403).json({ message: 'Token is not valid 2' });
+        }
+        // req.user = user;
+    }));
+};
+exports.verifyTokenPatient = verifyTokenPatient;
