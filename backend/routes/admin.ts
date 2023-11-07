@@ -2,7 +2,7 @@ import express,{Router} from 'express';
 
 
 import {deleteAdminByUsername, getAdmins, getPackageNAME} from '../controllers/adminController';
-import {addAdmin,deletePatientByUsername,deleteDoctorByUsername,viewDoctorInfo,addPackage,deletePackageByName,updatePackage,getPackage,getdoctorsR,getPatients,loginAdmin,logout,changePassword} from '../controllers/adminController';
+import {addAdmin,deletePatientByUsername,deleteDoctorByUsername,viewDoctorInfo,addPackage,deletePackageByName,updatePackage,getPackage,getdoctorsR,getPatients,logout,changePassword} from '../controllers/adminController';
 
 
 const router = Router();
@@ -48,7 +48,7 @@ router.delete('/deletePa',deletePackageByName)
  //get patients
  router.get('/getpati',getPatients);
 
- router.get('/loginAdmin',loginAdmin)
+
 router.delete('/logoutAdmin',logout)
 router.post('/changePassAdmin',changePassword)
 export default router;

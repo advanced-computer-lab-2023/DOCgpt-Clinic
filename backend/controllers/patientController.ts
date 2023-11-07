@@ -513,29 +513,7 @@ import adminModel from '../models/adminModel';
     const token = jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3d' });
     return token;
   };
-  export const loginPatient=async (req:Request, res:Response) => {
-    try{
-       const {username , password}=req.body
-       if(!username || !password){
-        throw Error ('all fields must be filled')
-       }
-       const patient=await Patientmodel.findOne({username})
-       if(! patient){
-        throw Error ('invalid username')
-       }
-       const match=await bcrypt.compare(password,patient.password)
-  
-       if(!match){
-        throw Error('incorrect password')
-       }
-       const token = createToken(patient.id);
-       const tokenn = await tokenModel.create({token,username,role:'patient'})
-       res.status(200).json({patient,token})}
-       catch(error){
-        const err = error as Error;
-        res.status(400).json({ error: err.message });
-       }
-  }
+ 
 
   export const logout =async (req:Request,res:Response) =>{
     try{

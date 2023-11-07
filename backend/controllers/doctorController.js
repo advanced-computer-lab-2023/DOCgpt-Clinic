@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.loginDoctor = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.uploadAndSubmitReqDocs = exports.createfollowUp = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.uploadAndSubmitReqDocs = exports.createfollowUp = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const multer_1 = __importDefault(require("multer"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -369,31 +369,6 @@ const createToken = (_id) => {
     return token;
 };
 exports.createToken = createToken;
-//login doctor
-const loginDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { username, password } = req.body;
-        if (!username || !password) {
-            throw Error('all fields must be filled');
-        }
-        const doctor = yield doctorModel_1.default.findOne({ username });
-        if (!doctor) {
-            throw Error('invalid username');
-        }
-        const match = yield bcrypt_1.default.compare(password, doctor.password);
-        if (!match) {
-            throw Error('incorrect password');
-        }
-        const token = (0, exports.createToken)(doctor.id);
-        const tokenn = yield tokenModel_1.default.create({ token, username, role: 'doctor' });
-        res.status(200).json({ doctor, token });
-    }
-    catch (error) {
-        const err = error;
-        res.status(400).json({ error: err.message });
-    }
-});
-exports.loginDoctor = loginDoctor;
 //logout
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

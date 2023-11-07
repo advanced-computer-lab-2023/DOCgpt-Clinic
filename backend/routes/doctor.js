@@ -42,7 +42,6 @@ const storage = multer_1.default.diskStorage({
 const upload = (0, multer_1.default)({ storage });
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorController_1.uploadAndSubmitReqDocs);
-router.get('/loginDoctor', doctorController_1.loginDoctor);
 router.delete('/logoutDoctor', doctorController_1.logout);
 router.post('/changePassDoc', doctorController_1.changePassword);
 exports.default = router;

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTokenAdmin = exports.changePassword = exports.logout = exports.loginAdmin = exports.createToken = exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientBySmsomaa = exports.deletePatientByrota = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.addAdmin = void 0;
+exports.verifyTokenAdmin = exports.changePassword = exports.logout = exports.createToken = exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientBySmsomaa = exports.deletePatientByrota = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.addAdmin = void 0;
 const adminModel_1 = __importDefault(require("../models/adminModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -304,30 +304,6 @@ const createToken = (_id) => {
 };
 exports.createToken = createToken;
 //login admin
-const loginAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { username, password } = req.body;
-        if (!username || !password) {
-            return res.status(401).json({ message: 'all fields must be filled' });
-        }
-        const admin = yield adminModel_1.default.findOne({ username });
-        if (!admin) {
-            return res.status(401).json({ message: 'invalid username' });
-        }
-        const match = yield bcrypt_1.default.compare(password, admin.password);
-        if (!match) {
-            return res.status(401).json({ message: 'invalid password' });
-        }
-        const token = (0, exports.createToken)(admin.id);
-        const tokenn = yield tokenModel_1.default.create({ token, username, role: 'admin' });
-        res.status(200).json({ admin, token });
-    }
-    catch (error) {
-        const err = error;
-        res.status(400).json({ error: err.message });
-    }
-});
-exports.loginAdmin = loginAdmin;
 const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const authHeader = req.headers['authorization'];

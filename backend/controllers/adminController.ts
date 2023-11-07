@@ -360,29 +360,7 @@ export const createToken = (_id: string): string => {
   return token;
 };
 //login admin
-export const loginAdmin=async (req:Request, res:Response) => {
-  try{
-     const {username , password}=req.body
-     if(!username || !password){
-      return res.status(401).json({ message: 'all fields must be filled' });
-     }
-     const admin=await adminModel.findOne({username})
-     if(! admin){
-      return res.status(401).json({ message: 'invalid username' });
-     }
-     const match=await bcrypt.compare(password,admin.password)
 
-     if(!match){
-      return res.status(401).json({ message: 'invalid password' });
-     }
-     const token = createToken(admin.id);
-     const tokenn = await tokenModel.create({token,username,role:'admin'})
-     res.status(200).json({admin,token})}
-     catch(error){
-      const err = error as Error;
-      res.status(400).json({ error: err.message });
-     }
-}
     
 export const logout =async (req:Request,res:Response) =>{
   try{

@@ -391,30 +391,8 @@ function validatePassword(password: string) {
     const token = jwt.sign({ _id }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '3d' });
     return token;
   };
-  //login doctor
-  export const loginDoctor=async (req:Request, res:Response) => {
-    try{
-       const {username , password}=req.body
-       if(!username || !password){
-        throw Error ('all fields must be filled')
-       }
-       const doctor=await DoctorModel.findOne({username})
-       if(!doctor){
-        throw Error ('invalid username')
-       }
-       const match=await bcrypt.compare(password,doctor.password)
   
-       if(!match){
-        throw Error('incorrect password')
-       }
-       const token = createToken(doctor.id);
-       const tokenn = await tokenModel.create({token,username,role:'doctor'})
-       res.status(200).json({doctor,token})}
-       catch(error){
-        const err = error as Error;
-        res.status(400).json({ error: err.message });
-       }
-  }
+
   //logout
   export const logout =async (req:Request,res:Response) =>{
     try{

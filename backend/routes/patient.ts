@@ -16,7 +16,6 @@ import {
   getAppointmentByDate,
   getAppointmentByStatus,
   viewMyHealthRecord,
-  loginPatient,
   logout,
   changePassword
   //viewDoctorAppointments,
@@ -74,7 +73,6 @@ router.get("/healthRecord", viewMyHealthRecord);
 
 router.get('/viewHealthPackage', viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
-router.get('/loginPatient',loginPatient)
 router.delete('/logoutPatient',logout)
 router.post('/changePassPatient',changePassword)
 
