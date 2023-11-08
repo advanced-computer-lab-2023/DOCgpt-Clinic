@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPapp = exports.getAllAppointments = exports.getAppointments = exports.createAppointment = void 0;
+exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = exports.createAppointment = void 0;
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.body.doctor;
@@ -45,3 +45,11 @@ const getPapp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     res.status(200).json(appoinments);
 });
 exports.getPapp = getPapp;
+const localVariables = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    req.app.locals = {
+        OTP: null,
+        resetSession: false
+    };
+    next();
+});
+exports.localVariables = localVariables;

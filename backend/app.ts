@@ -13,6 +13,7 @@ import appointment from './routes/appointment'
 import Healthrecords from './routes/healthRecord'
 import { createToken } from './controllers/patientController';
 import tokenModel from './models/tokenModel';
+import  Approuter from '../backend/routes/appRouter';
 import bcrypt from 'bcrypt';
 import express, { Request, Response ,NextFunction } from 'express';
 
@@ -30,6 +31,14 @@ app.use((req: express.Request, res: express.Response, next: express.NextFunction
   next()
 })
 
+// app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+//   req.app.locals = {
+//     OTP : null,
+//     resetSession : false
+// }
+// next()
+// })
+
 // Routes
 app.use('/routes/patient',  PatientRoutes);
 app.use('/routes/doctors',  DoctorRoutes);
@@ -37,6 +46,7 @@ app.use('/routes',  PrescriptionRoutes);
 app.use('/routes/admins',  adminrouter);
 app.use('/routes/appointments',  appointment);
 app.use('/routes/healthRecord', Healthrecords);
+app.use('/routes/otp',Approuter);
 
 
 
@@ -103,6 +113,9 @@ mongoose.connect(process.env.MONGO_URI!)
         res.status(400).json({ error: err.message });
        }
   }
+
+ 
+ 
   
 
   app.get('/api/login',login)

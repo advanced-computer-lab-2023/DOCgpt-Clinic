@@ -34,3 +34,11 @@ export const getPapp = async (req: Request, res: Response) => {
     const appoinments = await AppointmentModel.find({patient: username}).exec();
     res.status(200).json(appoinments);
 }
+
+export const localVariables = async (req: Request, res: Response, next: () => void) => {
+    req.app.locals = {
+        OTP : null,
+        resetSession : false
+    }
+    next()
+}

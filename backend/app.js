@@ -25,6 +25,7 @@ const appointment_1 = __importDefault(require("./routes/appointment"));
 const healthRecord_1 = __importDefault(require("./routes/healthRecord"));
 const patientController_1 = require("./controllers/patientController");
 const tokenModel_1 = __importDefault(require("./models/tokenModel"));
+const appRouter_1 = __importDefault(require("../backend/routes/appRouter"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const express_1 = __importDefault(require("express"));
 require('dotenv').config();
@@ -37,6 +38,13 @@ app.use((req, res, next) => {
     console.log(req.path, req.method);
     next();
 });
+// app.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
+//   req.app.locals = {
+//     OTP : null,
+//     resetSession : false
+// }
+// next()
+// })
 // Routes
 app.use('/routes/patient', patient_1.default);
 app.use('/routes/doctors', doctor_1.default);
@@ -44,6 +52,7 @@ app.use('/routes', prescription_1.default);
 app.use('/routes/admins', admin_1.default);
 app.use('/routes/appointments', appointment_1.default);
 app.use('/routes/healthRecord', healthRecord_1.default);
+app.use('/routes/otp', appRouter_1.default);
 console.log('Routes mounted!');
 // Connect to the database
 mongoose_1.default.connect(process.env.MONGO_URI)
