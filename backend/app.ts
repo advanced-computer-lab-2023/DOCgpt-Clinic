@@ -4,6 +4,7 @@ import adminModel from './models/adminModel';
 import patientModel from './models/patientModel';
 import doctorModel from './models/doctorModel'
 
+
 import mongoose from 'mongoose'
 import PatientRoutes from './routes/patient'
 import DoctorRoutes from './routes/doctor'
@@ -11,6 +12,7 @@ import PrescriptionRoutes from './routes/prescription'
 import adminrouter from './routes/admin';
 import appointment from './routes/appointment'
 import Healthrecords from './routes/healthRecord'
+import subscriptionRoute from './routes/subscriptionRoute'
 import { createToken } from './controllers/patientController';
 import tokenModel from './models/tokenModel';
 import  Approuter from '../backend/routes/appRouter';
@@ -47,6 +49,7 @@ app.use('/routes/admins',  adminrouter);
 app.use('/routes/appointments',  appointment);
 app.use('/routes/healthRecord', Healthrecords);
 app.use('/routes/otp',Approuter);
+app.use('/routes', subscriptionRoute);
 
 
 
