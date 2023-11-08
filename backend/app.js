@@ -23,6 +23,7 @@ const prescription_1 = __importDefault(require("./routes/prescription"));
 const admin_1 = __importDefault(require("./routes/admin"));
 const appointment_1 = __importDefault(require("./routes/appointment"));
 const healthRecord_1 = __importDefault(require("./routes/healthRecord"));
+const subscriptionRoute_1 = __importDefault(require("./routes/subscriptionRoute"));
 const patientController_1 = require("./controllers/patientController");
 const tokenModel_1 = __importDefault(require("./models/tokenModel"));
 const appRouter_1 = __importDefault(require("../backend/routes/appRouter"));
@@ -53,6 +54,7 @@ app.use('/routes/admins', admin_1.default);
 app.use('/routes/appointments', appointment_1.default);
 app.use('/routes/healthRecord', healthRecord_1.default);
 app.use('/routes/otp', appRouter_1.default);
+app.use('/routes', subscriptionRoute_1.default);
 console.log('Routes mounted!');
 // Connect to the database
 mongoose_1.default.connect(process.env.MONGO_URI)
