@@ -1,4 +1,3 @@
-
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
 
@@ -56,6 +55,8 @@ export const patientSchema = new mongoose.Schema({
       name:{
        type:String ,
        required: true,
+
+
       },
       startdate: {
         type: String,
@@ -100,6 +101,7 @@ export const patientSchema = new mongoose.Schema({
        type:String ,
        required: true,
 
+
       },
       startdate: {
         type: String,
@@ -115,7 +117,12 @@ export const patientSchema = new mongoose.Schema({
         required: true,
       },
     },
-  ]}]
+  ]}],
+  walletBalance: {
+    type: Number,
+    required: true,
+    default: 0,
+    }
 });
 
 function validatePassword(password: string) {
@@ -127,6 +134,4 @@ function validatePassword(password: string) {
 
 
 
-export default patientModel;
-
-
+export default patientModel;

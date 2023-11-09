@@ -114,7 +114,12 @@ exports.patientSchema = new mongoose_1.default.Schema({
                         required: true,
                     },
                 },
-            ] }]
+            ] }],
+    walletBalance: {
+        type: Number,
+        required: true,
+        default: 0,
+    }
 });
 function validatePassword(password) {
     return password.length >= 8; // Minimum password length of 8 characters
