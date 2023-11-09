@@ -17,8 +17,8 @@ import {
   getAppointmentByStatus,
   viewMyHealthRecord,
   logout,
-  changePassword
-  //viewDoctorAppointments,
+  changePassword,
+  viewDoctorAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 
@@ -75,6 +75,7 @@ router.get('/viewHealthPackage', viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
 router.delete('/logoutPatient',logout)
 router.post('/changePassPatient',changePassword)
+router.get('/viewDoctorAppointments', viewDoctorAppointments);
 
 export default router;
 

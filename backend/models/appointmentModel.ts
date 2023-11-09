@@ -28,7 +28,7 @@ export const appointmentSchema = new mongoose.Schema({
     },
     type:{
         type: String,
-        enum: ['new appointement', 'Follow up'],
+        enum: ['new appointment', 'Follow up'],
         required: false
     },
 

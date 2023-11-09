@@ -1,7 +1,4 @@
 
-
-
-
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
 
@@ -54,10 +51,27 @@ export const patientSchema = new mongoose.Schema({
     mobileNumber: String,
     relation: String,
   },
-  healthPackageSubscription: {
-    type: String,
-    default: null, // You can set a default value, like null, to indicate no subscription initially
-  },
+  healthPackageSubscription: [
+    {
+      name:{
+       type:String ,
+       required: true,
+      },
+      startdate: {
+        type: String,
+        required: false,
+      },
+      enddate: {
+        type: String,
+        required: false,
+      },     
+      status: {
+        type: String,
+        enum: ['subscribed with renewal date', 'unsubscribed', 'cancelled with end date'],
+        required: true,
+      },
+    },
+  ],
 
   familyMembers:[{ name: {
     type: String,
@@ -80,10 +94,28 @@ export const patientSchema = new mongoose.Schema({
     enum: ['wife','husband','child'],
     required: true,
   },
-  healthPackageSubscription: {
-    type: String,
-    default: null, // You can set a default value, like null, to indicate no subscription initially
-  }}]
+  healthPackageSubscription: [
+    {
+      name:{
+       type:String ,
+       required: true,
+
+      },
+      startdate: {
+        type: String,
+        required: false,
+      },
+      enddate: {
+        type: String,
+        required: false,
+      },     
+      status: {
+        type: String,
+        enum: ['subscribed with renewal date', 'unsubscribed', 'cancelled with end date'],
+        required: true,
+      },
+    },
+  ]}]
 });
 
 function validatePassword(password: string) {

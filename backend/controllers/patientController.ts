@@ -332,26 +332,45 @@ import adminModel from '../models/adminModel';
   }
   }
 
+  // export const viewDoctorAppointments = async (req: Request, res: Response) => {
+  //   const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
+
+  //   try {
+  //       const doctor: IDoctor | null = await doctorModel.findOne({ username: doctorUsername }).exec();
+
+  //       if (doctor) {
+  //           // Retrieve the doctor's timeslots (available appointments)
+  //           const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
+
+  //           res.status(200).json(doctorAppointments);
+  //       } else {
+  //           res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
+  //       }
+  //   } catch (error) {
+  //       res.status(500).json({ message: 'An error occurred', error });
+  //   }
+  // };
+
+
   export const viewDoctorAppointments = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
-
+    const doctorId = req.query.doctorId; // Assuming the parameter is in the route
+  
     try {
-        const doctor: IDoctor | null = await doctorModel.findOne({ username: doctorUsername }).exec();
-
-        if (doctor) {
-            // Retrieve the doctor's timeslots (available appointments)
-            const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
-
-            res.status(200).json(doctorAppointments);
-        } else {
-            res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
-        }
+      const doctor: IDoctor | null = await doctorModel.findById(doctorId).exec();
+  
+      if (doctor) {
+        // Retrieve the doctor's timeslots (available appointments)
+        const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
+  
+        res.status(200).json(doctorAppointments);
+      } else {
+        res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
+      }
     } catch (error) {
-        res.status(500).json({ message: 'An error occurred', error });
+      res.status(500).json({ message: 'An error occurred', error });
     }
   };
-
-
+  
 
   // export const viewHealthPackageDetails = async (req: Request, res: Response) => {
   //   try {

@@ -33,4 +33,5 @@ router.get('/viewHealthPackage', patientController_1.viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
 router.delete('/logoutPatient', patientController_1.logout);
 router.post('/changePassPatient', patientController_1.changePassword);
+router.get('/viewDoctorAppointments', patientController_1.viewDoctorAppointments);
 exports.default = router;

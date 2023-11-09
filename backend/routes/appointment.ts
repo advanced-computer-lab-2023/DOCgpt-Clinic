@@ -5,7 +5,7 @@ import { createAppointment, getAllAppointments, getAppointments, getPapp } from 
 
 const router = express.Router();
 
-router.post("/", createAppointment);
+router.post("/create", createAppointment);
 router.get("/", getAppointments);
 router.get("/getAll", getAllAppointments);
 router.get("/appP",getPapp);

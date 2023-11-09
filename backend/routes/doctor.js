@@ -31,6 +31,7 @@ router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
 //create follow up
 router.post("/followup", doctorController_1.createfollowUp);
 router.patch("/addtimeslot", doctorController_1.addTimeSlots);
+router.patch("/removetimeslot", doctorController_1.removeTimeSlots);
 // Set up Multer for file uploads
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
