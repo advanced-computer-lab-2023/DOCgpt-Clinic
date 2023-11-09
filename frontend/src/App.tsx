@@ -16,29 +16,27 @@ import papp from './pages/patient/papp'
 import viewAll from './pages/patient/viewAll'
 import DoctorLogin from './pages/doctor/doctorLogin';
 
-// import AdminRegistrationForm from './AdminRegistrationForm';
-function App() {
+
+
+
+// App.js
+import Navbar from './components/navBar'; // Import the Navbar component
+import DrawerAppBar from './components/bar/appBar';
+
+// App.tsx
+function App()  {
   return (
     <Router>
-         <Routes>
-        <Route path="/"  Component={LandingPage} />
-        <Route path="/register/patient" Component={PatientRegistrationForm} />
-        <Route path="/register/doctor" Component={DoctorRegistrationForm } />
-        <Route path="/patient/main" Component={PatientPage} />
-        <Route path="/patient/main/patients" Component={viewAll} />
-        <Route path="/patient/viewApp/:username" Component={papp} />
-        <Route path="/doctor/main" Component={DoctorMain} />
-        <Route path="/doctor/login" Component={DoctorLogin} />
-        <Route path="/patient/prescriptions/:username" element={<PatientPrescriptions />} />
-        <Route path="/patient/home/:username" element={<PatientHome />} />
-        <Route path="/patient/home/:username" element={<PatientHome />} />
-        <Route path="/patient/addFam/:username" element={<AddFamilyMember />} />
-        <Route path="/patient/ViewFamilyMembers/:username" element={<ViewFamilyMembers />} />
-        <Route path="/admin" Component={Admin} />
-
-      </Routes>
-    </Router>
+    <DrawerAppBar />
+    {/* <AppRoutes /> */}
+    <Routes>
+    <Route path="/"  Component={LandingPage} />
+    </Routes>
+  </Router>
   );
-}
+};
+
 
 export default App;
+
+
