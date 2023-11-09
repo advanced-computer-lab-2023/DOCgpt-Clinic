@@ -18,8 +18,8 @@ import {
   viewMyHealthRecord,
   logout,
   changePassword,
-  linkFamilyMember
-  //viewDoctorAppointments,
+  linkFamilyMember,
+  viewDoctorAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 
@@ -74,8 +74,8 @@ router.get("/healthRecord", viewMyHealthRecord);
 
 router.get('/viewHealthPackage', viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
-router.delete('/logoutPatient',logout);
-router.post('/changePassPatient',changePassword);
-router.patch('/linkFamilyMember',linkFamilyMember);
+router.delete('/logoutPatient',logout)
+router.post('/changePassPatient',changePassword)
+
 export default router;
 

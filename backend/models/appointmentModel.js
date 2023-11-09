@@ -26,7 +26,7 @@ exports.appointmentSchema = new mongoose_1.default.Schema({
     },
     type: {
         type: String,
-        enum: ['new appointement', 'Follow up'],
+        enum: ['new appointment', 'Follow up'],
         required: false
     },
 });

@@ -290,10 +290,25 @@ const viewHealthPackageDetails = (req, res) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.viewHealthPackageDetails = viewHealthPackageDetails;
+// export const viewDoctorAppointments = async (req: Request, res: Response) => {
+//   const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
+//   try {
+//       const doctor: IDoctor | null = await doctorModel.findOne({ username: doctorUsername }).exec();
+//       if (doctor) {
+//           // Retrieve the doctor's timeslots (available appointments)
+//           const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
+//           res.status(200).json(doctorAppointments);
+//       } else {
+//           res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
+//       }
+//   } catch (error) {
+//       res.status(500).json({ message: 'An error occurred', error });
+//   }
+// };
 const viewDoctorAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
+    const doctorId = req.query.doctorId; // Assuming the parameter is in the route
     try {
-        const doctor = yield doctorModel_2.default.findOne({ username: doctorUsername }).exec();
+        const doctor = yield doctorModel_2.default.findById(doctorId).exec();
         if (doctor) {
             // Retrieve the doctor's timeslots (available appointments)
             const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments

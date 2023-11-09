@@ -217,22 +217,69 @@ export const addTimeSlots = async (req: Request, res: Response) => {
     }
 };
 
+export const removeTimeSlots = async (req: Request, res: Response) => {
+    const doctorUsername = req.query.doctorUsername;
+    const { dates } = req.body;
+
+    try {
+        // Find the doctor by username
+        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+
+        if (doctor) {
+            // Remove time slots from the existing array
+            doctor.timeslots = doctor.timeslots.filter((timeslot) => !dates.includes(timeslot.date));
+
+            // Save the updated doctor
+            const updatedDoctor = await doctor.save();
+
+            res.status(200).json(updatedDoctor);
+        } else {
+            res.status(404).json({ message: 'Doctor not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+};
+
+
 export const createfollowUp = async (req: Request, res: Response) => {
-    const doctorUsername = req.body.doctor;
-    const patientUsername = req.body.patient;
+    const doctorUsername = req.query.doctor;
+    const patientUsername = req.query.patient;
     const date = req.body.date;
     const status = req.body.status;
-    const type=req.body.type;
-    
-    const appoinment = await AppointmentModel.create({
-        status: status,
-        doctor: doctorUsername,
-        patient: patientUsername,
-        date: date,
-        type:type
-    });
-    res.status(201).json(appoinment);
-    
+    const type= 'Follow up';
+    try {
+      // Find the doctor by ID
+      const doctor: IDoctor | null = await DoctorModel.findOne({username: doctorUsername}).exec();
+
+      if (doctor) {
+          // Remove the time slot from the doctor's timeslots
+          console.log('Before removing timeslot:', doctor.timeslots);
+          const newDate = new Date(date);
+          doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
+          
+          console.log('After removing timeslot:', doctor.timeslots);
+          
+          // Save the updated doctor
+          await doctor.save();
+
+          // Create the appointment
+          const appoinment = await AppointmentModel.create({
+            status: status,
+            doctor: doctorUsername,
+            patient: patientUsername,
+            date: date,
+            type:type
+        });
+
+        res.status(201).json(appoinment);
+
+      } else {
+          return res.status(404).json({ message: 'Doctor not found' });
+      }
+  } catch (error) {
+      return res.status(500).json({ message: 'An error occurred', error });
+  }
 };
 
 
@@ -568,3 +615,4 @@ try{
     console.log(doctor)
     res.status(200).json(doctor);
 };
+
