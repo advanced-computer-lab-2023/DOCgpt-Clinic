@@ -36,13 +36,29 @@ const getDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getDoctor = getDoctor;
 const searchPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const patientName = String(req.query.patientName);
-    // find by the full name
-    // const patient = await PatientModel.find({ name: patientName }).exec();
-    // res.status(200).json(patient);
-    // find by just the substring
-    const patients = yield patientModel_1.default.find().exec();
-    const matchingPatients = patients.filter((patient) => patient.name.includes(patientName));
-    res.json(matchingPatients);
+    const doctorUsername = req.query.doctor;
+    try {
+        // FIND THE PATIENTS OF THAT DOCTOR
+        const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
+        const patients = [];
+        const usernames = [];
+        for (const appointment of appointments) {
+            const username = appointment.get('patient');
+            const patient = yield patientModel_1.default.findOne({ username: username }).exec();
+            if (patient && !usernames.includes(username)) {
+                patients.push(patient);
+                usernames.push(username);
+            }
+        }
+        // NOW ARRAY PATIENTS CONTAINS ONLY THE PATIENTS OF THAT DOCTOR
+        // SEARCH IN THEM
+        const matchingPatients = patients.filter((patient) => patient.get('name').includes(patientName));
+        res.json(matchingPatients);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 exports.searchPatient = searchPatient;
 const createDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {

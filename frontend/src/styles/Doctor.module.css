@@ -1,6 +1,6 @@
 :root{
     --navy: #01031a;
-    --green: #1aac83;
+    --blue: #2196F3;
 }
 
 .doctorCard {
@@ -12,7 +12,7 @@
 }
 
 .cardSubtitles{
-    color: var(--green);
+    color: var(--blue);
     font-weight: bold;
 }
 
