@@ -33,16 +33,19 @@ interface Patient {
         enum: ['wife', 'husband', 'child']
     }}];
 }
+interface SearchBarProps{
+    doctorUsername : any;
+}
 
-export const SearchBar: React.FC = () => {
+export const SearchBar: React.FC<SearchBarProps> = ({doctorUsername}) => {
     const [nameSearchTerm, setNameSearchTerm] = useState('');
     const [searchPatient, setSearchPatient] = useState<Patient[]>([]);
     const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
     async function searchPatients() {
         try {
-        const res = await axios.get(`/routes/doctors/searchPatient?patientName=${nameSearchTerm}`);
-        setSearchPatient(res.data);
+            const res = await axios.get(`/routes/doctors/searchPatient?patientName=${nameSearchTerm}&doctor=${doctorUsername}`);
+            setSearchPatient(res.data);
         } catch (error) {
         console.error('Error searching for doctors: ', error);
         }
