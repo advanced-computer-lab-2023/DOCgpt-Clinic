@@ -90,7 +90,7 @@ const SignupDoctor = () => {
         .then((data) => {
           // Handle the response from the server
           console.log("object posted is" + data);
-            navigate(`/doctor/login`);
+            navigate(`/contract`);
           
         })
         .catch((error) => {

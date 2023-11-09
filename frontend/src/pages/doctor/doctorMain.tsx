@@ -9,7 +9,7 @@ import ViewMyPatients from '../../components/ViewMyPatients';
 import ViewHealthRecord from '../../components/ViewHealthRecord';
 import { useLocation, useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
+import DoctorAvailability from '../../components/DoctorAvailability';
 
 function DoctorMain() {
   const location = useLocation();
@@ -82,6 +82,7 @@ function DoctorMain() {
       <SearchBar doctorUsername={doctorUsername}/>
       <ViewMyPatients  doctorUsername={doctorUsername}/>
       <ViewHealthRecord doctorUsername={doctorUsername}/>
+        <DoctorAvailability doctorUsername={doctorUsername}/>
     </Container>
   );
 }

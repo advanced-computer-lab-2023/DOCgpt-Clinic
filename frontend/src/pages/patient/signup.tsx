@@ -1,7 +1,7 @@
-
-
 import React, { useState, CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Avatar, Button, Grid, Paper, TextField, Typography } from "@mui/material";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 
 // Define the Patient interface to match the Mongoose schema
 interface Patient {
@@ -9,8 +9,8 @@ interface Patient {
   name: string;
   email: string;
   password: string;
-  dateofbirth: string; // Adjust the type if it's not a string
-  mobilenumber: string; // Adjust the type if it's not a string
+  dateofbirth: string;
+  mobilenumber: string;
   emergencyContact: {
     fullName: string;
     mobileNumber: string;
@@ -19,15 +19,14 @@ interface Patient {
   familyMembers: Array<{
     name: string;
     nationalId: string;
-    age: string; // Adjust the type if it's not a string
+    age: string;
     gender: string;
     relationToPatient: string;
   }>;
 }
 
-const Signup = () => {
-  const navigate = useNavigate(); // Use useNavigate within the component
-
+const Signup: React.FC = () => {
+  const navigate = useNavigate();
   const [patient, setPatient] = useState<Patient>({
     username: '',
     name: '',
@@ -64,7 +63,6 @@ const Signup = () => {
 
   const validateForm = () => {
     const errors: Record<string, string> = {};
-    // Add validation logic here, e.g., checking if fields are not empty, etc.
     if (!patient.username) {
       errors.username = 'Username is required';
     }
@@ -93,8 +91,6 @@ const Signup = () => {
       errors.emergencyContactRelation = 'Relation of the emergency contact is required';
     }
 
-    // Add more validations for other fields as needed
-
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
   };
@@ -113,146 +109,145 @@ const Signup = () => {
       })
         .then((response) => response.json())
         .then((data) => {
-          // Handle the response from the server
           console.log(data);
-          navigate(`/patient/home/${data.username}`); // Redirect to the patientHome page after successful signup
+          navigate(`/patient/home/${data.username}`);
         })
         .catch((error) => {
-          // Handle any errors
           console.error(error);
         });
     }
   };
 
-  const styles: { [key: string]: CSSProperties } = {
-    container: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-    },
-    formGroup: {
-      marginBottom: 10,
-    },
-    input: {
-      width: '100%',
-      padding: '5px',
-    },
-    submitButton: {
-      marginTop: 10,
-    },
-    button: {
-      padding: '10px',
-      background: 'blue',
-      color: 'white',
-      border: 'none',
-    },
-  };
-
   return (
-    <div style={styles.container}>
-      <h2>Patient Signup</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={styles.formGroup}>
-          <label>Username:</label>
-          <input
-            type="text"
+    <Grid container justifyContent="center" alignItems="center" style={styles.container}>
+      <Paper elevation={20} style={styles.paper}>
+        <Grid container direction="column" alignItems="center" spacing={2}>
+          <Grid item>
+            <Avatar style={styles.avatar}>
+              <AddCircleOutlineIcon />
+            </Avatar>
+          </Grid>
+          <Grid item>
+            <Typography variant="h5" style={styles.header}>Patient Signup</Typography>
+          </Grid>
+          <Grid item>
+            <Typography variant="caption">Please fill this form to create an account!</Typography>
+          </Grid>
+        </Grid>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="Username"
+            placeholder="Enter your Username"
             value={patient.username}
             onChange={(e) => handleInputChange('username', e.target.value)}
-            style={styles.input}
           />
           {formErrors.username && <div style={{ color: 'red' }}>{formErrors.username}</div>}
-        </div>
-        <div style={styles.formGroup}>
-          <label>Name:</label>
-          <input
-            type="text"
+
+          <TextField
+            fullWidth
+            label="Name"
+            placeholder="Enter your Name"
             value={patient.name}
             onChange={(e) => handleInputChange('name', e.target.value)}
-            style={styles.input}
           />
           {formErrors.name && <div style={{ color: 'red' }}>{formErrors.name}</div>}
-        </div>
-        <div style={styles.formGroup}>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={patient.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            style={styles.input}
-          />
-          {formErrors.email && <div style={{ color: 'red' }}>{formErrors.email}</div>}
-        </div>
-        <div style={styles.formGroup}>
-          <label>Password:</label>
-          <input
-            type="password"
+
+          <TextField
+            fullWidth
+            label="Password"
+            placeholder="Enter your password"
             value={patient.password}
             onChange={(e) => handleInputChange('password', e.target.value)}
-            style={styles.input}
           />
           {formErrors.password && <div style={{ color: 'red' }}>{formErrors.password}</div>}
-        </div>
-        <div style={styles.formGroup}>
-          <label>Date of Birth:</label>
-          <input
+
+          <TextField
+            fullWidth
+            label="Email"
+            placeholder="Enter your email"
+            value={patient.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+          />
+          {formErrors.email && <div style={{ color: 'red' }}>{formErrors.email}</div>}
+
+          <TextField
+            fullWidth
+            
             type="date"
             value={patient.dateofbirth}
             onChange={(e) => handleInputChange('dateofbirth', e.target.value)}
-            style={styles.input}
           />
           {formErrors.dateofbirth && <div style={{ color: 'red' }}>{formErrors.dateofbirth}</div>}
-        </div>
-        <div style={styles.formGroup}>
-          <label>Mobile Number:</label>
-          <input
+
+          <TextField
+            fullWidth
+            label="Mobile Number"
             type="number"
             value={patient.mobilenumber}
             onChange={(e) => handleInputChange('mobilenumber', e.target.value)}
-            style={styles.input}
           />
           {formErrors.mobilenumber && <div style={{ color: 'red' }}>{formErrors.mobilenumber}</div>}
-        </div>
-        <div style={styles.formGroup}>
-          <label>Emergency Contact:</label>
-          <input
-            type="text"
-            placeholder="Full Name"
+
+          <TextField
+            fullWidth
+            label="Emergency Contact - Full Name"
+            placeholder="Enter full name of the emergency contact"
             value={patient.emergencyContact.fullName}
             onChange={(e) => handleEmergencyContactChange('fullName', e.target.value)}
-            style={styles.input}
           />
           {formErrors.emergencyContactFullName && (
             <div style={{ color: 'red' }}>{formErrors.emergencyContactFullName}</div>
           )}
-          <input
-            type="text"
-            placeholder="Mobile Number"
+
+          <TextField
+            fullWidth
+            label="Emergency Contact - Mobile Number"
+            placeholder="Enter mobile number of the emergency contact"
             value={patient.emergencyContact.mobileNumber}
             onChange={(e) => handleEmergencyContactChange('mobileNumber', e.target.value)}
-            style={styles.input}
           />
           {formErrors.emergencyContactMobileNumber && (
             <div style={{ color: 'red' }}>{formErrors.emergencyContactMobileNumber}</div>
           )}
-          <input
-            type="text"
-            placeholder="Relation"
+
+          <TextField
+            fullWidth
+            label="Emergency Contact - Relation"
+            placeholder="Enter relation of the emergency contact"
             value={patient.emergencyContact.relation}
             onChange={(e) => handleEmergencyContactChange('relation', e.target.value)}
-            style={styles.input}
           />
           {formErrors.emergencyContactRelation && (
             <div style={{ color: 'red' }}>{formErrors.emergencyContactRelation}</div>
           )}
-        </div>
-        <div style={styles.submitButton}>
-          <button type="submit" style={styles.button}>
-            Signup
-          </button>
-        </div>
-      </form>
-    </div>
+
+          <div style={{ textAlign: 'center' }}>
+            <Button type="submit" variant="contained" color="primary">
+              Signup
+            </Button>
+          </div>
+        </form>
+      </Paper>
+    </Grid>
   );
+};
+
+const styles: { [key: string]: CSSProperties } = {
+  container: {
+    minHeight: '100vh',
+  },
+  paper: {
+    padding: '30px 20px',
+    width: 500,
+    margin: "20px auto",
+  },
+  avatar: {
+    backgroundColor: "blue",
+  },
+  header: {
+    margin: 0,
+  },
 };
 
 export default Signup;
