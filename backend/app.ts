@@ -112,7 +112,7 @@ mongoose.connect(process.env.MONGO_URI!)
        const token = createToken(user.id);
        const tokenn = await tokenModel.create({token,username,role:role})
        console.log("Received login succes");
-
+          req.app.locals.username=username
        res.status(200).json({user,token,role})}
 
        catch(error){

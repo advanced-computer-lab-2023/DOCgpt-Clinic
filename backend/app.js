@@ -105,6 +105,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const token = (0, patientController_1.createToken)(user.id);
         const tokenn = yield tokenModel_1.default.create({ token, username, role: role });
         console.log("Received login succes");
+        req.app.locals.username = username;
         res.status(200).json({ user, token, role });
     }
     catch (error) {

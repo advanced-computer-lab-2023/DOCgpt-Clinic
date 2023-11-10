@@ -51,6 +51,9 @@ export default function SignIn() {
       const token = response.data.token;
       localStorage.setItem("authToken", token);
       const role= response.data.role;
+      const user= response.data.user
+      console.log(user);
+     
       console.log(role);
       console.log("succes");
       if(role=="patient"){

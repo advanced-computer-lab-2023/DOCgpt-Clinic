@@ -27,7 +27,6 @@ import AdminHomePage from './pages/admin/homePage';
 
 
 function App() {
-  const role = localStorage.getItem('role');
   useEffect(() => {
     // Create a link element for the font stylesheet
     const linkElement = document.createElement('link');
@@ -63,7 +62,7 @@ function App() {
          <Route path="/doctor/home" element={<DoctorHomePage/>} />
          <Route path="/admin/home" element={<AdminHomePage/>} />
         // <Route path="/patient/addFam/:username" element={<AddFamilyMember />} />
-        // <Route path="/patient/ViewFamilyMembers/:username" element={<ViewFamilyMembers />} />
+        // <Route path="/patient/ViewFamilyMembers" element={<ViewFamilyMembers />} />
         // <Route path="/admin" Component={Admin} />
         // <Route path="/doctor/appointments" Component={MyAppointments} />
         // <Route path="/doctor/patients" Component={MyPatients} />

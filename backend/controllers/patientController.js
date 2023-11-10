@@ -108,9 +108,15 @@ const getPrescriptionsByUser = (req, res) => __awaiter(void 0, void 0, void 0, f
 exports.getPrescriptionsByUser = getPrescriptionsByUser;
 const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { username } = req.query;
-        if (!username) {
-            return res.status(404).json({ error: 'No such patient' });
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: 'username not found' });
         }
         // Assuming you have a route parameter for the patient's ID
         const familyMemberData = req.body; // Assuming family member data is sent in the request body
@@ -141,9 +147,15 @@ exports.addFamilyMember = addFamilyMember;
 //view family members 
 const viewFamilyMembers = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { username } = req.query;
-        if (!username) {
-            return res.status(404).json({ error: 'user name is required' });
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: 'username not found' });
         }
         // Find the patient by ID
         const patient = yield patientModel_2.default.findOne({ username });

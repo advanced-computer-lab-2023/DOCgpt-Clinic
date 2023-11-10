@@ -1,9 +1,10 @@
 import { ReactNode } from "react";
 import HealingIcon from "@mui/icons-material/Healing";
+import { Typography } from "@mui/material";
 
 
 export type RouteType = {
-  header: string;
+  header: any;
   child: links[];
   sidebarProps?: {
     icon?: ReactNode;
@@ -19,21 +20,38 @@ export type links = {
 
 const appRoutes: RouteType[] = [
   {
-    header: "dashboard",
-    // icon: <DashboardOutlinedIcon />,
+    header: (
+      <Typography variant="h6" fontWeight="bold">
+        appoinments
+      </Typography>
+    ),
     child: [
       {
-        path: "/",
-        // element: <LandingPage/>,
-        state: "dashboard.default",
+        path: "/patient/home",
+        state: "add time slots ",
       },
       {
-        path: "/",
-        // element: <LandingPage/>,
-        state: "dashboard.one",
-      }
+        path: "/patient/home",
+        state: "make app",
+      },
+    ],
+  },
+  {
+    header: (
+      <Typography variant="h6" fontWeight="bold">
+        Family Members
+      </Typography>
+    ),
+    child: [
+      {
+        path: "/patient/viewFamilyMembers",
+        state: "Family members",
+      },
+      {
+        path: "/patient/home",
+        state: "make app",
+      },
     ],
   },
 ];
-
 export default appRoutes;
