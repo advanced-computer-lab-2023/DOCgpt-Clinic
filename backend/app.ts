@@ -4,6 +4,7 @@ import adminModel from './models/adminModel';
 import patientModel from './models/patientModel';
 import doctorModel from './models/doctorModel'
 
+
 import mongoose from 'mongoose'
 import PatientRoutes from './routes/patient'
 import DoctorRoutes from './routes/doctor'
@@ -11,6 +12,7 @@ import PrescriptionRoutes from './routes/prescription'
 import adminrouter from './routes/admin';
 import appointment from './routes/appointment'
 import Healthrecords from './routes/healthRecord'
+import subscriptionRoute from './routes/subscriptionRoute'
 import { createToken } from './controllers/patientController';
 import tokenModel from './models/tokenModel';
 import  Approuter from '../backend/routes/appRouter';
@@ -47,6 +49,7 @@ app.use('/routes/admins',  adminrouter);
 app.use('/routes/appointments',  appointment);
 app.use('/routes/healthRecord', Healthrecords);
 app.use('/routes/otp',Approuter);
+app.use('/routes', subscriptionRoute);
 
 
 
@@ -69,6 +72,8 @@ mongoose.connect(process.env.MONGO_URI!)
   })
 
   export const login=async (req:Request, res:Response) => {
+    console.log("Received login request:", req.body);
+
     try{
        const {username , password}=req.body
        if(!username || !password){
@@ -106,8 +111,10 @@ mongoose.connect(process.env.MONGO_URI!)
        }
        const token = createToken(user.id);
        const tokenn = await tokenModel.create({token,username,role:role})
-       
-       res.status(200).json({user,token})}
+       console.log("Received login succes");
+
+       res.status(200).json({user,token,role})}
+
        catch(error){
         const err = error as Error;
         res.status(400).json({ error: err.message });
@@ -115,7 +122,4 @@ mongoose.connect(process.env.MONGO_URI!)
   }
 
  
- 
-  
-
-  app.get('/api/login',login)
+  app.post('/api/login',login)

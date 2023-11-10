@@ -23,6 +23,7 @@ const prescription_1 = __importDefault(require("./routes/prescription"));
 const admin_1 = __importDefault(require("./routes/admin"));
 const appointment_1 = __importDefault(require("./routes/appointment"));
 const healthRecord_1 = __importDefault(require("./routes/healthRecord"));
+const subscriptionRoute_1 = __importDefault(require("./routes/subscriptionRoute"));
 const patientController_1 = require("./controllers/patientController");
 const tokenModel_1 = __importDefault(require("./models/tokenModel"));
 const appRouter_1 = __importDefault(require("../backend/routes/appRouter"));
@@ -53,6 +54,7 @@ app.use('/routes/admins', admin_1.default);
 app.use('/routes/appointments', appointment_1.default);
 app.use('/routes/healthRecord', healthRecord_1.default);
 app.use('/routes/otp', appRouter_1.default);
+app.use('/routes', subscriptionRoute_1.default);
 console.log('Routes mounted!');
 // Connect to the database
 mongoose_1.default.connect(process.env.MONGO_URI)
@@ -67,6 +69,7 @@ mongoose_1.default.connect(process.env.MONGO_URI)
     console.log(err);
 });
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Received login request:", req.body);
     try {
         const { username, password } = req.body;
         if (!username || !password) {
@@ -101,7 +104,8 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const token = (0, patientController_1.createToken)(user.id);
         const tokenn = yield tokenModel_1.default.create({ token, username, role: role });
-        res.status(200).json({ user, token });
+        console.log("Received login succes");
+        res.status(200).json({ user, token, role });
     }
     catch (error) {
         const err = error;
@@ -109,4 +113,4 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
-app.get('/api/login', exports.login);
+app.post('/api/login', exports.login);

@@ -36,15 +36,15 @@ const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
     return(
         <Card className={styles.doctorCard}>
             <Stack spacing={4}>
-                <Typography variant="h3"> Welcome,  {name}</Typography >
+                <Typography variant="h3"> Welcome, Dr.  {name}</Typography >
 
-                <div className={styles.cardSubtitles}>username: 
+                <div className={styles.cardSubtitles}>Username: 
                 <span className={styles.cardText}>{username}</span></div>
 
-                <div className={styles.cardSubtitles}>speciality: 
+                <div className={styles.cardSubtitles}>Speciality: 
                 <span className={styles.cardText}>{speciality}</span></div>
 
-                <div className={styles.cardSubtitles}>affiliation: 
+                <div className={styles.cardSubtitles}>Affiliation: 
                 <span className={styles.cardText}>{affiliation}</span>
                 <Button onClick={() => setshowUpdateHospitalDialog(true)}>Edit</Button></div>
                 {
@@ -55,7 +55,7 @@ const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
                         doctorUsername={doctorUsername}
                     />
                 }
-                <div className={styles.cardSubtitles}>hourlyRate: 
+                <div className={styles.cardSubtitles}>Hourly Rate: 
                 <span className={styles.cardText}>{hourlyRate}</span>
                 <Button onClick={() => setshowUpdateRateDialog(true)}>Edit</Button></div>
                 {
@@ -67,12 +67,12 @@ const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
                     />
                 }
 
-                <div className={styles.cardSubtitles}>educationalBackground: <span className={styles.cardText}>{educationalBackground}</span> </div>
+                <div className={styles.cardSubtitles}>Educational Background: <span className={styles.cardText}>{educationalBackground}</span> </div>
 
-                <div className={styles.cardSubtitles}>dateOfBirth: 
+                <div className={styles.cardSubtitles}>Date Of Birth: 
                 <span className={styles.cardText}> {dateOfBirth}</span></div>
 
-                <div className={styles.cardSubtitles}>email: 
+                <div className={styles.cardSubtitles}>Email: 
                 <span className={styles.cardText}>{email}</span>
                 <Button onClick={() => setshowUpdateEmailDialog(true)}>Edit</Button></div>
                 {

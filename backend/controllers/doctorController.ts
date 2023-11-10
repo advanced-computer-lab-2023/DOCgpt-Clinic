@@ -23,19 +23,39 @@ export const getDoctor = async (req: Request, res: Response) => {
     res.status(200).json(doctor);
 };
 
-export const searchPatient = async (req: Request, res: Response) => {
-    const patientName = String(req.query.patientName);
-    // find by the full name
-    // const patient = await PatientModel.find({ name: patientName }).exec();
-    // res.status(200).json(patient);
 
-    // find by just the substring
-    const patients = await PatientModel.find().exec();
+export const searchPatient = async (req: Request, res: Response) => {
+  const patientName: string = String(req.query.patientName);
+  const doctorUsername: string = req.query.doctor as string;
+
+  try {
+    // FIND THE PATIENTS OF THAT DOCTOR
+    const appointments = await AppointmentModel.find({ doctor: doctorUsername }).exec();
+    const patients = [];
+    const usernames: string[] = [];
+
+    for (const appointment of appointments) {
+      const username: string = appointment.get('patient') as string;
+      const patient = await PatientModel.findOne({ username: username }).exec();
+
+      if (patient && !usernames.includes(username)) {
+        patients.push(patient);
+        usernames.push(username);
+      }
+    }
+
+    // NOW ARRAY PATIENTS CONTAINS ONLY THE PATIENTS OF THAT DOCTOR
+    // SEARCH IN THEM
     const matchingPatients = patients.filter((patient) =>
-        patient.name.includes(patientName)
+      patient.get('name').includes(patientName)
     );
+
     res.json(matchingPatients);
-}
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Internal Server Error');
+  }
+};
 
 export const createDoctors = async (req: Request, res: Response) => {
     const username = req.body.username;
