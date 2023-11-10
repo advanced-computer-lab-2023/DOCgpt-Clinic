@@ -217,22 +217,69 @@ export const addTimeSlots = async (req: Request, res: Response) => {
     }
 };
 
+export const removeTimeSlots = async (req: Request, res: Response) => {
+    const doctorUsername = req.query.doctorUsername;
+    const { dates } = req.body;
+
+    try {
+        // Find the doctor by username
+        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+
+        if (doctor) {
+            // Remove time slots from the existing array
+            doctor.timeslots = doctor.timeslots.filter((timeslot) => !dates.includes(timeslot.date));
+
+            // Save the updated doctor
+            const updatedDoctor = await doctor.save();
+
+            res.status(200).json(updatedDoctor);
+        } else {
+            res.status(404).json({ message: 'Doctor not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+};
+
+
 export const createfollowUp = async (req: Request, res: Response) => {
-    const doctorUsername = req.body.doctor;
-    const patientUsername = req.body.patient;
+    const doctorUsername = req.query.doctor;
+    const patientUsername = req.query.patient;
     const date = req.body.date;
     const status = req.body.status;
-    const type=req.body.type;
-    
-    const appoinment = await AppointmentModel.create({
-        status: status,
-        doctor: doctorUsername,
-        patient: patientUsername,
-        date: date,
-        type:type
-    });
-    res.status(201).json(appoinment);
-    
+    const type= 'Follow up';
+    try {
+      // Find the doctor by ID
+      const doctor: IDoctor | null = await DoctorModel.findOne({username: doctorUsername}).exec();
+
+      if (doctor) {
+          // Remove the time slot from the doctor's timeslots
+          console.log('Before removing timeslot:', doctor.timeslots);
+          const newDate = new Date(date);
+          doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
+          
+          console.log('After removing timeslot:', doctor.timeslots);
+          
+          // Save the updated doctor
+          await doctor.save();
+
+          // Create the appointment
+          const appoinment = await AppointmentModel.create({
+            status: status,
+            doctor: doctorUsername,
+            patient: patientUsername,
+            date: date,
+            type:type
+        });
+
+        res.status(201).json(appoinment);
+
+      } else {
+          return res.status(404).json({ message: 'Doctor not found' });
+      }
+  } catch (error) {
+      return res.status(500).json({ message: 'An error occurred', error });
+  }
 };
 
 
@@ -247,19 +294,6 @@ const storage = multer.diskStorage({
   });
   const upload = multer({ storage });
   
-  export const uploadAndSubmitReqDocs = (req: Request, res: Response) => {
-    upload.array('documents', 3)(req, res, (err) => {
-      if (err) {
-        return res.status(500).json({ error: 'File upload failed.' });
-      }
-      const uploadedFiles = req.files as Express.Multer.File[];
-      console.log('Uploaded Files:', uploadedFiles);
-  
-      // Handle saving file information and associating it with the doctor's registration here
-  
-      res.json({ message: 'Documents uploaded and submitted successfully.' });
-    });
-  };
 
 
 // HEALTH RECORDS
@@ -567,4 +601,30 @@ try{
     const doctor = await DoctorModel.find({status: 'pending'}).exec();
     console.log(doctor)
     res.status(200).json(doctor);
+};
+
+export const uploadAndSubmitReqDocs = async (req: Request, res: Response) => {
+  const uploadedFiles = req.files as Express.Multer.File[];
+
+  try {
+    const fileInformation = [];
+
+    // Loop through the uploaded files and save their information
+    for (const file of uploadedFiles) {
+      // Here, you can save the file information in the pharmacist model or any other place as needed
+      const fileData = {
+        filename: file.originalname,
+        path: file.path, // This is the local path where the file is saved
+      };
+
+      fileInformation.push(fileData);
+    }
+
+    // You can save the file information wherever needed in your application
+
+    res.json({ message: 'Documents uploaded successfully.' });
+  } catch (error) {
+    console.error('Error handling file upload:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
 };

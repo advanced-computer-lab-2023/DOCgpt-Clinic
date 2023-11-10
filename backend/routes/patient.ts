@@ -17,8 +17,9 @@ import {
   getAppointmentByStatus,
   viewMyHealthRecord,
   logout,
-  changePassword
-  //viewDoctorAppointments,
+  changePassword,
+  linkFamilyMember,
+  viewDoctorAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 

@@ -5,6 +5,7 @@ import appointmentModel from '../models/appointmentModel';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+
 // create a new workout
 export const createPatient = async (req: Request, res: Response) => {
     console.log('Request reached controller')
@@ -332,26 +333,45 @@ import adminModel from '../models/adminModel';
   }
   }
 
+  // export const viewDoctorAppointments = async (req: Request, res: Response) => {
+  //   const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
+
+  //   try {
+  //       const doctor: IDoctor | null = await doctorModel.findOne({ username: doctorUsername }).exec();
+
+  //       if (doctor) {
+  //           // Retrieve the doctor's timeslots (available appointments)
+  //           const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
+
+  //           res.status(200).json(doctorAppointments);
+  //       } else {
+  //           res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
+  //       }
+  //   } catch (error) {
+  //       res.status(500).json({ message: 'An error occurred', error });
+  //   }
+  // };
+
+
   export const viewDoctorAppointments = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
-
+    const doctorId = req.query.doctorId; // Assuming the parameter is in the route
+  
     try {
-        const doctor: IDoctor | null = await doctorModel.findOne({ username: doctorUsername }).exec();
-
-        if (doctor) {
-            // Retrieve the doctor's timeslots (available appointments)
-            const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
-
-            res.status(200).json(doctorAppointments);
-        } else {
-            res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
-        }
+      const doctor: IDoctor | null = await doctorModel.findById(doctorId).exec();
+  
+      if (doctor) {
+        // Retrieve the doctor's timeslots (available appointments)
+        const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
+  
+        res.status(200).json(doctorAppointments);
+      } else {
+        res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
+      }
     } catch (error) {
-        res.status(500).json({ message: 'An error occurred', error });
+      res.status(500).json({ message: 'An error occurred', error });
     }
   };
-
-
+  
 
   // export const viewHealthPackageDetails = async (req: Request, res: Response) => {
   //   try {
@@ -626,3 +646,249 @@ import adminModel from '../models/adminModel';
       
     });
   };
+  const calculateAge = (birthdate: Date): number => {
+    const currentDate = new Date();
+    const birthYear = birthdate.getFullYear();
+    const currentYear = currentDate.getFullYear();
+  
+    let age = currentYear - birthYear;
+  
+    // Adjust age if birthday hasn't occurred yet this year
+    const birthMonth = birthdate.getMonth();
+    const currentMonth = currentDate.getMonth();
+    const birthDay = birthdate.getDate();
+    const currentDay = currentDate.getDate();
+  
+    if (currentMonth < birthMonth || (currentMonth === birthMonth && currentDay < birthDay)) {
+      age--;
+    }
+  
+    return age;
+  };
+  
+  // Example usage
+  const birthdate = new Date('1990-05-15');
+  const age = calculateAge(birthdate);
+  console.log(age); // Output: 32 (assuming current date is after May 15th)
+  
+
+
+
+
+
+
+
+  // export const linkFamilyMember = async (req: Request, res: Response) => {
+  //   try {
+  //     const { patientUsername } = req.query;
+  //     const familyMemberData = req.body.familyMemberData;
+  //     const relation=req.body.relation;
+  
+  //     // Validate inputs
+  //     if (!patientUsername || !familyMemberData) {
+  //       return res.status(400).json({ message: 'Invalid input data' });
+  //     }
+  
+  //     // Find the patient by username
+  //     const patient = await Patientmodel.findOne({ username: patientUsername });
+  
+  //     if (!patient) {
+  //       return res.status(404).json({ message: 'Patient not found' });
+  //     }
+
+  //     const familyMember = await Patientmodel.findOne({ email: familyMemberData });
+    
+  //     if (!familyMember) {
+  //       return res.status(404).json({ message: 'Family member not found' });
+  //     }
+  //     const healthPackageSubscription =
+  //     familyMember.healthPackageSubscription && familyMember.healthPackageSubscription[0]
+  //       ? familyMember.healthPackageSubscription[0]
+  //       : "default_subscription";
+
+  // const age=calculateAge(familyMember.dateofbirth);
+  //     // Add the new family member object to the patient's record
+  //     patient.familyMembers.push({
+  //       name: familyMember.name,
+  //       nationalId: " ",
+  //       age:age ,
+  //       gender: " ljkhj ",
+  //       relationToPatient: relation,
+  //  healthPackageSubscription:familyMember.healthPackageSubscription
+      
+  //     });
+  
+  //     await patient.save();
+  
+  //     res.status(200).json({ success: true, message: 'Family member linked successfully', patient });
+  //   } catch (error) {
+  //     console.error('Error linking family member:', error);
+  //     res.status(500).json({ success: false, message: 'An error occurred' });
+  //   }
+  // };
+
+
+
+
+
+  export const linkFamilyMember = async (req: Request, res: Response) => {
+    try {
+      const { patientUsername } = req.query;
+      const familyMemberData = req.body.familyMemberData;
+      const relation = req.body.relation;
+  
+      // Validate inputs
+      if (!patientUsername || !familyMemberData) {
+        return res.status(400).json({ message: 'Invalid input data' });
+      }
+  
+      // Find the patient by username
+      const patient = await Patientmodel.findOne({ username: patientUsername });
+  
+      if (!patient) {
+        return res.status(404).json({ message: 'Patient not found' });
+      }
+  
+      let familyMember;
+  
+      // Check if familyMemberData is a string (email) or a number (mobile number)
+      if (typeof familyMemberData === 'string') {
+        // Find the family member by email
+        familyMember = await Patientmodel.findOne({ email: familyMemberData });
+      } else if (typeof familyMemberData === 'number') {
+        // Find the family member by mobile number
+        familyMember = await Patientmodel.findOne({ mobilenumber: familyMemberData });
+      }
+  
+      if (!familyMember) {
+        return res.status(404).json({ message: 'Family member not found' });
+      }
+  
+      const healthPackageSubscription =
+        familyMember.healthPackageSubscription && familyMember.healthPackageSubscription[0]
+          ? familyMember.healthPackageSubscription[0]
+          : 'default_subscription';
+  
+      const age = calculateAge(familyMember.dateofbirth);
+  
+      // Add the new family member object to the patient's record
+      patient.familyMembers.push({
+        name: familyMember.name,
+        nationalId: ' ',
+        age: age,
+        gender: ' ljkhj ',
+        relationToPatient: relation,
+        healthPackageSubscription: familyMember.healthPackageSubscription,
+      });
+  
+      await patient.save();
+  
+      res.status(200).json({ success: true, message: 'Family member linked successfully', patient });
+    } catch (error) {
+      console.error('Error linking family member:', error);
+      res.status(500).json({ success: false, message: 'An error occurred' });
+    }
+  };
+  
+
+
+
+
+
+
+
+
+// ...
+
+// Endpoint to link family members
+// export const linkFamilyMember = async (req: Request, res: Response) => {
+//   try {
+//     const { patientUsername } = req.query;
+//     const familyMemberData = req.body;
+//     const relation=req.body;
+//     // Validate inputs
+//     if (!patientUsername || !familyMemberData) {
+//       return res.status(400).json({ message: 'Invalid input data' });
+//     }
+
+//     // // Check if familyMemberData is a string or a number
+//     // const isString = typeof familyMemberData === 'string';
+//     // const isNumber = typeof familyMemberData === 'number' || !isNaN(Number(familyMemberData));
+
+//     if (isString) {
+//       // If it's a string, assume it's the email
+//       // Find the family member by email
+//       const familyMember = await patientModel.findOne({ email: familyMemberData });
+
+//       if (!familyMember) {
+//         return res.status(404).json({ message: 'Family member not found' });
+//       }
+
+//       // Find the patient by username
+//       const patient = await patientModel.findOne({ username: patientUsername });
+
+//       if (!patient) {
+//         return res.status(404).json({ message: 'Patient not found' });
+//       }
+//       const age=calculateAge(familyMember.dateofbirth);
+//       // Add the new family member object to the patient's record
+//       patient.familyMembers.push({
+//         name: familyMember.name,
+//         nationalId: "",
+//         age: age,
+//         gender: "",
+//         relationToPatient: relation,
+//         healthPackageSubscription: familyMember.healthPackageSubscription,
+//       });
+
+//       await patient.save();
+
+//       res.status(200).json({ success: true, message: 'Family member linked successfully', patient });
+
+//     }
+//      else if (isNumber) {
+//       // If it's a number, assume it's the mobilenumber
+//       const phoneNumber = Number(familyMemberData);
+
+//       // Find the family member by mobilenumber
+//       const familyMember = await patientModel.findOne({ mobilenumber: phoneNumber });
+
+//       if (!familyMember) {
+//         return res.status(404).json({ message: 'Family member not found' });
+//       }
+
+//       // Find the patient by username
+//       const patient = await patientModel.findOne({ username: patientUsername });
+
+//       if (!patient) {
+//         return res.status(404).json({ message: 'Patient not found' });
+//       }
+//       const age=calculateAge(familyMember.dateofbirth);
+//       // Add the new family member object to the patient's record
+//       patient.familyMembers.push({
+//         name: familyMember.name,
+//         nationalId: "",
+//         age: age,
+//         gender: "",
+//         relationToPatient: relation,
+//         healthPackageSubscription: familyMember.healthPackageSubscription,
+//       });
+
+//       await patient.save();
+
+//       res.status(200).json({ success: true, message: 'Family member linked successfully', patient });
+
+//     } else {
+//       return res.status(400).json({ message: 'Invalid family member data' });
+//     }
+//   } catch (error) {
+//     console.error('Error linking family member:', error);
+//     res.status(500).json({ success: false, message: 'An error occurred' });
+//   }
+// };
+
+
+
+
+  
+ 

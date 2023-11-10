@@ -3,6 +3,8 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
 import Landing from './pages/Landing';
+import LandingPage from './pages/landingPage';
+import PatientRegistrationForm from './pages/patient/signup';
 import DoctorRegistrationForm from './pages/doctor/doctorSignUp';
 import PatientHome from './pages/patient/patientHome';
 import PatientPrescriptions from './pages/patient/prescriptions';
@@ -16,7 +18,7 @@ import viewAll from './pages/patient/viewAll'
 import DoctorLogin from './pages/doctor/doctorLogin';
 import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
-import DrawerAppBar from './components/patientBar/patientBar';
+import contract from './pages/doctor/contract';import DrawerAppBar from './components/patientBar/patientBar';
 import SignUpPatient from './pages/patient/signingUp';
 import Log from './pages/login'
 import HomePage from './pages/patient/homePage';

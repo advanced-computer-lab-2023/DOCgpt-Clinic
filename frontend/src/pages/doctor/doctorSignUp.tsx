@@ -14,6 +14,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
+import UploadAndSubmitReqDocs from "../../components/uploadandSubmitReqDocs";
 
 import axios from "axios";
 
@@ -84,6 +85,10 @@ function SignUpDoctor() {
       // Handle errors, e.g., display an error message to the user.
     }
   };
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>): void {
+    throw new Error("Function not implemented.");
+}
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -211,6 +216,8 @@ function SignUpDoctor() {
              
 
                 </Grid>
+                <UploadAndSubmitReqDocs />
+
 
             {formErrors && (
               <Typography color="error" align="center">

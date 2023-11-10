@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.uploadAndSubmitReqDocs = exports.createfollowUp = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const multer_1 = __importDefault(require("multer"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -211,20 +211,62 @@ const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* (
     }
 });
 exports.addTimeSlots = addTimeSlots;
+const removeTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername;
+    const { dates } = req.body;
+    try {
+        // Find the doctor by username
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+        if (doctor) {
+            // Remove time slots from the existing array
+            doctor.timeslots = doctor.timeslots.filter((timeslot) => !dates.includes(timeslot.date));
+            // Save the updated doctor
+            const updatedDoctor = yield doctor.save();
+            res.status(200).json(updatedDoctor);
+        }
+        else {
+            res.status(404).json({ message: 'Doctor not found' });
+        }
+    }
+    catch (error) {
+        res.status(500).json({ message: 'An error occurred', error });
+    }
+});
+exports.removeTimeSlots = removeTimeSlots;
 const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.body.doctor;
-    const patientUsername = req.body.patient;
+    const doctorUsername = req.query.doctor;
+    const patientUsername = req.query.patient;
     const date = req.body.date;
     const status = req.body.status;
-    const type = req.body.type;
-    const appoinment = yield appointmentModel_1.default.create({
-        status: status,
-        doctor: doctorUsername,
-        patient: patientUsername,
-        date: date,
-        type: type
-    });
-    res.status(201).json(appoinment);
+    const type = 'Follow up';
+    try {
+        // Find the doctor by ID
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+        if (doctor) {
+            // Remove the time slot from the doctor's timeslots
+            console.log('Before removing timeslot:', doctor.timeslots);
+            const newDate = new Date(date);
+            doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
+            console.log('After removing timeslot:', doctor.timeslots);
+            // Save the updated doctor
+            yield doctor.save();
+            // Create the appointment
+            const appoinment = yield appointmentModel_1.default.create({
+                status: status,
+                doctor: doctorUsername,
+                patient: patientUsername,
+                date: date,
+                type: type
+            });
+            res.status(201).json(appoinment);
+        }
+        else {
+            return res.status(404).json({ message: 'Doctor not found' });
+        }
+    }
+    catch (error) {
+        return res.status(500).json({ message: 'An error occurred', error });
+    }
 });
 exports.createfollowUp = createfollowUp;
 const storage = multer_1.default.diskStorage({
@@ -236,18 +278,6 @@ const storage = multer_1.default.diskStorage({
     },
 });
 const upload = (0, multer_1.default)({ storage });
-const uploadAndSubmitReqDocs = (req, res) => {
-    upload.array('documents', 3)(req, res, (err) => {
-        if (err) {
-            return res.status(500).json({ error: 'File upload failed.' });
-        }
-        const uploadedFiles = req.files;
-        console.log('Uploaded Files:', uploadedFiles);
-        // Handle saving file information and associating it with the doctor's registration here
-        res.json({ message: 'Documents uploaded and submitted successfully.' });
-    });
-};
-exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;
 // HEALTH RECORDS
 //VIEW ALL MY PATIENTS HEALTH RECORDS
 const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -515,3 +545,25 @@ const getPendingDoctor = (req, res) => __awaiter(void 0, void 0, void 0, functio
     res.status(200).json(doctor);
 });
 exports.getPendingDoctor = getPendingDoctor;
+const uploadAndSubmitReqDocs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const uploadedFiles = req.files;
+    try {
+        const fileInformation = [];
+        // Loop through the uploaded files and save their information
+        for (const file of uploadedFiles) {
+            // Here, you can save the file information in the pharmacist model or any other place as needed
+            const fileData = {
+                filename: file.originalname,
+                path: file.path, // This is the local path where the file is saved
+            };
+            fileInformation.push(fileData);
+        }
+        // You can save the file information wherever needed in your application
+        res.json({ message: 'Documents uploaded successfully.' });
+    }
+    catch (error) {
+        console.error('Error handling file upload:', error);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;
