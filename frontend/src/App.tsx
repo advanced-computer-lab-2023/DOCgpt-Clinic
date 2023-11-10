@@ -18,7 +18,7 @@ import viewAll from './pages/patient/viewAll'
 import DoctorLogin from './pages/doctor/doctorLogin';
 import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
-
+import HealthPackages from './pages/patient/healthPackages';
 
 // import AdminRegistrationForm from './AdminRegistrationForm';
 function App() {
@@ -53,7 +53,8 @@ function App() {
         <Route path="/admin" Component={Admin} />
         <Route path="/doctor/appointments" Component={MyAppointments} />
         <Route path="/doctor/patients" Component={MyPatients} />
-        
+        <Route path="/patient/healthPackageView" Component={HealthPackages} />
+
       </Routes>
     </Router>
   );
