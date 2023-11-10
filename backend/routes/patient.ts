@@ -18,9 +18,11 @@ import {
   viewMyHealthRecord,
   logout,
   changePassword,
+  linkFamilyMember,
   viewDoctorAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
+import { verifyTokenPatient } from '../controllers/patientController';
 
 import { viewPastAppointments } from "../controllers/patientController";
 
@@ -30,17 +32,17 @@ const router: Router = express.Router();
 // GET all patients
 router.get('/getP', getPatients);
 
-router.put('/addfammember', addFamilyMember);
+router.put('/addfammember',verifyTokenPatient , addFamilyMember);
 
 
-
+ router.get("verifyToken",verifyTokenPatient)
 // GET a single patient
 // router.get('/:id', getPatient);
 
 
 router.post('/postP', createPatient);
 
-router.get('/viewFam', viewFamilyMembers);
+router.get('/viewFam',verifyTokenPatient, viewFamilyMembers);
 
 router.get('/getPatientprescriptions',getPrescriptionsByUser);
 
@@ -75,7 +77,6 @@ router.get('/viewHealthPackage', viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
 router.delete('/logoutPatient',logout)
 router.post('/changePassPatient',changePassword)
-router.get('/viewDoctorAppointments', viewDoctorAppointments);
 
 export default router;
 

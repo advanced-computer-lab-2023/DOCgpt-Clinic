@@ -44,7 +44,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
         required: true,
     },
     mobilenumber: {
-        type: Number,
+        type: String,
         required: true,
     },
     emergencyContact: {
@@ -79,7 +79,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
             },
             nationalId: {
                 type: String,
-                required: true,
+                // required: true,
             },
             age: {
                 type: Number,
@@ -125,5 +125,4 @@ function validatePassword(password) {
     return password.length >= 8; // Minimum password length of 8 characters
 }
 const patientModel = mongoose_1.default.model('patient', exports.patientSchema);
-;
 exports.default = patientModel;

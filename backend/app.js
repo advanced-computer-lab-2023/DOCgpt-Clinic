@@ -69,6 +69,7 @@ mongoose_1.default.connect(process.env.MONGO_URI)
     console.log(err);
 });
 const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("Received login request:", req.body);
     try {
         const { username, password } = req.body;
         if (!username || !password) {
@@ -103,7 +104,9 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const token = (0, patientController_1.createToken)(user.id);
         const tokenn = yield tokenModel_1.default.create({ token, username, role: role });
-        res.status(200).json({ user, token });
+        console.log("Received login succes");
+        req.app.locals.username = username;
+        res.status(200).json({ user, token, role });
     }
     catch (error) {
         const err = error;
@@ -111,4 +114,4 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.login = login;
-app.get('/api/login', exports.login);
+app.post('/api/login', exports.login);
