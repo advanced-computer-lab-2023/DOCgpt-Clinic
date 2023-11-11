@@ -18,6 +18,8 @@ import viewAll from './pages/patient/viewAll'
 import DoctorLogin from './pages/doctor/doctorLogin';
 import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
+import SignupDoctor from './pages/doctor/signupDoctor';
+import ViewWalletAmountPage from './pages/patient/viewWalletAmountPage';
 
 
 // import AdminRegistrationForm from './AdminRegistrationForm';
@@ -47,12 +49,13 @@ function App() {
         <Route path="/doctor/login" Component={DoctorLogin} />
         <Route path="/patient/prescriptions/:username" element={<PatientPrescriptions />} />
         <Route path="/patient/home/:username" element={<PatientHome />} />
-        <Route path="/patient/home/:username" element={<PatientHome />} />
+        <Route path="/patient/walletAmount/:username" element={<ViewWalletAmountPage />} />
         <Route path="/patient/addFam/:username" element={<AddFamilyMember />} />
         <Route path="/patient/ViewFamilyMembers/:username" element={<ViewFamilyMembers />} />
         <Route path="/admin" Component={Admin} />
         <Route path="/doctor/appointments" Component={MyAppointments} />
         <Route path="/doctor/patients" Component={MyPatients} />
+        <Route path="/signup" element={<SignupDoctor />} />
         
       </Routes>
     </Router>
