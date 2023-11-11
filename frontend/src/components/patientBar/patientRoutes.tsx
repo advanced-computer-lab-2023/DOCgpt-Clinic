@@ -1,6 +1,8 @@
 import { ReactNode } from "react";
 import HealingIcon from "@mui/icons-material/Healing";
 import { Typography } from "@mui/material";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+
 
 
 export type RouteType = {
@@ -47,10 +49,7 @@ const appRoutes: RouteType[] = [
         path: "/patient/viewFamilyMembers",
         state: "Family members",
       },
-      {
-        path: "/patient/home",
-        state: "make app",
-      },
+     
     ],
   },
 ];

@@ -65,26 +65,26 @@ function SignUpPatient() {
     setFormErrors("Please fill out mail");
     return;}
     if( !data.get("password") ){
-    setFormErrors("Please fill out pass");
+    setFormErrors("Please fill out password");
     return;}
     if( !data.get("dateofbirth")){
-    setFormErrors("Please fill out dob");
+    setFormErrors("Please fill out birth date");
     return;}
     if( !data.get("mobileNumber")){
-    setFormErrors("Please fill out no");
+    setFormErrors("Please fill out mobileNumber");
     return;
     }
     if(  !data.get("emergencyContactFullName")){
-    setFormErrors("Please fill out Ename");
+    setFormErrors("Please fill out Emergency contact name");
     return;
     }
     if(  !data.get("emergencyContactMobileNumber")){
-    setFormErrors("Please fill out Eno");
+    setFormErrors("Please fill out emergency contact number");
     return;
 }
 
     if( !data.get("emergencyContactRelation")){
-    setFormErrors("Please fill out d re");
+    setFormErrors("Please fill out emergency contact number");
     return;
     }
 

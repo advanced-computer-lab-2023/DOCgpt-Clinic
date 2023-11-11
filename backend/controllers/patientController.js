@@ -133,7 +133,7 @@ const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function
             age: familyMemberData.age,
             gender: familyMemberData.gender,
             relationToPatient: familyMemberData.relationToPatient,
-            healthPackageSubscription: familyMemberData.healthPackageSubscription
+            healthPackageSubscription: []
         });
         yield patient.save();
         return res.status(201).json({ message: 'Family member added successfully', patient });
