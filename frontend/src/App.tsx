@@ -13,7 +13,6 @@ import Admin from './pages/admin/admin';
 //import timeslottt from './pages/doctor/timeslot';
 import PatientPage from './pages/patient/Patient';
 import DoctorMain from './pages/doctor/doctorMain';
-import papp from './pages/patient/papp'
 import DoctorLogin from './pages/doctor/doctorLogin';
 import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
@@ -54,7 +53,6 @@ function App() {
         <Route path="/register/patient" Component={SignUpPatient} />
          <Route path="/register/doctor" Component={DoctorRegistrationForm } />
         // <Route path="/patient/main" Component={PatientPage} />
-        // <Route path="/patient/viewApp/:username" Component={papp} />
         // <Route path="/doctor/main" Component={DoctorMain} />
         // <Route path="/doctor/login" Component={DoctorLogin} />
         // <Route path="/patient/prescriptions/:username" element={<PatientPrescriptions />} />
