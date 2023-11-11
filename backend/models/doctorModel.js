@@ -69,7 +69,7 @@ const doctorSchema = new mongoose_1.default.Schema({
         type: Number,
         required: true,
         default: 0,
-    },
+    }
 });
 const Doctor = mongoose_1.default.model('Doctor', doctorSchema);
 exports.default = Doctor;

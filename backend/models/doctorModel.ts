@@ -70,7 +70,7 @@ walletBalance: {
   required: true,
   default: 0,
   }
-,
+
 });
 
 

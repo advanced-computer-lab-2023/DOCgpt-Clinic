@@ -905,7 +905,40 @@ else{
 // };
 
 
+export const viewWalletAmount = async (req: Request, res: Response) => {
+  //const patientUsername = req.query.patientUsername as string;
 
+  try {
+    
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]
+    const tokenDB = await tokenModel.findOne({ token:token });
 
+    var username;
+    if(tokenDB){
+      username=tokenDB.username;
+    }
+    else{
+      return res.status(404).json({ error: 'username not found' });
+    }
+
+    const patient = await patientModel.findOne({ username }).exec();
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    const walletAmount = patient.walletBalance;
+
+    if (walletAmount === undefined) {
+      return res.status(500).json({ error: 'Wallet balance not available.' });
+    }
+
+    res.json({ walletAmount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+}; 
   
  

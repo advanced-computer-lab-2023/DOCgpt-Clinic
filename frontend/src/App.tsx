@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
@@ -19,6 +18,8 @@ import viewAll from './pages/patient/viewAll'
 import DoctorLogin from './pages/doctor/doctorLogin';
 import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
+import SignupDoctor from './pages/doctor/signupDoctor';
+import ViewWalletAmountPage from './pages/patient/viewWalletAmountPage';
 import HealthPackages from './pages/patient/healthPackages';import contract from './pages/doctor/contract';import DrawerAppBar from './components/patientBar/patientBar';
 import SignUpPatient from './pages/patient/signingUp';
 import Log from './pages/login'
@@ -68,6 +69,8 @@ function App() {
         // <Route path="/patient/ViewFamilyMembers" element={<ViewFamilyMembers />} />
         // <Route path="/admin" Component={Admin} />
         // <Route path="/doctor/appointments" Component={MyAppointments} />
+        <Route path="/patient/walletAmount/:username" element={<ViewWalletAmountPage />} />
+        <Route path="/doctor/signup" element={<SignupDoctor />} />
         // <Route path="/doctor/patients" Component={MyPatients} />
       
       </Routes>
@@ -78,3 +81,5 @@ function App() {
 }
 
 export default App;
+
+
