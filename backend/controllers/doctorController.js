@@ -12,8 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.uploadAndSubmitReqDocs = exports.createfollowUp = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
-const multer_1 = __importDefault(require("multer"));
+exports.viewWalletAmount = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -227,27 +226,6 @@ const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function*
     res.status(201).json(appoinment);
 });
 exports.createfollowUp = createfollowUp;
-const storage = multer_1.default.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + file.originalname);
-    },
-});
-const upload = (0, multer_1.default)({ storage });
-const uploadAndSubmitReqDocs = (req, res) => {
-    upload.array('documents', 3)(req, res, (err) => {
-        if (err) {
-            return res.status(500).json({ error: 'File upload failed.' });
-        }
-        const uploadedFiles = req.files;
-        console.log('Uploaded Files:', uploadedFiles);
-        // Handle saving file information and associating it with the doctor's registration here
-        res.json({ message: 'Documents uploaded and submitted successfully.' });
-    });
-};
-exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;
 // HEALTH RECORDS
 //VIEW ALL MY PATIENTS HEALTH RECORDS
 const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -515,3 +493,41 @@ const getPendingDoctor = (req, res) => __awaiter(void 0, void 0, void 0, functio
     res.status(200).json(doctor);
 });
 exports.getPendingDoctor = getPendingDoctor;
+const uploadAndSubmitReqDocs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const uploadedFiles = req.files;
+    try {
+        const fileInformation = [];
+        // Loop through the uploaded files and save their information
+        for (const file of uploadedFiles) {
+            // Here, you can save the file information in the pharmacist model or any other place as needed
+            const fileData = {
+                filename: file.originalname,
+                path: file.path, // This is the local path where the file is saved
+            };
+            fileInformation.push(fileData);
+        }
+        // You can save the file information wherever needed in your application
+        res.json({ message: 'Documents uploaded successfully.' });
+    }
+    catch (error) {
+        console.error('Error handling file upload:', error);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;
+const viewWalletAmount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.query.doctorUsername;
+    try {
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+        if (!doctor) {
+            return res.status(404).json({ error: 'Doctor not found.' });
+        }
+        const walletAmount = doctor.walletBalance;
+        res.json({ walletAmount });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+exports.viewWalletAmount = viewWalletAmount;

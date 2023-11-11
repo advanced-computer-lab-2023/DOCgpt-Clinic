@@ -12,13 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
+exports.viewWalletAmount = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-// create a new workout
 const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log('Request reached controller');
     try {
@@ -539,3 +538,32 @@ const verifyTokenPatient = (req, res, next) => {
     }));
 };
 exports.verifyTokenPatient = verifyTokenPatient;
+const viewWalletAmount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //const patientUsername = req.query.patientUsername as string;
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: 'username not found' });
+        }
+        const patient = yield patientModel_2.default.findOne({ username }).exec();
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found.' });
+        }
+        const walletAmount = patient.walletBalance;
+        if (walletAmount === undefined) {
+            return res.status(500).json({ error: 'Wallet balance not available.' });
+        }
+        res.json({ walletAmount });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+exports.viewWalletAmount = viewWalletAmount;

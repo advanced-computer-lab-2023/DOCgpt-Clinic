@@ -17,7 +17,9 @@ import {
   getAppointmentByStatus,
   viewMyHealthRecord,
   logout,
-  changePassword
+  changePassword,
+  viewWalletAmount,
+  verifyTokenPatient
   //viewDoctorAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
@@ -75,6 +77,31 @@ router.get('/viewHealthPackage', viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
 router.delete('/logoutPatient',logout)
 router.post('/changePassPatient',changePassword)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Create a route for viewing wallet amount
+router.get('/viewWalletAmount',verifyTokenPatient, viewWalletAmount);
 
 export default router;
 

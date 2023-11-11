@@ -33,4 +33,6 @@ router.get('/viewHealthPackage', patientController_1.viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
 router.delete('/logoutPatient', patientController_1.logout);
 router.post('/changePassPatient', patientController_1.changePassword);
+// Create a route for viewing wallet amount
+router.get('/viewWalletAmount', patientController_1.verifyTokenPatient, patientController_1.viewWalletAmount);
 exports.default = router;

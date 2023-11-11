@@ -60,6 +60,24 @@ const doctorSchema: Schema = new mongoose.Schema({
 
 }
 ,
+
+
+
+
+
+
+documents: [
+  {
+    filename: String, // The name of the uploaded file
+    path: String,     // The local path where the file is saved
+  },
+],
+walletBalance: {
+  type: Number,
+  required: true,
+  default: 0,
+  }
+
 });
 
 
@@ -78,6 +96,16 @@ export interface IDoctor extends Document {
     date: Date;
   
   }>;
+
+
+
+
+
+  documents: Array<{
+    filename: string;
+    path: string;
+  }>;
+  walletBalance: number;
 }
 
 const Doctor: Model<IDoctor> = mongoose.model<IDoctor>('Doctor', doctorSchema);

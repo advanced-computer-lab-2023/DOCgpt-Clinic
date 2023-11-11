@@ -52,10 +52,27 @@ exports.patientSchema = new mongoose_1.default.Schema({
         mobileNumber: String,
         relation: String,
     },
-    healthPackageSubscription: {
-        type: String,
-        default: null, // You can set a default value, like null, to indicate no subscription initially
-    },
+    healthPackageSubscription: [
+        {
+            name: {
+                type: String,
+                required: true,
+            },
+            startdate: {
+                type: String,
+                required: false,
+            },
+            enddate: {
+                type: String,
+                required: false,
+            },
+            status: {
+                type: String,
+                enum: ['subscribed with renewal date', 'unsubscribed', 'cancelled with end date'],
+                required: true,
+            },
+        },
+    ],
     familyMembers: [{ name: {
                 type: String,
                 required: true,
@@ -77,10 +94,32 @@ exports.patientSchema = new mongoose_1.default.Schema({
                 enum: ['wife', 'husband', 'child'],
                 required: true,
             },
-            healthPackageSubscription: {
-                type: String,
-                default: null, // You can set a default value, like null, to indicate no subscription initially
-            } }]
+            healthPackageSubscription: [
+                {
+                    name: {
+                        type: String,
+                        required: true,
+                    },
+                    startdate: {
+                        type: String,
+                        required: false,
+                    },
+                    enddate: {
+                        type: String,
+                        required: false,
+                    },
+                    status: {
+                        type: String,
+                        enum: ['subscribed with renewal date', 'unsubscribed', 'cancelled with end date'],
+                        required: true,
+                    },
+                },
+            ] }],
+    walletBalance: {
+        type: Number,
+        required: true,
+        default: 0,
+    }
 });
 function validatePassword(password) {
     return password.length >= 8; // Minimum password length of 8 characters

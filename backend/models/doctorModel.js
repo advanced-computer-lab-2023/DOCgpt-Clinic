@@ -59,6 +59,17 @@ const doctorSchema = new mongoose_1.default.Schema({
         ],
         default: 'pending'
     },
+    documents: [
+        {
+            filename: String,
+            path: String, // The local path where the file is saved
+        },
+    ],
+    walletBalance: {
+        type: Number,
+        required: true,
+        default: 0,
+    }
 });
 const Doctor = mongoose_1.default.model('Doctor', doctorSchema);
 exports.default = Doctor;

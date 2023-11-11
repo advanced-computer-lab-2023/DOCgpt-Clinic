@@ -237,30 +237,6 @@ export const createfollowUp = async (req: Request, res: Response) => {
 
 
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + file.originalname);
-    },
-  });
-  const upload = multer({ storage });
-  
-  export const uploadAndSubmitReqDocs = (req: Request, res: Response) => {
-    upload.array('documents', 3)(req, res, (err) => {
-      if (err) {
-        return res.status(500).json({ error: 'File upload failed.' });
-      }
-      const uploadedFiles = req.files as Express.Multer.File[];
-      console.log('Uploaded Files:', uploadedFiles);
-  
-      // Handle saving file information and associating it with the doctor's registration here
-  
-      res.json({ message: 'Documents uploaded and submitted successfully.' });
-    });
-  };
-
 
 // HEALTH RECORDS
 
@@ -567,4 +543,112 @@ try{
     const doctor = await DoctorModel.find({status: 'pending'}).exec();
     console.log(doctor)
     res.status(200).json(doctor);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+export const uploadAndSubmitReqDocs = async (req: Request, res: Response) => {
+  const uploadedFiles = req.files as Express.Multer.File[];
+
+  try {
+    const fileInformation = [];
+
+    // Loop through the uploaded files and save their information
+    for (const file of uploadedFiles) {
+      // Here, you can save the file information in the pharmacist model or any other place as needed
+      const fileData = {
+        filename: file.originalname,
+        path: file.path, // This is the local path where the file is saved
+      };
+
+      fileInformation.push(fileData);
+    }
+
+    // You can save the file information wherever needed in your application
+
+    res.json({ message: 'Documents uploaded successfully.' });
+  } catch (error) {
+    console.error('Error handling file upload:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+
+export const viewWalletAmount = async (req: Request, res: Response) => {
+  const doctorUsername = req.query.doctorUsername as string;
+
+  try {
+    const doctor = await DoctorModel.findOne({ username: doctorUsername }).exec();
+
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found.' });
+    }
+
+    const walletAmount = doctor.walletBalance;
+
+    res.json({ walletAmount });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
 };
