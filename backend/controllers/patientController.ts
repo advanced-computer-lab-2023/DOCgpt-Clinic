@@ -6,6 +6,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
+
 // create a new workout
 export const createPatient = async (req: Request, res: Response) => {
     console.log('Request reached controller')
@@ -120,10 +121,16 @@ export const getPrescriptionsByUser = async (req: Request, res: Response) => {
 
 export const addFamilyMember = async (req: Request, res: Response) => {
   try {
-    const { username } = req.query;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token:token }); 
     
-    if (!username) {
-      return res.status(404).json({ error: 'No such patient' });
+    var username;
+    if(tokenDB){
+    username=tokenDB.username;
+    }
+    else {
+      return res.status(404).json({ error: 'username not found' });
     }
 
     // Assuming you have a route parameter for the patient's ID
@@ -161,10 +168,17 @@ export const addFamilyMember = async (req: Request, res: Response) => {
 
 export const viewFamilyMembers = async (req: Request, res: Response) => {
   try {
-    const { username } = req.query;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+   
+    const tokenDB = await tokenModel.findOne({ token:token }); 
     
-    if (!username) {
-      return res.status(404).json({ error: 'user name is required' });
+    var username;
+    if(tokenDB){
+    username=tokenDB.username;
+    }
+    else {
+      return res.status(404).json({ error: 'username not found' });
     }
     
     // Find the patient by ID

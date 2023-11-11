@@ -2,8 +2,21 @@ import React from 'react';
 import { AppBar, Button, Container, Toolbar, Typography, Paper, Grid, Link, ButtonGroup, Divider } from '@mui/material';
 import { AccountCircle, ExitToApp, Info, ContactSupport } from '@mui/icons-material';
 import theme from '../theme';
+import { useNavigate } from 'react-router-dom';
 
 function Landing() {
+
+    const navigate = useNavigate(); 
+    const handleSignUp = () => {
+        navigate('/register/patient'); // Navigate to the '/signup' page
+    };
+
+    const handleJoinPlatform = () => {
+        navigate('/register/doctor'); // Replace with the path of your join platform page
+      };
+    const handleLogin = () => {
+        navigate('/login'); // Navigate to the '/login' page
+    };
     const scrollToSection = (sectionId: string) => {
         const section = document.getElementById(sectionId);
         if (section) {
@@ -20,10 +33,10 @@ return (
             <Button style={{color: theme.palette.customGrey.light}} onClick={() => scrollToSection('contactUsSection')}>Contact Info</Button>
         </ButtonGroup>
         <ButtonGroup variant="contained">
-        <Button startIcon={<AccountCircle />}>
+        <Button startIcon={<AccountCircle />} onClick={handleSignUp}>
         Sign Up
         </Button>
-        <Button startIcon={<ExitToApp />}>
+        <Button startIcon={<ExitToApp />} onClick={handleLogin}>
         Log In
         </Button>
         </ButtonGroup>
@@ -68,6 +81,11 @@ return (
                         Our mission
                     </Typography>
                     </Grid>
+                    <Grid item xs={12} style={{ display: 'flex', justifyContent: 'center' }}>
+          <Button variant="contained" color="primary" size="large" onClick={handleJoinPlatform}>
+            Apply to Join the Platform
+          </Button>
+        </Grid>
                     <Grid item xs={6} style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     <Divider orientation="vertical" variant="middle" flexItem />
                     <Typography variant="h6" style={{ padding: '20px',  color: theme.palette.customGrey.dark }}>

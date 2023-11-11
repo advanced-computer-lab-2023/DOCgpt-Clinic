@@ -6,14 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const patientController_1 = require("../controllers/patientController");
 const patientController_2 = require("../controllers/patientController");
+const patientController_3 = require("../controllers/patientController");
 const router = express_1.default.Router();
 // GET all patients
 router.get('/getP', patientController_1.getPatients);
-router.put('/addfammember', patientController_1.addFamilyMember);
+router.put('/addfammember', patientController_2.verifyTokenPatient, patientController_1.addFamilyMember);
+router.get("verifyToken", patientController_2.verifyTokenPatient);
 // GET a single patient
 // router.get('/:id', getPatient);
 router.post('/postP', patientController_1.createPatient);
-router.get('/viewFam', patientController_1.viewFamilyMembers);
+router.get('/viewFam', patientController_2.verifyTokenPatient, patientController_1.viewFamilyMembers);
 router.get('/getPatientprescriptions', patientController_1.getPrescriptionsByUser);
 router.get('/doctors', patientController_1.getDoctor);
 router.get('/doctors/search', patientController_1.searchDoctors);
@@ -22,7 +24,7 @@ router.get('/doctors/view', patientController_1.getDoctorDetails);
 router.get('/doctors/select', patientController_1.selectDoctors);
 //APPOINTMENTS 
 router.get('/getMyAppointments', patientController_1.getPatientAppointments);
-router.get("/pastApp", patientController_2.viewPastAppointments);
+router.get("/pastApp", patientController_3.viewPastAppointments);
 router.get("/upcomingApp", patientController_1.viewUpcomingAppointments);
 router.get("/getAppByDate", patientController_1.getAppointmentByDate);
 router.get("/getAppByStatus", patientController_1.getAppointmentByStatus);

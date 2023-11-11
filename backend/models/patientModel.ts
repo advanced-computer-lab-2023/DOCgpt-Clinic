@@ -80,7 +80,7 @@ export const patientSchema = new mongoose.Schema({
   },
   nationalId: {
     type: String,
-    required: true,
+    // required: true,
   },
   age: {
     type: Number,

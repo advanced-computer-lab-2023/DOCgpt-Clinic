@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const doctorController_1 = require("../controllers/doctorController");
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
+const fs_1 = __importDefault(require("fs"));
 const router = express_1.default.Router();
 router.get("/", doctorController_1.getDoctors);
 router.get("/getDoctor", doctorController_1.getDoctor);
@@ -33,9 +34,22 @@ router.post("/followup", doctorController_1.createfollowUp);
 router.patch("/addtimeslot", doctorController_1.addTimeSlots);
 router.patch("/removetimeslot", doctorController_1.removeTimeSlots);
 // Set up Multer for file uploads
+// Create a route for uploading and submitting required documents
+// router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
+router.delete('/logoutDoctor', doctorController_1.logout);
+router.post('/changePassDoc', doctorController_1.changePassword);
+//requests approval 
+router.get("/pendingDoctors", doctorController_1.getPendingDoctor);
+router.patch("/acceptRequest", doctorController_1.acceptDoctorRequest);
+router.patch("/rejectRequest", doctorController_1.rejecttDoctorRequest);
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
+        const uploadFolder = path_1.default.join(__dirname, '../uploads'); // The folder where files will be saved (inside your project)
+        // Check if the 'uploads' folder exists, and create it if not
+        if (!fs_1.default.existsSync(uploadFolder)) {
+            fs_1.default.mkdirSync(uploadFolder);
+        }
+        cb(null, uploadFolder);
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path_1.default.extname(file.originalname)); // Rename file with a timestamp
@@ -44,10 +58,4 @@ const storage = multer_1.default.diskStorage({
 const upload = (0, multer_1.default)({ storage });
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorController_1.uploadAndSubmitReqDocs);
-router.delete('/logoutDoctor', doctorController_1.logout);
-router.post('/changePassDoc', doctorController_1.changePassword);
-//requests approval 
-router.get("/pendingDoctors", doctorController_1.getPendingDoctor);
-router.patch("/acceptRequest", doctorController_1.acceptDoctorRequest);
-router.patch("/rejectRequest", doctorController_1.rejecttDoctorRequest);
 exports.default = router;
