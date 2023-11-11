@@ -27,7 +27,7 @@ import HomePage from './pages/patient/homePage';
 import DoctorHomePage from './pages/doctor/homePage';
 import AdminHomePage from './pages/admin/homePage';
 import NavBar from './components/navBar';
-
+import LinkFamilyMember from './components/linkfammem';
 //import DoctorAvailability from './components/DoctorAvailability';
 function App() {
   useEffect(() => {
@@ -62,6 +62,7 @@ function App() {
         // <Route path="/doctor/login" Component={DoctorLogin} />
         // <Route path="/patient/prescriptions/:username" element={<PatientPrescriptions />} />
          <Route path="/patient/home" element={<HomePage/>} />
+         <Route path ="/patient/link" element={<LinkFamilyMember/>}/>
          <Route path="/doctor/home" element={<DoctorHomePage/>} />
          <Route path="/admin/home" element={<AdminHomePage/>} />
         {/* //<Route path="/doctor/timeslot" Component={timeslottt}/> */}

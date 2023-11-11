@@ -51,6 +51,10 @@ const appRoutes: RouteType[] = [
         path: "/patient/home",
         state: "make app",
       },
+      {
+        path:"/patient/link",
+        state:"link family member",
+      }
     ],
   },
   {

@@ -1,6 +1,7 @@
 import { FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import theme from '../theme';
+import DrawerAppBar from './patientBar/patientBar';
 
 interface LinkFamilyMemberProps {
   // Add any additional props as needed
@@ -54,6 +55,8 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
   };
 
   return (
+    <>
+    <DrawerAppBar/>
     <Paper elevation={3} style={{ padding: '20px', width: '400px', margin: 'auto' }}>
        <Typography variant="h5">Link Family Member</Typography>
       <form>
@@ -65,7 +68,7 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
           required
           fullWidth
           margin="normal"
-        />
+        /> 
 
 <FormControl fullWidth margin="normal">
 <InputLabel id="familyMemberType">select</InputLabel>
@@ -109,6 +112,7 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>} 
       </Paper>
+      </>
   );
 };
 
