@@ -194,7 +194,10 @@ export const selectPatient = async (req: Request, res: Response) => {
 export const addTimeSlots = async (req: Request, res: Response) => {
     const doctorUsername = req.query.doctorUsername;
     const { dates } = req.body;
-
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]
+    const tokenDB = await tokenModel.findOne({ token }); 
+    const username=tokenDB?.username;
     try {
         // Find the doctor by username
         const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();

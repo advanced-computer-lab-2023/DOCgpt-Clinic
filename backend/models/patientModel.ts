@@ -42,7 +42,7 @@ export const patientSchema = new mongoose.Schema({
     required: true,
   },
   mobilenumber: {
-    type: Number,
+    type: String,
     required: true,
   },
   emergencyContact: {

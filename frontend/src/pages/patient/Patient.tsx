@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import ListOfDoctors from '../../components/listOfDoctors';
 import { SearchBar } from '../../components/SearchBarDoc';
 import FilterDoctors from '../../components/FilterDoctors';
-
+import LinkFamilyMember from '../../components/linkfammem';
 //import  DoctorFiltered  from '../components/DoctorFiltered';
 
 
@@ -23,7 +23,7 @@ const PatientPage: React.FC = () => {
       {showPatients&& <ListOfDoctors /> }{" "}
       <SearchBar />
       <FilterDoctors />
-      
+      <LinkFamilyMember/>
     </div>
   );
 };

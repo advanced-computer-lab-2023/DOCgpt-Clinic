@@ -1,253 +1,272 @@
-import React, { useState, CSSProperties } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Avatar, Button, Grid, Paper, TextField, Typography } from "@mui/material";
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import * as React from "react";
+import { useNavigate } from "react-router-dom";
 
-// Define the Patient interface to match the Mongoose schema
-interface Patient {
-  username: string;
-  name: string;
-  email: string;
-  password: string;
-  dateofbirth: string;
-  mobilenumber: string;
-  emergencyContact: {
-    fullName: string;
-    mobileNumber: string;
-    relation: string;
-  };
-  familyMembers: Array<{
-    name: string;
-    nationalId: string;
-    age: string;
-    gender: string;
-    relationToPatient: string;
-  }>;
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import CssBaseline from "@mui/material/CssBaseline";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+
+import axios from "axios";
+
+function Copyright(props: any) {
+  return (
+    <Typography
+      variant="body2"
+      color="text.secondary"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit" href="https://mui.com/">
+        el72ani
+      </Link>{" "}
+      {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
 }
 
-const Signup: React.FC = () => {
+// TODO remove, this demo shouldn't need to reset the theme.
+const defaultTheme = createTheme();
+
+function SignUpPatient() {
   const navigate = useNavigate();
-  const [patient, setPatient] = useState<Patient>({
-    username: '',
-    name: '',
-    email: '',
-    password: '',
-    dateofbirth: '',
-    mobilenumber: '',
-    emergencyContact: {
-      fullName: '',
-      mobileNumber: '',
-      relation: '',
-    },
-    familyMembers: [],
-  });
+  const [formErrors, setFormErrors] = React.useState<string | null>(null);
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    // if (
+    //   !data.get("username") ||
+    //   !data.get("name") ||
+    //   !data.get("email") ||
+    //   !data.get("password") ||
+    //   !data.get("dateofbirth") ||
+    //   !data.get("moblieNumber")||
+    //   !data.get("emergencyContactFullName")||
+    //   !data.get("emergencyContactMobileNumber")||
+    //   !data.get("emergencyContactRelation")
+    // )
+    if(!data.get("username") ){
+    setFormErrors("Please fill out username");
+    return;}
+    if( !data.get("name") ){
+    setFormErrors("Please fill out name");
+    return;}
+    if( !data.get("email")  ){
+    setFormErrors("Please fill out mail");
+    return;}
+    if( !data.get("password") ){
+    setFormErrors("Please fill out password");
+    return;}
+    if( !data.get("dateofbirth")){
+    setFormErrors("Please fill out birth date");
+    return;}
+    if( !data.get("mobileNumber")){
+    setFormErrors("Please fill out mobileNumber");
+    return;
+    }
+    if(  !data.get("emergencyContactFullName")){
+    setFormErrors("Please fill out Emergency contact name");
+    return;
+    }
+    if(  !data.get("emergencyContactMobileNumber")){
+    setFormErrors("Please fill out emergency contact number");
+    return;
+}
 
-  const [formErrors, setFormErrors] = useState<Record<string, string>>({});
-
-  const handleInputChange = (field: string, value: string) => {
-    setPatient((prevPatient) => ({
-      ...prevPatient,
-      [field]: value,
-    }));
-  };
-
-  const handleEmergencyContactChange = (field: string, value: string) => {
-    setPatient((prevPatient) => ({
-      ...prevPatient,
-      emergencyContact: {
-        ...prevPatient.emergencyContact,
-        [field]: value,
-      },
-    }));
-  };
-
-  const validateForm = () => {
-    const errors: Record<string, string> = {};
-    if (!patient.username) {
-      errors.username = 'Username is required';
-    }
-    if (!patient.name) {
-      errors.name = 'Name is required';
-    }
-    if (!patient.email) {
-      errors.email = 'Email is required';
-    }
-    if (!patient.password) {
-      errors.password = 'Password is required';
-    }
-    if (!patient.dateofbirth) {
-      errors.dateofbirth = 'Date of birth is required';
-    }
-    if (!patient.mobilenumber) {
-      errors.mobilenumber = 'Mobile number is required';
-    }
-    if (!patient.emergencyContact.fullName) {
-      errors.emergencyContactFullName = 'Full name of the emergency contact is required';
-    }
-    if (!patient.emergencyContact.mobileNumber) {
-      errors.emergencyContactMobileNumber = 'Mobile number of the emergency contact is required';
-    }
-    if (!patient.emergencyContact.relation) {
-      errors.emergencyContactRelation = 'Relation of the emergency contact is required';
+    if( !data.get("emergencyContactRelation")){
+    setFormErrors("Please fill out emergency contact number");
+    return;
     }
 
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+    
+    try {
+      setFormErrors(null);
+      const response = await axios.post("/routes/patient/postP", {
+        // Adjust the field names according to your form
+        username: data.get("username"),
+        name: data.get("name"),
+        email: data.get("email"),
+        password: data.get("password"),
+        dateofbirth: data.get("dateofbirth"),
+        mobilenumber:data.get("mobileNumber"),
+        emergencyContact: {
+            fullName:data.get("emergencyContactFullName"),
+            mobileNumber: data.get("emergencyContactMobileNumber"),
+            relation: data.get("emergencyContactRelation"),
+          }
+      });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (validateForm()) {
-      // Send the patient data to the server for signup
-      fetch('/routes/postP', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(patient),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          console.log(data);
-          navigate(`/patient/home/${data.username}`);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+      // Handle the response from the back-end as needed, e.g., show a success message or redirect the user.
+      console.log("patient registered successfully :", response);
+      navigate("/");
+      // You can also redirect the user to the login page after a successful sign-up
+      // history.push("/login"); // You need to import useHistory from 'react-router-dom'
+    } catch (error) {
+      console.error("Request failed:", error);
+      // Handle errors, e.g., display an error message to the user.
     }
   };
 
   return (
-    <Grid container justifyContent="center" alignItems="center" style={styles.container}>
-      <Paper elevation={20} style={styles.paper}>
-        <Grid container direction="column" alignItems="center" spacing={2}>
-          <Grid item>
-            <Avatar style={styles.avatar}>
-              <AddCircleOutlineIcon />
-            </Avatar>
-          </Grid>
-          <Grid item>
-            <Typography variant="h5" style={styles.header}>Patient Signup</Typography>
-          </Grid>
-          <Grid item>
-            <Typography variant="caption">Please fill this form to create an account!</Typography>
-          </Grid>
-        </Grid>
-        <form onSubmit={handleSubmit}>
-          <TextField
-            fullWidth
-            label="Username"
-            placeholder="Enter your Username"
-            value={patient.username}
-            onChange={(e) => handleInputChange('username', e.target.value)}
-          />
-          {formErrors.username && <div style={{ color: 'red' }}>{formErrors.username}</div>}
+    <ThemeProvider theme={defaultTheme}>
+      <Container component="main" maxWidth="xs">
+        <CssBaseline />
+        <Box
+          sx={{
+            marginTop: 8,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Avatar sx={{ m: 1, bgcolor: "black" }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography component="h1" variant="h5">
+               Sign up
+         </Typography>
+          <Box
+            component="form"
+            noValidate
+            onSubmit={handleSubmit}
+            sx={{ mt: 3 }}
+          >
+            <Grid container spacing={2}>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  autoComplete="given-name"
+                  name="username"
+                  required
+                  fullWidth
+                  id="username"
+                  label="Username"
+                  autoFocus
+                />
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <TextField
+                  required
+                  fullWidth
+                  id="name"
+                  label="Name"
+                  name="name"
+                  autoComplete="name"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="new-password"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="dateofbirth"
+                  label="Date of birth"
+                  type="dateofbirth"
+                  id="dateofbirth"
+                  autoComplete="dateofbirth"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  name="mobileNumber"
+                  label="mobileNumber"
+                  type="text" 
+                  id="mobileNumber"
+                  autoComplete="mobileNumber"
+                />
+              </Grid>
 
-          <TextField
-            fullWidth
-            label="Name"
-            placeholder="Enter your Name"
-            value={patient.name}
-            onChange={(e) => handleInputChange('name', e.target.value)}
-          />
-          {formErrors.name && <div style={{ color: 'red' }}>{formErrors.name}</div>}
+              <Grid item xs={12}>
+                <TextField
+                required
+                fullWidth
+                name="emergencyContactFullName"
+                label="Emergency Contact Full Name"
+                type="emergencyContactFullName"
+                id="emergencyContactFullName"
+            />
+                </Grid>
 
-          <TextField
-            fullWidth
-            label="Password"
-            placeholder="Enter your password"
-            value={patient.password}
-            onChange={(e) => handleInputChange('password', e.target.value)}
-          />
-          {formErrors.password && <div style={{ color: 'red' }}>{formErrors.password}</div>}
+                <Grid item xs={12}>
+                <TextField
+                    required
+                    fullWidth
+                    name="emergencyContactMobileNumber"
+                    label="Emergency Contact Mobile Number"
+                    type="emergencyContactMobileNumber"  // Keep it as "text" since it's a string
+                    id="emergencyContactMobileNumber"
+                />
+                </Grid>
 
-          <TextField
-            fullWidth
-            label="Email"
-            placeholder="Enter your email"
-            value={patient.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-          />
-          {formErrors.email && <div style={{ color: 'red' }}>{formErrors.email}</div>}
+                <Grid item xs={12}>
+                <TextField
+                    required
+                    fullWidth
+                    name="emergencyContactRelation"
+                    label="Emergency Contact Relation"
+                    type="emergencyContactRelation"
+                    id="emergencyContactRelation"
+                />
+                </Grid>
 
-          <TextField
-            fullWidth
-            
-            type="date"
-            value={patient.dateofbirth}
-            onChange={(e) => handleInputChange('dateofbirth', e.target.value)}
-          />
-          {formErrors.dateofbirth && <div style={{ color: 'red' }}>{formErrors.dateofbirth}</div>}
+                </Grid>
 
-          <TextField
-            fullWidth
-            label="Mobile Number"
-            type="number"
-            value={patient.mobilenumber}
-            onChange={(e) => handleInputChange('mobilenumber', e.target.value)}
-          />
-          {formErrors.mobilenumber && <div style={{ color: 'red' }}>{formErrors.mobilenumber}</div>}
-
-          <TextField
-            fullWidth
-            label="Emergency Contact - Full Name"
-            placeholder="Enter full name of the emergency contact"
-            value={patient.emergencyContact.fullName}
-            onChange={(e) => handleEmergencyContactChange('fullName', e.target.value)}
-          />
-          {formErrors.emergencyContactFullName && (
-            <div style={{ color: 'red' }}>{formErrors.emergencyContactFullName}</div>
-          )}
-
-          <TextField
-            fullWidth
-            label="Emergency Contact - Mobile Number"
-            placeholder="Enter mobile number of the emergency contact"
-            value={patient.emergencyContact.mobileNumber}
-            onChange={(e) => handleEmergencyContactChange('mobileNumber', e.target.value)}
-          />
-          {formErrors.emergencyContactMobileNumber && (
-            <div style={{ color: 'red' }}>{formErrors.emergencyContactMobileNumber}</div>
-          )}
-
-          <TextField
-            fullWidth
-            label="Emergency Contact - Relation"
-            placeholder="Enter relation of the emergency contact"
-            value={patient.emergencyContact.relation}
-            onChange={(e) => handleEmergencyContactChange('relation', e.target.value)}
-          />
-          {formErrors.emergencyContactRelation && (
-            <div style={{ color: 'red' }}>{formErrors.emergencyContactRelation}</div>
-          )}
-
-          <div style={{ textAlign: 'center' }}>
-            <Button type="submit" variant="contained" color="primary">
-              Signup
+            {formErrors && (
+              <Typography color="error" align="center">
+                {formErrors}
+              </Typography>
+            )}
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+            >
+             Sign up 
             </Button>
-          </div>
-        </form>
-      </Paper>
-    </Grid>
+            <Grid container justifyContent="flex-end">
+              <Grid item>
+                <Link href="/login" variant="body2">
+                  Already have an account? Sign in
+                </Link>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+        <Copyright sx={{ mt: 5 }} />
+      </Container>
+    </ThemeProvider>
   );
-};
-
-const styles: { [key: string]: CSSProperties } = {
-  container: {
-    minHeight: '100vh',
-  },
-  paper: {
-    padding: '30px 20px',
-    width: 500,
-    margin: "20px auto",
-  },
-  avatar: {
-    backgroundColor: "blue",
-  },
-  header: {
-    margin: 0,
-  },
-};
-
-export default Signup;
+}
+export default SignUpPatient;

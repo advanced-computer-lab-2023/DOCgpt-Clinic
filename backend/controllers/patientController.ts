@@ -733,10 +733,16 @@ import adminModel from '../models/adminModel';
 
   export const linkFamilyMember = async (req: Request, res: Response) => {
     try {
-      const { patientUsername } = req.query;
+      const authHeader = req.headers['authorization'];
+     const token = authHeader && authHeader.split(' ')[1];
+     const tokenDB = await tokenModel.findOne({ token });
+     var patientUsername;
+  if(tokenDB){
+    patientUsername=tokenDB.username;
+  }
       const familyMemberData = req.body.familyMemberData;
       const relation = req.body.relation;
-  
+      //const flag = req.body.isMobileNumber;
       // Validate inputs
       if (!patientUsername || !familyMemberData) {
         return res.status(400).json({ message: 'Invalid input data' });
@@ -749,17 +755,14 @@ import adminModel from '../models/adminModel';
         return res.status(404).json({ message: 'Patient not found' });
       }
   
-      let familyMember;
-  
-      // Check if familyMemberData is a string (email) or a number (mobile number)
-      if (typeof familyMemberData === 'string') {
-        // Find the family member by email
-        familyMember = await Patientmodel.findOne({ email: familyMemberData });
-      } else if (typeof familyMemberData === 'number') {
-        // Find the family member by mobile number
-        familyMember = await Patientmodel.findOne({ mobilenumber: familyMemberData });
-      }
-  
+  let familyMember;
+ if(familyMemberData.startsWith("01"))
+{
+  familyMember = await Patientmodel.findOne({ mobilenumber: familyMemberData });
+}
+else{
+  familyMember = await Patientmodel.findOne({ email: familyMemberData });
+}
       if (!familyMember) {
         return res.status(404).json({ message: 'Family member not found' });
       }

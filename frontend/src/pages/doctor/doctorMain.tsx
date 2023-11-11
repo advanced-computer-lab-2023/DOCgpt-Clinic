@@ -69,6 +69,7 @@ function DoctorMain() {
             <Typography>MY PATIENTS</Typography>
           </Button>
         </Grid>
+       
       </Grid>
       <div>
       {doctor ? (
@@ -79,10 +80,10 @@ function DoctorMain() {
         <p>Loading...</p>
       )}
     </div>
-      <SearchBar doctorUsername={doctorUsername}/>
+      {/* <SearchBar doctorUsername={doctorUsername}/>
       <ViewMyPatients  doctorUsername={doctorUsername}/>
-      <ViewHealthRecord doctorUsername={doctorUsername}/>
-        <DoctorAvailability doctorUsername={doctorUsername}/>
+      <ViewHealthRecord doctorUsername={doctorUsername}/> */}
+     <DoctorAvailability doctorUsername={doctorUsername}/> 
     </Container>
   );
 }

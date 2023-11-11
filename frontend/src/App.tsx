@@ -12,6 +12,7 @@ import PatientPrescriptions from './pages/patient/prescriptions';
 import AddFamilyMember from './pages/patient/addFam';
 import ViewFamilyMembers from './pages/patient/getFam';
 import Admin from './pages/admin/admin';
+//import timeslottt from './pages/doctor/timeslot';
 import PatientPage from './pages/patient/Patient';
 import DoctorMain from './pages/doctor/doctorMain';
 import papp from './pages/patient/papp'
@@ -20,7 +21,7 @@ import DoctorLogin from './pages/doctor/doctorLogin';
 import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
 import contract from './pages/doctor/contract';
-
+//import DoctorAvailability from './components/DoctorAvailability';
 // import AdminRegistrationForm from './AdminRegistrationForm';
 function App() {
   useEffect(() => {
@@ -51,6 +52,7 @@ function App() {
         <Route path="/patient/prescriptions/:username" element={<PatientPrescriptions />} />
         <Route path="/patient/home/:username" element={<PatientHome />} />
         <Route path="/patient/home/:username" element={<PatientHome />} />
+        {/* //<Route path="/doctor/timeslot" Component={timeslottt}/> */}
         <Route path="/patient/addFam/:username" element={<AddFamilyMember />} />
         <Route path="/patient/ViewFamilyMembers/:username" element={<ViewFamilyMembers />} />
         <Route path="/admin" Component={Admin} />

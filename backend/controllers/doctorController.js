@@ -190,6 +190,10 @@ exports.selectPatient = selectPatient;
 const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.query.doctorUsername;
     const { dates } = req.body;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    const username = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     try {
         // Find the doctor by username
         const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();

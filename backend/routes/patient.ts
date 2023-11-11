@@ -76,6 +76,6 @@ router.get('/viewHealthPackage', viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
 router.delete('/logoutPatient',logout)
 router.post('/changePassPatient',changePassword)
-
+router.patch('/linkFamilyMember',linkFamilyMember)
 export default router;
 

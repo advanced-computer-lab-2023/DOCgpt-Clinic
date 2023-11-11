@@ -617,6 +617,7 @@ const linkFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const { patientUsername } = req.query;
         const familyMemberData = req.body.familyMemberData;
         const relation = req.body.relation;
+        //const flag = req.body.isMobileNumber;
         // Validate inputs
         if (!patientUsername || !familyMemberData) {
             return res.status(400).json({ message: 'Invalid input data' });
@@ -627,14 +628,11 @@ const linkFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, functio
             return res.status(404).json({ message: 'Patient not found' });
         }
         let familyMember;
-        // Check if familyMemberData is a string (email) or a number (mobile number)
-        if (typeof familyMemberData === 'string') {
-            // Find the family member by email
-            familyMember = yield patientModel_1.default.findOne({ email: familyMemberData });
-        }
-        else if (typeof familyMemberData === 'number') {
-            // Find the family member by mobile number
+        if (familyMemberData.startsWith("01")) {
             familyMember = yield patientModel_1.default.findOne({ mobilenumber: familyMemberData });
+        }
+        else {
+            familyMember = yield patientModel_1.default.findOne({ email: familyMemberData });
         }
         if (!familyMember) {
             return res.status(404).json({ message: 'Family member not found' });

@@ -44,7 +44,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
         required: true,
     },
     mobilenumber: {
-        type: Number,
+        type: String,
         required: true,
     },
     emergencyContact: {
