@@ -30,7 +30,7 @@ const UploadAndSubmitReqDocs: React.FC = () => {
       const fileName = `${documentName.replace(/\s+/g, '')}_${selectedFiles[0].name}`;
       formData.append('documents', selectedFiles[0], fileName);
 
-      await axios.post("/routes/doctors/uploadAndSubmitReqDocs", formData);
+      await axios.post('routes/doctors/uploadAndSubmitReqDocs', formData);
 
       setSubmittedDocuments((prev) => [...prev, documentName]);
       setDocumentName('');

@@ -12,8 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
-const multer_1 = __importDefault(require("multer"));
+exports.viewWalletAmount = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -190,6 +189,10 @@ exports.selectPatient = selectPatient;
 const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.query.doctorUsername;
     const { dates } = req.body;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    const username = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     try {
         // Find the doctor by username
         const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
@@ -269,15 +272,6 @@ const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.createfollowUp = createfollowUp;
-const storage = multer_1.default.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
-    },
-    filename: (req, file, cb) => {
-        cb(null, Date.now() + file.originalname);
-    },
-});
-const upload = (0, multer_1.default)({ storage });
 // HEALTH RECORDS
 //VIEW ALL MY PATIENTS HEALTH RECORDS
 const viewHealthRecords = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -567,3 +561,22 @@ const uploadAndSubmitReqDocs = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;
+const viewWalletAmount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const patientUsername = req.query.patientUsername;
+    try {
+        const patient = yield patientModel_1.default.findOne({ username: patientUsername }).exec();
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found.' });
+        }
+        const walletAmount = patient.walletBalance;
+        if (walletAmount === undefined) {
+            return res.status(500).json({ error: 'Wallet balance not available.' });
+        }
+        res.json({ walletAmount });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+exports.viewWalletAmount = viewWalletAmount;

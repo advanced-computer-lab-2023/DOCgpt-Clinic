@@ -194,7 +194,10 @@ export const selectPatient = async (req: Request, res: Response) => {
 export const addTimeSlots = async (req: Request, res: Response) => {
     const doctorUsername = req.query.doctorUsername;
     const { dates } = req.body;
-
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]
+    const tokenDB = await tokenModel.findOne({ token }); 
+    const username=tokenDB?.username;
     try {
         // Find the doctor by username
         const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
@@ -283,17 +286,6 @@ export const createfollowUp = async (req: Request, res: Response) => {
 };
 
 
-
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, '/Users/rawan/Desktop/uploads'); // The folder where files will be saved
-    },
-    filename: (req, file, cb) => {
-      cb(null, Date.now() + file.originalname);
-    },
-  });
-  const upload = multer({ storage });
-  
 
 
 // HEALTH RECORDS
@@ -625,6 +617,29 @@ export const uploadAndSubmitReqDocs = async (req: Request, res: Response) => {
     res.json({ message: 'Documents uploaded successfully.' });
   } catch (error) {
     console.error('Error handling file upload:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const viewWalletAmount = async (req: Request, res: Response) => {
+  const patientUsername = req.query.patientUsername as string;
+
+  try {
+    const patient = await PatientModel.findOne({ username: patientUsername }).exec();
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    const walletAmount = patient.walletBalance;
+
+    if (walletAmount === undefined) {
+      return res.status(500).json({ error: 'Wallet balance not available.' });
+    }
+
+    res.json({ walletAmount });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 };

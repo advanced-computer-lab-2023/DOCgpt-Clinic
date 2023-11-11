@@ -19,10 +19,11 @@ import {
   logout,
   changePassword,
   linkFamilyMember,
+  viewWalletAmount,
+  verifyTokenPatient,
   viewDoctorAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
-import { verifyTokenPatient } from '../controllers/patientController';
 
 import { viewPastAppointments } from "../controllers/patientController";
 
@@ -77,6 +78,10 @@ router.get('/viewHealthPackage', viewHealthPackages);
 //router.get('/viewPackageDetails',viewHealthPackageDetails);
 router.delete('/logoutPatient',logout)
 router.post('/changePassPatient',changePassword)
+router.patch('/linkFamilyMember',linkFamilyMember)
+
+// Create a route for viewing wallet amount
+router.get('/viewWalletAmount',verifyTokenPatient, viewWalletAmount);
 
 export default router;
 

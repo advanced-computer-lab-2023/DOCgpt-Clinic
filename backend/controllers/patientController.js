@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
+exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -629,6 +629,7 @@ const linkFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, functio
         const { patientUsername } = req.query;
         const familyMemberData = req.body.familyMemberData;
         const relation = req.body.relation;
+        //const flag = req.body.isMobileNumber;
         // Validate inputs
         if (!patientUsername || !familyMemberData) {
             return res.status(400).json({ message: 'Invalid input data' });
@@ -639,14 +640,11 @@ const linkFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, functio
             return res.status(404).json({ message: 'Patient not found' });
         }
         let familyMember;
-        // Check if familyMemberData is a string (email) or a number (mobile number)
-        if (typeof familyMemberData === 'string') {
-            // Find the family member by email
-            familyMember = yield patientModel_1.default.findOne({ email: familyMemberData });
-        }
-        else if (typeof familyMemberData === 'number') {
-            // Find the family member by mobile number
+        if (familyMemberData.startsWith("01")) {
             familyMember = yield patientModel_1.default.findOne({ mobilenumber: familyMemberData });
+        }
+        else {
+            familyMember = yield patientModel_1.default.findOne({ email: familyMemberData });
         }
         if (!familyMember) {
             return res.status(404).json({ message: 'Family member not found' });
@@ -745,3 +743,32 @@ exports.linkFamilyMember = linkFamilyMember;
 //     res.status(500).json({ success: false, message: 'An error occurred' });
 //   }
 // };
+const viewWalletAmount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //const patientUsername = req.query.patientUsername as string;
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: 'username not found' });
+        }
+        const patient = yield patientModel_2.default.findOne({ username }).exec();
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found.' });
+        }
+        const walletAmount = patient.walletBalance;
+        if (walletAmount === undefined) {
+            return res.status(500).json({ error: 'Wallet balance not available.' });
+        }
+        res.json({ walletAmount });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+exports.viewWalletAmount = viewWalletAmount;

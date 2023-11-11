@@ -19,13 +19,14 @@ const PatientHome = () => {
     display: 'block',
     width: '200px',
     padding: '10px',
-    backgroundColor: 'blue',
+    backgroundColor: '#2196F3', // Change to the color you prefer
     color: 'white',
     border: 'none',
     borderRadius: '5px',
     margin: '10px auto',
     textAlign: 'center',
     textDecoration: 'none',
+    fontSize: '16px', // Add font size
   };
 
   const handleViewPrescriptions = () => {
@@ -49,6 +50,9 @@ const PatientHome = () => {
   
 };
   
+const handleViewWalletBalance = () => {
+    navigate(`/patient/walletAmount/${username}`);
+};
 
   return (
     <div style={{ textAlign: 'center' }}>
@@ -82,6 +86,9 @@ const PatientHome = () => {
        View and filter appoinments
       </button>
 
+      <button style={buttonStyle} onClick={handleViewWalletBalance}>
+       View Wallet Balance
+      </button>
 
       <Link to="/patient/main/patients" style={buttonStyle}>
         view All
