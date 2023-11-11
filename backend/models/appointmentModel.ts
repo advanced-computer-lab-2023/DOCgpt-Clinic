@@ -31,6 +31,16 @@ export const appointmentSchema = new mongoose.Schema({
         enum: ['new appointment', 'Follow up'],
         required: false
     },
+    price: {
+        type: Number,
+        default: 10,
+        required: false,
+      },
+      paid: {
+        type: Boolean,
+        default: false, 
+        required: false,
+      },
 
 });
 
