@@ -50,6 +50,10 @@ const appRoutes: RouteType[] = [
         state: "Family members",
       },
      
+      {
+        path:"/patient/link",
+        state:"link family member",
+      }
     ],
   },
   {
