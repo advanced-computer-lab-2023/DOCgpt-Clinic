@@ -1,8 +1,8 @@
 import express from "express";
-import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, viewWalletAmount} from "../controllers/doctorController";
+import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots} from "../controllers/doctorController";
 import multer from "multer";
 import path from 'path';
-import fs from 'fs';
+import fs from "fs"
 
 const router = express.Router();
 
@@ -36,8 +36,28 @@ router.patch("/updateAffiliation", updateDoctorAffiliation);
 //create follow up
 router.post("/followup",createfollowUp);
 router.patch("/addtimeslot",addTimeSlots);
+router.patch("/removetimeslot",removeTimeSlots);
+
 
 // Set up Multer for file uploads
+
+  
+  // Create a route for uploading and submitting required documents
+  // router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
+
+
+
+  router.delete('/logoutDoctor',logout)
+  router.post('/changePassDoc',changePassword)
+
+
+  //requests approval 
+router.get("/pendingDoctors",getPendingDoctor);
+router.patch("/acceptRequest",acceptDoctorRequest);
+router.patch("/rejectRequest",rejecttDoctorRequest);
+
+
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadFolder = path.join(__dirname, '../uploads'); // The folder where files will be saved (inside your project)
@@ -58,29 +78,4 @@ const upload = multer({ storage });
 
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
-
-
-
-  router.delete('/logoutDoctor',logout)
-  router.post('/changePassDoc',changePassword)
-
-
-  //requests approval 
-router.get("/pendingDoctors",getPendingDoctor);
-router.patch("/acceptRequest",acceptDoctorRequest);
-router.patch("/rejectRequest",rejecttDoctorRequest);
-
-
-
-
-
-
-
-
-
-
-// Create a route for viewing wallet amount
-router.get("/viewWalletAmount", viewWalletAmount);
-
-
 export default router;

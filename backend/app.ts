@@ -72,6 +72,8 @@ mongoose.connect(process.env.MONGO_URI!)
   })
 
   export const login=async (req:Request, res:Response) => {
+    console.log("Received login request:", req.body);
+
     try{
        const {username , password}=req.body
        if(!username || !password){
@@ -109,8 +111,10 @@ mongoose.connect(process.env.MONGO_URI!)
        }
        const token = createToken(user.id);
        const tokenn = await tokenModel.create({token,username,role:role})
-       
-       res.status(200).json({user,token})}
+       console.log("Received login succes");
+          req.app.locals.username=username
+       res.status(200).json({user,token,role})}
+
        catch(error){
         const err = error as Error;
         res.status(400).json({ error: err.message });
@@ -118,7 +122,4 @@ mongoose.connect(process.env.MONGO_URI!)
   }
 
  
- 
-  
-
-  app.get('/api/login',login)
+  app.post('/api/login',login)

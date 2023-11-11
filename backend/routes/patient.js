@@ -9,11 +9,12 @@ const patientController_2 = require("../controllers/patientController");
 const router = express_1.default.Router();
 // GET all patients
 router.get('/getP', patientController_1.getPatients);
-router.put('/addfammember', patientController_1.addFamilyMember);
+router.put('/addfammember', patientController_1.verifyTokenPatient, patientController_1.addFamilyMember);
+router.get("verifyToken", patientController_1.verifyTokenPatient);
 // GET a single patient
 // router.get('/:id', getPatient);
 router.post('/postP', patientController_1.createPatient);
-router.get('/viewFam', patientController_1.viewFamilyMembers);
+router.get('/viewFam', patientController_1.verifyTokenPatient, patientController_1.viewFamilyMembers);
 router.get('/getPatientprescriptions', patientController_1.getPrescriptionsByUser);
 router.get('/doctors', patientController_1.getDoctor);
 router.get('/doctors/search', patientController_1.searchDoctors);

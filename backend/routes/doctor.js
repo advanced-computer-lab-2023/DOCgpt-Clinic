@@ -32,7 +32,16 @@ router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
 //create follow up
 router.post("/followup", doctorController_1.createfollowUp);
 router.patch("/addtimeslot", doctorController_1.addTimeSlots);
+router.patch("/removetimeslot", doctorController_1.removeTimeSlots);
 // Set up Multer for file uploads
+// Create a route for uploading and submitting required documents
+// router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
+router.delete('/logoutDoctor', doctorController_1.logout);
+router.post('/changePassDoc', doctorController_1.changePassword);
+//requests approval 
+router.get("/pendingDoctors", doctorController_1.getPendingDoctor);
+router.patch("/acceptRequest", doctorController_1.acceptDoctorRequest);
+router.patch("/rejectRequest", doctorController_1.rejecttDoctorRequest);
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         const uploadFolder = path_1.default.join(__dirname, '../uploads'); // The folder where files will be saved (inside your project)
@@ -49,12 +58,4 @@ const storage = multer_1.default.diskStorage({
 const upload = (0, multer_1.default)({ storage });
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorController_1.uploadAndSubmitReqDocs);
-router.delete('/logoutDoctor', doctorController_1.logout);
-router.post('/changePassDoc', doctorController_1.changePassword);
-//requests approval 
-router.get("/pendingDoctors", doctorController_1.getPendingDoctor);
-router.patch("/acceptRequest", doctorController_1.acceptDoctorRequest);
-router.patch("/rejectRequest", doctorController_1.rejecttDoctorRequest);
-// Create a route for viewing wallet amount
-router.get("/viewWalletAmount", doctorController_1.viewWalletAmount);
 exports.default = router;

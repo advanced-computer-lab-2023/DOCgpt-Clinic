@@ -58,14 +58,7 @@ const doctorSchema: Schema = new mongoose.Schema({
     ],
     default: 'pending'
 
-}
-,
-
-
-
-
-
-
+},
 documents: [
   {
     filename: String, // The name of the uploaded file
@@ -96,11 +89,6 @@ export interface IDoctor extends Document {
     date: Date;
   
   }>;
-
-
-
-
-
   documents: Array<{
     filename: string;
     path: string;

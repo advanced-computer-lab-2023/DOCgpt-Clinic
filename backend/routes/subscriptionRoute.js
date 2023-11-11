@@ -8,5 +8,7 @@ const subscriptionController_1 = require("../controllers/subscriptionController"
 const router = express_1.default.Router();
 router.post('/subscribeToHealthPackage', subscriptionController_1.subscribeToHealthPackage);
 router.post('/subscribeToHealthPackageForFamily', subscriptionController_1.subscribeToHealthPackageForFamily);
-router.get('/viewSubscription', subscriptionController_1.viewSubscribedHealthPackages);
+router.get('/viewSubscribedPackages', subscriptionController_1.viewSubscribedPackages);
+router.get('/viewHealthPackageStatus', subscriptionController_1.viewHealthPackageStatus);
+router.patch('/cancelSubscription', subscriptionController_1.cancelSubscription);
 exports.default = router;
