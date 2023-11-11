@@ -1,92 +1,189 @@
 
+
 import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {
+  Container,
+  Typography,
+  TextField,
+  Button,
+  Grid,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Snackbar,
+  SnackbarContent,
+} from '@mui/material';
+import { AddCircleOutline, Male, Female } from '@mui/icons-material'; // Import MUI icons
+import axios from 'axios';
+import { Navigate, useNavigate } from 'react-router-dom';
+import DrawerAppBar from '../../components/patientBar/patientBar';
 
-interface FamilyMember {
-  name: string;
-  nationalId: string;
-  age: number;
-  gender: string;
-  relationToPatient: string;
-}
+const AddFamilyMemberForm = () => {
+  const navigate =useNavigate();
+  const [familyMember, setFamilyMember] = useState({
+    name: '',
+    nationalId: '',
+    age: '',
+    gender: 'Male', // Default to Male
+    relationToPatient: 'wife', // Default to 'wife'
+    healthPackageSubscription: {
+      name: '',
+      startdate: '',
+      enddate: '',
+      status: '',
+    },
+  });
 
-const AddFamilyMember: React.FC = ()  => {
-    const{username}=useParams();
-  const [name, setName] = useState('');
-  const [nationalId, setNationalId] = useState('');
-  const [age, setAge] = useState(0);
-  const [gender, setGender] = useState('');
-  const [relationToPatient, setRelationToPatient] = useState('');
-  const [message, setMessage] = useState('');
+  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleInputChange = (e: { target: { name: any; value: any; }; }) => {
+    const { name, value } = e.target;
+    setFamilyMember((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
+
+  const handleGenderChange = (e: { target: { value: any; }; }) => {
+    setFamilyMember((prevData) => ({
+      ...prevData,
+      gender: e.target.value,
+    }));
+  };
+
+  const handleRelationChange = (e: { target: { value: any; }; }) => {
+    setFamilyMember((prevData) => ({
+      ...prevData,
+      relationToPatient: e.target.value,
+    }));
+  };
+
+  const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
 
-    const familyMemberData: FamilyMember = {
-      name,
-      nationalId,
-      age,
-      gender,
-      relationToPatient,
-    };
-
     try {
-      const response = await fetch(`/routes/addfammember?username=${username}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(familyMemberData),
-      });
+      const token = localStorage.getItem('authToken');
+      const response = await axios.put(
+        '/routes/patient/addfammember',
+        familyMember,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage(data.message);
-      } else {
-        setMessage('Failed to add family member' +familyMemberData.age +""+ familyMemberData.gender + familyMemberData.name+""+ familyMemberData.nationalId +""+familyMemberData.relationToPatient);
-      }
+      // Handle success, e.g., show a success message or redirect
+      console.log('Family member added successfully:', response.data);
+      setSuccessSnackbarOpen(true);
     } catch (error) {
       console.error('Error adding family member:', error);
-      setMessage('An error occurred');
     }
   };
 
-  return (
-    <div>
-      <h2>Add Family Member</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label>Name:</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} required />
-        </div>
-        <div>
-          <label>National ID:</label>
-          <input type="text" value={nationalId} onChange={(e) => setNationalId(e.target.value)} required />
-        </div>
-        <div>
-  <label>Age:</label>
-  <input
-    type="number"
-    value={age || ''}
-    onChange={(e) => setAge(parseInt(e.target.value, 10) || 0)}
-    required
-  />
-</div>
+  const handleSnackbarClose = () => {
+    setSuccessSnackbarOpen(false);
+    navigate('/patient/home')
+  };
 
-        <div>
-          <label>Gender:</label>
-          <input type="text" value={gender} onChange={(e) => setGender(e.target.value)} required />
-        </div>
-        <div>
-          <label>Relation to Patient:</label>
-          <input type="text" value={relationToPatient} onChange={(e) => setRelationToPatient(e.target.value)} required />
-        </div>
-        <button type="submit">Add Family Member</button>
+  return (
+    <>
+    <DrawerAppBar/>
+    <Container>
+      <Typography variant="h4" gutterBottom>
+        Add Family Member
+      </Typography>
+
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={3}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Name"
+              name="name"
+              value={familyMember.name}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="National ID"
+              name="nationalId"
+              value={familyMember.nationalId}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              fullWidth
+              label="Age"
+              name="age"
+              type="number"
+              value={familyMember.age}
+              onChange={handleInputChange}
+              required
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Gender</InputLabel>
+              <Select
+                value={familyMember.gender}
+                onChange={handleGenderChange}
+              >
+                <MenuItem value="Male">
+                  <Male />
+                  Male
+                </MenuItem>
+                <MenuItem value="Female">
+                  <Female />
+                  Female
+                </MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Relation to Patient</InputLabel>
+              <Select
+                value={familyMember.relationToPatient}
+                onChange={handleRelationChange}
+              >
+                <MenuItem value="wife">Wife</MenuItem>
+                <MenuItem value="husband">Husband</MenuItem>
+                <MenuItem value="child">Child</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        </Grid>
+
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          startIcon={<AddCircleOutline />}
+        >
+          Add Family Member
+        </Button>
       </form>
-      {message && <p>{message}</p>}
-    </div>
+
+      <Snackbar
+        open={successSnackbarOpen}
+        autoHideDuration={3000}
+        onClose={handleSnackbarClose}
+      >
+        <SnackbarContent
+          message="Family member added successfully"
+          style={{ backgroundColor: 'green' }}
+        />
+      </Snackbar>
+    </Container>
+    </>
   );
 };
 
-export default AddFamilyMember;
+export default AddFamilyMemberForm;

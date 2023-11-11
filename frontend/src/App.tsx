@@ -14,7 +14,6 @@ import Admin from './pages/admin/admin';
 import PatientPage from './pages/patient/Patient';
 import DoctorMain from './pages/doctor/doctorMain';
 import papp from './pages/patient/papp'
-import viewAll from './pages/patient/viewAll'
 import DoctorLogin from './pages/doctor/doctorLogin';
 import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
@@ -26,7 +25,6 @@ import Log from './pages/login'
 import HomePage from './pages/patient/homePage';
 import DoctorHomePage from './pages/doctor/homePage';
 import AdminHomePage from './pages/admin/homePage';
-import NavBar from './components/navBar';
 import LinkFamilyMember from './components/linkfammem';
 //import DoctorAvailability from './components/DoctorAvailability';
 function App() {
@@ -56,7 +54,6 @@ function App() {
         <Route path="/register/patient" Component={SignUpPatient} />
          <Route path="/register/doctor" Component={DoctorRegistrationForm } />
         // <Route path="/patient/main" Component={PatientPage} />
-        // <Route path="/patient/main/patients" Component={viewAll} />
         // <Route path="/patient/viewApp/:username" Component={papp} />
         // <Route path="/doctor/main" Component={DoctorMain} />
         // <Route path="/doctor/login" Component={DoctorLogin} />
@@ -66,8 +63,8 @@ function App() {
          <Route path="/doctor/home" element={<DoctorHomePage/>} />
          <Route path="/admin/home" element={<AdminHomePage/>} />
         {/* //<Route path="/doctor/timeslot" Component={timeslottt}/> */}
-        // <Route path="/patient/addFam/:username" element={<AddFamilyMember />} />
-        // <Route path="/patient/ViewFamilyMembers" element={<ViewFamilyMembers />} />
+         <Route path="/patient/addMember" element={<AddFamilyMember />} />
+         <Route path="/patient/ViewFamilyMembers" element={<ViewFamilyMembers />} />
         // <Route path="/admin" Component={Admin} />
         // <Route path="/doctor/appointments" Component={MyAppointments} />
         <Route path="/patient/walletAmount/:username" element={<ViewWalletAmountPage />} />

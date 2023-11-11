@@ -150,7 +150,7 @@ export const addFamilyMember = async (req: Request, res: Response) => {
       age: familyMemberData.age,
       gender: familyMemberData.gender,
       relationToPatient: familyMemberData.relationToPatient,
-      healthPackageSubscription:familyMemberData.healthPackageSubscription
+      healthPackageSubscription:[]
     });
     
     await patient.save();
