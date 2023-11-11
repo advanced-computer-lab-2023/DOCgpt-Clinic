@@ -71,5 +71,5 @@ const doctorSchema = new mongoose_1.default.Schema({
         default: 0,
     }
 });
-const Doctor = mongoose_1.default.model('Doctor', doctorSchema);
-exports.default = Doctor;
+const doctorModel = mongoose_1.default.model('Doctor', doctorSchema);
+exports.default = doctorModel;

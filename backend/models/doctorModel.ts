@@ -75,27 +75,8 @@ walletBalance: {
 
 
 
-export interface IDoctor extends Document {
-  username: string;
-  name: string;
-  email: string;
-  password: string;
-  dateOfBirth: Date;
-  hourlyRate: number;
-  affiliation: string;
-  speciality: string;
-  educationalBackground: string;
-  timeslots: Array<{
-    date: Date;
-  
-  }>;
-  documents: Array<{
-    filename: string;
-    path: string;
-  }>;
-  walletBalance: number;
-}
 
-const Doctor: Model<IDoctor> = mongoose.model<IDoctor>('Doctor', doctorSchema);
 
-export default Doctor;
+const doctorModel= mongoose.model('Doctor', doctorSchema);
+
+export default doctorModel;

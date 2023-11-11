@@ -25,7 +25,6 @@ const appointment_1 = __importDefault(require("./routes/appointment"));
 const healthRecord_1 = __importDefault(require("./routes/healthRecord"));
 const subscriptionRoute_1 = __importDefault(require("./routes/subscriptionRoute"));
 const patientController_1 = require("./controllers/patientController");
-const tokenModel_1 = __importDefault(require("./models/tokenModel"));
 const appRouter_1 = __importDefault(require("../backend/routes/appRouter"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const express_1 = __importDefault(require("express"));
@@ -80,9 +79,6 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const usernameExists3 = yield adminModel_1.default.findOne({ username });
         var user;
         var role;
-        //  if(! patient){
-        //   throw Error ('invalid username')
-        //  }
         if (usernameExists) {
             user = yield patientModel_1.default.findOne({ username });
             role = 'patient';
@@ -98,12 +94,17 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (user == null) {
             throw Error('no user found');
         }
+        if (role == 'doctor' && (usernameExists2 === null || usernameExists2 === void 0 ? void 0 : usernameExists2.status) == "pending") {
+            throw Error('your request is still pending');
+        }
+        if (role == 'doctor' && (usernameExists2 === null || usernameExists2 === void 0 ? void 0 : usernameExists2.status) == "rejected") {
+            throw Error('your request to join the platform is rejected from the adminstrator');
+        }
         const match = yield bcrypt_1.default.compare(password, user.password);
         if (!match) {
             throw Error('incorrect password');
         }
         const token = (0, patientController_1.createToken)(user.id);
-        const tokenn = yield tokenModel_1.default.create({ token, username, role: role });
         console.log("Received login succes");
         req.app.locals.username = username;
         res.status(200).json({ user, token, role });

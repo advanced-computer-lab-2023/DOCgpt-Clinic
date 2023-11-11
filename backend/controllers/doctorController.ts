@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import multer from 'multer';
 import path from 'path';
-import DoctorModel, { IDoctor } from "../models/doctorModel";
+import DoctorModel from "../models/doctorModel";
 import AppointmentModel from "../models/appointmentModel";
 import PatientModel from "../models/patientModel";
 import HealthRecordModel from "../models/healthRecordModel";
@@ -200,7 +200,7 @@ export const addTimeSlots = async (req: Request, res: Response) => {
     const username=tokenDB?.username;
     try {
         // Find the doctor by username
-        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+        const doctor = await DoctorModel.findOne({ username: doctorUsername }).exec();
 
         if (doctor) {
             // Use push to add new time slots to the existing array
@@ -226,11 +226,11 @@ export const removeTimeSlots = async (req: Request, res: Response) => {
 
     try {
         // Find the doctor by username
-        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+        const doctor = await DoctorModel.findOne({ username: doctorUsername }).exec();
 
         if (doctor) {
             // Remove time slots from the existing array
-            doctor.timeslots = doctor.timeslots.filter((timeslot) => !dates.includes(timeslot.date));
+            doctor.timeslots = doctor.timeslots.filter((timeslot: { date: any; }) => !dates.includes(timeslot.date));
 
             // Save the updated doctor
             const updatedDoctor = await doctor.save();
@@ -253,13 +253,13 @@ export const createfollowUp = async (req: Request, res: Response) => {
     const type= 'Follow up';
     try {
       // Find the doctor by ID
-      const doctor: IDoctor | null = await DoctorModel.findOne({username: doctorUsername}).exec();
+      const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
 
       if (doctor) {
           // Remove the time slot from the doctor's timeslots
           console.log('Before removing timeslot:', doctor.timeslots);
           const newDate = new Date(date);
-          doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
+          doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number; }; }) => timeslot.date.getTime() !== newDate.getTime());
           
           console.log('After removing timeslot:', doctor.timeslots);
           

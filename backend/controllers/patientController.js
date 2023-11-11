@@ -626,7 +626,13 @@ console.log(age); // Output: 32 (assuming current date is after May 15th)
 // };
 const linkFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { patientUsername } = req.query;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        var patientUsername;
+        if (tokenDB) {
+            patientUsername = tokenDB.username;
+        }
         const familyMemberData = req.body.familyMemberData;
         const relation = req.body.relation;
         //const flag = req.body.isMobileNumber;

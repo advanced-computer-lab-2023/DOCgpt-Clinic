@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import AppointmentModel from "../models/appointmentModel";
-import DoctorModel, { IDoctor } from '../models/doctorModel'; // Import your Doctor model
+import DoctorModel from '../models/doctorModel'; // Import your Doctor model
 
 
 export const createAppointment = async (req: Request, res: Response) => {
@@ -11,13 +11,13 @@ export const createAppointment = async (req: Request, res: Response) => {
     const type = 'new appointment';
     try {
         // Find the doctor by ID
-        const doctor: IDoctor | null = await DoctorModel.findOne({username: doctorUsername}).exec();
+        const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
 
         if (doctor) {
             // Remove the time slot from the doctor's timeslots
             console.log('Before removing timeslot:', doctor.timeslots);
             const newDate = new Date(date);
-            doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
+            doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number; }; }) => timeslot.date.getTime() !== newDate.getTime());
             
             console.log('After removing timeslot:', doctor.timeslots);
             

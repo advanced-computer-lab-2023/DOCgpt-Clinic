@@ -72,7 +72,7 @@ export const getPatients = async (req: Request, res: Response) => {
 import Prescription from '../models/perscriptionModel';
 import Patient from '../models/patientModel';
 import patientModel from '../models/patientModel';
-import Doctor, { IDoctor } from '../models/doctorModel';
+import Doctor from '../models/doctorModel';
 
 
  
@@ -371,7 +371,7 @@ import adminModel from '../models/adminModel';
     const doctorId = req.query.doctorId; // Assuming the parameter is in the route
   
     try {
-      const doctor: IDoctor | null = await doctorModel.findById(doctorId).exec();
+      const doctor  = await doctorModel.findById(doctorId).exec();
   
       if (doctor) {
         // Retrieve the doctor's timeslots (available appointments)
