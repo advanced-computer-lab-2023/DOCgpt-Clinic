@@ -1,5 +1,5 @@
-import { FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
-import React, { useState } from 'react';
+import { Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeEvent, TextField, Typography } from '@mui/material';
+import React, { CSSProperties, useState } from 'react';
 import theme from '../theme';
 import DrawerAppBar from './patientBar/patientBar';
 
@@ -23,7 +23,7 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
       // Check if familyMemberData is a valid mobile number
     //   const isMobileNumber = /^\d{10}$/.test(familyMemberData);
        const token=localStorage.getItem("authToken");
-      const response = await fetch(`/routes/patient/linkFamilyMember?patientUsername=${patientUsername}`, {
+      const response = await fetch(`/routes/patient/linkFamilyMember`, {
         method: 'PATCH', // Change the method to PATCH
         headers: {
           'Content-Type': 'application/json',
@@ -57,10 +57,11 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
   return (
     <>
     <DrawerAppBar/>
-    <Paper elevation={3} style={{ padding: '20px', width: '400px', margin: 'auto' }}>
+    <Paper elevation={3} style={{ padding: '20px', width: '600px', height:'500px' ,margin: 'auto' }}>
        <Typography variant="h5">Link Family Member</Typography>
+       <div style={styles.space}></div> 
       <form>
-      <TextField
+      {/* <TextField
           id="patientUsername"
           label="Patient Username"
           value={patientUsername}
@@ -68,7 +69,7 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
           required
           fullWidth
           margin="normal"
-        /> 
+        />  */}
 
 <FormControl fullWidth margin="normal">
 <InputLabel id="familyMemberType">select</InputLabel>
@@ -81,7 +82,7 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
             <MenuItem value={'Email'}> Email</MenuItem>
             </Select>
         </FormControl> 
-
+        <div style={styles.space}></div> 
         <TextField
   id="familyMemberData"
   name="familyMemberData"
@@ -93,6 +94,7 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
   fullWidth
   margin="normal"
 />
+<div style={styles.space}></div> 
 <TextField
           id="relation"
           label="Relation to Patient"
@@ -102,19 +104,33 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
           fullWidth
           margin="normal"
         />
-       <button
-  type="button"
+         <div style={styles.space}></div> 
+         <Button
+  variant="contained"
+  color="primary"
+  size="large"
   onClick={linkFamilyMember}
-  style={{ backgroundColor: theme.palette.blue.main, color: 'white' }}
+  sx={{ backgroundColor: theme.palette.blue.main, color: 'white' }}
 >
   Link Family Member
-</button>
+</Button>
       </form>
       {error && <p style={{ color: 'red' }}>{error}</p>} 
       </Paper>
       </>
   );
 };
+
+const styles: { [key: string]: CSSProperties } = {
+
+  space: {
+    height: 20,
+  }
+
+}
+
+
+
 
 export default LinkFamilyMember;
 

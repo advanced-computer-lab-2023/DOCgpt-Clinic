@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Typography, TextField } from '@mui/material';
+import { response } from 'express';
 
 const UploadAndSubmitReqDocs: React.FC = () => {
   const [documentName, setDocumentName] = useState<string>('');
@@ -18,28 +19,34 @@ const UploadAndSubmitReqDocs: React.FC = () => {
   const handleDocumentNameChange = (value: string) => {
     setDocumentName(value);
   };
-
-  const handleSubmit = async () => {
+const handleSubmit = async () => {
     try {
       if (!selectedFiles || !documentName.trim()) {
         setErrorMessage('Please fill in all the required fields.');
         return;
       }
-
+  
       const formData = new FormData();
       const fileName = `${documentName.replace(/\s+/g, '')}_${selectedFiles[0].name}`;
       formData.append('documents', selectedFiles[0], fileName);
-
-      await axios.post('routes/doctors/uploadAndSubmitReqDocs', formData);
-
-      setSubmittedDocuments((prev) => [...prev, documentName]);
-      setDocumentName('');
-      setErrorMessage(null);
-    } catch (error) {
-      console.error('Error submitting document:', error);
+  
+      const response = await axios.post('/routes/doctors/uploadAndSubmitReqDocs', formData);
+  
+      if (response.status === 200) {
+        setSubmittedDocuments((prev) => [...prev, documentName]);
+        setDocumentName('');
+        setErrorMessage(null);
+      } else {
+        console.error('Error submitting document:', response.statusText);
+        setErrorMessage('Error submitting document. Please try again.');
+      }
+    } catch (error:any) {
+      console.error('Error submitting document:', error.message);
       setErrorMessage('Error submitting document. Please try again.');
     }
   };
+  
+  
 
   return (
     <div>

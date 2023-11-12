@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 
 import Landing from './pages/Landing';
-import LandingPage from './pages/landingPage';
+
 import PatientRegistrationForm from './pages/patient/signup';
 import DoctorRegistrationForm from './pages/doctor/doctorSignUp';
 import PatientHome from './pages/patient/patientHome';
@@ -17,7 +17,7 @@ import papp from './pages/patient/papp'
 import DoctorLogin from './pages/doctor/doctorLogin';
 import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
-import SignupDoctor from './pages/doctor/signupDoctor';
+import SignUpDoctor from './pages/doctor/doctorSignUp';
 import ViewWalletAmountPage from './pages/patient/viewWalletAmountPage';
 import HealthPackages from './pages/patient/healthPackages';import contract from './pages/doctor/contract';import DrawerAppBar from './components/patientBar/patientBar';
 import SignUpPatient from './pages/patient/signingUp';
@@ -26,6 +26,17 @@ import HomePage from './pages/patient/homePage';
 import DoctorHomePage from './pages/doctor/homePage';
 import AdminHomePage from './pages/admin/homePage';
 import LinkFamilyMember from './components/linkfammem';
+import DocAvailability from './components/DoctorAvailability';
+import DoctorAvailability from './components/DoctorAvailability';
+import AdminList from './components/AdminList';
+import adminHome from './pages/admin/adminHome';
+import adminPage from './pages/admin/adminPage';
+import RemoveAdmin from './components/RemoveAdmin';
+import RemovePatient from './components/RemovePatient';
+import RemoveDoc from './components/RemoveDoc';
+//import viewDoctor from './components/ViewDoctorInfo';
+import DoctorInfo from './components/DoctorInfo';
+import Contract from './pages/doctor/contract';
 //import DoctorAvailability from './components/DoctorAvailability';
 function App() {
   useEffect(() => {
@@ -60,17 +71,26 @@ function App() {
         // <Route path="/patient/prescriptions/:username" element={<PatientPrescriptions />} />
          <Route path="/patient/home" element={<HomePage/>} />
          <Route path ="/patient/link" element={<LinkFamilyMember/>}/>
+         <Route path ="/doctor/time" element={<DocAvailability/>}/>
+         <Route path ="/admin/info" element={<DoctorInfo/>}/>
          <Route path="/doctor/home" element={<DoctorHomePage/>} />
          <Route path="/admin/home" element={<AdminHomePage/>} />
+         <Route path="/patient/remove" element={<RemovePatient/>} />
+         <Route path="/contract" Component={contract} />
         {/* //<Route path="/doctor/timeslot" Component={timeslottt}/> */}
          <Route path="/patient/addMember" element={<AddFamilyMember />} />
+         <Route path="/Remove" element={<RemoveAdmin />} />
          <Route path="/patient/ViewFamilyMembers" element={<ViewFamilyMembers />} />
         // <Route path="/admin" Component={Admin} />
         // <Route path="/doctor/appointments" Component={MyAppointments} />
         <Route path="/patient/walletAmount/:username" element={<ViewWalletAmountPage />} />
-        <Route path="/doctor/signup" element={<SignupDoctor />} />
+        <Route path="/doctor/signup" element={<SignUpDoctor />} />
         // <Route path="/doctor/patients" Component={MyPatients} />
+        <Route path="/admin/add" element={<AdminList />} />
       
+       < Route path="/Doctor/Remove" element={<RemoveDoc />} />
+        <Route path="/AdminPage" Component={adminPage} />
+       <Route path="/AdminHome" Component={adminHome}/>
       </Routes>
     
         

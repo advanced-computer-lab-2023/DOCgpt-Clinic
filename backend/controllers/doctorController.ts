@@ -77,23 +77,30 @@ export const createDoctors = async (req: Request, res: Response) => {
     const usernameExists3=await adminModel.findOne({username});
 
     if(emailExists){
-    
+      console.log("1");
         return res.status(401).json({ message: 'email exists' });
-      
+   
       }
       if(emailExists2){
+        console.log("2");
         return res.status(401).json({ message: 'email exists' });
+       
       }
       if(emailExists3){
+        console.log("3");
         return res.status(401).json({ message: 'email exists' });
+
       }
       if(usernameExists){
+        console.log("4");
         return res.status(401).json({ message: 'username exists' });
       }
       if(usernameExists2){
+        console.log("5");
         return res.status(401).json({ message: 'username exists' });
       }
       if(usernameExists3){
+        console.log("6");
         return res.status(401).json({ message: 'username exists' });
       }
       const salt =await bcrypt.genSalt(10)
@@ -192,26 +199,34 @@ export const selectPatient = async (req: Request, res: Response) => {
 };
 
 export const addTimeSlots = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername;
-    const { dates } = req.body;
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]
-    const tokenDB = await tokenModel.findOne({ token }); 
-    const username=tokenDB?.username;
-    try {
-        // Find the doctor by username
-        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+    //const doctorUsername = req.query.doctorUsername;
+   
 
+    try {
+      const { dates } = req.body;
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+      const tokenDB = await tokenModel.findOne({ token:token }); 
+      
+      var doctorUsername;
+
+      if(tokenDB){
+       doctorUsername=tokenDB.username;
+      }
+      
+        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+         console.log(doctor)
         if (doctor) {
-            // Use push to add new time slots to the existing array
+            console.log("dkhlt")
             dates.forEach((date: Date) => {
+            console.log(date);
                 doctor.timeslots.push({ date });
             });
 
-            // Save the updated doctor
-            const updatedDoctor = await doctor.save();
+           
+             await doctor.save();
 
-            res.status(200).json(updatedDoctor);
+            res.status(200).json(doctor);
         } else {
             res.status(404).json({ message: 'Doctor not found' });
         }

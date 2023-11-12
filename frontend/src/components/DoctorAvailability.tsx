@@ -4,12 +4,9 @@ import axios from 'axios';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { CSSProperties } from '@mui/material/styles/createMixins';
 import theme from '../theme';
+import DrawerAppBar from './Doctor bar/doctorBar';
 
-interface DoctorAvailabilityProps {
-  doctorUsername: any;
-}
-
-const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername }) => {
+const DoctorAvailability: React.FC =() => {
   const theme = useTheme(); // Access the theme
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [inputDate, setInputDate] = useState<string>(''); // For input validation
@@ -18,19 +15,22 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
   const addTimeSlotsToDatabase = async () => {
     try {
       // Make an API call to your backend
-      const token=localStorage.getItem("authToken");
-      await axios.patch(`/routes/doctors/addtimeslot?doctorUsername=${doctorUsername}`, {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.patch('/routes/doctors/addtimeslot', {
         dates: selectedDates,
-        Headers :{
-          Authorization:`Bearer ${token}`
+      }, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
       });
-
+  
       // After a successful API call, you can perform any additional actions or update the UI
+      console.log('Time slots added successfully:', response.data);
     } catch (error) {
       console.error('Error adding time slots:', error);
     }
   };
+  
 
   const handleDateChange = (date: Date | null) => {
     // You can add custom validation or formatting here
@@ -54,6 +54,8 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
   };
 
   return (
+    <>
+    <DrawerAppBar/>
     <Grid container justifyContent="center" alignItems="center" style={styles.container}>
       <Paper elevation={20} style={styles.paper}>
         <Grid container spacing={2} direction="column" alignItems="center">
@@ -116,6 +118,7 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
         </Grid>
       </Paper>
     </Grid>
+    </>
   );
 };
 

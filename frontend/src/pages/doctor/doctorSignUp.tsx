@@ -77,7 +77,7 @@ function SignUpDoctor() {
 
       // Handle the response from the back-end as needed, e.g., show a success message or redirect the user.
       console.log("patient registered successfully :", response);
-      navigate("/");
+      navigate("/contract");
       // You can also redirect the user to the login page after a successful sign-up
       // history.push("/login"); // You need to import useHistory from 'react-router-dom'
     } catch (error) {
@@ -234,7 +234,7 @@ function SignUpDoctor() {
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>
-                <Link href="/login" variant="body2">
+                <Link href="/contract" variant="body2">
                   Already have an account? Sign in
                 </Link>
               </Grid>

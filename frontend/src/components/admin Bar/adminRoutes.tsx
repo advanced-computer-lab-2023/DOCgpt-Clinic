@@ -22,34 +22,51 @@ const appRoutes: RouteType[] = [
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-        Doctors
+        Admins
       </Typography>
     ),
     child: [
       {
-        path: "/admin/home",
-        state: "viewDoctors",
+        path: "/AdminPage",
+        state: "add another admin",
       },
       {
-        path: "/admin/home",
-        state: "make app",
+        path: "/AdminPage",
+        state: "Remove admin",
       },
     ],
   },
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-        Family Members
+       Patients
       </Typography>
     ),
     child: [
       {
-        path: "/patient/viewFamilyMembers",
-        state: "Family members",
+        path: "/patient/Remove",
+        state: "Remove Patient",
+      },
+      // {
+      //   path: "/patient/home",
+      //   state: "make app",
+      // },
+    ],
+  },
+  {
+    header: (
+      <Typography variant="h6" fontWeight="bold">
+       Doctors
+      </Typography>
+    ),
+    child: [
+      {
+        path: "/Doctor/Remove",
+        state: "Remove Doctor",
       },
       {
-        path: "/patient/home",
-        state: "make app",
+        path: "/admin/info",
+        state: "ViewDoctorInfo",
       },
     ],
   },

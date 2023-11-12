@@ -77,21 +77,27 @@ const createDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     const usernameExists2 = yield doctorModel_1.default.findOne({ username });
     const usernameExists3 = yield adminModel_1.default.findOne({ username });
     if (emailExists) {
+        console.log("1");
         return res.status(401).json({ message: 'email exists' });
     }
     if (emailExists2) {
+        console.log("2");
         return res.status(401).json({ message: 'email exists' });
     }
     if (emailExists3) {
+        console.log("3");
         return res.status(401).json({ message: 'email exists' });
     }
     if (usernameExists) {
+        console.log("4");
         return res.status(401).json({ message: 'username exists' });
     }
     if (usernameExists2) {
+        console.log("5");
         return res.status(401).json({ message: 'username exists' });
     }
     if (usernameExists3) {
+        console.log("6");
         return res.status(401).json({ message: 'username exists' });
     }
     const salt = yield bcrypt_1.default.genSalt(10);
@@ -187,23 +193,26 @@ const selectPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
 });
 exports.selectPatient = selectPatient;
 const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
-    const { dates } = req.body;
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    const tokenDB = yield tokenModel_1.default.findOne({ token });
-    const username = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
+    //const doctorUsername = req.query.doctorUsername;
     try {
-        // Find the doctor by username
+        const { dates } = req.body;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var doctorUsername;
+        if (tokenDB) {
+            doctorUsername = tokenDB.username;
+        }
         const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+        console.log(doctor);
         if (doctor) {
-            // Use push to add new time slots to the existing array
+            console.log("dkhlt");
             dates.forEach((date) => {
+                console.log(date);
                 doctor.timeslots.push({ date });
             });
-            // Save the updated doctor
-            const updatedDoctor = yield doctor.save();
-            res.status(200).json(updatedDoctor);
+            yield doctor.save();
+            res.status(200).json(doctor);
         }
         else {
             res.status(404).json({ message: 'Doctor not found' });

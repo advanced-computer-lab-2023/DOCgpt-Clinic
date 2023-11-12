@@ -83,7 +83,7 @@ function DoctorMain() {
       {/* <SearchBar doctorUsername={doctorUsername}/>
       <ViewMyPatients  doctorUsername={doctorUsername}/>
       <ViewHealthRecord doctorUsername={doctorUsername}/> */}
-     <DoctorAvailability doctorUsername={doctorUsername}/> 
+   
     </Container>
   );
 }

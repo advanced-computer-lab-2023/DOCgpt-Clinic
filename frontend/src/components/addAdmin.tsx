@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import axios from "axios";
 import {
   Button,
   Dialog,
@@ -11,11 +12,10 @@ import {
   Box,
 } from "@mui/material";
 
-const RegisterAdmin: React.FC = () => {
+const CreateAdminButton: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -31,38 +31,46 @@ const RegisterAdmin: React.FC = () => {
     setSnackbarOpen(false);
   };
 
-  const handleRegister = async () => {
+  const handleCreateAdmin = async () => {
     try {
-      const response = await fetch('/routes/addAdmin', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        "/routes/admins/addAdmin",
+        {
+          username,
+          password,
         },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (response.ok) {
-        setMessage('Admin registered successfully');
-        setSnackbarMessage('Admin registered successfully');
-        setSnackbarOpen(true);
-      } else {
-        const data = await response.json();
-        setMessage(data.error);
-        setSnackbarMessage('Error registering admin');
-        setSnackbarOpen(true);
-      }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSnackbarMessage(`Admin '${username}' created successfully`);
+      setSnackbarOpen(true);
+      handleClose();
     } catch (error) {
-      setMessage('Internal server error');
-      setSnackbarMessage('Internal server error');
+      setSnackbarMessage("Error creating admin");
       setSnackbarOpen(true);
     }
   };
 
   return (
-    <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
-      <Button variant="contained" color="primary" onClick={handleOpen}>
-        Add Admin
-      </Button>
+    <Box
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+      height="10vh"
+    >
+       <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        onClick={handleOpen}
+        sx={{ backgroundColor: '#1976D2', width: '150px' }} // Match the color of the "Add Admin" button
+      >
+        Add Admin 
+        </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create Admin</DialogTitle>
         <DialogContent>
@@ -90,8 +98,8 @@ const RegisterAdmin: React.FC = () => {
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleRegister} color="primary">
-            Register
+          <Button onClick={handleCreateAdmin} color="primary">
+            Create
           </Button>
         </DialogActions>
       </Dialog>
@@ -101,9 +109,8 @@ const RegisterAdmin: React.FC = () => {
         onClose={handleSnackbarClose}
         message={snackbarMessage}
       />
-      <div>{message}</div>
     </Box>
   );
 };
 
-export default RegisterAdmin;
+export default CreateAdminButton;

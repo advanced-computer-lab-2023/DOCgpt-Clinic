@@ -751,6 +751,7 @@ import adminModel from '../models/adminModel';
      const token = authHeader && authHeader.split(' ')[1];
      const tokenDB = await tokenModel.findOne({ token });
      var patientUsername;
+     console.log(tokenDB)
   if(tokenDB){
     patientUsername=tokenDB.username;
   }
@@ -759,6 +760,8 @@ import adminModel from '../models/adminModel';
       //const flag = req.body.isMobileNumber;
       // Validate inputs
       if (!patientUsername || !familyMemberData) {
+        console.log(patientUsername);
+        console.log(familyMemberData)
         return res.status(400).json({ message: 'Invalid input data' });
       }
   
@@ -793,7 +796,7 @@ else{
         name: familyMember.name,
         nationalId: ' ',
         age: age,
-        gender: ' ljkhj ',
+        gender: '  ',
         relationToPatient: relation,
         healthPackageSubscription: familyMember.healthPackageSubscription,
       });

@@ -1,16 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import {
+  Container,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Paper,
+  Grid,
+  SelectChangeEvent,
+} from '@mui/material';
+import AdminBar from '../components/admin Bar/adminBar';
 
 interface Doctor {
   _id: string;
   username: string;
   name: string;
   email: string;
-  dateofbirth: string; // This assumes 'dateofbirth' is a string, adjust the type as needed
+  dateofbirth: string;
   hourlyrate: number;
   affiliation: string;
   educationalBackground: string;
-  speciality: string; // New property
+  speciality: string;
   // Add other properties as needed
 }
 
@@ -26,7 +38,7 @@ const DoctorInfoDropdown: React.FC = () => {
 
   const fetchDoctors = async () => {
     try {
-      const response = await axios.get('/routes/getdoc'); // Adjust the URL
+      const response = await axios.get('/routes/admins/getdoc');
 
       if (response.status === 200) {
         setDoctors(response.data.doctors);
@@ -36,7 +48,7 @@ const DoctorInfoDropdown: React.FC = () => {
     }
   };
 
-  const handleDoctorSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDoctorSelect = async (event: SelectChangeEvent<string>) => {
     const selectedUsername = event.target.value;
     setSelectedDoctor(selectedUsername);
   
@@ -46,10 +58,11 @@ const DoctorInfoDropdown: React.FC = () => {
     }
   };
   
+
   const fetchDoctorInfo = async (username: string) => {
     try {
-      const response = await axios.get(`/routes/doctor?username=${username}`); // Use GET request for doctor info
-  
+      const response = await axios.get(`/routes/admins/doctor?username=${username}`);
+
       if (response.status === 200) {
         setDoctorInfo(response.data.doctor);
       }
@@ -59,34 +72,53 @@ const DoctorInfoDropdown: React.FC = () => {
   };
 
   return (
-    <div>
-      <h1>Doctor Information</h1>
-      <div>
-        <label>Select a Doctor:</label>
-        <select value={selectedDoctor} onChange={handleDoctorSelect}>
-          <option value="">Select a doctor</option>
-          {doctors.map((doctor) => (
-            <option key={doctor._id} value={doctor.username}>
-              {doctor.username}
-            </option>
-          ))}
-        </select>
-      </div>
-      {doctorInfo && (
-        <div>
-          <h2>Doctor Information</h2>
-          <p>Username: {doctorInfo.username}</p>
-          <p>Name: {doctorInfo.name}</p>
-          <p>Email: {doctorInfo.email}</p>
-          <p>Date of Birth: {doctorInfo.dateofbirth}</p>
-          <p>Hourly Rate: {doctorInfo.hourlyrate}</p>
-          <p>Affiliation: {doctorInfo.affiliation}</p>
-          <p>Educational Background: {doctorInfo.educationalBackground}</p>
-          <p>Speciality: {doctorInfo.speciality}</p>
-          {/* Include other doctor fields here */}
-        </div>
-      )}
-    </div>
+    <>
+      <AdminBar />
+      <Container maxWidth="md" sx={{ mt: 4 }}>
+        <Paper elevation={3} sx={{ p: 3 }}>
+          <Typography variant="h4" align="center" gutterBottom>
+            Doctor Information
+          </Typography>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <FormControl fullWidth>
+                <InputLabel>Select a Doctor</InputLabel>
+                <Select
+                  value={selectedDoctor}
+                  onChange={handleDoctorSelect}
+                  label="Select a Doctor"
+                >
+                  <MenuItem value="">Select a doctor</MenuItem>
+                  {doctors.map((doctor) => (
+                    <MenuItem key={doctor._id} value={doctor.username}>
+                      {doctor.username}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            {doctorInfo && (
+              <Grid item xs={12}>
+                <Paper elevation={2} sx={{ p: 2 }}>
+                  <Typography variant="h6" gutterBottom>
+                    Doctor Information
+                  </Typography>
+                  <Typography variant="body1">Username: {doctorInfo.username}</Typography>
+                  <Typography variant="body1">Name: {doctorInfo.name}</Typography>
+                  <Typography variant="body1">Email: {doctorInfo.email}</Typography>
+                  <Typography variant="body1">Date of Birth: {doctorInfo.dateofbirth}</Typography>
+                  <Typography variant="body1">Hourly Rate: {doctorInfo.hourlyrate}</Typography>
+                  <Typography variant="body1">Affiliation: {doctorInfo.affiliation}</Typography>
+                  <Typography variant="body1">Educational Background: {doctorInfo.educationalBackground}</Typography>
+                  <Typography variant="body1">Speciality: {doctorInfo.speciality}</Typography>
+                  {/* Include other doctor fields here */}
+                </Paper>
+              </Grid>
+            )}
+          </Grid>
+        </Paper>
+      </Container>
+    </>
   );
 };
 

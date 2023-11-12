@@ -62,7 +62,7 @@ export default function DrawerAppBar() {
   const handleLogout = async () => {
     try {
       const token = localStorage.getItem("authToken");
-      const response = await fetch("/routes/admin/logoutAdmin", {
+      const response = await fetch("/routes/admins/logoutAdmin", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",

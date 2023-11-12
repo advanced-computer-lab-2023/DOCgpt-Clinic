@@ -27,7 +27,7 @@ const appRoutes: RouteType[] = [
     ),
     child: [
       {
-        path: "/patient/home",
+        path: "/doctor/time",
         state: "add time slots ",
       },
       {
