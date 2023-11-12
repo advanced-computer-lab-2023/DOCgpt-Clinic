@@ -84,9 +84,7 @@ mongoose.connect(process.env.MONGO_URI!)
       const usernameExists3=await adminModel.findOne({username});
        var user;
        var role;
-      //  if(! patient){
-      //   throw Error ('invalid username')
-      //  }
+      
   
        if(usernameExists){
           user=await patientModel.findOne( {username});
@@ -100,17 +98,24 @@ mongoose.connect(process.env.MONGO_URI!)
       user=await adminModel.findOne({username});
       role='admin';
    }
-  
+
     if(user==null){
       throw Error('no user found');
     }
+    if(role=='doctor' && usernameExists2?.status=="pending"){
+      throw Error('your request is still pending');
+    }
+
+    if(role=='doctor' && usernameExists2?.status=="rejected"){
+      throw Error('your request to join the platform is rejected from the adminstrator');
+    }
+
        const match=await bcrypt.compare(password,user.password)
   
        if(!match){
         throw Error('incorrect password')
        }
        const token = createToken(user.id);
-       const tokenn = await tokenModel.create({token,username,role:role})
        console.log("Received login succes");
           req.app.locals.username=username
        res.status(200).json({user,token,role})}

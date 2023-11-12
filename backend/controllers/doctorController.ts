@@ -198,41 +198,69 @@ export const selectPatient = async (req: Request, res: Response) => {
     res.status(200).json(patient);
 };
 
-export const addTimeSlots = async (req: Request, res: Response) => {
-    //const doctorUsername = req.query.doctorUsername;
+// export const addTimeSlots = async (req: Request, res: Response) => {
+//     //const doctorUsername = req.query.doctorUsername;
    
 
-    try {
-      const { dates } = req.body;
-      const authHeader = req.headers['authorization'];
-      const token = authHeader && authHeader.split(' ')[1];
-      const tokenDB = await tokenModel.findOne({ token:token }); 
+//     try {
+//       const { dates } = req.body;
+//       const authHeader = req.headers['authorization'];
+//       const token = authHeader && authHeader.split(' ')[1];
+//       const tokenDB = await tokenModel.findOne({ token:token }); 
       
-      var doctorUsername;
+//       var doctorUsername;
 
-      if(tokenDB){
-       doctorUsername=tokenDB.username;
-      }
+//       if(tokenDB){
+//        doctorUsername=tokenDB.username;
+//       }
       
-        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
-         console.log(doctor)
-        if (doctor) {
-            console.log("dkhlt")
-            dates.forEach((date: Date) => {
-            console.log(date);
-                doctor.timeslots.push({ date });
-            });
+//         const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+//          console.log(doctor)
+//         if (doctor) {
+//             console.log("dkhlt")
+//             dates.forEach((date: Date) => {
+//             console.log(date);
+//                 doctor.timeslots.push({ date });
+//             });
 
            
-             await doctor.save();
+//              await doctor.save();
 
-            res.status(200).json(doctor);
-        } else {
-            res.status(404).json({ message: 'Doctor not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'An error occurred', error });
-    }
+//             res.status(200).json(doctor);
+//         } else {
+//             res.status(404).json({ message: 'Doctor not found' });
+//         }
+//     } catch (error) {
+//         res.status(500).json({ message: 'An error occurred', error });
+//     }
+// };
+export const addTimeSlots = async (req: Request, res: Response) => {
+  const doctorUsername = req.query.doctorUsername;
+  const { dates } = req.body;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]
+  const tokenDB = await tokenModel.findOne({ token }); 
+  const username=tokenDB?.username;
+  try {
+      // Find the doctor by username
+      const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+
+      if (doctor) {
+          // Use push to add new time slots to the existing array
+          dates.forEach((date: Date) => {
+              doctor.timeslots.push({ date });
+          });
+
+          // Save the updated doctor
+          const updatedDoctor = await doctor.save();
+
+          res.status(200).json(updatedDoctor);
+      } else {
+          res.status(404).json({ message: 'Doctor not found' });
+      }
+  } catch (error) {
+      res.status(500).json({ message: 'An error occurred', error });
+  }
 };
 
 export const removeTimeSlots = async (req: Request, res: Response) => {
@@ -241,11 +269,11 @@ export const removeTimeSlots = async (req: Request, res: Response) => {
 
     try {
         // Find the doctor by username
-        const doctor: IDoctor | null = await DoctorModel.findOne({ username: doctorUsername }).exec();
+        const doctor = await DoctorModel.findOne({ username: doctorUsername }).exec();
 
         if (doctor) {
             // Remove time slots from the existing array
-            doctor.timeslots = doctor.timeslots.filter((timeslot) => !dates.includes(timeslot.date));
+            doctor.timeslots = doctor.timeslots.filter((timeslot: { date: any; }) => !dates.includes(timeslot.date));
 
             // Save the updated doctor
             const updatedDoctor = await doctor.save();
@@ -268,13 +296,13 @@ export const createfollowUp = async (req: Request, res: Response) => {
     const type= 'Follow up';
     try {
       // Find the doctor by ID
-      const doctor: IDoctor | null = await DoctorModel.findOne({username: doctorUsername}).exec();
+      const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
 
       if (doctor) {
           // Remove the time slot from the doctor's timeslots
           console.log('Before removing timeslot:', doctor.timeslots);
           const newDate = new Date(date);
-          doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
+          doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number; }; }) => timeslot.date.getTime() !== newDate.getTime());
           
           console.log('After removing timeslot:', doctor.timeslots);
           

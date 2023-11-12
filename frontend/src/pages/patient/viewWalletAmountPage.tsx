@@ -10,26 +10,7 @@ const ViewWalletAmountPage = () => {
   const [walletAmount, setWalletAmount] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // useEffect(() => {
-  //   const fetchWalletBalance = async () => {
-  //     try {
-  //       const response = await fetch(`/routes/patient/viewWalletAmount?patientUsername=${username}`);
-  //       const data = await response.json();
-  //       console.log('Data received:', data); // Log the data received from the backend
-  //       setWalletAmount(data.walletAmount);
-  //       setError(null);
-  //     } catch (error: any) {
-  //       console.error('Error fetching wallet balance:', error);
-  //       console.error('Error response:', error.response); // Log the response details
-  //       setWalletAmount(null);
-  //       setError('Error fetching wallet balance. Please try again.');
-  //     }
-  //   };
   
-  //   fetchWalletBalance();
-  // }, [username]);
-  
-
   const pageStyle: React.CSSProperties = {
     textAlign: 'center',
     marginTop: '50px',
