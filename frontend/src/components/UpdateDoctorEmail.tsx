@@ -21,6 +21,7 @@ const UpdateDoctorEmail = ({onDismiss, onSaved, doctorUsername}: UpdateDoctorEma
             console.log("updated doctor is"+ doctorResponse);
             
             onSaved(doctorResponse);
+            window.location.reload();
         } catch (error) {
             console.error(error);
             alert(error);

@@ -22,10 +22,16 @@ import {
   viewWalletAmount,
   verifyTokenPatient,
   viewDoctorAppointments,
+  openPatientDocument,
+  uploadPatintDocs,
+  deletePatientDocs,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
+import fs from 'fs';
+import path from 'path';
 
 import { viewPastAppointments } from "../controllers/patientController";
+import multer from 'multer';
 
 
 const router: Router = express.Router();
@@ -83,5 +89,30 @@ router.patch('/linkFamilyMember',linkFamilyMember)
 // Create a route for viewing wallet amount
 router.get('/viewWalletAmount',verifyTokenPatient, viewWalletAmount);
 
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const uploadFolderP = path.join(__dirname, '../uploadsPatient'); // The folder where files will be saved (inside your project)
+
+    // Check if the 'uploads' folder exists, and create it if not
+    if (!fs.existsSync(uploadFolderP)) {
+      fs.mkdirSync(uploadFolderP);
+    }
+
+    cb(null, uploadFolderP);
+  },
+  // filename: (req, file, cb) => {
+  //   cb(null, Date.now() + path.extname(file.originalname)); // Rename file with a timestamp
+  // },
+});
+
+const uploadsPatient = multer({ storage });
+
+// Create a route for uploading and submitting required documents
+
+
+router.patch('/uploadDocs', uploadsPatient.array('documents', 1),verifyTokenPatient, uploadPatintDocs);
+router.get('/patientDocument/:filename', openPatientDocument);
+router.patch('/deleteDocs', deletePatientDocs);
 export default router;
 

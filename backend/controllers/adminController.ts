@@ -7,6 +7,9 @@ import bcrypt from 'bcrypt';
 import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken';
 import tokenModel from '../models/tokenModel';
+import appointmentModel from '../models/appointmentModel';
+import healthRecordModel from '../models/healthRecordModel';
+import Prescription from '../models/perscriptionModel';
 
 export const addAdmin = async (req:Request,res: Response) => {
 const { username, password } = req.body;
@@ -68,6 +71,8 @@ const { username, password } = req.body;
       
           // Find and delete the Doctor by username
           const deletedDoctor = await doctorModel.findOneAndDelete({ username });
+          const appoinment = await appointmentModel.findOneAndDelete({doctor: username});
+          const prescription = await Prescription.findOneAndDelete({doctorUsername: username});
       
           if (!deletedDoctor) {
             return res.status(404).json({ message: 'Doctor not found' });
@@ -92,6 +97,9 @@ const { username, password } = req.body;
           if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
           }
+          const appoinment = await appointmentModel.findOneAndDelete({patient: username});
+          const healthRecord = await healthRecordModel.findOneAndDelete({patient: username});
+          const prescription = await Prescription.findOneAndDelete({patientUsername: username});
       
           res.status(200).json({ message: 'Patient deleted successfully' });
         } catch (error) {

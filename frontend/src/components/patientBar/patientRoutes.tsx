@@ -24,18 +24,19 @@ const appRoutes: RouteType[] = [
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-        Doctors
+        Appointments
       </Typography>
     ),
     child: [
       {
-        path: "/patient/home",
-        state: "viewDoctors",
+        path: "/patient/viewDoctors",
+        state: "Reserve An Appointment",
       },
       {
-        path: "/patient/home",
-        state: "make app",
+        path: "/patient/viewMyappointments",
+        state: "View My Appointments",
       },
+      
     ],
   },
   {
@@ -67,8 +68,35 @@ const appRoutes: RouteType[] = [
         path: "/patient/healthPackages",
         state: "Health Packages",
       },
+      {
+        path: "/patient/packages",
+        state: "My Packages",
+
+
+      },
+      {
+        path: "/patient/subscribedPage",
+        state: "Subscribed Packages",
+
+
+      },
       
     ],
   },
+  {
+    header: (
+      <Typography variant="h6" fontWeight="bold">
+        Health Records
+      </Typography>
+    ),
+    child: [
+      {
+        path: "/patient/viewMyhealthrecords",
+        state: "View My Health Record",
+      },
+      
+    ],
+  }
 ];
 export default appRoutes;
+

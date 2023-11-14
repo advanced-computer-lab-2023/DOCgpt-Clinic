@@ -32,10 +32,18 @@ export const patientSchema = new mongoose.Schema({
     required: true,
     match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
   },
+  gender: {
+    type: String,
+    required: true,
+    enum: ['male', 'female', 'other'], 
+    default : 'male' , 
+    // Add appropriate values based on your application
+  },
   password: {
     type: String,
     required: true,
     validate: [validatePassword, 'Password must be at least 8 characters long'],
+    
   },
   dateofbirth: {
     type: Date,
@@ -82,6 +90,10 @@ export const patientSchema = new mongoose.Schema({
     type: String,
     // required: true,
   },
+  username: {
+    type: String,
+    // required: true,
+  },
   age: {
     type: Number,
     required: true,
@@ -121,7 +133,7 @@ export const patientSchema = new mongoose.Schema({
   walletBalance: {
     type: Number,
     required: true,
-    default: 0,
+    default: 2000,
     }
 });
 

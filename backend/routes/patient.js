@@ -5,7 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const patientController_1 = require("../controllers/patientController");
+const fs_1 = __importDefault(require("fs"));
+const path_1 = __importDefault(require("path"));
 const patientController_2 = require("../controllers/patientController");
+const multer_1 = __importDefault(require("multer"));
 const router = express_1.default.Router();
 // GET all patients
 router.get('/getP', patientController_1.getPatients);
@@ -37,4 +40,22 @@ router.post('/changePassPatient', patientController_1.changePassword);
 router.patch('/linkFamilyMember', patientController_1.linkFamilyMember);
 // Create a route for viewing wallet amount
 router.get('/viewWalletAmount', patientController_1.verifyTokenPatient, patientController_1.viewWalletAmount);
+const storage = multer_1.default.diskStorage({
+    destination: (req, file, cb) => {
+        const uploadFolderP = path_1.default.join(__dirname, '../uploadsPatient'); // The folder where files will be saved (inside your project)
+        // Check if the 'uploads' folder exists, and create it if not
+        if (!fs_1.default.existsSync(uploadFolderP)) {
+            fs_1.default.mkdirSync(uploadFolderP);
+        }
+        cb(null, uploadFolderP);
+    },
+    // filename: (req, file, cb) => {
+    //   cb(null, Date.now() + path.extname(file.originalname)); // Rename file with a timestamp
+    // },
+});
+const uploadsPatient = (0, multer_1.default)({ storage });
+// Create a route for uploading and submitting required documents
+router.patch('/uploadDocs', uploadsPatient.array('documents', 1), patientController_1.verifyTokenPatient, patientController_1.uploadPatintDocs);
+router.get('/patientDocument/:filename', patientController_1.openPatientDocument);
+router.patch('/deleteDocs', patientController_1.deletePatientDocs);
 exports.default = router;

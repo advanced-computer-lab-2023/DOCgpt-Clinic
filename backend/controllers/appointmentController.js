@@ -12,16 +12,32 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = exports.createAppointment = void 0;
+exports.complete = exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = exports.createAppointment = void 0;
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel")); // Import your Doctor model
+const tokenModel_1 = __importDefault(require("../models/tokenModel"));
+const patientModel_1 = __importDefault(require("../models/patientModel"));
 const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.body.doctor;
-    const patientId = req.query.patientId;
     const date = req.body.date;
-    const status = req.body.status;
+    const status = "upcoming";
     const type = 'new appointment';
+    const price = req.body.price;
     try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: 'username not found' });
+        }
+        const patient = yield patientModel_1.default.findOne({ username });
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
         // Find the doctor by ID
         const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
         if (doctor) {
@@ -36,9 +52,10 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
             const appointment = yield appointmentModel_1.default.create({
                 status: status,
                 doctor: doctorUsername,
-                patient: patientId,
+                patient: patient,
                 date: new Date(date),
-                type: type
+                type: type,
+                price: price
             });
             return res.status(201).json(appointment);
         }
@@ -83,7 +100,11 @@ exports.createAppointment = createAppointment;
 //     }
 // };
 const getAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    console.log(token);
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     const appoinments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
     res.status(200).json(appoinments);
 });
@@ -107,3 +128,20 @@ const localVariables = (req, res, next) => __awaiter(void 0, void 0, void 0, fun
     next();
 });
 exports.localVariables = localVariables;
+const complete = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    console.log(token);
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
+    const status = req.body.status;
+    const date = req.body.date;
+    const patient = req.body.patient;
+    const result = yield appointmentModel_1.default.updateOne({
+        patient: patient,
+        status: status,
+        date: date,
+        doctor: doctorUsername,
+    }, { $set: { status: 'completed' } });
+});
+exports.complete = complete;

@@ -1,15 +1,33 @@
 import { Request, Response } from "express";
 import AppointmentModel from "../models/appointmentModel";
 import DoctorModel from '../models/doctorModel'; // Import your Doctor model
+import tokenModel from "../models/tokenModel";
+import patientModel from "../models/patientModel";
+
 
 
 export const createAppointment = async (req: Request, res: Response) => {
     const doctorUsername = req.body.doctor;
-    const patientId = req.query.patientId;
     const date = req.body.date;
-    const status = req.body.status;
+    const status = "upcoming";
     const type = 'new appointment';
+    const price =req.body.price;
     try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = await tokenModel.findOne({ token:token }); 
+        var username;
+        if(tokenDB){
+        username=tokenDB.username;
+        }
+        else {
+          return res.status(404).json({ error: 'username not found' });
+        }
+        const patient= await patientModel.findOne({ username });
+        
+        if (!patient) {
+          return res.status(404).json({ error: 'Patient not found' });
+        }
         // Find the doctor by ID
         const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
 
@@ -28,9 +46,10 @@ export const createAppointment = async (req: Request, res: Response) => {
             const appointment = await AppointmentModel.create({
                 status: status,
                 doctor: doctorUsername,
-                patient: patientId,
+                patient: patient,
                 date: new Date(date), // Convert date to Date object
-                type: type
+                type: type,
+                price : price
             });
 
             return res.status(201).json(appointment);
@@ -83,7 +102,12 @@ export const createAppointment = async (req: Request, res: Response) => {
 // };
 
 export const getAppointments = async (req: Request, res: Response) => { 
-    const doctorUsername = req.query.doctorUsername;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    console.log(token);
+    
+    const doctorUsername=tokenDB?.username;
     const appoinments = await AppointmentModel.find({doctor: doctorUsername}).exec();
     res.status(200).json(appoinments);
 }
@@ -105,4 +129,26 @@ export const localVariables = async (req: Request, res: Response, next: () => vo
         resetSession : false
     }
     next()
+}
+
+
+export const complete = async(req: Request, res: Response) => {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    console.log(token);
+    const doctorUsername=tokenDB?.username;
+    const status = req.body.status;
+    const date = req.body.date;
+    const patient = req.body.patient;
+
+    const result = await AppointmentModel.updateOne(
+        {
+            patient: patient,
+            status: status,
+            date: date,
+            doctor: doctorUsername,
+            },
+        { $set: { status: 'completed' } }
+    );
 }

@@ -20,6 +20,7 @@ const UpdateDoctorRate = ({onDismiss, onSaved, doctorUsername}: UpdateDoctorRate
         try {
             const doctorResponse = await DoctorApi.updateRate(rate,  doctorUsername);
             onSaved(doctorResponse);
+            window.location.reload();
         } catch (error) {
             console.error(error);
             alert(error);

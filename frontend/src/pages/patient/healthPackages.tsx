@@ -1,7 +1,9 @@
-import { Button, Card, Container, Grid, Typography,  Menu, MenuItem } from "@mui/material";
-import { blue } from "@mui/material/colors";
+import { Container, Typography } from "@mui/material";
 import axios from "axios";
-import { Key, useEffect, useState } from "react";
+import {useEffect, useState } from "react";
+
+import PatientAppBar from '../../components/patientBar/patientBar';
+import HealthPackageComp from "../../components/healthPackageComp";
 
 interface HealthPackage {
     name: string,
@@ -11,18 +13,39 @@ interface HealthPackage {
     familysubscribtionDiscount: number
 }
 
+// interface HealthPackagesProps {
+//   healthPackages: HealthPackage[]; // Assuming HealthPackage is the type of healthPackages
+// }
+
 function HealthPackages() {
 
     const [healthPackages, sethealthPackages] = useState<HealthPackage[]>([]);
-    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [subscribed, setSubscribed] = useState<HealthPackage[]>([]);
+    const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(true);
 
-    const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
-        setAnchorEl(event.currentTarget);
-      };
+    useEffect(() => {
+        const fetchData = async () =>
+        {
+            try {
+                const token = localStorage.getItem('authToken');
+                const response = await axios.get('/routes/viewSubscribedPackages', {
+                  headers: {
+                    Authorization: `Bearer ${token}`,
+                  },
+                });
+                setSubscribed(response.data.subscribedPackages); // Assuming the array of subscribed packages is within response.data.subscribedPackages
+                
+              } catch (error : any) {
+                console.error('Error fetching Subscribed Health Packages:', error);
+                setError(`Error fetching Subscribed Health Packages. Details: ${error.message}`);
+              } finally {
+                setLoading(false);
+              }
+        }
+        fetchData();
+    }, []);
     
-      const handleCloseMenu = () => {
-        setAnchorEl(null);
-      };
 
     useEffect(() => {
         const fetchHealthPackages = async () =>
@@ -43,35 +66,18 @@ function HealthPackages() {
 
 
     return(
-        <Container>
-           {healthPackages && healthPackages.map((healthPackage)=>(
-            <Card style={{padding: '20px', margin: '20px'}}>
-                <Grid container>
-                    <Grid item xs={10}>
-                    <Typography variant="h5" style={{ fontWeight: 'bold'}}> Package Name: {healthPackage.name}</Typography>
-                    <Typography> feesPerYear: {healthPackage.feesPerYear}</Typography>
-                    <Typography> doctorDiscount: {healthPackage.doctorDiscount}</Typography>
-                    <Typography> medicineDiscount: {healthPackage.medicineDiscount}</Typography>
-                    <Typography> familysubscribtionDiscount: {healthPackage.familysubscribtionDiscount}</Typography>
-                    </Grid>
-                    <Grid item xs={2} style={{ display: 'flex', alignItems: 'center' }}>
-              <Button variant="contained" onMouseOver={handleOpenMenu}>
-                Subscribe
-              </Button>
-              <Menu
-                anchorEl={anchorEl}
-                open={Boolean(anchorEl)}
-                onClose={handleCloseMenu}
-              >
-                <MenuItem onClick={handleCloseMenu}>For Myself</MenuItem>
-                <MenuItem onClick={handleCloseMenu}>For a Family Member</MenuItem>
-              </Menu>
-            </Grid>
-                </Grid>
-            </Card>
+        <>
+        <PatientAppBar/>
+        <Container style={{marginTop: '20px' }}>
+        <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
+        Available Health Packages
+      </Typography>
+           {healthPackages && healthPackages.map((healthPackage, index)=>(
+           <HealthPackageComp key={index} healthPackage={healthPackage} healthPackages={subscribed}></HealthPackageComp>
             // <SarahComp  healthPackage= {healthPackage}></SarahComp>
            ))}
         </Container>
+        </>
     );
 
 }

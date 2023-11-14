@@ -20,6 +20,9 @@ const packageModel_1 = __importDefault(require("../models/packageModel")); // Im
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
+const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
+const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
+const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const addAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { username, password } = req.body;
     const usernameExists = yield patientModel_1.default.findOne({ username });
@@ -72,6 +75,8 @@ const deleteDoctorByUsername = (req, res) => __awaiter(void 0, void 0, void 0, f
         const { username } = req.body;
         // Find and delete the Doctor by username
         const deletedDoctor = yield doctorModel_1.default.findOneAndDelete({ username });
+        const appoinment = yield appointmentModel_1.default.findOneAndDelete({ doctor: username });
+        const prescription = yield perscriptionModel_1.default.findOneAndDelete({ doctorUsername: username });
         if (!deletedDoctor) {
             return res.status(404).json({ message: 'Doctor not found' });
         }
@@ -92,6 +97,9 @@ const deletePatientByUsername = (req, res) => __awaiter(void 0, void 0, void 0, 
         if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
+        const appoinment = yield appointmentModel_1.default.findOneAndDelete({ patient: username });
+        const healthRecord = yield healthRecordModel_1.default.findOneAndDelete({ patient: username });
+        const prescription = yield perscriptionModel_1.default.findOneAndDelete({ patientUsername: username });
         res.status(200).json({ message: 'Patient deleted successfully' });
     }
     catch (error) {

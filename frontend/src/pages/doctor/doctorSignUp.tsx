@@ -77,7 +77,7 @@ function SignUpDoctor() {
 
       // Handle the response from the back-end as needed, e.g., show a success message or redirect the user.
       console.log("patient registered successfully :", response);
-      navigate("/");
+      navigate("/contract");
       // You can also redirect the user to the login page after a successful sign-up
       // history.push("/login"); // You need to import useHistory from 'react-router-dom'
     } catch (error) {

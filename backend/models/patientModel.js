@@ -34,6 +34,13 @@ exports.patientSchema = new mongoose_1.default.Schema({
         required: true,
         match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
     },
+    gender: {
+        type: String,
+        required: true,
+        enum: ['male', 'female', 'other'],
+        default: 'male',
+        // Add appropriate values based on your application
+    },
     password: {
         type: String,
         required: true,
@@ -81,6 +88,10 @@ exports.patientSchema = new mongoose_1.default.Schema({
                 type: String,
                 // required: true,
             },
+            username: {
+                type: String,
+                // required: true,
+            },
             age: {
                 type: Number,
                 required: true,
@@ -118,7 +129,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
     walletBalance: {
         type: Number,
         required: true,
-        default: 0,
+        default: 2000,
     }
 });
 function validatePassword(password) {

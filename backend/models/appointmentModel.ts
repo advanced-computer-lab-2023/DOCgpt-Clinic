@@ -14,7 +14,6 @@ export const appointmentSchema = new mongoose.Schema({
         required: false
     },
     doctor: {
-        // type: mongoose.Schema.Types.ObjectId,
         type: String,
         required: true
     },

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Button, Typography } from '@mui/material';
 
@@ -12,7 +12,14 @@ const ViewWalletBalance: React.FC<ViewMyWalletAmount> = ({ patientUsername }) =>
 
   const handleViewWalletBalance = async () => {
     try {
-      const response = await axios.get(`/routes/patient/viewWalletAmount?patientUsername=${patientUsername}`);
+      //const response = await axios.get(`/routes/patient/viewWalletAmount?patientUsername=${patientUsername}`);
+      const token = localStorage.getItem('authToken');
+      const authHeader = `Bearer ${token}`;
+      const response = await axios.get(`/routes/patient/viewWalletAmount?patientUsername=${patientUsername}`, {
+        headers: {
+          Authorization: authHeader,
+        },
+      });
       console.log('API Response:', response); // Log the entire response for debugging
       const { walletAmount } = response.data;
       console.log('Extracted Wallet Amount:', walletAmount); // Log the extracted walletAmount for debugging
@@ -26,14 +33,19 @@ const ViewWalletBalance: React.FC<ViewMyWalletAmount> = ({ patientUsername }) =>
     }
   };
 
+  useEffect(() => {
+    // Fetch wallet balance when the component mounts
+    handleViewWalletBalance();
+  }, [patientUsername]); // Trigger a fetch whenever the patientUsername changes
+
   return (
-    <div>
-      <Button variant="contained" onClick={handleViewWalletBalance}>
-        View Wallet Balance
-      </Button>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
+      <Typography variant="h6" color="primary">
+        Current Balance
+      </Typography>
       {walletAmount !== null && (
-        <Typography>
-          Wallet Balance: ${walletAmount.toFixed(2)} {/* Assuming walletAmount is a number */}
+        <Typography variant="h4" color="black">
+          ${walletAmount.toFixed(2)}
         </Typography>
       )}
       {error && <Typography color="error">{error}</Typography>}

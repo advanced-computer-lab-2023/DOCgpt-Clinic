@@ -1,18 +1,15 @@
-// IMPORTS
-
 import { Container, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Switch, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState} from "react";
 import { useLocation } from "react-router-dom";
-import Appointment from "../../components/Appointment";
-import React from "react";
+import DoctorAppointment from "../../components/DoctorAppointment";
 
 function MyAppointments(){
 //THE LOGIC OF VIEWING A DOCTOR'S APPOINTMENTS
 //THW LINK TO BACK
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const doctorUsername = queryParams.get('doctorUsername');
+    // const location = useLocation();
+    // const queryParams = new URLSearchParams(location.search);
+    // const doctorUsername = queryParams.get('doctorUsername');
 
     const [appointments, setAppointments] = useState<any[]>([]);
     const [filteredAppointments, setFilteredAppointments] = useState<any[]>([]);
@@ -38,9 +35,20 @@ function MyAppointments(){
         const fetchAppointments = async () => {
             console.log('Fetching appointments...');
             try {
-            const response = await axios.get(`/routes/appointments/?doctorUsername=${doctorUsername}`);
-            console.log('Response:', response);
-            setAppointments(response.data);
+                const token=localStorage.getItem("authToken")
+                const response = await axios.get(`/routes/appointments`,{
+                headers:{
+                    Authorization:`Bearer ${token}`
+                }
+            });
+            if(response){
+                console.log('Response:', response);
+                const data = await response.data;
+                setAppointments(data);
+            }
+            else {
+                console.error('Failed to fetch doctor data');
+            }
             } catch (error) {
             console.error('Error:', error);
             }
@@ -182,10 +190,10 @@ return(
         </Grid>
         <Container>
             {appointments && !(filteredAppointments) && appointments.map((appointment) => (
-                <Appointment appointment={appointment}/>
+                <DoctorAppointment appointment={appointment}/>
             ))}
             {filteredAppointments && filteredAppointments.map((appointment: any, index: number) => (
-                <Appointment appointment={appointment}/>
+                <DoctorAppointment appointment={appointment}/>
             ))}
         </Container>
     </Container>

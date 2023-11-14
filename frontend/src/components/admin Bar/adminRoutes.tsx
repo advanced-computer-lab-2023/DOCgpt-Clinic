@@ -27,32 +27,28 @@ const appRoutes: RouteType[] = [
     ),
     child: [
       {
-        path: "/admin/home",
-        state: "viewDoctors",
-      },
-      {
-        path: "/admin/home",
-        state: "make app",
+        path: "/requests",
+        state: "View Doctor Requests",
       },
     ],
   },
-  {
-    header: (
-      <Typography variant="h6" fontWeight="bold">
-        Family Members
-      </Typography>
-    ),
-    child: [
-      {
-        path: "/patient/viewFamilyMembers",
-        state: "Family members",
-      },
-      {
-        path: "/patient/home",
-        state: "make app",
-      },
-    ],
-  },
+  // {
+  //   header: (
+  //     <Typography variant="h6" fontWeight="bold">
+  //       Family Members
+  //     </Typography>
+  //   ),
+  //   child: [
+  //     {
+  //       path: "/patient/viewFamilyMembers",
+  //       state: "Family members",
+  //     },
+  //     {
+  //       path: "/patient/home",
+  //       state: "make app",
+  //     },
+  //   ],
+  // },
 ];
 
 export default appRoutes;

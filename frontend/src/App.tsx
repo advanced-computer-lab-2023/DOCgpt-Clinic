@@ -18,14 +18,33 @@ import MyAppointments from './pages/doctor/MyAppointments';
 import MyPatients from './pages/doctor/MyPatients';
 import SignupDoctor from './pages/doctor/signupDoctor';
 import ViewWalletAmountPage from './pages/patient/viewWalletAmountPage';
-import HealthPackages from './pages/patient/healthPackages';import contract from './pages/doctor/contract';import DrawerAppBar from './components/patientBar/patientBar';
+import HealthPackages from './pages/patient/healthPackages';
+import contract from './pages/doctor/contract';
+import DrawerAppBar from './components/patientBar/patientBar';
 import SignUpPatient from './pages/patient/signingUp';
 import Log from './pages/login'
 import HomePage from './pages/patient/homePage';
 import DoctorHomePage from './pages/doctor/homePage';
 import AdminHomePage from './pages/admin/homePage';
 import LinkFamilyMember from './components/linkfammem';
-//import DoctorAvailability from './components/DoctorAvailability';
+import DoctorRequests from './components/admin/DoctorRequests';
+import PasswordReset from './components/resetPassword';
+import DoctorAvailability from './components/doctor/DoctorAvailability';
+import SubscribeFam from './pages/patient/SubscribeFam';
+import Mypackages from './pages/patient/Mypackages';
+import subscribedPage from './pages/patient/subscribedPackage';
+import HealthRecord from './pages/doctor/HealthRecord';
+import HealthRecordEmpty from './pages/doctor/HealthRecordEmpty';
+import HealthRecordForm from './pages/doctor/HealthRecordForm';
+import PatientsInfo from './pages/doctor/PatientsInfo';
+import ViewMyTimeSlots from './pages/doctor/ScheduleFollowUp';
+import DoctorInfo from './pages/patient/DoctorInfo';
+import ViewDoctors from './pages/patient/viewDoctors';
+import ViewMyAppointments from './pages/patient/ViewMyAppointments';
+import ViewMyHealthRecord from './pages/patient/ViewMyHealthRecord';
+import ViewMyFam from './pages/patient/ViewMyFam';
+import ViewDoctorDocuments from './pages/doctor/viewDoctorDocuments';
+
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -60,14 +79,36 @@ function App() {
          <Route path ="/patient/link" element={<LinkFamilyMember/>}/>
          <Route path="/doctor/home" element={<DoctorHomePage/>} />
          <Route path="/admin/home" element={<AdminHomePage/>} />
+         <Route path ="/doctor/time" element={<DoctorAvailability/>}/>
         {/* //<Route path="/doctor/timeslot" Component={timeslottt}/> */}
          <Route path="/patient/addMember" element={<AddFamilyMember />} />
          <Route path="/patient/ViewFamilyMembers" element={<ViewFamilyMembers />} />
         // <Route path="/admin" Component={Admin} />
-        // <Route path="/doctor/appointments" Component={MyAppointments} />
         <Route path="/patient/walletAmount/:username" element={<ViewWalletAmountPage />} />
         <Route path="/doctor/signup" element={<SignupDoctor />} />
+        <Route path="/requests"element={<DoctorRequests/>}/>
         // <Route path="/doctor/patients" Component={MyPatients} />
+        < Route path="/forgetpassword" element={<PasswordReset/>} />
+        <Route path="/contract" Component={contract} />
+        <Route path="/patient/healthPackages" Component={HealthPackages} />
+        <Route path="/patient/SubscribeFam" Component={SubscribeFam} />
+        <Route path="/patient/packages" Component={Mypackages} />
+        <Route path="/patient/subscribedPage" Component={subscribedPage} />
+        <Route path="/doctor/appointments" Component={MyAppointments} />
+        <Route path="/doctor/patients" Component={MyPatients} />
+        <Route path="/doctor/patientInfo" Component={PatientsInfo} />
+        <Route path="/doctor/patientHealthRecord" Component={HealthRecord} />
+        <Route path="/doctor/healthRecordEmpty" Component={HealthRecordEmpty} />
+        <Route path="/doctor/healthRecordForm" Component={HealthRecordForm} />
+        <Route path="/patient/viewDoctors" Component={ViewDoctors} />  
+        <Route path="/patient/viewMyappointments" Component={ViewMyAppointments} />  
+        <Route path="/patient/viewMyhealthrecords" Component={ViewMyHealthRecord} />  
+        <Route path ="/doctor/followUp" element={<ViewMyTimeSlots/>}/>
+        <Route path ="/patient/doctorinfo" Component={DoctorInfo}/>
+        <Route path ="/patient/ViewMyFam" Component={ViewMyFam}/>
+        <Route path="/view-doctor-documents" element={<ViewDoctorDocuments />} />
+
+
       
       </Routes>
     

@@ -1,7 +1,162 @@
+import { Button, Container, Grid, Paper, TextField, Typography } from "@mui/material";
+import axios from "axios";
+import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+interface FormValues {
+    MedicalHistory: {
+        Allergies: string[];
+        PastMedicalConditions: string[];
+        Comments: string[];
+    };
+    MedicationList: {
+        CurrentMedications: {
+            Names: string[],
+            Prescriptions: string[],
+        },
+        PastMedications: {
+            Names: string[],
+            Prescriptions: string[],
+        },
+        Comments: string[],
+    };
+    VitalSigns: {
+        BloodPressure: null,
+        HeartRate: null,
+        Height: null,
+        Weight: null,
+        Comments: string[],
+    };
+    Laboratory: {
+        BloodTests: string[],
+        XRays: string[],
+        Other: string[],
+        Comments: string[],
+    };
+    GeneralComments: string[];
+    GeneralImages: string[];
+}
 
 function HealthRecordForm(){
     //THE LOGIC OF DISPLAYING A FORM TO TAKE UP ALL THE INFORMATION NEEDED TO ADD A NEW HEALTH RECORD OF A SPECIFIC PATIENT UPON CLICK ON THAT BUTTON(+) IN THE (EMPTY HEALTH RECORD)PAGE
+    const location = useLocation();
+    const queryParams = new URLSearchParams(location.search);
+    const username = queryParams.get('patient');
 
+    //1- TAKE THE VALUES FROM THE FORM
+    const [formValues, setFormValues] = useState<FormValues>({
+        MedicalHistory: {
+            Allergies: [],
+            PastMedicalConditions: [],
+            Comments: [],
+        },
+        MedicationList: {
+            CurrentMedications: {
+                Names: [],
+                Prescriptions: [],
+            },
+            PastMedications: {
+                Names: [],
+                Prescriptions: [],
+            },
+            Comments: [],
+        },
+        VitalSigns: {
+            BloodPressure: null,
+            HeartRate: null,
+            Height: null,
+            Weight: null,
+            Comments: [],
+        },
+        Laboratory: {
+            BloodTests: [],
+            XRays: [],
+            Other: [],
+            Comments: [],
+        },
+        GeneralComments: [],
+        GeneralImages: [],
+    });
+    const [allergy, setAllergy] = useState<string>('');
+    const [medicalCondition, setmedicalCondition] = useState<string>('');
+    const [currentMed, setcurrentMed] = useState<string>('');
+    const [pastMed, setpastMed] = useState<string>('');
+    const [bloodPressure, setbloodPressure] = useState<string>('');
+    const [heartRate, setHeartRate] = useState<string>('');
+    const [height, setHeight] = useState<string>('');
+    const [weight, setweight] = useState<string>('');
+    const navigate = useNavigate();
+
+
+    const inputAllergy = (e: any) => {
+        setAllergy(e.target.value);
+    };
+    const inputMedCond = (e: any) => {
+        setmedicalCondition(e.target.value);
+    }
+    const inputCurrMed = (e: any) => {
+        setcurrentMed(e.target.value);
+    };
+    const inputPastMed = (e: any) => {
+        setpastMed(e.target.value);
+    };
+    const inputBloodPress = (e: any) => {
+        setbloodPressure(e.target.value);
+    };
+    const inputHeartRate = (e: any) => {
+        setHeartRate(e.target.value);
+    };
+    const inputHeight = (e: any) => {
+        setHeight(e.target.value);
+    };
+    const inputWeight = (e: any) => {
+        setweight(e.target.value);
+    };
+
+    //2- MAKE A POST REQUEST WITH THESE VALUES AS THE BODY USING AXIOS AND THE ROUTE AND ADDING THE PATIENT USERNAME TO THE BODY
+    const handleSubmit = (event : React.FormEvent) => {
+        event.preventDefault();
+        formValues.MedicalHistory.Allergies.push(allergy);
+        formValues.MedicalHistory.PastMedicalConditions.push(medicalCondition);
+        formValues.MedicationList.CurrentMedications.Names.push(currentMed);
+        formValues.MedicationList.PastMedications.Names.push(pastMed);
+
+        // Handle form submission, e.g., send formValues to the server
+        createHealthRequest();
+        navigate(`/doctor/patients`);
+
+    };
+
+    const createHealthRequest = async () => {
+        try {
+            const response = await axios.post('/routes/healthRecord/', {
+                patient: username,
+                MedicalHistory: {
+                    Allergies: formValues.MedicalHistory.Allergies,
+                    PastMedicalConditions: formValues.MedicalHistory.PastMedicalConditions
+                },
+                MedicationList: {
+                    CurrentMedications: {
+                        Names: formValues.MedicationList.CurrentMedications.Names,
+                    },
+                    PastMedications: {
+                        Names: formValues.MedicationList.PastMedications.Names,
+                    },
+                },
+                VitalSigns: {
+                    BloodPressure: bloodPressure,
+                    HeartRate: heartRate,
+                    Height: height,
+                    Weight: weight,
+                },
+                // Add other key-value pairs as needed
+            });
+            alert("Health Record Created Successfully!");
+            console.log('Response:', response.data);
+            } catch (error) {
+            console.error('Error:', error);
+            }
+        };
     //ALSO HANDLING SUBMIT OF THAT BUTTON
     //SHOULD REDIRECT TO THE (HEALTH RECORD) PAGE OF THAT PATIENT AND DISPLAY IT THERE OR REDIRECT TO THE (MY PATIENTS) PAGE WITH JUST A NOTIFICATION THAT HEALTH RECORD IS ADDED SUCCESSFULLY AND THE DOCTOR COULD CLICK ON THE HEALTH RECORD BUTTON AGAIN TO VIEW (STILL THINKING)
 
@@ -9,6 +164,84 @@ function HealthRecordForm(){
     //THE DISPLAY OF THE FORM
     //SIMPLE FORM, MAKE SURE IT INCLUDES ALL  THE QUESTIONS NEEDED TO GATHER THE INFO FOR CREATE HEALTH RECORD, GIVE SPACE FOR (NO ANSWER), INCLUDE BUTTONS TO UPLOAD IMAGES WHEN NEEDED, INCLUDE A GENERAL COMMENTS(NOTES) SECTION 
 
+    return(
+    <Container component="main" maxWidth="md">
+        <Paper elevation={3} style={{ padding: 20, marginTop: 20 }}>
+            <Typography component="h1" variant="h5" align="center">
+            Medical History Form
+            </Typography>
+            <form onSubmit={handleSubmit}>
+            <Grid container spacing={2}>
+                {/* Medical History Section */}
+                <Grid item xs={12}>
+                <Typography variant="h6">Medical History</Typography>
+                <TextField
+                    label="Allergies"
+                    fullWidth
+                    value={allergy}
+                    onChange={inputAllergy}
+                />
+                <div>{allergy}</div>
+                <TextField
+                    label="Past Medical Conditions"
+                    fullWidth
+                    value={medicalCondition}
+                    onChange={inputMedCond}
+                />
+                </Grid>
+                {/* Medication List Section */}
+                <Grid item xs={12}>
+                <Typography variant="h6">Medication List</Typography>
+                <TextField
+                    label="Current Medications"
+                    fullWidth
+                    value={currentMed}
+                    onChange={inputCurrMed}
+                />
+                <TextField
+                    label="Past Medications"
+                    fullWidth
+                    value={pastMed}
+                    onChange={inputPastMed}
+                />
+                </Grid>
+                {/* Vital Signs Section */}
+                <Grid item xs={12}>
+                <Typography variant="h6">Vital Signs</Typography>
+                <TextField
+                    label="Blood Pressure"
+                    fullWidth
+                    value={bloodPressure}
+                    onChange={inputBloodPress}
+                />
+                <TextField
+                    label="Heart Rate"
+                    fullWidth
+                    value={heartRate}
+                    onChange={inputHeartRate}
+                />
+                <TextField
+                    label="Height"
+                    fullWidth
+                    value={height}
+                    onChange={inputHeight}
+                />
+                <TextField
+                    label="Weight"
+                    fullWidth
+                    value={weight}
+                    onChange={inputWeight}
+                />
+                </Grid>
+            </Grid>
+
+            <Button type="submit" variant="contained" color="primary" style={{ marginTop: 20 }}>
+                Submit
+            </Button>
+            </form>
+        </Paper>
+    </Container>    
+    );
 }
 
 export default HealthRecordForm;

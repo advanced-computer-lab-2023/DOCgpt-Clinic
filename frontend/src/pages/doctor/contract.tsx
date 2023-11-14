@@ -1,5 +1,3 @@
-// Contract.tsx
-
 import React, { useState, CSSProperties } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, Button, Grid, Paper, Typography } from "@mui/material";
@@ -8,8 +6,8 @@ import DescriptionIcon from '@mui/icons-material/Description';
 const Contract: React.FC = () => {
   const navigate = useNavigate();
   const [accepted, setAccepted] = useState(false);
-  const salary = 10000; // Salary in dollars
-  const duration = '4 years'; // Contract duration
+  const markup = 100; // Salary in dollars
+  //const duration = '4 years'; // Contract duration
 
   const handleAccept = () => {
     // Logic to mark the contract as accepted and navigate to the login page
@@ -30,11 +28,9 @@ const Contract: React.FC = () => {
         </Typography>
         <div style={styles.space}></div> {/* Space between "Doctor Contract" and salary */}
         <Typography variant="body1" style={styles.contractText}>
-          Salary: ${salary}
+          markup:   {markup}   egp
         </Typography>
-        <Typography variant="body1" style={styles.contractText}>
-          Duration: {duration}
-        </Typography>
+       
         <Typography variant="body1" style={styles.contractText}>
           {/* Add additional terms and conditions here */}
         

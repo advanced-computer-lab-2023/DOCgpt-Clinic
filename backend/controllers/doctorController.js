@@ -12,7 +12,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewWalletAmount = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+const path_1 = __importDefault(require("path"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -21,13 +22,21 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const adminModel_1 = __importDefault(require("../models/adminModel"));
+const patientModel_2 = __importDefault(require("../models/patientModel"));
+const packageModel_1 = __importDefault(require("../models/packageModel"));
+const healthRecordModel_2 = __importDefault(require("../models/healthRecordModel"));
+const fs_1 = __importDefault(require("fs"));
 const getDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctors = yield doctorModel_1.default.find().exec();
     res.status(200).json(doctors);
 });
 exports.getDoctors = getDoctors;
 const getDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    console.log(token);
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
     console.log(doctor);
     res.status(200).json(doctor);
@@ -35,7 +44,11 @@ const getDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 exports.getDoctor = getDoctor;
 const searchPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const patientName = String(req.query.patientName);
-    const doctorUsername = req.query.doctor;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    console.log(token);
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     try {
         // FIND THE PATIENTS OF THAT DOCTOR
         const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
@@ -147,7 +160,11 @@ const updateDoctorAffiliation = (req, res) => __awaiter(void 0, void 0, void 0, 
 });
 exports.updateDoctorAffiliation = updateDoctorAffiliation;
 const viewMyPatients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    console.log(token);
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
     const patients = [];
     const usernames = [];
@@ -164,7 +181,11 @@ const viewMyPatients = (req, res) => __awaiter(void 0, void 0, void 0, function*
 });
 exports.viewMyPatients = viewMyPatients;
 const viewPatientsUpcoming = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    console.log(token);
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername, status: "upcoming" }).exec();
     const patients = [];
     const usernames = [];
@@ -172,7 +193,6 @@ const viewPatientsUpcoming = (req, res) => __awaiter(void 0, void 0, void 0, fun
         const username = appoinment.patient;
         const patient = yield patientModel_1.default.findOne({ username: username }).exec();
         if (!usernames.includes(username)) {
-            patients.push({ date: appoinment.date });
             patients.push(patient);
             usernames.push(username);
         }
@@ -181,18 +201,18 @@ const viewPatientsUpcoming = (req, res) => __awaiter(void 0, void 0, void 0, fun
 });
 exports.viewPatientsUpcoming = viewPatientsUpcoming;
 const selectPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const patientId = req.query.patientId;
-    const patient = yield patientModel_1.default.findById(patientId);
+    const patientUsername = req.query.patient;
+    const patient = yield patientModel_1.default.findOne({ username: patientUsername }).exec();
     res.status(200).json(patient);
 });
 exports.selectPatient = selectPatient;
 const addTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
+    //const doctorUsername = req.query.doctorUsername;
     const { dates } = req.body;
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     const tokenDB = yield tokenModel_1.default.findOne({ token });
-    const username = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     try {
         // Find the doctor by username
         const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
@@ -237,10 +257,15 @@ const removeTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function
 });
 exports.removeTimeSlots = removeTimeSlots;
 const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctor;
-    const patientUsername = req.query.patient;
+    //const doctorUsername = req.query.doctor;
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    console.log(token);
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
+    const patientUsername = req.body.patient;
     const date = req.body.date;
-    const status = req.body.status;
+    const status = 'upcoming';
     const type = 'Follow up';
     try {
         // Find the doctor by ID
@@ -293,7 +318,7 @@ exports.viewHealthRecords = viewHealthRecords;
 //VIEW A HEALTH RECORD FOR A SPECIFIC PATIENT
 const viewHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const patientUsername = req.query.patientUsername;
-    const healthRecord = yield healthRecordModel_1.default.find({ patient: patientUsername });
+    const healthRecord = yield healthRecordModel_1.default.findOne({ patient: patientUsername });
     res.status(200).json(healthRecord);
 });
 exports.viewHealthRecord = viewHealthRecord;
@@ -539,21 +564,31 @@ const getPendingDoctor = (req, res) => __awaiter(void 0, void 0, void 0, functio
     res.status(200).json(doctor);
 });
 exports.getPendingDoctor = getPendingDoctor;
+const fs_2 = require("fs");
 const uploadAndSubmitReqDocs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const uploadedFiles = req.files;
+    //const { username } = req.body; // Assuming the username is sent in the request body
     try {
         const fileInformation = [];
-        // Loop through the uploaded files and save their information
+        // Create a folder for the pharmacist if it doesn't exist
+        const uploadFolder = path_1.default.join(__dirname, `../uploads`);
+        // const uploadFolder = path.join(__dirname, `../uploads/${username}`);
+        if (!fs_1.default.existsSync(uploadFolder)) {
+            fs_1.default.mkdirSync(uploadFolder);
+        }
+        // Loop through the uploaded files and save them in the pharmacist's folder
         for (const file of uploadedFiles) {
-            // Here, you can save the file information in the pharmacist model or any other place as needed
             const fileData = {
                 filename: file.originalname,
-                path: file.path, // This is the local path where the file is saved
+                path: path_1.default.join(uploadFolder, file.originalname),
             };
             fileInformation.push(fileData);
+            // Create a write stream to save the file
+            const writeStream = (0, fs_2.createWriteStream)(fileData.path);
+            (0, fs_2.createReadStream)(file.path).pipe(writeStream);
         }
         // You can save the file information wherever needed in your application
-        res.json({ message: 'Documents uploaded successfully.' });
+        res.json({ documents: fileInformation, message: 'Documents uploaded successfully.' });
     }
     catch (error) {
         console.error('Error handling file upload:', error);
@@ -561,14 +596,130 @@ const uploadAndSubmitReqDocs = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.uploadAndSubmitReqDocs = uploadAndSubmitReqDocs;
-const viewWalletAmount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const patientUsername = req.query.patientUsername;
+const calculateSessionPrice = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const patient = yield patientModel_1.default.findOne({ username: patientUsername }).exec();
+        const hourlyRate = req.query.hourlyRate;
+        if (!hourlyRate) {
+            return res.status(404).json({ error: 'rate not found.' });
+        }
+        const price = Number(hourlyRate) + 100;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        var patientUsername;
+        console.log(tokenDB);
+        if (tokenDB) {
+            patientUsername = tokenDB.username;
+        }
+        const patient = yield patientModel_2.default.findOne({ username: patientUsername });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found.' });
         }
-        const walletAmount = patient.walletBalance;
+        if (patient.healthPackageSubscription.length === 0) {
+            console.log('Patient has no health packages subscribed');
+            return res.status(200).json(price);
+        }
+        const subscribedPackage = patient.healthPackageSubscription.find((subscription) => subscription.status === 'subscribed with renewal date');
+        if (!subscribedPackage) {
+            console.log('No subscribed health package found');
+            console.log(price);
+            return res.status(200).json(price);
+            ;
+        }
+        const packageName = subscribedPackage.name;
+        const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
+        if (!healthPackage) {
+            throw new Error('Health package not found');
+        }
+        const discount = price - healthPackage.doctorDiscount * 0.01 * price;
+        console.log('Discount:', discount);
+        // Perform further calculations or operations with the discount value
+        return res.status(200).json(discount);
+    }
+    catch (error) {
+        console.error('Error calculating session price:', error);
+        throw error;
+    }
+});
+exports.calculateSessionPrice = calculateSessionPrice;
+const ViewMyTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    console.log(token);
+    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
+    try {
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+        if (doctor) {
+            const timeslots = doctor.timeslots;
+            res.status(200).json({ timeslots });
+        }
+        else {
+            // Handle case where no matching doctor is found
+            res.status(404).json({ error: 'Doctor not found' });
+        }
+    }
+    catch (error) {
+        console.error('Error retrieving doctor timeslots:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.ViewMyTimeSlots = ViewMyTimeSlots;
+const commentsHealthRecord = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d, _e;
+    const patientUsername = req.query.patientUsername;
+    const { section, comment } = req.body;
+    try {
+        // Save the new document to the database
+        const healthRecord = yield healthRecordModel_2.default.findOne({ patient: patientUsername });
+        if (!healthRecord) {
+            return res.status(404).json({ message: 'Health record not found for the specified patient.' });
+        }
+        if (section == 'MedicalHistory') {
+            (_a = healthRecord.MedicalHistory) === null || _a === void 0 ? void 0 : _a.Comments.push(comment);
+        }
+        else if (section == 'MedicationList') {
+            (_b = healthRecord.MedicationList) === null || _b === void 0 ? void 0 : _b.Comments.push(comment);
+        }
+        else if (section == 'VitalSigns') {
+            (_c = healthRecord.VitalSigns) === null || _c === void 0 ? void 0 : _c.Comments.push(comment);
+        }
+        else if (section == 'Laboratory') {
+            (_d = healthRecord.Laboratory) === null || _d === void 0 ? void 0 : _d.Comments.push(comment);
+        }
+        else if (section == 'GeneralComments') {
+            (_e = healthRecord.GeneralComments) === null || _e === void 0 ? void 0 : _e.push(comment);
+        }
+        else {
+            return res.status(400).json({ message: 'Invalid section provided.' });
+        }
+        yield healthRecord.save();
+        res.status(201).json({ message: 'Record created successfully', healthRecord });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.commentsHealthRecord = commentsHealthRecord;
+const viewWalletAmount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    //const patientUsername = req.query.patientUsername as string;
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: 'username not found' });
+        }
+        const doctor = yield doctorModel_1.default.findOne({ username }).exec();
+        if (!doctor) {
+            return res.status(404).json({ error: 'Doctor not found.' });
+        }
+        const walletAmount = doctor.walletBalance;
         if (walletAmount === undefined) {
             return res.status(500).json({ error: 'Wallet balance not available.' });
         }
@@ -580,3 +731,55 @@ const viewWalletAmount = (req, res) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.viewWalletAmount = viewWalletAmount;
+const getDoctorDocuments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const uploadFolder = path_1.default.join(__dirname, '../uploads');
+        const files = fs_1.default.readdirSync(uploadFolder);
+        res.json({ documents: files });
+    }
+    catch (error) {
+        console.error('Error getting pharmacist documents:', error);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+});
+exports.getDoctorDocuments = getDoctorDocuments;
+const serveDoctorDocument = (req, res) => {
+    try {
+        const filename = req.params.filename;
+        const filePath = path_1.default.join(__dirname, '../uploads', filename);
+        const fileStream = fs_1.default.createReadStream(filePath);
+        fileStream.on('open', () => {
+            res.set('Content-Type', 'application/octet-stream');
+            fileStream.pipe(res);
+        });
+        fileStream.on('error', (error) => {
+            console.error('Error serving pharmacist document:', error);
+            res.status(500).json({ error: 'Internal server error.' });
+        });
+    }
+    catch (error) {
+        console.error('Error serving pharmacist document:', error);
+        res.status(500).json({ error: 'Internal server error.' });
+    }
+};
+exports.serveDoctorDocument = serveDoctorDocument;
+// Helper function to get content type based on file extension
+const getContentType = (filename) => {
+    const ext = path_1.default.extname(filename).toLowerCase();
+    switch (ext) {
+        case '.pdf':
+            return 'application/pdf';
+        case '.docx':
+            return 'application/docx';
+        case '.png':
+            return 'image/png';
+        case '.jpeg':
+            return 'image/jpeg';
+        case '.jpg':
+            return 'image/jpg';
+        // Add more cases for other file types as needed
+        default:
+            return 'application/octet-stream';
+    }
+};
+exports.getContentType = getContentType;

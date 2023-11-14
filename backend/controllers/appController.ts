@@ -4,7 +4,6 @@ import { sendOTPByEmail } from './nodemailer';
 import patientModel from '../models/patientModel';
 import Doctor from '../models/doctorModel';
 import adminModel from '../models/adminModel';
-import packageModel  from '../models/packageModel'; // Import your package model
 import bcrypt from 'bcrypt';
 import mongoose from 'mongoose'
 import jwt from 'jsonwebtoken';
@@ -32,7 +31,7 @@ export const verifyOTP = async (req: Request, res: Response) => {
 };
 
 export const SendResetmail = async (req: Request, res: Response) => {
-  const email = req.query.email as string;
+  const email = req.body.email as string;
   const isValidMail = validateEmail(email);
 
   if (!isValidMail) {
@@ -73,14 +72,14 @@ export const resetPassword = async (req: Request, res: Response) => {
     if (!req.app.locals.resetSession) {
       return res.status(403).json({ message: 'Access denied' });
     }
-
-    const newPassword = req.query.newPassword;
-    const confirmPassword = req.query.confirmPassword;
-    const email = req.query.email;
+    const username=req.body.username;
+    const newPassword = req.body.newPassword;
+    const confirmPassword = req.body.confirmPassword;
+ 
     let user;
 
-    const doctor = await Doctor.findOne({ email: email });
-    const patient = await patientModel.findOne({ email: email });
+    const doctor = await Doctor.findOne({username:username });
+    const patient = await patientModel.findOne({ username:username });
 
     if (doctor) {
       user = doctor;
@@ -108,6 +107,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     req.app.locals.resetSession=false;
     return res.status(200).json({ message: 'Password reset successfully' });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: 'Internal server error' });
   }
 };
@@ -120,7 +120,7 @@ function validatePassword(password: any) {
   }
 
   // Regular expression pattern to check for at least one capital letter and one number
-  const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+  const pattern = /^(?=.[A-Z])(?=.\d)/;
 
   // Use the test method to check if the password matches the pattern
   if (!pattern.test(password)) {

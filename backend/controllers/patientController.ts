@@ -5,6 +5,8 @@ import appointmentModel from '../models/appointmentModel';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import path from 'path';
+import fs from 'fs';
 
 
 // create a new workout
@@ -12,7 +14,7 @@ export const createPatient = async (req: Request, res: Response) => {
     console.log('Request reached controller')
 
   try {
-    const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription } = req.body;
+    const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription ,gender} = req.body;
     const emailExists=await Patientmodel.findOne({email}) ;
     const emailExists2=await doctorModel.findOne({email})
     const emailExists3=await adminModel.findOne({email})
@@ -44,7 +46,7 @@ export const createPatient = async (req: Request, res: Response) => {
     if (!validatePassword(password)) {
       return res.status(400).json({ message: 'Invalid password' });
     }
-    const patient = await Patientmodel.create({ username,name,email,password:hash,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription });
+    const patient = await Patientmodel.create({ username,name,email,password:hash,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription ,gender});
 console.log('Patient created!', patient)
 
     res.status(200).json(patient);
@@ -123,6 +125,7 @@ export const addFamilyMember = async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
+   
     const tokenDB = await tokenModel.findOne({ token:token }); 
     
     var username;
@@ -135,32 +138,54 @@ export const addFamilyMember = async (req: Request, res: Response) => {
 
     // Assuming you have a route parameter for the patient's ID
     const familyMemberData = req.body; // Assuming family member data is sent in the request body
-    
+
     // Find the patient by ID
-    const patient= await patientModel.findOne({ username });
-    
+    const patient = await patientModel.findOne({ username });
+
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
     }
-            console.log(patient);
-            // Add the new family member object to the patient's record
+      const user=familyMemberData.name+""+"xx"
+      const email=familyMemberData.name+""+"xx"+"@gmail.com"
+    // Create a new patient
+    const newPatientData = {
+      username: user, // Add the appropriate attribute for the username
+      name: familyMemberData.name,
+      email: email, // Add the appropriate attribute for the email
+      password: "Helloworld2", // Add the appropriate attribute for the password
+      dateofbirth: "2002-10-10",
+      mobilenumber: "01152050450",
+      emergencyContact: "Hadwa pasha",
+      healthPackageSubscription: [],
+      familyMembers: [],
+      walletBalance: 2000,
+      gender: familyMemberData.gender,
+      // Add other required attributes here
+    };
+
+    // Create the new patient
+    const newPatient = await patientModel.create(newPatientData);
+
+    // Add the new family member object to the patient's record
     patient.familyMembers.push({
       name: familyMemberData.name,
+      username : user,
       nationalId: familyMemberData.nationalId,
       age: familyMemberData.age,
       gender: familyMemberData.gender,
       relationToPatient: familyMemberData.relationToPatient,
-      healthPackageSubscription:[]
+      healthPackageSubscription: [],
     });
-    
+
     await patient.save();
-    
-    return res.status(201).json({ message: 'Family member added successfully', patient });
+
+    return res.status(201).json({ message: 'Family member added successfully', patient, newPatient });
   } catch (error) {
     console.error('Error adding family member:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 
 
@@ -196,13 +221,19 @@ export const viewFamilyMembers = async (req: Request, res: Response) => {
   }
 };
 
+
+
+  export const getSessionPrice=  async (req: Request, res: Response , username: string) =>{
+                 
+
+
+  }
 export const getDoctor = async (req: Request, res: Response): Promise<void> => {
   try {
     const doctors = await Doctor.find({}, 'name speciality hourlyRate');
     const doctorsWithSessionPrice = [];
 
     for (const doctor of doctors) {
-      //const hourlyRate = doctor.hourlyRate;
       const sessionPrice = (130 + 0.1) - 0.5;
       const doctorWithSessionPrice = { ...doctor.toObject(), sessionPrice };
       doctorsWithSessionPrice.push(doctorWithSessionPrice);
@@ -284,9 +315,9 @@ export const searchDoctors = async (req: Request, res: Response): Promise<void> 
 
 export const selectDoctors = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { _id } = req.query;
+    const { username } = req.query;
 
-    const doctor = await Doctor.findById(_id);
+    const doctor = await doctorModel.findOne({username});
 
     if (!doctor) {
       res.status(404).json({ error: 'Doctor not found' });
@@ -347,24 +378,6 @@ import adminModel from '../models/adminModel';
   }
   }
 
-  // export const viewDoctorAppointments = async (req: Request, res: Response) => {
-  //   const doctorUsername = req.query.doctorUsername; // Assuming the parameter is in the route
-
-  //   try {
-  //       const doctor: IDoctor | null = await doctorModel.findOne({ username: doctorUsername }).exec();
-
-  //       if (doctor) {
-  //           // Retrieve the doctor's timeslots (available appointments)
-  //           const doctorAppointments = doctor.timeslots; // or any other property you've defined for appointments
-
-  //           res.status(200).json(doctorAppointments);
-  //       } else {
-  //           res.status(404).json({ message: 'Doctor not found yasara elkalbb' });
-  //       }
-  //   } catch (error) {
-  //       res.status(500).json({ message: 'An error occurred', error });
-  //   }
-  // };
 
 
   export const viewDoctorAppointments = async (req: Request, res: Response) => {
@@ -416,8 +429,13 @@ import adminModel from '../models/adminModel';
   export const getPatientAppointments = async (req: Request, res: Response) => {
     console.log("im in");
     try {
-      const patientUsername = req.query.patientUsername; // Extract username from route parameters
-      
+      // const patientUsername = req.query.patientUsername; // Extract username from route parameters
+      const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    console.log(token);
+  
+  const patientUsername=tokenDB?.username;
       const dateString = req.query.date as string; // Assert the type as string
       const status = req.query.status;
       
@@ -504,23 +522,31 @@ import adminModel from '../models/adminModel';
 
   //HEALTH RECORD 
 
-  //VIEW MY HEALTH RECORD (ONE AND ONLY)
-  export const viewMyHealthRecord = async (req: Request, res: Response) => {
-    try{
-      const patientUsername = req.query.patientUsername;
-      const healthRecord = await healthRecordModel.find({ patient: patientUsername});
-      if(!healthRecord){
-        return res.status(404).json({ message: 'You Have No healthRecord Yet!'});
-      }
-      
-      res.status(200).json( { healthRecord });
+//VIEW MY HEALTH RECORD (ONE AND ONLY)
+export const viewMyHealthRecord = async (req: Request, res: Response) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const tokenDB = await tokenModel.findOne({ token });
+  console.log(token);
+  console.log(tokenDB?.username);
+  
+  const patientUsername=tokenDB?.username;
+  try{
+    const healthRecord = await healthRecordModel.findOne({ patient: patientUsername});
+    if(!healthRecord){
+      return res.status(404).json({ message: 'You Have No healthRecord Yet!'});
+    }
+    
+    res.status(200).json( { healthRecord });
+    console.log(healthRecord);
+    
 
-    }
-    catch (error) {
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    }
   }
+  catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 
   function validatePassword(password: string) {
@@ -751,6 +777,7 @@ import adminModel from '../models/adminModel';
      const token = authHeader && authHeader.split(' ')[1];
      const tokenDB = await tokenModel.findOne({ token });
      var patientUsername;
+     console.log(tokenDB)
   if(tokenDB){
     patientUsername=tokenDB.username;
   }
@@ -759,6 +786,8 @@ import adminModel from '../models/adminModel';
       //const flag = req.body.isMobileNumber;
       // Validate inputs
       if (!patientUsername || !familyMemberData) {
+        console.log(patientUsername);
+        console.log(familyMemberData)
         return res.status(400).json({ message: 'Invalid input data' });
       }
   
@@ -791,9 +820,10 @@ else{
       // Add the new family member object to the patient's record
       patient.familyMembers.push({
         name: familyMember.name,
+        username: familyMember.username,
         nationalId: ' ',
         age: age,
-        gender: ' ljkhj ',
+        gender: '  ',
         relationToPatient: relation,
         healthPackageSubscription: familyMember.healthPackageSubscription,
       });
@@ -809,104 +839,8 @@ else{
   
 
 
-
-
-
-
-
-
-// ...
-
-// Endpoint to link family members
-// export const linkFamilyMember = async (req: Request, res: Response) => {
-//   try {
-//     const { patientUsername } = req.query;
-//     const familyMemberData = req.body;
-//     const relation=req.body;
-//     // Validate inputs
-//     if (!patientUsername || !familyMemberData) {
-//       return res.status(400).json({ message: 'Invalid input data' });
-//     }
-
-//     // // Check if familyMemberData is a string or a number
-//     // const isString = typeof familyMemberData === 'string';
-//     // const isNumber = typeof familyMemberData === 'number' || !isNaN(Number(familyMemberData));
-
-//     if (isString) {
-//       // If it's a string, assume it's the email
-//       // Find the family member by email
-//       const familyMember = await patientModel.findOne({ email: familyMemberData });
-
-//       if (!familyMember) {
-//         return res.status(404).json({ message: 'Family member not found' });
-//       }
-
-//       // Find the patient by username
-//       const patient = await patientModel.findOne({ username: patientUsername });
-
-//       if (!patient) {
-//         return res.status(404).json({ message: 'Patient not found' });
-//       }
-//       const age=calculateAge(familyMember.dateofbirth);
-//       // Add the new family member object to the patient's record
-//       patient.familyMembers.push({
-//         name: familyMember.name,
-//         nationalId: "",
-//         age: age,
-//         gender: "",
-//         relationToPatient: relation,
-//         healthPackageSubscription: familyMember.healthPackageSubscription,
-//       });
-
-//       await patient.save();
-
-//       res.status(200).json({ success: true, message: 'Family member linked successfully', patient });
-
-//     }
-//      else if (isNumber) {
-//       // If it's a number, assume it's the mobilenumber
-//       const phoneNumber = Number(familyMemberData);
-
-//       // Find the family member by mobilenumber
-//       const familyMember = await patientModel.findOne({ mobilenumber: phoneNumber });
-
-//       if (!familyMember) {
-//         return res.status(404).json({ message: 'Family member not found' });
-//       }
-
-//       // Find the patient by username
-//       const patient = await patientModel.findOne({ username: patientUsername });
-
-//       if (!patient) {
-//         return res.status(404).json({ message: 'Patient not found' });
-//       }
-//       const age=calculateAge(familyMember.dateofbirth);
-//       // Add the new family member object to the patient's record
-//       patient.familyMembers.push({
-//         name: familyMember.name,
-//         nationalId: "",
-//         age: age,
-//         gender: "",
-//         relationToPatient: relation,
-//         healthPackageSubscription: familyMember.healthPackageSubscription,
-//       });
-
-//       await patient.save();
-
-//       res.status(200).json({ success: true, message: 'Family member linked successfully', patient });
-
-//     } else {
-//       return res.status(400).json({ message: 'Invalid family member data' });
-//     }
-//   } catch (error) {
-//     console.error('Error linking family member:', error);
-//     res.status(500).json({ success: false, message: 'An error occurred' });
-//   }
-// };
-
-
+  
 export const viewWalletAmount = async (req: Request, res: Response) => {
-  //const patientUsername = req.query.patientUsername as string;
 
   try {
     
@@ -939,6 +873,172 @@ export const viewWalletAmount = async (req: Request, res: Response) => {
     console.error(error);
     res.status(500).json({ error: 'Internal server error.' });
   }
-}; 
+};
+
+
+export const uploadPatintDocs = async (req: Request, res: Response) => {
   
+  try {
+    const uploadedFiles = req.files as Express.Multer.File[];
+    console.log(uploadedFiles);
+    
+    if(uploadedFiles){
+      const file = uploadedFiles[0];
+      const path= file.filename;
+      console.log(path);
+      
+      const authHeader = req.headers['authorization'];
+     const token = authHeader && authHeader.split(' ')[1]
+     const tokenDB = await tokenModel.findOne({ token:token });
  
+     var username;
+     if(tokenDB){
+       username=tokenDB.username;
+     }
+     else{
+       return res.status(404).json({ error: 'username not found' });
+     }
+     const healthRecord = await healthRecordModel.findOne({patient : username})
+ 
+     const {section, subsection} = req.query;
+     console.log(section);
+     
+ 
+     if (!healthRecord) {
+       return res.status(404).json({ message: 'Health record not found for the specified patient.' });
+     }
+     console.log(healthRecord);
+     
+     
+      if(section == 'MedicationList' && subsection == 'CurrentMedications'){
+       healthRecord.MedicationList?.CurrentMedications?.Prescriptions.push(path);
+     }
+     else if(section == 'MedicationList' && subsection == 'PastMedications'){
+       healthRecord.MedicationList?.PastMedications?.Prescriptions.push(path);
+     }
+     else if(section == 'Laboratory' && subsection == 'BloodTests'){
+       healthRecord.Laboratory?.BloodTests.push(path);
+     } 
+     else if(section == 'Laboratory' && subsection == 'XRays'){
+       healthRecord.Laboratory?.XRays.push(path);
+     } 
+     else if(section == 'Laboratory' && subsection == 'Other'){
+       healthRecord.Laboratory?.Other.push(path);
+     } 
+     else if(section == 'GeneralImages'){
+      console.log("heyy");
+      
+       healthRecord.GeneralImages?.push(path);
+     }
+     console.log(healthRecord);
+     await healthRecord.save();
+     
+     res.json({ message: 'Documents uploaded successfully.' });
+    }
+
+  } catch (error) {
+    console.error('Error handling file upload:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const openPatientDocument = (req: Request, res: Response) => {
+  try {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, '../uploadsPatient', filename);
+    const fileStream = fs.createReadStream(filePath);
+
+    fileStream.on('open', () => {
+      res.set('Content-Type', 'application/octet-stream');
+      fileStream.pipe(res);
+    });
+
+    fileStream.on('error', (error: any) => {
+      console.error('Error serving pharmacist document:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    });
+  } catch (error) {
+    console.error('Error serving pharmacist document:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const deletePatientDocs =  async (req: Request, res: Response) => {
+  try{
+
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]
+  const tokenDB = await tokenModel.findOne({ token:token });
+
+  var username;
+  if(tokenDB){
+    username=tokenDB.username;
+  }
+  else{
+    return res.status(404).json({ error: 'username not found' });
+  }
+  const healthRecord = await healthRecordModel.findOne({patient : username});
+  const {section, subsection} = req.query;
+  const {path} = req.body;
+
+  if (!healthRecord) {
+    return res.status(404).json({ message: 'Health record not found for the specified patient.' });
+  }
+  console.log(healthRecord);
+  
+  
+   if(section == 'MedicationList' && subsection == 'CurrentMedications'){
+     if (healthRecord.MedicationList?.CurrentMedications) {
+      const updatedPrescriptions = healthRecord.MedicationList?.CurrentMedications?.Prescriptions.filter(prescription => prescription !== path);
+      if (updatedPrescriptions !== undefined) {
+        healthRecord.MedicationList.CurrentMedications.Prescriptions = updatedPrescriptions;
+      }
+    }  
+  }
+  else if(section == 'MedicationList' && subsection == 'PastMedications'){
+    if (healthRecord.MedicationList?.PastMedications) {
+      const updatedPrescriptions = healthRecord.MedicationList?.PastMedications?.Prescriptions.filter(prescription => prescription !== path);
+      if (updatedPrescriptions !== undefined) {
+        healthRecord.MedicationList.PastMedications.Prescriptions = updatedPrescriptions;
+      }
+    }    }
+  else if(section == 'Laboratory' && subsection == 'BloodTests'){
+    if (healthRecord.Laboratory?.BloodTests) {
+      const updated = healthRecord.Laboratory?.BloodTests?.filter(prescription => prescription !== path);
+      if (updated !== undefined) {
+        healthRecord.Laboratory.BloodTests = updated;
+      }
+    }    } 
+  else if(section == 'Laboratory' && subsection == 'XRays'){
+    if (healthRecord.Laboratory?.XRays) {
+      const updated= healthRecord.Laboratory?.XRays?.filter(prescription => prescription !== path);
+      if (updated !== undefined) {
+        healthRecord.Laboratory.XRays = updated;
+      }
+    }    } 
+  else if(section == 'Laboratory' && subsection == 'Other'){
+    if (healthRecord.Laboratory?.Other) {
+      const updated = healthRecord.Laboratory?.Other?.filter(prescription => prescription !== path);
+      if (updated !== undefined) {
+        healthRecord.Laboratory.Other = updated;
+      }
+    }    } 
+  else if(section == 'GeneralImages'){
+   console.log("heyy");
+   
+   if (healthRecord.GeneralImages) {
+     const updatedPrescriptions = healthRecord.GeneralImages.filter(prescription => prescription !== path);
+     if (updatedPrescriptions !== undefined) {
+       healthRecord.GeneralImages = updatedPrescriptions;
+     }
+   }    }
+
+
+   await healthRecord.save();
+   res.json({ message: 'Document removed successfully.' });
+
+  } catch (error) {
+    console.error('Error handling file remove:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+}

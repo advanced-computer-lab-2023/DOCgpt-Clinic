@@ -27,29 +27,25 @@ const appRoutes: RouteType[] = [
     ),
     child: [
       {
-        path: "/patient/home",
+        path: "/doctor/time",
         state: "add time slots ",
       },
       {
-        path: "/patient/home",
-        state: "make app",
+        path: "/doctor/appointments",
+        state: "View my appointments",
       },
     ],
   },
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-        Family Members
+        Patients
       </Typography>
     ),
     child: [
       {
-        path: "/patient/viewFamilyMembers",
-        state: "Family members",
-      },
-      {
-        path: "/patient/home",
-        state: "make app",
+        path: "/doctor/patients",
+        state: "View My Patients",
       },
     ],
   },

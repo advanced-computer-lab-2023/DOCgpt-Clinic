@@ -1,5 +1,9 @@
 import express from "express";
-import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, searchPatient, selectPatient, updateDoctorAffiliation, updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord, viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots} from "../controllers/doctorController";
+import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStatus, getDoctor, getDoctors, 
+  searchPatient, selectPatient, updateDoctorAffiliation, 
+  updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord,
+   viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, 
+   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments} from "../controllers/doctorController";
 import multer from "multer";
 import path from 'path';
 import fs from "fs"
@@ -22,6 +26,7 @@ router.get("/appointmentsByStatus", getAppointmentByStatus);
 //HEALTH RECORDS
 router.get("/HealthRecords", viewHealthRecords);
 router.get("/HealthRecord", viewHealthRecord);
+router.patch("/HealthRecord/comments", commentsHealthRecord);
 
 
 router.post("/postDoctor", createDoctors);
@@ -36,7 +41,13 @@ router.patch("/updateAffiliation", updateDoctorAffiliation);
 //create follow up
 router.post("/followup",createfollowUp);
 router.patch("/addtimeslot",addTimeSlots);
+router.get("/getSlots",ViewMyTimeSlots);
 router.patch("/removetimeslot",removeTimeSlots);
+router.get('/sessionPrice',calculateSessionPrice);
+
+
+// Create a route for viewing wallet amount
+router.get('/viewWalletAmount',verifyTokenDoctor, viewWalletAmount);
 
 
 // Set up Multer for file uploads
@@ -58,6 +69,7 @@ router.patch("/rejectRequest",rejecttDoctorRequest);
 
 
 
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadFolder = path.join(__dirname, '../uploads'); // The folder where files will be saved (inside your project)
@@ -75,6 +87,17 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage });
+
+//Create a route for uploading and submitting required documents
+
+router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
+
+// Add a route to get the list of uploaded documents
+router.get('/doctorDocuments', getDoctorDocuments);
+
+
+// // Add a route to serve the actual document file
+ router.get('/doctorDocuments/:filename', serveDoctorDocument);
 
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);

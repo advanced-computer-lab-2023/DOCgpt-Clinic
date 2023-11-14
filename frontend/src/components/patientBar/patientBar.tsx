@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useState } from "react";
-import { To, useNavigate } from "react-router-dom";
+import { To, useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import {
   AppBar,
@@ -19,9 +19,12 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
+import WalletIcon from '@mui/icons-material/Wallet';
+import ViewWalletAmount from "../viewWalletAmount"
 
 import { ReactNode } from "react";
 import appRoutes from "./patientRoutes";
+import ViewWalletBalance from "../viewWalletBalance";
 
 const drawerWidth = 240;
 //const navItems = ["Home", "About", "Pharmacy", "Contact", "Login"];
@@ -49,6 +52,10 @@ export type links = {
 
 export default function DrawerAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [isWalletOpen, setIsWalletOpen] = useState(false); // State to manage the wallet sidebar
+
+  
+  const { username } = useParams();
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
@@ -58,6 +65,9 @@ export default function DrawerAppBar() {
   const navigateTo = (route: To) => {
     navigate(route);
     setIsDrawerOpen(false);
+  };
+  const handleViewWalletBalance = () => {
+    setIsWalletOpen(!isWalletOpen); // Toggle the wallet sidebar
   };
   const handleLogout = async () => {
     try {
@@ -173,6 +183,38 @@ export default function DrawerAppBar() {
               Logout
             </Button>
           </Box>
+          <Box sx={{ display: "flex" }}>
+    
+    <IconButton
+      color="primary"
+      aria-label="Wallet"
+      onClick={handleViewWalletBalance}
+      sx={{ ml: 2, display: { sm: "block" } }}
+    >
+      <WalletIcon style={{ fontSize: 40, color: "primary" }} />
+    </IconButton>
+    {isWalletOpen && (
+      <Drawer
+        variant="temporary"
+        open={isWalletOpen}
+        onClose={handleViewWalletBalance}
+        ModalProps={{
+          keepMounted: true, // Better open performance on mobile.
+        }}
+        sx={{
+          display: { xs: "block", sm: "block" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
+            width: drawerWidth,
+          },
+        }}
+      >
+        {/* Render the ViewWalletBalance component in the wallet sidebar */}
+        <ViewWalletBalance patientUsername={username} />
+      </Drawer>
+    )}
+    
+  </Box>
         </Toolbar>
       </AppBar>
       <nav>

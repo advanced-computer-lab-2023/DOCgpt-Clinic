@@ -9,6 +9,10 @@ import bcrypt from 'bcrypt';
 import tokenModel from "../models/tokenModel";
 import jwt from 'jsonwebtoken';
 import adminModel from "../models/adminModel";
+import patientModel from "../models/patientModel";
+import packageModel from "../models/packageModel";
+import healthRecordModel from "../models/healthRecordModel";
+import fs from 'fs';
 
 export const getDoctors = async (req: Request, res: Response) => {
     const doctors = await DoctorModel.find().exec();
@@ -16,18 +20,26 @@ export const getDoctors = async (req: Request, res: Response) => {
 };
 
 export const getDoctor = async (req: Request, res: Response) => {
-
-    const doctorUsername = req.query.doctorUsername;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const tokenDB = await tokenModel.findOne({ token });
+  console.log(token);
+  
+  const doctorUsername=tokenDB?.username;
     const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
     console.log(doctor)
     res.status(200).json(doctor);
 };
 
-
 export const searchPatient = async (req: Request, res: Response) => {
+  
   const patientName: string = String(req.query.patientName);
-  const doctorUsername: string = req.query.doctor as string;
-
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const tokenDB = await tokenModel.findOne({ token });
+  console.log(token);
+  
+  const doctorUsername=tokenDB?.username;
   try {
     // FIND THE PATIENTS OF THAT DOCTOR
     const appointments = await AppointmentModel.find({ doctor: doctorUsername }).exec();
@@ -151,8 +163,13 @@ export const updateDoctorAffiliation = async (req: Request, res: Response) => {
 };
 
 export const viewMyPatients = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername;
-    const appointments = await AppointmentModel.find({ doctor: doctorUsername }).exec();
+
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const tokenDB = await tokenModel.findOne({ token });
+  console.log(token);
+  const doctorUsername=tokenDB?.username;
+  const appointments = await AppointmentModel.find({ doctor: doctorUsername }).exec();
     const patients: any[] = []; 
     const usernames: any[] = [];
     for (const appoinment of appointments) {
@@ -168,15 +185,18 @@ export const viewMyPatients = async (req: Request, res: Response) => {
 };
 
 export const viewPatientsUpcoming = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername;
-    const appointments = await AppointmentModel.find({ doctor: doctorUsername , status: "upcoming"}).exec();
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const tokenDB = await tokenModel.findOne({ token });
+  console.log(token);
+  
+  const doctorUsername=tokenDB?.username;    const appointments = await AppointmentModel.find({ doctor: doctorUsername , status: "upcoming"}).exec();
     const patients: any[] = []; 
     const usernames: any[] = [];
     for (const appoinment of appointments) {
         const username = appoinment.patient;
         const patient = await PatientModel.findOne({ username: username}).exec();
         if(!usernames.includes(username)){
-            patients.push({date: appoinment.date});
             patients.push(patient);
             usernames.push(username);
         }
@@ -186,38 +206,38 @@ export const viewPatientsUpcoming = async (req: Request, res: Response) => {
 
 
 export const selectPatient = async (req: Request, res: Response) => {
-    const patientId = req.query.patientId;
-    const patient = await PatientModel.findById(patientId);
-    res.status(200).json(patient);
+  const patientUsername = req.query.patient;
+  const patient = await PatientModel.findOne({username: patientUsername}).exec();
+  res.status(200).json(patient);
 };
 
 export const addTimeSlots = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername;
-    const { dates } = req.body;
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]
-    const tokenDB = await tokenModel.findOne({ token }); 
-    const username=tokenDB?.username;
-    try {
-        // Find the doctor by username
-        const doctor = await DoctorModel.findOne({ username: doctorUsername }).exec();
+  //const doctorUsername = req.query.doctorUsername;
+  const { dates } = req.body;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]
+  const tokenDB = await tokenModel.findOne({ token }); 
+  const doctorUsername=tokenDB?.username;
+  try {
+      // Find the doctor by username
+      const doctor = await DoctorModel.findOne({ username: doctorUsername }).exec();
 
-        if (doctor) {
-            // Use push to add new time slots to the existing array
-            dates.forEach((date: Date) => {
-                doctor.timeslots.push({ date });
-            });
+      if (doctor) {
+          // Use push to add new time slots to the existing array
+          dates.forEach((date: Date) => {
+              doctor.timeslots.push({ date });
+          });
 
-            // Save the updated doctor
-            const updatedDoctor = await doctor.save();
+          // Save the updated doctor
+          const updatedDoctor = await doctor.save();
 
-            res.status(200).json(updatedDoctor);
-        } else {
-            res.status(404).json({ message: 'Doctor not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'An error occurred', error });
-    }
+          res.status(200).json(updatedDoctor);
+      } else {
+          res.status(404).json({ message: 'Doctor not found' });
+      }
+  } catch (error) {
+      res.status(500).json({ message: 'An error occurred', error });
+  }
 };
 
 export const removeTimeSlots = async (req: Request, res: Response) => {
@@ -246,45 +266,50 @@ export const removeTimeSlots = async (req: Request, res: Response) => {
 
 
 export const createfollowUp = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctor;
-    const patientUsername = req.query.patient;
-    const date = req.body.date;
-    const status = req.body.status;
-    const type= 'Follow up';
-    try {
-      // Find the doctor by ID
-      const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
+  //const doctorUsername = req.query.doctor;
+  const authHeader = req.headers['authorization'];
+const token = authHeader && authHeader.split(' ')[1];
+const tokenDB = await tokenModel.findOne({ token });
+console.log(token);
 
-      if (doctor) {
-          // Remove the time slot from the doctor's timeslots
-          console.log('Before removing timeslot:', doctor.timeslots);
-          const newDate = new Date(date);
-          doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number; }; }) => timeslot.date.getTime() !== newDate.getTime());
-          
-          console.log('After removing timeslot:', doctor.timeslots);
-          
-          // Save the updated doctor
-          await doctor.save();
+const doctorUsername=tokenDB?.username;
+  const patientUsername = req.body.patient;
+  const date = req.body.date;
+  const status = 'upcoming';
+  const type= 'Follow up';
+  try {
+    // Find the doctor by ID
+    const doctor = await DoctorModel.findOne({username: doctorUsername}).exec();
 
-          // Create the appointment
-          const appoinment = await AppointmentModel.create({
-            status: status,
-            doctor: doctorUsername,
-            patient: patientUsername,
-            date: date,
-            type:type
-        });
+    if (doctor) {
+        // Remove the time slot from the doctor's timeslots
+        console.log('Before removing timeslot:', doctor.timeslots);
+        const newDate = new Date(date);
+        doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number; }; }) => timeslot.date.getTime() !== newDate.getTime());
+        
+        console.log('After removing timeslot:', doctor.timeslots);
+        
+        // Save the updated doctor
+        await doctor.save();
 
-        res.status(201).json(appoinment);
+        // Create the appointment
+        const appoinment = await AppointmentModel.create({
+          status: status,
+          doctor: doctorUsername,
+          patient: patientUsername,
+          date: date,
+          type:type
+      });
 
-      } else {
-          return res.status(404).json({ message: 'Doctor not found' });
-      }
-  } catch (error) {
-      return res.status(500).json({ message: 'An error occurred', error });
-  }
+      res.status(201).json(appoinment);
+
+    } else {
+        return res.status(404).json({ message: 'Doctor not found' });
+    }
+} catch (error) {
+    return res.status(500).json({ message: 'An error occurred', error });
+}
 };
-
 
 
 
@@ -309,9 +334,9 @@ export const viewHealthRecords = async (req: Request, res: Response) => {
 
 //VIEW A HEALTH RECORD FOR A SPECIFIC PATIENT
 export const viewHealthRecord = async (req: Request, res: Response) => {
-    const patientUsername = req.query.patientUsername;
-    const healthRecord = await HealthRecordModel.find({ patient: patientUsername});
-    res.status(200).json(healthRecord);
+  const patientUsername = req.query.patientUsername;
+  const healthRecord = await HealthRecordModel.findOne({ patient: patientUsername});
+  res.status(200).json(healthRecord);
 };  
 
 //ADD A HEALTH RECORD FOR CHOSEN PATIENT
@@ -595,43 +620,193 @@ try{
     res.status(200).json(doctor);
 };
 
+import { createReadStream, createWriteStream } from 'fs';
+
 export const uploadAndSubmitReqDocs = async (req: Request, res: Response) => {
   const uploadedFiles = req.files as Express.Multer.File[];
+  //const { username } = req.body; // Assuming the username is sent in the request body
 
   try {
     const fileInformation = [];
 
-    // Loop through the uploaded files and save their information
+    // Create a folder for the pharmacist if it doesn't exist
+    const uploadFolder = path.join(__dirname, `../uploads`);
+   // const uploadFolder = path.join(__dirname, `../uploads/${username}`);
+    if (!fs.existsSync(uploadFolder)) {
+      fs.mkdirSync(uploadFolder);
+    }
+
+    // Loop through the uploaded files and save them in the pharmacist's folder
     for (const file of uploadedFiles) {
-      // Here, you can save the file information in the pharmacist model or any other place as needed
       const fileData = {
         filename: file.originalname,
-        path: file.path, // This is the local path where the file is saved
+        path: path.join(uploadFolder, file.originalname),
       };
 
-      fileInformation.push(fileData);
-    }
+       fileInformation.push(fileData);
+
+      // Create a write stream to save the file
+      const writeStream = createWriteStream(fileData.path);
+      createReadStream(file.path).pipe(writeStream);
+     }
 
     // You can save the file information wherever needed in your application
 
-    res.json({ message: 'Documents uploaded successfully.' });
+    res.json({ documents: fileInformation, message: 'Documents uploaded successfully.' });
   } catch (error) {
     console.error('Error handling file upload:', error);
     res.status(500).json({ error: 'Internal server error.' });
   }
 };
 
-export const viewWalletAmount = async (req: Request, res: Response) => {
-  const patientUsername = req.query.patientUsername as string;
-
+export const  calculateSessionPrice = async (req: Request, res: Response ) => {
   try {
-    const patient = await PatientModel.findOne({ username: patientUsername }).exec();
+         const hourlyRate= req.query.hourlyRate;
+         if(!hourlyRate){
+          return res.status(404).json({ error: 'rate not found.' });
 
+         }
+    const price = Number(hourlyRate) + 100;
+
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    var patientUsername;
+    console.log(tokenDB)
+     if(tokenDB){
+      patientUsername=tokenDB.username;
+         }
+    const patient = await patientModel.findOne({ username : patientUsername });
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found.' });
+
     }
 
-    const walletAmount = patient.walletBalance;
+    if (patient.healthPackageSubscription.length === 0) {
+      console.log('Patient has no health packages subscribed');
+      return   res.status(200).json(price);
+
+    }
+
+    const subscribedPackage = patient.healthPackageSubscription.find(
+      (subscription) => subscription.status === 'subscribed with renewal date'
+    );
+
+    if (!subscribedPackage) {
+      console.log('No subscribed health package found');
+      console.log(price);
+
+      return   res.status(200).json(price);; 
+    }
+
+    const packageName = subscribedPackage.name;
+
+    const healthPackage = await packageModel.findOne({ name: packageName });
+    if (!healthPackage) {
+      throw new Error('Health package not found');
+    }
+
+    const discount = price - healthPackage.doctorDiscount * 0.01 * price;
+
+    console.log('Discount:', discount);
+    // Perform further calculations or operations with the discount value
+
+    return res.status(200).json(discount);
+  } catch (error) {
+    console.error('Error calculating session price:', error);
+    throw error;
+  }
+}
+
+
+
+export const ViewMyTimeSlots = async (req: Request, res: Response) => {
+
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const tokenDB = await tokenModel.findOne({ token });
+  console.log(token);
+  
+  const doctorUsername=tokenDB?.username;
+try{
+  const doctor =  await DoctorModel.findOne({username: doctorUsername}).exec();
+  if(doctor){
+    const timeslots = doctor.timeslots;
+    res.status(200).json({ timeslots });
+  } else {
+    // Handle case where no matching doctor is found
+    res.status(404).json({ error: 'Doctor not found' });
+  }
+} catch (error) {
+  console.error('Error retrieving doctor timeslots:', error);
+  res.status(500).json({ error: 'Internal Server Error' });
+}
+
+}
+
+
+export const commentsHealthRecord = async (req: Request, res: Response) => {
+  const patientUsername = req.query.patientUsername;
+  const { section, comment } = req.body;
+  try{
+
+    // Save the new document to the database
+    const healthRecord = await healthRecordModel.findOne({ patient: patientUsername });
+
+    if (!healthRecord) {
+      return res.status(404).json({ message: 'Health record not found for the specified patient.' });
+    }
+    if(section == 'MedicalHistory'){
+      healthRecord.MedicalHistory?.Comments.push(comment);
+    }
+    else if(section == 'MedicationList'){
+      healthRecord.MedicationList?.Comments.push(comment);
+    }
+    else if(section == 'VitalSigns'){
+      healthRecord.VitalSigns?.Comments.push(comment);
+    } 
+    else if(section == 'Laboratory'){
+      healthRecord.Laboratory?.Comments.push(comment);
+    } 
+    else if(section == 'GeneralComments'){
+      healthRecord.GeneralComments?.push(comment);
+    } 
+    else {
+      return res.status(400).json({ message: 'Invalid section provided.' });
+    }
+    await healthRecord.save();
+    res.status(201).json({ message: 'Record created successfully', healthRecord });
+
+} catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+}
+};
+
+export const viewWalletAmount = async (req: Request, res: Response) => {
+  //const patientUsername = req.query.patientUsername as string;
+
+  try {
+    
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1]
+    const tokenDB = await tokenModel.findOne({ token:token });
+
+    var username;
+    if(tokenDB){
+      username=tokenDB.username;
+    }
+    else{
+      return res.status(404).json({ error: 'username not found' });
+    }
+
+    const doctor = await DoctorModel.findOne({ username }).exec();
+
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found.' });
+    }
+
+    const walletAmount = doctor.walletBalance;
 
     if (walletAmount === undefined) {
       return res.status(500).json({ error: 'Wallet balance not available.' });
@@ -641,5 +816,60 @@ export const viewWalletAmount = async (req: Request, res: Response) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+
+export const getDoctorDocuments = async (req: Request, res: Response) => {
+  try {
+    const uploadFolder = path.join(__dirname, '../uploads');
+    const files = fs.readdirSync(uploadFolder);
+    res.json({ documents: files });
+  } catch (error) {
+    console.error('Error getting pharmacist documents:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+export const serveDoctorDocument = (req: Request, res: Response) => {
+  try {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, '../uploads', filename);
+    const fileStream = fs.createReadStream(filePath);
+
+    fileStream.on('open', () => {
+      res.set('Content-Type', 'application/octet-stream');
+      fileStream.pipe(res);
+    });
+
+    fileStream.on('error', (error) => {
+      console.error('Error serving pharmacist document:', error);
+      res.status(500).json({ error: 'Internal server error.' });
+    });
+  } catch (error) {
+    console.error('Error serving pharmacist document:', error);
+    res.status(500).json({ error: 'Internal server error.' });
+  }
+};
+
+
+
+// Helper function to get content type based on file extension
+export const getContentType = (filename: string) => {
+  const ext = path.extname(filename).toLowerCase();
+  switch (ext) {
+    case '.pdf':
+      return 'application/pdf';
+    case '.docx':
+      return 'application/docx';
+      case '.png':
+      return 'image/png';
+      case '.jpeg':
+      return 'image/jpeg';
+      case '.jpg':
+      return 'image/jpg';
+    // Add more cases for other file types as needed
+    default:
+      return 'application/octet-stream';
   }
 };

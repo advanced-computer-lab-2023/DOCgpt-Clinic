@@ -40,7 +40,7 @@ const verifyOTP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
 });
 exports.verifyOTP = verifyOTP;
 const SendResetmail = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const email = req.query.email;
+    const email = req.body.email;
     const isValidMail = validateEmail(email);
     if (!isValidMail) {
         return res.status(400).send({ error: 'Please enter a correct Gmail' });
@@ -73,12 +73,12 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!req.app.locals.resetSession) {
             return res.status(403).json({ message: 'Access denied' });
         }
-        const newPassword = req.query.newPassword;
-        const confirmPassword = req.query.confirmPassword;
-        const email = req.query.email;
+        const username = req.body.username;
+        const newPassword = req.body.newPassword;
+        const confirmPassword = req.body.confirmPassword;
         let user;
-        const doctor = yield doctorModel_1.default.findOne({ email: email });
-        const patient = yield patientModel_1.default.findOne({ email: email });
+        const doctor = yield doctorModel_1.default.findOne({ username: username });
+        const patient = yield patientModel_1.default.findOne({ username: username });
         if (doctor) {
             user = doctor;
         }
@@ -102,6 +102,7 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         return res.status(200).json({ message: 'Password reset successfully' });
     }
     catch (error) {
+        console.log(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 });
@@ -112,7 +113,7 @@ function validatePassword(password) {
         return false;
     }
     // Regular expression pattern to check for at least one capital letter and one number
-    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+    const pattern = /^(?=.[A-Z])(?=.\d)/;
     // Use the test method to check if the password matches the pattern
     if (!pattern.test(password)) {
         return false;

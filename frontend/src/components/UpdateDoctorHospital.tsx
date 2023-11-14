@@ -19,6 +19,7 @@ const UpdateDoctorHospital = ({onDismiss, onSaved, doctorUsername}: UpdateDoctor
         try {
             const doctorResponse = await DoctorApi.updateAffiliation(affiliation, doctorUsername);
             onSaved(doctorResponse);
+            window.location.reload();
         } catch (error) {
             console.error(error);
             alert(error);

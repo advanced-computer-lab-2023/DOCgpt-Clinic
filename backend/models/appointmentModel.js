@@ -12,7 +12,6 @@ exports.appointmentSchema = new mongoose_1.default.Schema({
         required: false
     },
     doctor: {
-        // type: mongoose.Schema.Types.ObjectId,
         type: String,
         required: true
     },

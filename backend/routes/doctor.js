@@ -24,6 +24,7 @@ router.get("/appointmentsByStatus", doctorController_1.getAppointmentByStatus);
 //HEALTH RECORDS
 router.get("/HealthRecords", doctorController_1.viewHealthRecords);
 router.get("/HealthRecord", doctorController_1.viewHealthRecord);
+router.patch("/HealthRecord/comments", doctorController_1.commentsHealthRecord);
 router.post("/postDoctor", doctorController_1.createDoctors);
 router.post("/addHealthRecord", doctorController_1.addHealthRecord);
 router.patch("/updateEmail", doctorController_1.updateDoctorEmail);
@@ -32,7 +33,11 @@ router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
 //create follow up
 router.post("/followup", doctorController_1.createfollowUp);
 router.patch("/addtimeslot", doctorController_1.addTimeSlots);
+router.get("/getSlots", doctorController_1.ViewMyTimeSlots);
 router.patch("/removetimeslot", doctorController_1.removeTimeSlots);
+router.get('/sessionPrice', doctorController_1.calculateSessionPrice);
+// Create a route for viewing wallet amount
+router.get('/viewWalletAmount', doctorController_1.verifyTokenDoctor, doctorController_1.viewWalletAmount);
 // Set up Multer for file uploads
 // Create a route for uploading and submitting required documents
 // router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
@@ -56,6 +61,12 @@ const storage = multer_1.default.diskStorage({
     },
 });
 const upload = (0, multer_1.default)({ storage });
+//Create a route for uploading and submitting required documents
+router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorController_1.uploadAndSubmitReqDocs);
+// Add a route to get the list of uploaded documents
+router.get('/doctorDocuments', doctorController_1.getDoctorDocuments);
+// // Add a route to serve the actual document file
+router.get('/doctorDocuments/:filename', doctorController_1.serveDoctorDocument);
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorController_1.uploadAndSubmitReqDocs);
 exports.default = router;

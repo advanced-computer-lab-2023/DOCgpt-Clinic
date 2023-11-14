@@ -10,5 +10,7 @@ router.post('/subscribeToHealthPackage', subscriptionController_1.subscribeToHea
 router.post('/subscribeToHealthPackageForFamily', subscriptionController_1.subscribeToHealthPackageForFamily);
 router.get('/viewSubscribedPackages', subscriptionController_1.viewSubscribedPackages);
 router.get('/viewHealthPackageStatus', subscriptionController_1.viewHealthPackageStatus);
+router.get('/viewFamilyMembersAndPackages', subscriptionController_1.viewFamilyMembersAndPackages);
 router.patch('/cancelSubscription', subscriptionController_1.cancelSubscription);
+router.patch('/cancelSubscriptionfam', subscriptionController_1.cancelSubscriptionfam2);
 exports.default = router;
