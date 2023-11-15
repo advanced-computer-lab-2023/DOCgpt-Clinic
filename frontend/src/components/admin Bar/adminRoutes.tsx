@@ -19,6 +19,37 @@ export type links = {
 };
 
 const appRoutes: RouteType[] = [
+  {    header: (
+    <Typography variant="h6" fontWeight="bold">
+     Settings
+    </Typography>
+  ),
+  child: [
+    {
+      path: "/changepasswordadmin",
+      state: "Change Password",
+    },
+    
+  ],
+},
+  {
+    header: (
+      <Typography variant="h6" fontWeight="bold">
+        Admins
+      </Typography>
+    ),
+    child: [
+      {
+        path: "/AdminPage",
+        state: "add another admin",
+      },
+      {
+        path: "/AdminPage",
+        state: "Remove admin",
+      },
+   
+    ],
+  },
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
@@ -30,8 +61,64 @@ const appRoutes: RouteType[] = [
         path: "/requests",
         state: "View Doctor Requests",
       },
+      {
+        path: "/Doctor/Remove",
+        state: "Remove Doctor",
+      },
+      {
+        path: "/admin/info",
+        state: "ViewDoctorInfo",
+      },
     ],
   },
+  {
+    header: (
+      <Typography variant="h6" fontWeight="bold">
+       Patients
+      </Typography>
+    ),
+    child: [
+      {
+        path: "/patient/Remove",
+        state: "Remove Patient",
+      },
+   
+    ],
+  },
+
+  {
+    header: (
+      <Typography variant="h6" fontWeight="bold">
+       Packages
+      </Typography>
+    ),
+    child: [
+      {
+        path: "/hp",
+        state: "Health Packages",
+      },
+      {
+        path: "/patient/PackagesPage",
+        state: "Add Packages",
+      },
+      {
+        path:"/hp",
+        state:"Update Packages",
+
+      },
+      {
+        path:"/hp",
+        state:"Delete Packages",
+
+      },
+    ],
+      
+   
+
+  },
+
+
+
   // {
   //   header: (
   //     <Typography variant="h6" fontWeight="bold">

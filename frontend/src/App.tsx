@@ -48,7 +48,16 @@ import HealthPackageSubscriptionPage from './pages/patient/HealthPackageSubscrib
 import FamSub from './pages/patient/famSub'
 import PayForApp from './pages/patient/payForAppointment'
 import PayForFam from './pages/patient/payForFam'
-
+import adminPage from './pages/admin/adminPage';
+import adminHome from './pages/admin/adminHome';
+import RemoveDoc from './components/RemoveDoc';
+import DoctorInformation from './components/DoctorInfo';
+import RemovePatient from './components/RemovePatient';
+import PackagesPage from './pages/admin/packages';
+import HealthPackage from './components/healthPackages';
+import ChangePassword from './components/changePasswordPatient';
+import ChangePasswordDoctor from './components/changePassworddoctor';
+import ChangePasswordAdmin from './components/changePasswordadmin';
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -115,13 +124,19 @@ function App() {
         <Route path="/subFam/:packageName" Component={FamSub} />
         <Route path="/makeApp/:date/:price" Component={PayForApp} />
         <Route path="/makeAppForFam/:date/:price" Component={PayForFam} />
+        <Route path="/AdminPage" Component={adminPage} />
+        <Route path="/AdminHome" Component={adminHome}/>
+        <Route path="/requests"element={<DoctorRequests/>}/>
+        < Route path="/Doctor/Remove" element={<RemoveDoc />} />
+        <Route path ="/admin/info" element={<DoctorInformation/>}/>
+        <Route path="/patient/remove" element={<RemovePatient/>} />
+        <Route path="patient/PackagesPage" Component={PackagesPage} />
+        <Route path="/hp" Component={HealthPackage} />
 
 
-
-
-
-
-      
+        <Route path="/changepasswordpatient" Component={ChangePassword} />
+        <Route path="/changepassworddoctor" Component={ChangePasswordDoctor} />
+        <Route path="/changepasswordadmin" Component={ChangePasswordAdmin} />
       </Routes>
     
         

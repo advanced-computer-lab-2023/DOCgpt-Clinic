@@ -24,6 +24,20 @@ const appRoutes: RouteType[] = [
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
+       Settings
+      </Typography>
+    ),
+    child: [
+      {
+        path: "/changepasswordpatient",
+        state: "Change Password",
+      },
+      
+    ],
+  },
+  {
+    header: (
+      <Typography variant="h6" fontWeight="bold">
         Appointments
       </Typography>
     ),
@@ -39,6 +53,7 @@ const appRoutes: RouteType[] = [
       
     ],
   },
+ 
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
