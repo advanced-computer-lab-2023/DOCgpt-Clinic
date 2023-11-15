@@ -32,6 +32,11 @@ const adminschema = new mongoose_1.Schema({
     password: {
         type: String,
         required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
     }
 });
 const adminModel = mongoose_1.default.model('admin', adminschema);

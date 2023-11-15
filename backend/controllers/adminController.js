@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTokenAdmin = exports.changePassword = exports.logout = exports.createToken = exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientBySmsomaa = exports.deletePatientByrota = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.addAdmin = void 0;
+exports.verifyTokenAdmin = exports.changePassword = exports.logout = exports.createToken = exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientBySmsomaa = exports.deletePatientByrota = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.createAdmin = void 0;
 const adminModel_1 = __importDefault(require("../models/adminModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -23,11 +23,23 @@ const tokenModel_1 = __importDefault(require("../models/tokenModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
-const addAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { username, password } = req.body;
+const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, password, email } = req.body;
+    const emailExists = yield patientModel_1.default.findOne({ email });
+    const emailExists2 = yield doctorModel_1.default.findOne({ email });
+    const emailExists3 = yield adminModel_1.default.findOne({ email });
     const usernameExists = yield patientModel_1.default.findOne({ username });
     const usernameExists2 = yield doctorModel_1.default.findOne({ username });
     const usernameExists3 = yield adminModel_1.default.findOne({ username });
+    if (emailExists) {
+        return res.status(401).json({ message: 'email exists' });
+    }
+    if (emailExists2) {
+        return res.status(401).json({ message: 'email exists' });
+    }
+    if (emailExists3) {
+        return res.status(401).json({ message: 'email exists' });
+    }
     if (usernameExists) {
         return res.status(401).json({ message: 'username exists' });
     }
@@ -43,7 +55,7 @@ const addAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         return res.status(400).json({ message: 'Invalid password' });
     }
     try {
-        const admin = yield adminModel_1.default.create({ username, password: hash });
+        const admin = yield adminModel_1.default.create({ username, password: hash, email });
         res.status(200).json(admin);
     }
     catch (error) {
@@ -51,7 +63,7 @@ const addAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         res.status(400).json({ error: err.message });
     }
 });
-exports.addAdmin = addAdmin;
+exports.createAdmin = createAdmin;
 //delete admin
 const deleteAdminByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {

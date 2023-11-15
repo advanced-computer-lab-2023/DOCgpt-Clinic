@@ -11,32 +11,47 @@ import appointmentModel from '../models/appointmentModel';
 import healthRecordModel from '../models/healthRecordModel';
 import Prescription from '../models/perscriptionModel';
 
-export const addAdmin = async (req:Request,res: Response) => {
-const { username, password } = req.body;
-    const usernameExists=await patientModel.findOne({username});
-    const usernameExists2=await doctorModel.findOne({username});
-    const usernameExists3=await adminModel.findOne({username});
-    if(usernameExists){
-      return res.status(401).json({ message: 'username exists' });
-    }
-    if(usernameExists2){
-      return res.status(401).json({ message: 'username exists' });
-    }
-    if(usernameExists3){
-      return res.status(401).json({ message: 'username exists' });
-    }
-    const salt =await bcrypt.genSalt(10)
-    const hash=await bcrypt.hash(password,salt)
-    if (!validatePassword(password)) {
-      return res.status(400).json({ message: 'Invalid password' });
-    }
-    try {
-      const admin= await adminModel.create({ username, password:hash });
-      res.status(200).json(admin);
-    } catch (error) {
-      const err: Error = error as Error; // Type assertion to specify the type as 'Error'
-      res.status(400).json({ error: err.message });
-    }}
+export const createAdmin = async (req: Request, res: Response) => {
+  const { username, password,email } = req.body;
+  const emailExists=await patientModel.findOne({email}) ;
+  const emailExists2=await doctorModel.findOne({email})
+  const emailExists3=await adminModel.findOne({email})
+  const usernameExists=await patientModel.findOne({username});
+  const usernameExists2=await doctorModel.findOne({username});
+  const usernameExists3=await adminModel.findOne({username});
+
+  if(emailExists){
+  
+    return res.status(401).json({ message: 'email exists' });
+  
+  }
+  if(emailExists2){
+    return res.status(401).json({ message: 'email exists' });
+  }
+  if(emailExists3){
+    return res.status(401).json({ message: 'email exists' });
+  }
+  if(usernameExists){
+    return res.status(401).json({ message: 'username exists' });
+  }
+  if(usernameExists2){
+    return res.status(401).json({ message: 'username exists' });
+  }
+  if(usernameExists3){
+    return res.status(401).json({ message: 'username exists' });
+  }
+  const salt =await bcrypt.genSalt(10)
+  const hash=await bcrypt.hash(password,salt)
+  if (!validatePassword(password)) {
+    return res.status(400).json({ message: 'Invalid password' });
+  }
+  try {
+    const admin= await adminModel.create({ username, password:hash ,email});
+    res.status(200).json(admin);
+  } catch (error) {
+    const err: Error = error as Error; // Type assertion to specify the type as 'Error'
+    res.status(400).json({ error: err.message });
+  }}
 
     //delete admin
     export const deleteAdminByUsername = async (req: Request, res: Response) => {

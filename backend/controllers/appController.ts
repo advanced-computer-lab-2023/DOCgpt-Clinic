@@ -80,12 +80,17 @@ export const resetPassword = async (req: Request, res: Response) => {
 
     const doctor = await Doctor.findOne({username:username });
     const patient = await patientModel.findOne({ username:username });
+    const admin = await adminModel.findOne({ username:username });
 
     if (doctor) {
       user = doctor;
-    } else {
-      user = patient;
+    } else if(admin) {
+      user = admin;
     }
+    else{
+      user=patient;
+    }
+
 
     if (!user) {
       throw Error('No user found');

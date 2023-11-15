@@ -79,8 +79,12 @@ const resetPassword = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         let user;
         const doctor = yield doctorModel_1.default.findOne({ username: username });
         const patient = yield patientModel_1.default.findOne({ username: username });
+        const admin = yield adminModel_1.default.findOne({ username: username });
         if (doctor) {
             user = doctor;
+        }
+        else if (admin) {
+            user = admin;
         }
         else {
             user = patient;

@@ -10,7 +10,14 @@ const adminschema = new Schema({
         type: String,
         required: true
       
-      }})
+      }
+    ,
+    email: {
+      type: String,
+      required: true,
+      match: /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/,
+    }
+  })
     
       const adminModel = mongoose.model('admin', adminschema);
       

@@ -6,7 +6,7 @@ const adminController_2 = require("../controllers/adminController");
 const router = (0, express_1.Router)();
 // Define your routes and middleware here
 //post a new admin 
-router.post('/addAdmin', adminController_2.addAdmin);
+router.post('/addAdmin', adminController_2.createAdmin);
 //get all admins
 router.get('/viewAdmin', adminController_1.getAdmins);
 //getdoctors
