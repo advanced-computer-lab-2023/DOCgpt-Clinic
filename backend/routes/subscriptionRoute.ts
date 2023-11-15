@@ -18,8 +18,10 @@ router.post('/subscribeToHealthPackageForFamily', subscribeToHealthPackageForFam
 
 router.get('/viewSubscribedPackages', viewSubscribedPackages);
 router.get('/viewHealthPackageStatus', viewHealthPackageStatus);
-router.get('/viewFamilyMembersAndPackages', viewFamilyMembersAndPackages);
+router.get('/getSubscribedPackagesForMember', getSubscribedPackagesForMember);
+// router.get('/viewFamilyMembersAndPackages', viewFamilyMembersAndPackages);
 router.patch('/cancelSubscription', cancelSubscription);
 router.patch('/cancelSubscriptionfam', cancelSubscriptionfam2);
+router.get('/viewFamMemberPackages', viewFamilyMembersAndPackages);
 
 export default router;

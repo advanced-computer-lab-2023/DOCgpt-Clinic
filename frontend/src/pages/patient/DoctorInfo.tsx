@@ -51,7 +51,7 @@ function DoctorInfo(){
         //set doctorUsername fel local storage
         if(doctor &&selectedTimeslot ){
             localStorage.setItem("doctorUserName", doctor.username);
-            navigate(`/path/for/payment?date=${selectedTimeslot.date}&price=${price}`);
+            navigate(`/makeApp/${selectedTimeslot.date}/${price}`);
         }
 
       };
@@ -59,7 +59,7 @@ function DoctorInfo(){
         if(doctor && selectedTimeslot){
         //fel page de hangeb el doctor username mn local storage w neb3ato lel back f body w session price f body, w el token fel header
             localStorage.setItem("doctorUserName", doctor.username);
-            navigate(`/patient/ViewMyFam?date=${selectedTimeslot.date}&price=${price}`);
+            navigate(`/patient/ViewMyFam/${selectedTimeslot.date}/${price}`);
         } 
 
       };

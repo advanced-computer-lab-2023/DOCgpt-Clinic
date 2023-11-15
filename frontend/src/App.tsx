@@ -44,6 +44,10 @@ import ViewMyAppointments from './pages/patient/ViewMyAppointments';
 import ViewMyHealthRecord from './pages/patient/ViewMyHealthRecord';
 import ViewMyFam from './pages/patient/ViewMyFam';
 import ViewDoctorDocuments from './pages/doctor/viewDoctorDocuments';
+import HealthPackageSubscriptionPage from './pages/patient/HealthPackageSubscribtion';
+import FamSub from './pages/patient/famSub'
+import PayForApp from './pages/patient/payForAppointment'
+import PayForFam from './pages/patient/payForFam'
 
 function App() {
   useEffect(() => {
@@ -105,8 +109,16 @@ function App() {
         <Route path="/patient/viewMyhealthrecords" Component={ViewMyHealthRecord} />  
         <Route path ="/doctor/followUp" element={<ViewMyTimeSlots/>}/>
         <Route path ="/patient/doctorinfo" Component={DoctorInfo}/>
-        <Route path ="/patient/ViewMyFam" Component={ViewMyFam}/>
+        <Route path ="/patient/ViewMyFam/:date/:price" Component={ViewMyFam}/>
         <Route path="/view-doctor-documents" element={<ViewDoctorDocuments />} />
+        <Route path="/health-package-subscription/:packageName" Component={HealthPackageSubscriptionPage} />
+        <Route path="/subFam/:packageName" Component={FamSub} />
+        <Route path="/makeApp/:date/:price" Component={PayForApp} />
+        <Route path="/makeAppForFam/:date/:price" Component={PayForFam} />
+
+
+
+
 
 
       

@@ -685,9 +685,9 @@ const linkFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, functio
         patient.familyMembers.push({
             name: familyMember.name,
             username: familyMember.username,
-            nationalId: ' ',
+            nationalId: '0197854612301457',
             age: age,
-            gender: '  ',
+            gender: familyMember.gender,
             relationToPatient: relation,
             healthPackageSubscription: familyMember.healthPackageSubscription,
         });

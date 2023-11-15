@@ -3,6 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import { Navigate, useNavigate } from "react-router-dom";
 
 interface HealthPackage {
     name: string,
@@ -21,7 +22,7 @@ const HealthPackageComp = ({healthPackage , healthPackages}:healthPackageProps) 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [openAlert, setOpenAlert] = useState(false);
-
+    const navigate= useNavigate();
   
     console.log('HealthPackages prop:', healthPackages);
 
@@ -46,7 +47,7 @@ const HealthPackageComp = ({healthPackage , healthPackages}:healthPackageProps) 
                 if (isSubscribed) {
                     setOpenAlert(true);
                 } else {
-                    window.location.href = '/path/for/myself';
+                   navigate(`/health-package-subscription/${packageName}`);
                 }
               } 
                

@@ -12,10 +12,11 @@ import {
 } from '@mui/material';
 import PatientAppBar from '../../components/patientBar/patientBar';
 import { Male, Female, PersonAddAlt1 } from '@mui/icons-material'; // Import MUI icons
-import { useLocation, useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useLocation, useNavigate, useParams } from 'react-router-dom'; // Import useNavigate
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 
 type FamilyMember = {
+  username: string;
     userName: string;
   name: string;
   nationalId: string;
@@ -33,8 +34,10 @@ type FamilyMember = {
 const ViewMyFam = () => {
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const price = queryParams.get('price');
-    const date = queryParams.get('date');
+    const { date,price } = useParams<{ date: any , price : string }>(); // Get packageName from URL params
+
+    console.log(date);
+    console.log(price);
 
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
   const [famMem, setFamMem] = useState<string>('');
@@ -63,14 +66,14 @@ const ViewMyFam = () => {
     fetchData();
   }, []);
 
-  const clickFamMember =(name:string)=>{
+  const clickFamMember =(username:string)=>{
     //hateb2a username badal name lama n fetch mn el model el sah inshaallahh
-    setFamMem(name);
+    setFamMem(username);
   }
 
   const PayForApp = () =>{
     localStorage.setItem("FamMemUserName", famMem);
-    navigate(`path/for/payment?date=${date}&price=${price}`);
+    navigate(`/makeAppforFam/${date}/${price}`);
   }
 
 
@@ -123,10 +126,12 @@ const ViewMyFam = () => {
                     </Typography>
                     <Typography color="textSecondary">Age: {member.age}</Typography>
                     <Typography color="textSecondary">Gender: {member.gender}</Typography>
+                    <Typography color="textSecondary">username: {member.username}</Typography>
+
                     <Typography color="textSecondary">
                       Relation to Patient: {member.relationToPatient}
                     </Typography>
-                    <Button onClick={() => clickFamMember(member.name)}>Choose</Button>
+                    <Button onClick={() => clickFamMember(member.username)}>Choose</Button>
                   </CardContent>
                 </Card>
                 <Typography>Chosen Fam Member: {famMem}</Typography>

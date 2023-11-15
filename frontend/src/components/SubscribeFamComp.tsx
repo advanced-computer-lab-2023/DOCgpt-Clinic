@@ -88,7 +88,9 @@ useEffect(() => {
     if (isSubscribed) {
       setOpenAlert(true);
     } else {
-      navigate('/path/aykalam');
+      const fam = member.name;
+      localStorage.setItem('fam',fam);
+      navigate(`/subFam/${packageName}`);
     }
   }
 }, [chosenMem, subscribedArray]);
