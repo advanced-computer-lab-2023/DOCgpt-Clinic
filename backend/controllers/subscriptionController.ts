@@ -10,14 +10,13 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 if (!process.env.STRIPE_SECRET_KEY)
  throw new Error('process.env.STRIPE_SECRET_KEY not found');
 
-export const subscribeToHealthPackage = async (req: Request, res: Response) => {
+ export const subscribeToHealthPackage = async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     const tokenDB = await tokenModel.findOne({ token });
     const username = tokenDB && tokenDB.username;
-    const {packageName, paymentMethod } = req.body;
- 
+    const { packageName, paymentMethod } = req.body;
 
     if (!username || !packageName || !paymentMethod) {
       return res.status(400).json({ error: 'Username, package name, and payment method are required' });
@@ -36,57 +35,50 @@ export const subscribeToHealthPackage = async (req: Request, res: Response) => {
     if (!healthPackage) {
       return res.status(404).json({ error: 'Health package not found' });
     }
+
     const isSubscribed = patient.healthPackageSubscription.some(
       subscription => subscription.name === packageName && subscription.status === 'subscribed with renewal date'
     );
-    
+
     if (isSubscribed) {
       return res.status(400).json({ error: 'Patient is already subscribed to this package' });
     }
-    const subscriptionCost = healthPackage.feesPerYear;
-    if (paymentMethod === 'creditCard') {
 
+    const subscriptionCost = healthPackage.feesPerYear;
+
+    if (paymentMethod === 'creditCard') {
       const sessionUrl = await creditPayment(req, res, subscriptionCost);
 
       if (!sessionUrl) {
         return res.status(500).json({ error: 'Failed to create payment session' });
       }
-      
+
       patient.healthPackageSubscription.push({
         name: packageName,
         startdate: '',
         enddate: '',
-        status: "subscribed with renewal date"   
-      })
+        status: "subscribed with renewal date"
+      });
+
       await patient.save();
       return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });
+    } else { // <-- Corrected placement of else
 
-    } ;
-    if (paymentMethod === 'wallet') {
+      console.log("ana dkhlt hena");
+
       if (patient.walletBalance < subscriptionCost) {
         return res.status(400).json({ error: 'Insufficient funds in the wallet' });
+      } else {
+        patient.walletBalance -= subscriptionCost;
+        patient.healthPackageSubscription.push({
+          name: packageName,
+          startdate: '',
+          enddate: '',
+          status: "subscribed with renewal date"
+        });
+        await patient.save();
       }
-      else {
-        // Deduct the cost from the wallet balance
-      patient.walletBalance -= subscriptionCost;
-      patient.healthPackageSubscription.push({
-        name: packageName,
-        startdate: '',
-        enddate: '',
-        status: "subscribed with renewal date"   
-      })
-      }
     }
-  
-    if (!patient.healthPackageSubscription) {
-      patient.healthPackageSubscription = [];
-    }
-
-    if (!Array.isArray(patient.healthPackageSubscription)) {
-      patient.healthPackageSubscription = [];
-    }
-
-    await patient.save();
 
     return res.status(201).json({ message: 'Health package subscribed successfully', patient });
   } catch (error) {
@@ -94,6 +86,7 @@ export const subscribeToHealthPackage = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 export const subscribeFamAsPatient = async (username: String, packageName: string) => {
   try {
@@ -215,8 +208,9 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
         await subscribeFamAsPatient(familyMemberUsername, packageName);     
         await patient.save();
         return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });     
-      } ;
-      if (paymentMethod === 'wallet') {
+      } 
+  else {
+    console.log("ana hena ")
         if (patient.walletBalance < subscriptionCost) {
           return res.status(400).json({ error: 'Insufficient funds in the wallet' });
         }
@@ -236,9 +230,6 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
         subscribeFamAsPatient(familyMemberUsername, packageName);
       }
       }
-     
-      
-
       await patient.save();
 
       return res.status(201).json({ message: 'Health package subscribed successfully for family member', patient });
@@ -252,17 +243,11 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
 };
 
 export const viewSubscribedPackages = async (req: Request, res: Response) => {
-  interface SubscribedPackage {
-    name: string;
-    startdate?: string | Date;
-    enddate?: string | Date;
-    status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date';
-  }
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     const tokenDB = await tokenModel.findOne({ token });
-    const username = (tokenDB && tokenDB.username);
+    const username = tokenDB?.username;
 
     if (!username) {
       return res.status(400).json({ error: 'Username is required' });
@@ -272,30 +257,16 @@ export const viewSubscribedPackages = async (req: Request, res: Response) => {
 
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
-    }
+    }    
 
-    let subscribedPackages: SubscribedPackage[] = [];
+    let subscribedPackages: { name: string; status: "subscribed with renewal date" | "unsubscribed" | "cancelled with end date"; startdate?: string | undefined; enddate?: string | undefined; }[] = [];
 
-    // Check patient's subscriptions
     if (patient.healthPackageSubscription && Array.isArray(patient.healthPackageSubscription)) {
       subscribedPackages = patient.healthPackageSubscription.filter(
         (pkg) => pkg.status === 'subscribed with renewal date'
       );
     }
-
-    // Check family members' subscriptions
-    // if (patient.familyMembers && patient.familyMembers.length > 0) {
-    //   for (const familyMember of patient.familyMembers) {
-    //     if (familyMember.healthPackageSubscription && Array.isArray(familyMember.healthPackageSubscription)) {
-    //       const familyMemberSubscribedPackages = familyMember.healthPackageSubscription.filter(
-    //         (pkg) => pkg.status === 'subscribed with renewal date'
-    //       );
-    //       subscribedPackages.push(...familyMemberSubscribedPackages);
-    //     }
-    //   }
-    // }
-
-    return res.status(200).json({ subscribedPackages });
+    return res.status(200).json({subscribedPackages});
   } catch (error) {
     console.error('Error retrieving subscribed packages:', error);
     return res.status(500).json({ error: 'Internal server error' });
@@ -487,18 +458,7 @@ console.log(familyname);
 };
 
 
-
 export const viewFamilyMembersAndPackages = async (req: Request, res: Response) => {
-  interface FamilyMemberPackage {
-    familyMemberName: string;
-    package: {
-      name: string;
-      startdate?: string ;
-      enddate?: string ;
-      status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date';
-    };
-  }
-
   try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -510,34 +470,42 @@ export const viewFamilyMembersAndPackages = async (req: Request, res: Response) 
     }
 
     const patient = await patientModel.findOne({ username });
-
+   
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
     }
 
-    let familyMembersAndPackages: FamilyMemberPackage[] = [];
+    // Collect family members' subscriptions
+    const familyMemberPackages: any[] = [];
 
-    // Check family members' subscriptions
-    if (patient.familyMembers && patient.familyMembers.length > 0) {
-      for (const familyMember of patient.familyMembers) {
-        if (familyMember.healthPackageSubscription && Array.isArray(familyMember.healthPackageSubscription)) {
-          const familyMemberSubscribedPackages = familyMember.healthPackageSubscription
-            .filter(pkg => pkg.status === 'subscribed with renewal date') // Filter by status
-            .map(pkg => ({
-              familyMemberName: familyMember.name,
-              package: pkg,
-            }));
-          familyMembersAndPackages.push(...familyMemberSubscribedPackages);
-        }
+    for (const familyMember of patient.familyMembers) {
+      console.log('Family Member:', familyMember.name);
+      if (familyMember.healthPackageSubscription && Array.isArray(familyMember.healthPackageSubscription)) {
+        console.log('Subscriptions before filter:', familyMember.healthPackageSubscription);
+    
+        const subscribedPackages = familyMember.healthPackageSubscription
+          .filter(pkg => pkg.status === 'subscribed with renewal date')
+          .map(pkg => ({
+            familyMemberName: familyMember.name,
+            package: pkg,
+          }));
+    
+        console.log('Subscribed Packages:', subscribedPackages);
+    
+        familyMemberPackages.push(...subscribedPackages);
       }
     }
+    
 
-    return res.status(200).json({ familyMembersAndPackages });
+  console.log("ana hena")
+  console.log(familyMemberPackages);
+    return res.status(200).json({ familyMemberPackages });
   } catch (error) {
     console.error('Error retrieving family members and packages:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 export const getSubscribedPackagesForMember = async (req: Request, res: Response) => {
   try {

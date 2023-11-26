@@ -117,7 +117,7 @@ function validatePassword(password) {
         return false;
     }
     // Regular expression pattern to check for at least one capital letter and one number
-    const pattern = /^(?=.[A-Z])(?=.\d)/;
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
     // Use the test method to check if the password matches the pattern
     if (!pattern.test(password)) {
         return false;

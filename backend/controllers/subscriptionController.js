@@ -60,13 +60,12 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
             yield patient.save();
             return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });
         }
-        ;
-        if (paymentMethod === 'wallet') {
+        else { // <-- Corrected placement of else
+            console.log("ana dkhlt hena");
             if (patient.walletBalance < subscriptionCost) {
                 return res.status(400).json({ error: 'Insufficient funds in the wallet' });
             }
             else {
-                // Deduct the cost from the wallet balance
                 patient.walletBalance -= subscriptionCost;
                 patient.healthPackageSubscription.push({
                     name: packageName,
@@ -74,15 +73,9 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
                     enddate: '',
                     status: "subscribed with renewal date"
                 });
+                yield patient.save();
             }
         }
-        if (!patient.healthPackageSubscription) {
-            patient.healthPackageSubscription = [];
-        }
-        if (!Array.isArray(patient.healthPackageSubscription)) {
-            patient.healthPackageSubscription = [];
-        }
-        yield patient.save();
         return res.status(201).json({ message: 'Health package subscribed successfully', patient });
     }
     catch (error) {
@@ -186,8 +179,8 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
                 yield patient.save();
                 return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });
             }
-            ;
-            if (paymentMethod === 'wallet') {
+            else {
+                console.log("ana hena ");
                 if (patient.walletBalance < subscriptionCost) {
                     return res.status(400).json({ error: 'Insufficient funds in the wallet' });
                 }
@@ -224,7 +217,7 @@ const viewSubscribedPackages = (req, res) => __awaiter(void 0, void 0, void 0, f
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
         const tokenDB = yield tokenModel_1.default.findOne({ token });
-        const username = (tokenDB && tokenDB.username);
+        const username = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
         if (!username) {
             return res.status(400).json({ error: 'Username is required' });
         }
@@ -233,21 +226,9 @@ const viewSubscribedPackages = (req, res) => __awaiter(void 0, void 0, void 0, f
             return res.status(404).json({ error: 'Patient not found' });
         }
         let subscribedPackages = [];
-        // Check patient's subscriptions
         if (patient.healthPackageSubscription && Array.isArray(patient.healthPackageSubscription)) {
             subscribedPackages = patient.healthPackageSubscription.filter((pkg) => pkg.status === 'subscribed with renewal date');
         }
-        // Check family members' subscriptions
-        // if (patient.familyMembers && patient.familyMembers.length > 0) {
-        //   for (const familyMember of patient.familyMembers) {
-        //     if (familyMember.healthPackageSubscription && Array.isArray(familyMember.healthPackageSubscription)) {
-        //       const familyMemberSubscribedPackages = familyMember.healthPackageSubscription.filter(
-        //         (pkg) => pkg.status === 'subscribed with renewal date'
-        //       );
-        //       subscribedPackages.push(...familyMemberSubscribedPackages);
-        //     }
-        //   }
-        // }
         return res.status(200).json({ subscribedPackages });
     }
     catch (error) {
@@ -416,22 +397,25 @@ const viewFamilyMembersAndPackages = (req, res) => __awaiter(void 0, void 0, voi
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        let familyMembersAndPackages = [];
-        // Check family members' subscriptions
-        if (patient.familyMembers && patient.familyMembers.length > 0) {
-            for (const familyMember of patient.familyMembers) {
-                if (familyMember.healthPackageSubscription && Array.isArray(familyMember.healthPackageSubscription)) {
-                    const familyMemberSubscribedPackages = familyMember.healthPackageSubscription
-                        .filter(pkg => pkg.status === 'subscribed with renewal date') // Filter by status
-                        .map(pkg => ({
-                        familyMemberName: familyMember.name,
-                        package: pkg,
-                    }));
-                    familyMembersAndPackages.push(...familyMemberSubscribedPackages);
-                }
+        // Collect family members' subscriptions
+        const familyMemberPackages = [];
+        for (const familyMember of patient.familyMembers) {
+            console.log('Family Member:', familyMember.name);
+            if (familyMember.healthPackageSubscription && Array.isArray(familyMember.healthPackageSubscription)) {
+                console.log('Subscriptions before filter:', familyMember.healthPackageSubscription);
+                const subscribedPackages = familyMember.healthPackageSubscription
+                    .filter(pkg => pkg.status === 'subscribed with renewal date')
+                    .map(pkg => ({
+                    familyMemberName: familyMember.name,
+                    package: pkg,
+                }));
+                console.log('Subscribed Packages:', subscribedPackages);
+                familyMemberPackages.push(...subscribedPackages);
             }
         }
-        return res.status(200).json({ familyMembersAndPackages });
+        console.log("ana hena");
+        console.log(familyMemberPackages);
+        return res.status(200).json({ familyMemberPackages });
     }
     catch (error) {
         console.error('Error retrieving family members and packages:', error);

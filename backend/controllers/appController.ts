@@ -118,14 +118,14 @@ export const resetPassword = async (req: Request, res: Response) => {
 };
 
 
-function validatePassword(password: any) {
+function validatePassword(password: string) {
   // Minimum password length of 8 characters
   if (password.length < 8) {
     return false;
   }
 
   // Regular expression pattern to check for at least one capital letter and one number
-  const pattern = /^(?=.[A-Z])(?=.\d)/;
+  const pattern = /^(?=.*[A-Z])(?=.*\d)/;
 
   // Use the test method to check if the password matches the pattern
   if (!pattern.test(password)) {

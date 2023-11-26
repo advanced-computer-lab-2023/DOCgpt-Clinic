@@ -37,7 +37,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
     gender: {
         type: String,
         required: true,
-        enum: ['male', 'female', 'other'],
+        enum: ['male', 'female', 'other', 'Female', 'Male'],
         default: 'male',
         // Add appropriate values based on your application
     },
@@ -102,7 +102,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
             },
             relationToPatient: {
                 type: String,
-                enum: ['wife', 'husband', 'child'],
+                enum: ['wife', 'husband', 'child', 'sister', 'brothet'],
                 required: true,
             },
             healthPackageSubscription: [

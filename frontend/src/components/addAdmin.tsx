@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -17,6 +16,8 @@ const CreateAdminButton: React.FC = () => {
   const [open, setOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
 
@@ -40,6 +41,7 @@ const CreateAdminButton: React.FC = () => {
         {
           username,
           password,
+          email,
         },
         {
           headers: {
@@ -63,15 +65,9 @@ const CreateAdminButton: React.FC = () => {
       alignItems="center"
       height="10vh"
     >
-       <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleOpen}
-        sx={{ backgroundColor: '#1976D2', width: '150px' }} // Match the color of the "Add Admin" button
-      >
-        Add Admin 
-        </Button>
+      <Button variant="contained" color="primary" onClick={handleOpen}>
+        Add Admin
+      </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create Admin</DialogTitle>
         <DialogContent>
@@ -93,6 +89,14 @@ const CreateAdminButton: React.FC = () => {
             fullWidth
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            label="Email"
+            type="email"
+            fullWidth
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </DialogContent>
         <DialogActions>
