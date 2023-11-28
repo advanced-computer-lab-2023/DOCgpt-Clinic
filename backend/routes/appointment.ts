@@ -10,7 +10,7 @@ router.get("/", getAppointments);
 router.get("/getAll", getAllAppointments);
 router.get("/appP",getPapp);
 router.patch("/completed", complete);
-router.post("/makeApp",paymenttt)
+
 router.post("/makeApp",paymenttt)
 router.post("/makeAppForFam",payment2)
 

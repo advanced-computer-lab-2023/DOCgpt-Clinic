@@ -2,7 +2,6 @@ import { ReactNode } from "react";
 import HealingIcon from "@mui/icons-material/Healing";
 import { Typography } from "@mui/material";
 
-
 export type RouteType = {
   header: any;
   child: links[];
@@ -19,11 +18,10 @@ export type links = {
 };
 
 const appRoutes: RouteType[] = [
-
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-       Settings
+        Settings
       </Typography>
     ),
     child: [
@@ -31,11 +29,9 @@ const appRoutes: RouteType[] = [
         path: "/changepassworddoctor",
         state: "Change Password",
       },
-      
     ],
   },
   {
-    
     header: (
       <Typography variant="h6" fontWeight="bold">
         appoinments
@@ -62,6 +58,10 @@ const appRoutes: RouteType[] = [
       {
         path: "/doctor/patients",
         state: "View My Patients",
+      },
+      {
+        path: "/doctor/walletAmount",
+        state: "View My wallet",
       },
     ],
   },

@@ -1,9 +1,7 @@
 import { ReactNode } from "react";
 import HealingIcon from "@mui/icons-material/Healing";
 import { Typography } from "@mui/material";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-
-
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 
 export type RouteType = {
   header: any;
@@ -24,7 +22,7 @@ const appRoutes: RouteType[] = [
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-       Settings
+        Settings
       </Typography>
     ),
     child: [
@@ -32,7 +30,6 @@ const appRoutes: RouteType[] = [
         path: "/changepasswordpatient",
         state: "Change Password",
       },
-      
     ],
   },
   {
@@ -50,10 +47,9 @@ const appRoutes: RouteType[] = [
         path: "/patient/viewMyappointments",
         state: "View My Appointments",
       },
-      
     ],
   },
- 
+
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
@@ -65,11 +61,11 @@ const appRoutes: RouteType[] = [
         path: "/patient/viewFamilyMembers",
         state: "Family members",
       },
-     
+
       {
-        path:"/patient/link",
-        state:"link family member",
-      }
+        path: "/patient/link",
+        state: "link family member",
+      },
     ],
   },
   {
@@ -86,16 +82,11 @@ const appRoutes: RouteType[] = [
       {
         path: "/patient/packages",
         state: "My Packages",
-
-
       },
       {
         path: "/patient/subscribedPage",
         state: "Subscribed Packages",
-
-
       },
-      
     ],
   },
   {
@@ -109,9 +100,11 @@ const appRoutes: RouteType[] = [
         path: "/patient/viewMyhealthrecords",
         state: "View My Health Record",
       },
-      
+      {
+        path: "/patient/walletAmount",
+        state: "View My wallet",
+      },
     ],
-  }
+  },
 ];
 export default appRoutes;
-

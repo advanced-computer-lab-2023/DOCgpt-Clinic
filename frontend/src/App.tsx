@@ -58,6 +58,7 @@ import HealthPackage from "./components/healthPackages";
 import ChangePassword from "./components/changePasswordPatient";
 import ChangePasswordDoctor from "./components/changePassworddoctor";
 import ChangePasswordAdmin from "./components/changePasswordadmin";
+import ViewWalletAmount from "./components/viewWalletAmountDoctor";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -92,7 +93,6 @@ function App() {
         <Route path="/doctor/home" element={<DoctorHomePage />} />
         <Route path="/admin/home" element={<AdminHomePage />} />
         <Route path="/doctor/time" element={<DoctorAvailability />} />
-        {/* //<Route path="/doctor/timeslot" Component={timeslottt}/> */}
         <Route path="/patient/addMember" element={<AddFamilyMember />} />
         <Route
           path="/patient/ViewFamilyMembers"
@@ -100,9 +100,10 @@ function App() {
         />
         // <Route path="/admin" Component={Admin} />
         <Route
-          path="/patient/walletAmount/:username"
+          path="/patient/walletAmount"
           element={<ViewWalletAmountPage />}
         />
+        <Route path="/doctor/walletAmount" element={<ViewWalletAmount />} />
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
         // <Route path="/doctor/patients" Component={MyPatients} />

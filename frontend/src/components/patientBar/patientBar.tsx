@@ -19,18 +19,17 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
-import WalletIcon from '@mui/icons-material/Wallet';
-import ViewWalletAmount from "../viewWalletAmount"
+import WalletIcon from "@mui/icons-material/Wallet";
+import ViewWalletAmount from "../viewWalletAmountDoctor";
 
 import { ReactNode } from "react";
 import appRoutes from "./patientRoutes";
-import ViewWalletBalance from "../viewWalletBalance";
+import ViewWalletBalance from "../viewWalletPatient";
 
 const drawerWidth = 240;
 //const navItems = ["Home", "About", "Pharmacy", "Contact", "Login"];
 const navItems = [
   { name: "Home", path: "/patient/home" },
-  { name: "Clinic", path: "/patient/home" },
   { name: "About", path: "/patient/home" },
   { name: "Contact", path: "/patient/home" },
 ];
@@ -54,12 +53,21 @@ export default function DrawerAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isWalletOpen, setIsWalletOpen] = useState(false); // State to manage the wallet sidebar
 
-  
-  const { username } = useParams();
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setIsDrawerOpen(!isDrawerOpen);
+  };
+  const openPharmacy = () => {
+    const newWindow = window.open(
+      "http://localhost:3001/patientHome",
+      "_blank"
+    );
+    if (newWindow) {
+      window.close();
+    } else {
+      console.error("Unable to open a new window.");
+    }
   };
 
   const navigateTo = (route: To) => {
@@ -126,7 +134,7 @@ export default function DrawerAppBar() {
   const drawer = (
     <Box sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }} color="black">
-       Clinic
+        Clinic
       </Typography>
       <Divider />
       {renderMenuItems(appRoutes)}
@@ -159,16 +167,6 @@ export default function DrawerAppBar() {
           >
             CLINIC
           </Typography>
-          <IconButton
-            color="primary"
-            aria-label="Search"
-            onClick={() => {
-              // Handle search functionality
-            }}
-            sx={{ mr: 2, display: { sm: "block" } }}
-          >
-            <SearchIcon />
-          </IconButton>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item) => (
               <Button
@@ -179,42 +177,34 @@ export default function DrawerAppBar() {
                 {item.name}
               </Button>
             ))}
+            <Button key="Logout" sx={{ color: "black" }} onClick={openPharmacy}>
+              Pharmacy
+            </Button>
             <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
               Logout
             </Button>
           </Box>
           <Box sx={{ display: "flex" }}>
-    
-    <IconButton
-      color="primary"
-      aria-label="Wallet"
-      onClick={handleViewWalletBalance}
-      sx={{ ml: 2, display: { sm: "block" } }}
-    >
-      <WalletIcon style={{ fontSize: 40, color: "primary" }} />
-    </IconButton>
-    {isWalletOpen && (
-      <Drawer
-        variant="temporary"
-        open={isWalletOpen}
-        onClose={handleViewWalletBalance}
-        ModalProps={{
-          keepMounted: true, // Better open performance on mobile.
-        }}
-        sx={{
-          display: { xs: "block", sm: "block" },
-          "& .MuiDrawer-paper": {
-            boxSizing: "border-box",
-            width: drawerWidth,
-          },
-        }}
-      >
-        {/* Render the ViewWalletBalance component in the wallet sidebar */}
-        <ViewWalletBalance patientUsername={username} />
-      </Drawer>
-    )}
-    
-  </Box>
+            {isWalletOpen && (
+              <Drawer
+                variant="temporary"
+                open={isWalletOpen}
+                onClose={handleViewWalletBalance}
+                ModalProps={{
+                  keepMounted: true, // Better open performance on mobile.
+                }}
+                sx={{
+                  display: { xs: "block", sm: "block" },
+                  "& .MuiDrawer-paper": {
+                    boxSizing: "border-box",
+                    width: drawerWidth,
+                  },
+                }}
+              >
+                {/* Render the ViewWalletBalance component in the wallet sidebar */}
+              </Drawer>
+            )}
+          </Box>
         </Toolbar>
       </AppBar>
       <nav>
