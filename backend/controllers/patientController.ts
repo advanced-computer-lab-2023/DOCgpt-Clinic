@@ -1042,3 +1042,25 @@ export const deletePatientDocs =  async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 }
+
+
+export const getTodayAppointments = async (req: Request, res: Response) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const tokenDB = await tokenModel.findOne({ token });
+  console.log(token);
+
+  const patientUsername = tokenDB?.username;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0 for the start of the day
+
+  const appointments = await appointmentModel
+    .find({
+      patient: patientUsername,
+      date: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) }, // Filter for today's appointments
+    })
+    .exec();
+
+  res.status(200).json(appointments);
+};

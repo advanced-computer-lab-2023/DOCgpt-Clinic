@@ -59,6 +59,9 @@ import ChangePassword from "./components/changePasswordPatient";
 import ChangePasswordDoctor from "./components/changePassworddoctor";
 import ChangePasswordAdmin from "./components/changePasswordadmin";
 import ViewWalletAmount from "./components/viewWalletAmountDoctor";
+import TodayAppointmentsComponent from "./pages/doctor/todaysappDOC";
+import TodayAppointmentsPatient from "./pages/patient/todaysappP";
+import Chat from "./components/chat";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -75,7 +78,6 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" Component={Landing} />
-        {/* //     <Route path="/"  Component={LandingPage} /> */}
         <Route path="/" Component={Landing} />
         <Route path="/login" Component={Log} />
         <Route path="/register/patient" Component={SignUpPatient} />
@@ -121,6 +123,10 @@ function App() {
         <Route path="/doctor/healthRecordForm" Component={HealthRecordForm} />
         <Route path="/patient/viewDoctors" Component={ViewDoctors} />
         <Route
+          path="/doctor/todayapp"
+          element={<TodayAppointmentsComponent />}
+        />
+        <Route
           path="/patient/viewMyappointments"
           Component={ViewMyAppointments}
         />
@@ -128,6 +134,11 @@ function App() {
           path="/patient/viewMyhealthrecords"
           Component={ViewMyHealthRecord}
         />
+        <Route
+          path="/patient/viewtodapp"
+          Component={TodayAppointmentsPatient}
+        />
+        <Route path="/chat/:conversationId" element={<Chat />} />
         <Route path="/doctor/followUp" element={<ViewMyTimeSlots />} />
         <Route path="/patient/doctorinfo" Component={DoctorInfo} />
         <Route path="/patient/ViewMyFam/:date/:price" Component={ViewMyFam} />

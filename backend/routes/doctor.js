@@ -21,6 +21,7 @@ router.get("/upcomingApp", doctorController_1.viewUpcomingAppointments);
 router.get("/pastApp", doctorController_1.viewPastAppointments);
 router.get("/appointmentsByDate", doctorController_1.getAppointmentByDate);
 router.get("/appointmentsByStatus", doctorController_1.getAppointmentByStatus);
+router.get("/todayapp", doctorController_1.getTodayAppointments);
 //HEALTH RECORDS
 router.get("/HealthRecords", doctorController_1.viewHealthRecords);
 router.get("/HealthRecord", doctorController_1.viewHealthRecord);
