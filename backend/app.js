@@ -30,6 +30,8 @@ const appRouter_1 = __importDefault(require("../backend/routes/appRouter"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const express_1 = __importDefault(require("express"));
 const payment_1 = __importDefault(require("./routes/payment"));
+const Message_1 = __importDefault(require("./routes/Message"));
+const Conversation_1 = __importDefault(require("./routes/Conversation"));
 const stripe_1 = __importDefault(require("stripe"));
 require('dotenv').config();
 // Express app
@@ -58,6 +60,8 @@ app.use('/routes/healthRecord', healthRecord_1.default);
 app.use('/routes/otp', appRouter_1.default);
 app.use('/routes', subscriptionRoute_1.default);
 app.use('/routes/pay', payment_1.default);
+app.use('/routes/messages', Message_1.default);
+app.use('/routes/conversation', Conversation_1.default);
 console.log('Routes mounted!');
 // Connect to the database
 mongoose_1.default.connect(process.env.MONGO_URI)
@@ -115,7 +119,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const tokenn = yield tokenModel_1.default.create({ token, username, role: role });
         console.log("Received login succes");
         req.app.locals.username = username;
-        res.status(200).json({ user, token, role });
+        res.status(200).json({ user, username, token, role });
     }
     catch (error) {
         const err = error;
@@ -126,5 +130,29 @@ exports.login = login;
 const storeItems = new Map([
     [1, { priceInCents: 1000, name: "Appointment" }],
 ]);
+// app.post("/create-checkout-session", async (req: Request, res: Response) => {
+//   try {
+//     const session = await stripe.checkout.sessions.create({
+//       payment_method_types: ["card"],
+//       mode: "payment",
+//       line_items: [
+//         {
+//           price_data: {
+//             currency: "EGP",
+//             product_data: {
+//               name: "Appoitment ",
+//             },
+//             unit_amount: 10000,
+//           },
+//           quantity: 1,
+//     }],
+//       success_url: `http://localhost:3000/login`,
+//       cancel_url: `http://localhost:3000/login`,
+//     });
+//     res.json({ url: session.url });
+//   } catch (e: any) {
+//     res.status(500).json({ error: e.message });
+//   }
+// });
 // app.post('/pay',paymenttt)
 app.post('/api/login', exports.login);

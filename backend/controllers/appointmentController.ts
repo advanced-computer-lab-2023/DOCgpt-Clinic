@@ -215,9 +215,9 @@ export const paymenttt = async (req: Request, res: Response) => {
       patient.walletBalance -= price;
       await patient.save();
 
-      doctor.walletBalance += price;
+      doctor.walletBalance = parseFloat(doctor.walletBalance) + parseFloat(price);
       await doctor.save();
-
+      console.log(doctor.walletBalance);
       const app = await createAppointment(req, res);
 
       if (!app) {
@@ -288,9 +288,10 @@ export const payment2 = async (req: Request, res: Response) => {
       patient.walletBalance -= price;
       await patient.save();
 
-      doctor.walletBalance += price;
-      await doctor.save();
+      doctor.walletBalance = parseFloat(doctor.walletBalance) + parseFloat(price);
 
+      await doctor.save();
+       console.log(doctor.walletBalance);
       const app = await createAppointment22(req, res,user);
 
       if (!app) {

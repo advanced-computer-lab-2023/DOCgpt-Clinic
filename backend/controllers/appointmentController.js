@@ -180,8 +180,9 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
             patient.walletBalance -= price;
             yield patient.save();
-            doctor.walletBalance += price;
+            doctor.walletBalance = parseFloat(doctor.walletBalance) + parseFloat(price);
             yield doctor.save();
+            console.log(doctor.walletBalance);
             const app = yield (0, exports.createAppointment)(req, res);
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });
@@ -239,8 +240,9 @@ const payment2 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
             patient.walletBalance -= price;
             yield patient.save();
-            doctor.walletBalance += price;
+            doctor.walletBalance = parseFloat(doctor.walletBalance) + parseFloat(price);
             yield doctor.save();
+            console.log(doctor.walletBalance);
             const app = yield (0, exports.createAppointment22)(req, res, user);
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });

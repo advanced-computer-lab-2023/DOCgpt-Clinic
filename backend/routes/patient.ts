@@ -26,7 +26,8 @@ import {
   uploadPatintDocs,
   deletePatientDocs,
   rescheduleAppointments,
-  viewFamAppointments
+  viewFamAppointments,
+  getTodayAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 import fs from 'fs';
@@ -90,7 +91,7 @@ router.patch('/linkFamilyMember',linkFamilyMember)
 
 // Create a route for viewing wallet amount
 router.get('/viewWalletAmount',verifyTokenPatient, viewWalletAmount);
-
+router.get('/getTodApp',verifyTokenPatient,getTodayAppointments)
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

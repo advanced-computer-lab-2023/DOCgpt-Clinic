@@ -3,7 +3,7 @@ import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStat
   searchPatient, selectPatient, updateDoctorAffiliation, 
   updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord,
    viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, 
-   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments} from "../controllers/doctorController";
+   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments} from "../controllers/doctorController";
 import multer from "multer";
 import path from 'path';
 import fs from "fs"
@@ -22,6 +22,7 @@ router.get("/upcomingApp", viewUpcomingAppointments);
 router.get("/pastApp", viewPastAppointments);
 router.get("/appointmentsByDate", getAppointmentByDate);
 router.get("/appointmentsByStatus", getAppointmentByStatus);
+router.get("/todayapp",getTodayAppointments);
 
 //HEALTH RECORDS
 router.get("/HealthRecords", viewHealthRecords);
