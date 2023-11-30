@@ -3,6 +3,8 @@ import {
   createPrescription,
   getAllPrescriptions,
   updatePrescription,
+  getAllPrescriptionsPatient,
+  getAllPrescriptionsDoctor,
 } from '../controllers/prescriptionController';
 
 const router = express.Router();
@@ -15,6 +17,9 @@ router.get('/prescriptions', getAllPrescriptions);
 
 // Update a prescription
 router.put('/prescriptions/:id', updatePrescription);
+
+router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
+router.get('/getAllPrescriptionsDoctor', getAllPrescriptionsDoctor);
 
 
 export default router;

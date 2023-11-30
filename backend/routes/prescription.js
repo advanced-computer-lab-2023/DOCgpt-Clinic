@@ -12,4 +12,6 @@ router.post('/prescriptions', prescriptionController_1.createPrescription);
 router.get('/prescriptions', prescriptionController_1.getAllPrescriptions);
 // Update a prescription
 router.put('/prescriptions/:id', prescriptionController_1.updatePrescription);
+router.get('/getAllPrescriptionsPatient', prescriptionController_1.getAllPrescriptionsPatient);
+router.get('/getAllPrescriptionsDoctor', prescriptionController_1.getAllPrescriptionsDoctor);
 exports.default = router;

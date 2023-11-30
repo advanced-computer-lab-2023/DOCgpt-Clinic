@@ -12,14 +12,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getpatientsPrescription = exports.updatePrescription = exports.getAllPrescriptions = exports.createPrescription = void 0;
+exports.getAllPrescriptionsDoctor = exports.getAllPrescriptionsPatient = exports.getpatientsPrescription = exports.updatePrescription = exports.getAllPrescriptions = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
+const tokenModel_1 = __importDefault(require("../models/tokenModel"));
+const doctorModel_2 = __importDefault(require("../models/doctorModel"));
 // Create a new prescription
 const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { doctorUsername, patientUsername, filled } = req.body;
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const doctorUsername = tokenDB && tokenDB.username;
+        const { patientUsername, status, Medicines } = req.body;
         console.log("hi am herre");
         // Check if the doctor exists
         const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
@@ -34,7 +40,8 @@ const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const prescription = new perscriptionModel_1.default({
             doctorUsername,
             patientUsername,
-            filled,
+            status,
+            Medicines
         });
         const savedPrescription = yield prescription.save();
         res.json(savedPrescription);
@@ -59,8 +66,8 @@ exports.getAllPrescriptions = getAllPrescriptions;
 const updatePrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { filled } = req.body;
-        const updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(id, { filled }, { new: true });
+        const { status } = req.body;
+        const updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(id, { status }, { new: true });
         if (!updatedPrescription) {
             return res.status(404).json({ error: 'Prescription not found' });
         }
@@ -92,3 +99,64 @@ const getpatientsPrescription = (req, res) => __awaiter(void 0, void 0, void 0, 
     }
 });
 exports.getpatientsPrescription = getpatientsPrescription;
+// Get all prescriptions for a specific patient by patient's username
+const getAllPrescriptionsPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const username = tokenDB && tokenDB.username;
+        // Check if the patient exists
+        const patient = yield patientModel_1.default.findOne({ username });
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+        // Find all prescriptions for the patient
+        const prescriptions = yield perscriptionModel_1.default.find({ patientUsername: username })
+            .populate('doctorUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
+            .select('doctorUsername date status Medicines');
+        // Construct response with full prescription details
+        const prescriptionDetails = prescriptions.map(prescription => ({
+            doctorName: prescription.doctorUsername,
+            date: prescription.date,
+            status: prescription.status,
+            medicines: prescription.Medicines
+        }));
+        // Respond with the detailed prescriptions
+        res.json(prescriptionDetails);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+    }
+});
+exports.getAllPrescriptionsPatient = getAllPrescriptionsPatient;
+const getAllPrescriptionsDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const username = tokenDB && tokenDB.username;
+        // Check if the patient exists
+        const doctor = yield doctorModel_2.default.findOne({ username });
+        if (!doctor) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+        // Find all prescriptions for the patient
+        const prescriptions = yield perscriptionModel_1.default.find({ doctorUsername: username })
+            .populate('patientUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
+            .select('patientUsername date status Medicines');
+        // Construct response with full prescription details
+        const prescriptionDetails = prescriptions.map(prescription => ({
+            PatientName: prescription.patientUsername,
+            date: prescription.date,
+            status: prescription.status,
+            medicines: prescription.Medicines
+        }));
+        // Respond with the detailed prescriptions
+        res.json(prescriptionDetails);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+    }
+});
+exports.getAllPrescriptionsDoctor = getAllPrescriptionsDoctor;

@@ -2,11 +2,20 @@ import { Request, Response } from 'express';
 import Prescription from '../models/perscriptionModel';
 import Doctor from '../models/doctorModel';
 import Patient from '../models/patientModel';
+import tokenModel from '../models/tokenModel';
+import doctorModel from '../models/doctorModel';
 
 // Create a new prescription
 export const createPrescription = async (req: Request, res: Response) => {
     try {
-      const { doctorUsername, patientUsername, filled } = req.body;
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+      const tokenDB = await tokenModel.findOne({ token });
+      const doctorUsername = tokenDB && tokenDB.username;
+
+
+
+      const {  patientUsername, status,Medicines } = req.body;
         console.log("hi am herre");
       // Check if the doctor exists
       const doctor = await Doctor.findOne({ username: doctorUsername });
@@ -23,7 +32,8 @@ export const createPrescription = async (req: Request, res: Response) => {
       const prescription  = new Prescription({
         doctorUsername,
         patientUsername,
-        filled,
+        status,
+        Medicines
       });
   
       const savedPrescription = await prescription.save();
@@ -47,11 +57,11 @@ export const getAllPrescriptions = async (req: Request, res: Response) => {
 export const updatePrescription = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { filled } = req.body;
+    const { status } = req.body;
 
     const updatedPrescription = await Prescription.findByIdAndUpdate(
       id,
-      { filled },
+      { status },
       { new: true }
     );
 
@@ -68,10 +78,9 @@ export const updatePrescription = async (req: Request, res: Response) => {
 
 // Get patients prescription by patient's username
 export const getpatientsPrescription = async (req: Request, res: Response) => {
-    console.log("im hererrrr");
 
     try {
-        console.log("im hererrrr");
+
 
       const { username } = req.params;
   
@@ -90,3 +99,76 @@ export const getpatientsPrescription = async (req: Request, res: Response) => {
       res.status(500).json({ error: 'Failed to fetch prescription' });
     }
   };
+
+
+
+  // Get all prescriptions for a specific patient by patient's username
+export const getAllPrescriptionsPatient = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    const username = tokenDB && tokenDB.username;
+
+      // Check if the patient exists
+      const patient = await Patient.findOne({ username });
+      if (!patient) {
+          return res.status(404).json({ error: 'Patient not found' });
+      }
+
+      // Find all prescriptions for the patient
+      const prescriptions = await Prescription.find({ patientUsername: username })
+          .populate('doctorUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
+          .select('doctorUsername date status Medicines');
+
+      // Construct response with full prescription details
+      const prescriptionDetails = prescriptions.map(prescription => ({
+          doctorName: prescription.doctorUsername, // Replace with just 'doctorUsername' if it's not a reference
+          date: prescription.date,
+          status: prescription.status,
+          medicines: prescription.Medicines
+      }));
+
+      // Respond with the detailed prescriptions
+      res.json(prescriptionDetails);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+  }
+};
+
+
+
+
+
+export const getAllPrescriptionsDoctor = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    const username = tokenDB && tokenDB.username;
+
+      // Check if the patient exists
+      const doctor = await doctorModel.findOne({ username });
+      if (!doctor) {
+          return res.status(404).json({ error: 'Patient not found' });
+      }
+
+      // Find all prescriptions for the patient
+      const prescriptions = await Prescription.find({ doctorUsername: username })
+          .populate('patientUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
+          .select('patientUsername date status Medicines');
+
+      // Construct response with full prescription details
+      const prescriptionDetails = prescriptions.map(prescription => ({
+          PatientName: prescription.patientUsername, // Replace with just 'doctorUsername' if it's not a reference
+          date: prescription.date,
+          status: prescription.status,
+          medicines: prescription.Medicines
+      }));
+
+      // Respond with the detailed prescriptions
+      res.json(prescriptionDetails);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+  }
+};
