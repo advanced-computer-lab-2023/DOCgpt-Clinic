@@ -69,4 +69,5 @@ router.get('/doctorDocuments', doctorController_1.getDoctorDocuments);
 router.get('/doctorDocuments/:filename', doctorController_1.serveDoctorDocument);
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorController_1.uploadAndSubmitReqDocs);
+router.patch('/rescheduleApp', doctorController_1.rescheduleAppointments);
 exports.default = router;

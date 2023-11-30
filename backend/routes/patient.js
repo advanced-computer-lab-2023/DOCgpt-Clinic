@@ -58,4 +58,6 @@ const uploadsPatient = (0, multer_1.default)({ storage });
 router.patch('/uploadDocs', uploadsPatient.array('documents', 1), patientController_1.verifyTokenPatient, patientController_1.uploadPatintDocs);
 router.get('/patientDocument/:filename', patientController_1.openPatientDocument);
 router.patch('/deleteDocs', patientController_1.deletePatientDocs);
+router.patch('/rescheduleAppointments', patientController_1.rescheduleAppointments);
+router.get('/viewFamAppointments', patientController_1.viewFamAppointments);
 exports.default = router;

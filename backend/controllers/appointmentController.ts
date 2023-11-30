@@ -113,7 +113,7 @@ export const createAppointment = async (req: Request, res: Response) => {
   const doctorUsername = req.body.doctorUsername;
   const date = req.body.date;
   const status = 'upcoming';
-  const type = 'new appointment';
+  const type = 'Regular';
   const price = Number(req.body.price);
 
   try {

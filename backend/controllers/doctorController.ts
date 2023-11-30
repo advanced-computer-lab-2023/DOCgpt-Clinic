@@ -621,6 +621,8 @@ try{
 };
 
 import { createReadStream, createWriteStream } from 'fs';
+import appointmentModel from "../models/appointmentModel";
+import doctorModel from "../models/doctorModel";
 
 export const uploadAndSubmitReqDocs = async (req: Request, res: Response) => {
   const uploadedFiles = req.files as Express.Multer.File[];
@@ -871,5 +873,56 @@ export const getContentType = (filename: string) => {
     // Add more cases for other file types as needed
     default:
       return 'application/octet-stream';
+  }
+};
+
+
+export const rescheduleAppointments = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
+
+    var username;
+  if(tokenDB){
+    username=tokenDB.username;
+  }
+  else{
+    return res.status(404).json({ error: 'username not found' });
+  }
+    
+  const { appointmentId, date} = req.body;
+  const newDate = new Date(date);
+
+  const appointment = await appointmentModel.findById(appointmentId);
+  if(appointment){
+    const doctor = await doctorModel.findOne({ username: username });
+
+    if(doctor){
+
+      doctor.timeslots.push({ date: appointment.date });
+    ;
+
+      doctor.timeslots = doctor.timeslots.filter((timeslot: any) =>
+      timeslot.date && timeslot.date.getTime() !== newDate.getTime()
+    );
+
+      await doctor.save();
+
+    }
+    appointment.date = newDate; 
+    appointment.status = "rescheduled";
+
+    const updatedAppointment = await appointment.save();
+    res.status(200).json({ updatedAppointment });
+
+   
+    //Send Notificationss(system & mail)//username DOC & PATIENT
+  
+
+  }
+} catch (error) {
+    console.error("Error handling file remove:", error);
+    res.status(500).json({ error: "Internal server error." });
   }
 };

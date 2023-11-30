@@ -103,7 +103,7 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'upcoming';
-    const type = 'new appointment';
+    const type = 'Regular';
     const price = Number(req.body.price);
     try {
         const authHeader = req.headers['authorization'];

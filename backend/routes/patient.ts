@@ -25,6 +25,8 @@ import {
   openPatientDocument,
   uploadPatintDocs,
   deletePatientDocs,
+  rescheduleAppointments,
+  viewFamAppointments
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 import fs from 'fs';
@@ -114,5 +116,8 @@ const uploadsPatient = multer({ storage });
 router.patch('/uploadDocs', uploadsPatient.array('documents', 1),verifyTokenPatient, uploadPatintDocs);
 router.get('/patientDocument/:filename', openPatientDocument);
 router.patch('/deleteDocs', deletePatientDocs);
+
+router.patch('/rescheduleAppointments', rescheduleAppointments);
+router.get('/viewFamAppointments', viewFamAppointments);
 export default router;
 
