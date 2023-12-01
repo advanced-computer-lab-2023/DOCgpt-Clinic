@@ -12,6 +12,7 @@ import adminModel from "../models/adminModel";
 import patientModel from "../models/patientModel";
 import packageModel from "../models/packageModel";
 import healthRecordModel from "../models/healthRecordModel";
+import requestModel from "../models/requestModel";
 import fs from 'fs';
 
 export const getDoctors = async (req: Request, res: Response) => {
@@ -298,7 +299,8 @@ const doctorUsername=tokenDB?.username;
           doctor: doctorUsername,
           patient: patientUsername,
           date: date,
-          type:type
+          type:type,
+          scheduledBy: doctorUsername
       });
 
       res.status(201).json(appoinment);
@@ -893,27 +895,32 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
     
   const { appointmentId, date} = req.body;
   const newDate = new Date(date);
-
+  
   const appointment = await appointmentModel.findById(appointmentId);
+ 
   if(appointment){
+    const updatedAppointment = await AppointmentModel.create({
+      status: "rescheduled",
+      doctor: appointment.doctor,
+      patient: appointment.patient,
+      date: newDate, // Convert date to Date object
+      scheduledBy: username,
+  });
+
     const doctor = await doctorModel.findOne({ username: username });
 
     if(doctor){
-
       doctor.timeslots.push({ date: appointment.date });
-    ;
-
       doctor.timeslots = doctor.timeslots.filter((timeslot: any) =>
       timeslot.date && timeslot.date.getTime() !== newDate.getTime()
-    );
 
+    );
       await doctor.save();
 
     }
-    appointment.date = newDate; 
-    appointment.status = "rescheduled";
+    appointment.status = "cancelled";
 
-    const updatedAppointment = await appointment.save();
+    await appointment.save();
     res.status(200).json({ updatedAppointment });
 
    
@@ -947,3 +954,100 @@ export const getTodayAppointments = async (req: Request, res: Response) => {
 
   res.status(200).json(appointments);
 };
+
+
+//accept/reject follow up request 
+
+export const acceptFollowUpRequest = async(req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
+
+    var username;
+  if(tokenDB){
+    username=tokenDB.username;
+  }
+  else{
+    return res.status(404).json({ error: 'username not found' });
+  }
+
+  const {requestId}= req.body;
+
+  const request = await requestModel.findById(requestId);
+  if(request){
+    request.status = "accepted";
+    await request.save();
+
+    const doctor = await doctorModel.findOne({ username});
+if(doctor){
+  const newDate = request.followUpDate;
+
+  if(newDate){
+  doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number } }) =>
+    timeslot.date.getTime() !== newDate.getTime()
+  );
+  }
+  await doctor.save();
+}
+
+    //Send Notificationss(system & mail)//username DOC & PATIENT
+
+    const appointment = await AppointmentModel.create({
+      status: "upcoming",
+      doctor: request.doctor,
+      patient: request.patient,
+      date: request.followUpDate, // Convert date to Date object
+      type: "Follow up",
+      price: 0,
+      paid: true,
+      scheduledBy: request.requestedBy,
+    });
+
+    if(request.requestedBy!=request.patient){
+      // send to request.patient and request.requestedBy
+    }
+    else{
+      //send to request.patient
+    }
+
+
+
+    return res.status(200).json({ appointment });
+    
+
+  }
+}catch (error) {
+    console.error("Error accept Req", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+}
+
+export const rejectFollowUpRequest = async(req: Request, res: Response) => {
+  try {
+   
+
+  const {requestId}= req.body;
+
+  const request = await requestModel.findById(requestId);
+  if(request){
+    request.status = "rejected";
+    await request.save();
+
+    //Send Notificationss(system & mail)//username DOC & PATIENT
+
+    if(request.requestedBy!=request.patient){
+      // send to request.patient and request.requestedBy
+    }
+    else{
+      //send to request.patient
+    }
+
+    
+    return res.status(200).json({ message: "Request rejected successfully" });
+  }
+}catch (error) {
+    console.error("Error accept Req", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+}

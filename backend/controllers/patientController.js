@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.viewFamAppointments = exports.rescheduleAppointments = exports.getTodayAppointments = exports.deletePatientDocs = exports.openPatientDocument = exports.uploadPatintDocs = exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.getSessionPrice = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
+exports.sendRequestFollowUp = exports.getTodayAppointments = exports.viewFamAppointments = exports.rescheduleAppointments = exports.deletePatientDocs = exports.openPatientDocument = exports.uploadPatintDocs = exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.getSessionPrice = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
+const requestModel_1 = __importDefault(require("../models/requestModel"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const path_1 = __importDefault(require("path"));
@@ -167,9 +168,7 @@ const addFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, function
             healthPackageSubscription: [],
         });
         yield patient.save();
-        return res
-            .status(201)
-            .json({
+        return res.status(201).json({
             message: "Family member added successfully",
             patient,
             newPatient,
@@ -746,9 +745,7 @@ const linkFamilyMember = (req, res) => __awaiter(void 0, void 0, void 0, functio
             healthPackageSubscription: familyMember.healthPackageSubscription,
         });
         yield patient.save();
-        res
-            .status(200)
-            .json({
+        res.status(200).json({
             success: true,
             message: "Family member linked successfully",
             patient,
@@ -813,9 +810,7 @@ const uploadPatintDocs = (req, res) => __awaiter(void 0, void 0, void 0, functio
             const { section, subsection } = req.query;
             console.log(section);
             if (!healthRecord) {
-                return res
-                    .status(404)
-                    .json({
+                return res.status(404).json({
                     message: "Health record not found for the specified patient.",
                 });
             }
@@ -888,9 +883,7 @@ const deletePatientDocs = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const { section, subsection } = req.query;
         const { path } = req.body;
         if (!healthRecord) {
-            return res
-                .status(404)
-                .json({
+            return res.status(404).json({
                 message: "Health record not found for the specified patient.",
             });
         }
@@ -957,28 +950,36 @@ const deletePatientDocs = (req, res) => __awaiter(void 0, void 0, void 0, functi
 exports.deletePatientDocs = deletePatientDocs;
 const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        //   const authHeader = req.headers["authorization"];
-        //   const token = authHeader && authHeader.split(" ")[1];
-        //   const tokenDB = await tokenModel.findOne({ token: token });
-        //   var username;
-        // if(tokenDB){
-        //   username=tokenDB.username;
-        // }
-        // else{
-        //   return res.status(404).json({ error: 'username not found' });
-        // }
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: "username not found" });
+        }
         const { appointmentId, date } = req.body;
         const newDate = new Date(date);
         const appointment = yield appointmentModel_1.default.findById(appointmentId);
         if (appointment) {
-            const doctor = yield doctorModel_2.default.findOne({ username: appointment.doctor });
+            const updatedAppointment = yield appointmentModel_2.default.create({
+                status: "rescheduled",
+                doctor: appointment.doctor,
+                patient: appointment.patient,
+                date: newDate,
+                scheduledBy: username,
+            });
+            const doctor = yield doctorModel_2.default.findOne({
+                username: appointment.doctor,
+            });
             if (doctor) {
                 doctor.timeslots.push({ date: appointment.date });
                 // await doctor.save();
                 doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date && timeslot.date.getTime() !== newDate.getTime());
                 yield doctor.save();
-                appointment.date = newDate;
-                appointment.status = "rescheduled";
+                appointment.status = "cancelled";
                 const updatedAppointment = yield appointment.save();
                 res.status(200).json({ updatedAppointment });
             }
@@ -1001,7 +1002,7 @@ const viewFamAppointments = (req, res) => __awaiter(void 0, void 0, void 0, func
             username = tokenDB.username;
         }
         else {
-            return res.status(404).json({ error: 'username not found' });
+            return res.status(404).json({ error: "username not found" });
         }
         const patient = yield patientModel_2.default.findOne({ username: username }).lean();
         if (patient) {
@@ -1010,10 +1011,12 @@ const viewFamAppointments = (req, res) => __awaiter(void 0, void 0, void 0, func
             const appointments = yield appointmentModel_1.default.find({
                 patient: { $in: familyMemberUsernames },
             });
-            res.status(200).json({ appointments });
+            // Filter appointments where scheduledBy is equal to username
+            const famMemApps = appointments.filter((appointment) => appointment.scheduledBy === username);
+            res.status(200).json({ appointments: famMemApps });
         }
         else {
-            return res.status(404).json({ error: 'patient not found' });
+            return res.status(404).json({ error: "patient not found" });
         }
     }
     catch (error) {
@@ -1023,8 +1026,8 @@ const viewFamAppointments = (req, res) => __awaiter(void 0, void 0, void 0, func
 });
 exports.viewFamAppointments = viewFamAppointments;
 const getTodayAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
     const tokenDB = yield tokenModel_1.default.findOne({ token });
     console.log(token);
     const patientUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
@@ -1033,9 +1036,49 @@ const getTodayAppointments = (req, res) => __awaiter(void 0, void 0, void 0, fun
     const appointments = yield appointmentModel_1.default
         .find({
         patient: patientUsername,
-        date: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) }, // Filter for today's appointments
+        date: {
+            $gte: today,
+            $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+        }, // Filter for today's appointments
     })
         .exec();
     res.status(200).json(appointments);
 });
 exports.getTodayAppointments = getTodayAppointments;
+//send Request Follow up to doctor
+const sendRequestFollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: "username not found" });
+        }
+        const { Appointmentstatus, doctor, patient, AppointmentDate, type, price, paid, scheduledBy, followUpDate } = req.body;
+        const followUpRequest = yield requestModel_1.default.create({
+            Appointmentstatus: Appointmentstatus,
+            doctor: doctor,
+            patient: patient,
+            AppointmentDate: AppointmentDate,
+            type: type,
+            price: price,
+            paid: paid,
+            scheduledBy: scheduledBy,
+            status: "pending",
+            followUpDate: followUpDate,
+            requestedBy: username,
+        });
+        res.status(200).json({ followUpRequest });
+        //follow up in doctor
+        //el ana 3amlaha follow up schedBy me
+    }
+    catch (error) {
+        console.error("Error handling file remove:", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+exports.sendRequestFollowUp = sendRequestFollowUp;

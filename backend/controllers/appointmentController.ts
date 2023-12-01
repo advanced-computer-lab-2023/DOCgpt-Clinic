@@ -138,6 +138,8 @@ export const createAppointment = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Doctor not found app' });
     }
 
+    console.log("ana hena");
+    
     const newDate = new Date(date);
     doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number } }) =>
       timeslot.date.getTime() !== newDate.getTime()
@@ -152,9 +154,10 @@ export const createAppointment = async (req: Request, res: Response) => {
       date: new Date(date),
       type: type,
       price: price,
+      scheduledBy: username,
     });
-
-    return appointment;
+    console.log("ana khalast");
+    return res.status(200).json({ appointment });
   } catch (error) {
     return res.status(500).json({ message: 'An error occurred', error });
   }

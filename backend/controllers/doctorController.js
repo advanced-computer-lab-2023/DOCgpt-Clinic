@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rescheduleAppointments = exports.getTodayAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const path_1 = __importDefault(require("path"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -25,6 +25,7 @@ const adminModel_1 = __importDefault(require("../models/adminModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const healthRecordModel_2 = __importDefault(require("../models/healthRecordModel"));
+const requestModel_1 = __importDefault(require("../models/requestModel"));
 const fs_1 = __importDefault(require("fs"));
 const getDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctors = yield doctorModel_1.default.find().exec();
@@ -284,7 +285,8 @@ const createfollowUp = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 doctor: doctorUsername,
                 patient: patientUsername,
                 date: date,
-                type: type
+                type: type,
+                scheduledBy: doctorUsername
             });
             res.status(201).json(appoinment);
         }
@@ -801,16 +803,21 @@ const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
         const newDate = new Date(date);
         const appointment = yield appointmentModel_2.default.findById(appointmentId);
         if (appointment) {
+            const updatedAppointment = yield appointmentModel_1.default.create({
+                status: "rescheduled",
+                doctor: appointment.doctor,
+                patient: appointment.patient,
+                date: newDate,
+                scheduledBy: username,
+            });
             const doctor = yield doctorModel_2.default.findOne({ username: username });
             if (doctor) {
                 doctor.timeslots.push({ date: appointment.date });
-                ;
                 doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date && timeslot.date.getTime() !== newDate.getTime());
                 yield doctor.save();
             }
-            appointment.date = newDate;
-            appointment.status = "rescheduled";
-            const updatedAppointment = yield appointment.save();
+            appointment.status = "cancelled";
+            yield appointment.save();
             res.status(200).json({ updatedAppointment });
             //Send Notificationss(system & mail)//username DOC & PATIENT
         }
@@ -837,4 +844,67 @@ const getTodayAppointments = (req, res) => __awaiter(void 0, void 0, void 0, fun
         .exec();
     res.status(200).json(appointments);
 });
-exports.getTodayAppointments = getTodayAppointments
+exports.getTodayAppointments = getTodayAppointments;
+//accept/reject follow up request 
+const acceptFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: 'username not found' });
+        }
+        const { requestId } = req.body;
+        const request = yield requestModel_1.default.findById(requestId);
+        if (request) {
+            request.status = "accepted";
+            yield request.save();
+            const doctor = yield doctorModel_2.default.findOne({ username });
+            if (doctor) {
+                const newDate = request.followUpDate;
+                if (newDate) {
+                    doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
+                }
+                yield doctor.save();
+            }
+            //Send Notificationss(system & mail)//username DOC & PATIENT
+            const appointment = yield appointmentModel_1.default.create({
+                status: "upcoming",
+                doctor: request.doctor,
+                patient: request.patient,
+                date: request.followUpDate,
+                type: "Follow up",
+                price: 0,
+                paid: true,
+                scheduledBy: request.requestedBy,
+            });
+            return res.status(200).json({ appointment });
+        }
+    }
+    catch (error) {
+        console.error("Error accept Req", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+exports.acceptFollowUpRequest = acceptFollowUpRequest;
+const rejectFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { requestId } = req.body;
+        const request = yield requestModel_1.default.findById(requestId);
+        if (request) {
+            request.status = "rejected";
+            yield request.save();
+            //Send Notificationss(system & mail)//username DOC & PATIENT
+            return res.status(200).json({ message: "Request rejected successfully" });
+        }
+    }
+    catch (error) {
+        console.error("Error accept Req", error);
+        res.status(500).json({ error: "Internal server error." });
+    }
+});
+exports.rejectFollowUpRequest = rejectFollowUpRequest;

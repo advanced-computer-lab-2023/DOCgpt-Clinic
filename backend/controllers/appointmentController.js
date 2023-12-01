@@ -121,6 +121,7 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (!doctor) {
             return res.status(404).json({ message: 'Doctor not found app' });
         }
+        console.log("ana hena");
         const newDate = new Date(date);
         doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
         yield doctor.save();
@@ -131,8 +132,10 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
             date: new Date(date),
             type: type,
             price: price,
+            scheduledBy: username,
         });
-        return appointment;
+        console.log("ana khalast");
+        return res.status(200).json({ appointment });
     }
     catch (error) {
         return res.status(500).json({ message: 'An error occurred', error });

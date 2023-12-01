@@ -61,4 +61,5 @@ router.get('/patientDocument/:filename', patientController_1.openPatientDocument
 router.patch('/deleteDocs', patientController_1.deletePatientDocs);
 router.patch('/rescheduleAppointments', patientController_1.rescheduleAppointments);
 router.get('/viewFamAppointments', patientController_1.viewFamAppointments);
+router.post('/requestFollowUp', patientController_1.sendRequestFollowUp);
 exports.default = router;

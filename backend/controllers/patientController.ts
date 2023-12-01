@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from "express";
 import Patientmodel from "../models/patientModel";
 import packageModel from "../models/packageModel";
 import appointmentModel from "../models/appointmentModel";
+import requestModel from "../models/requestModel";
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
@@ -183,13 +184,11 @@ export const addFamilyMember = async (req: Request, res: Response) => {
 
     await patient.save();
 
-    return res
-      .status(201)
-      .json({
-        message: "Family member added successfully",
-        patient,
-        newPatient,
-      });
+    return res.status(201).json({
+      message: "Family member added successfully",
+      patient,
+      newPatient,
+    });
   } catch (error) {
     console.error("Error adding family member:", error);
     return res.status(500).json({ error: "Internal server error" });
@@ -867,13 +866,11 @@ export const linkFamilyMember = async (req: Request, res: Response) => {
 
     await patient.save();
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Family member linked successfully",
-        patient,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Family member linked successfully",
+      patient,
+    });
   } catch (error) {
     console.error("Error linking family member:", error);
     res.status(500).json({ success: false, message: "An error occurred" });
@@ -940,11 +937,9 @@ export const uploadPatintDocs = async (req: Request, res: Response) => {
       console.log(section);
 
       if (!healthRecord) {
-        return res
-          .status(404)
-          .json({
-            message: "Health record not found for the specified patient.",
-          });
+        return res.status(404).json({
+          message: "Health record not found for the specified patient.",
+        });
       }
       console.log(healthRecord);
 
@@ -1017,11 +1012,9 @@ export const deletePatientDocs = async (req: Request, res: Response) => {
     const { path } = req.body;
 
     if (!healthRecord) {
-      return res
-        .status(404)
-        .json({
-          message: "Health record not found for the specified patient.",
-        });
+      return res.status(404).json({
+        message: "Health record not found for the specified patient.",
+      });
     }
     console.log(healthRecord);
 
@@ -1097,95 +1090,105 @@ export const deletePatientDocs = async (req: Request, res: Response) => {
 
 export const rescheduleAppointments = async (req: Request, res: Response) => {
   try {
-  //   const authHeader = req.headers["authorization"];
-  //   const token = authHeader && authHeader.split(" ")[1];
-  //   const tokenDB = await tokenModel.findOne({ token: token });
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
 
-  //   var username;
-  // if(tokenDB){
-  //   username=tokenDB.username;
-  // }
-  // else{
-  //   return res.status(404).json({ error: 'username not found' });
-  // }
-    
-  const { appointmentId, date} = req.body;
-  const newDate = new Date(date);
-
-  const appointment = await appointmentModel.findById(appointmentId);
-  if(appointment){
-    const doctor = await doctorModel.findOne({ username: appointment.doctor });
-    if(doctor){
-      
-      doctor.timeslots.push({date: appointment.date});
-      // await doctor.save();
-
-      doctor.timeslots = doctor.timeslots.filter((timeslot: any) =>
-      timeslot.date && timeslot.date.getTime() !== newDate.getTime()
-
-    );
-    await doctor.save();
-    appointment.date = newDate;  
-    appointment.status = "rescheduled";
-
-    const updatedAppointment = await appointment.save();
-    res.status(200).json({ updatedAppointment });
-
-    
-
+    var username;
+    if (tokenDB) {
+      username = tokenDB.username;
+    } else {
+      return res.status(404).json({ error: "username not found" });
     }
-    //Send Notificationss(system & mail)
-  
 
-  }
-} catch (error) {
+    const { appointmentId, date } = req.body;
+    const newDate = new Date(date);
+
+    const appointment = await appointmentModel.findById(appointmentId);
+    if (appointment) {
+      const updatedAppointment = await AppointmentModel.create({
+        status: "rescheduled",
+        doctor: appointment.doctor,
+        patient: appointment.patient,
+        date: newDate, // Convert date to Date object
+        scheduledBy: username,
+      });
+      const doctor = await doctorModel.findOne({
+        username: appointment.doctor,
+      });
+      if (doctor) {
+        doctor.timeslots.push({ date: appointment.date });
+        // await doctor.save();
+
+        doctor.timeslots = doctor.timeslots.filter(
+          (timeslot: any) =>
+            timeslot.date && timeslot.date.getTime() !== newDate.getTime()
+        );
+        await doctor.save();
+        appointment.status = "cancelled";
+
+        const updatedAppointment = await appointment.save();
+        res.status(200).json({ updatedAppointment });
+      }
+      //Send Notificationss(system & mail)
+
+
+      if(username!=appointment.patient){
+        //send notification to username and appointment.patient
+      }
+      else{
+        //send notification to username
+      }
+    }
+  } catch (error) {
     console.error("Error handling file remove:", error);
     res.status(500).json({ error: "Internal server error." });
   }
 };
 
-
 export const viewFamAppointments = async (req: Request, res: Response) => {
   try {
-      const authHeader = req.headers["authorization"];
+    const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
     const tokenDB = await tokenModel.findOne({ token: token });
 
-    var username;
-  if(tokenDB){
-    username=tokenDB.username;
-  }
-  else{
-    return res.status(404).json({ error: 'username not found' });
-  }
-  const patient = await patientModel.findOne({ username: username }).lean();
+    var username: string;
+    if (tokenDB) {
+      username = tokenDB.username;
+    } else {
+      return res.status(404).json({ error: "username not found" });
+    }
 
-  if (patient) {
-    const familyMembers = patient.familyMembers;
+    const patient = await patientModel.findOne({ username: username }).lean();
 
-    const familyMemberUsernames: string[] = familyMembers.map((member: any) => member.username);
-    const appointments = await appointmentModel.find({
-      patient: { $in: familyMemberUsernames },
-    });
+    if (patient) {
+      const familyMembers = patient.familyMembers;
 
-    res.status(200).json({ appointments });
-  } else {
-    return res.status(404).json({ error: 'patient not found' });
-  }
+      const familyMemberUsernames: string[] = familyMembers.map(
+        (member: any) => member.username
+      );
+      const appointments = await appointmentModel.find({
+        patient: { $in: familyMemberUsernames },
+      });
 
-  
+      // Filter appointments where scheduledBy is equal to username
+      const famMemApps = appointments.filter(
+        (appointment: any) => appointment.scheduledBy === username
+      );
 
-
-  }catch (error) {
+      res.status(200).json({ appointments: famMemApps });
+    } else {
+      return res.status(404).json({ error: "patient not found" });
+    }
+  } catch (error) {
     console.error("Error handling file remove:", error);
     res.status(500).json({ error: "Internal server error." });
   }
-}
-
+};
 
 export const getTodayAppointments = async (req: Request, res: Response) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
   const tokenDB = await tokenModel.findOne({ token });
   console.log(token);
 
@@ -1197,9 +1200,50 @@ export const getTodayAppointments = async (req: Request, res: Response) => {
   const appointments = await appointmentModel
     .find({
       patient: patientUsername,
-      date: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) }, // Filter for today's appointments
+      date: {
+        $gte: today,
+        $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000),
+      }, // Filter for today's appointments
     })
     .exec();
 
   res.status(200).json(appointments);
+};
+
+//send Request Follow up to doctor
+export const sendRequestFollowUp = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
+
+    var username: string;
+    if (tokenDB) {
+      username = tokenDB.username;
+    } else {
+      return res.status(404).json({ error: "username not found" });
+    }
+    const {Appointmentstatus, doctor, patient, AppointmentDate, type, price, paid, scheduledBy, followUpDate } = req.body;
+
+    const followUpRequest  = await requestModel.create({
+      Appointmentstatus: Appointmentstatus,
+      doctor: doctor,
+      patient: patient,
+      AppointmentDate: AppointmentDate,
+      type: type,
+      price: price,
+      paid: paid,
+      scheduledBy: scheduledBy,
+      status: "pending",
+      followUpDate: followUpDate,
+      requestedBy: username,
+    });
+    res.status(200).json({ followUpRequest });
+//follow up in doctor
+//el ana 3amlaha follow up schedBy me
+
+  } catch (error) {
+    console.error("Error handling file remove:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
 };
