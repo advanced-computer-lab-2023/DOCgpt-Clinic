@@ -5,6 +5,7 @@ import {
   updatePrescription,
   getAllPrescriptionsPatient,
   getAllPrescriptionsDoctor,
+  addMedtoPresc,
 } from '../controllers/prescriptionController';
 
 const router = express.Router();
@@ -20,6 +21,8 @@ router.put('/prescriptions/:id', updatePrescription);
 
 router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
 router.get('/getAllPrescriptionsDoctor', getAllPrescriptionsDoctor);
+router.post('/addMedTopresc/:prescriptionId', addMedtoPresc);
+
 
 
 export default router;

@@ -97,12 +97,46 @@ const Patient = ({patient, doctor}: PatientProps) => {
             navigate(`/doctor/patientHealthRecord?${params.toString()}`);
         }
     } 
+    const addPresc = async (name: any) => {
+        try {
+          const token = localStorage.getItem("authToken");
+          const response = await axios.post(
+            "/routes/prescriptions",
+            {
+              patientUsername: name,
+            },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+      
+          // Extract prescriptionId from the response
+          const prescriptionId = response.data._id;
+      
+          // Append prescriptionId to the URL
+          const newWindow = window.open(
+            `http://localhost:3001/doctormed/${prescriptionId}`,
+            "_blank"
+          );
+      
+          if (!newWindow) {
+            console.error("Unable to open a new window.");
+          }
+        } catch (error) {
+          console.error("Error in addPresc:", error);
+        }
+      };
+      
     return(
         <Card style={{padding: '20px', margin: '10px', display: 'flex', justifyContent:'space-between', alignItems:'center'}} >
             <Container onClick={handleClick}>
             <Typography> Patient Name: {name}</Typography>
             </Container>
             <Button variant="contained" onClick={healthRecordClick}> Health Record</Button>
+            <Button variant="contained" onClick={() => addPresc(name)}> Add Prescription</Button>
+
         </Card>
     );
 }

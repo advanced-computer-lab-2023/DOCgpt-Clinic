@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllPrescriptionsDoctor = exports.getAllPrescriptionsPatient = exports.getpatientsPrescription = exports.updatePrescription = exports.getAllPrescriptions = exports.createPrescription = void 0;
+exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getAllPrescriptionsPatient = exports.getpatientsPrescription = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -25,8 +25,7 @@ const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
         const token = authHeader && authHeader.split(' ')[1];
         const tokenDB = yield tokenModel_1.default.findOne({ token });
         const doctorUsername = tokenDB && tokenDB.username;
-        const { patientUsername, status, Medicines } = req.body;
-        console.log("hi am herre");
+        const { patientUsername } = req.body;
         // Check if the doctor exists
         const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
         if (!doctor) {
@@ -39,9 +38,7 @@ const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
         }
         const prescription = new perscriptionModel_1.default({
             doctorUsername,
-            patientUsername,
-            status,
-            Medicines
+            patientUsername
         });
         const savedPrescription = yield prescription.save();
         res.json(savedPrescription);
@@ -51,6 +48,34 @@ const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
     }
 });
 exports.createPrescription = createPrescription;
+// Adjust the path accordingly
+const addMedtoPresc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const prescriptionId = req.params.prescriptionId;
+        const { medicineName, quantity, dosage } = req.body; // Additional details from the request body
+        console.log(medicineName);
+        console.log(dosage);
+        console.log(quantity);
+        // Find the prescription and update it
+        const updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(prescriptionId, {
+            $push: {
+                Medicines: {
+                    medicineName,
+                    dosage,
+                    quantity,
+                },
+            },
+        }, { new: true });
+        console.log("ana henaaaaaa");
+        // Send success response
+        res.status(200).send({ message: 'Medicine added to prescription successfully.', updatedPrescription });
+    }
+    catch (error) {
+        // Handle errors
+        res.status(500).send({ message: 'Error adding medicine to prescription', error });
+    }
+});
+exports.addMedtoPresc = addMedtoPresc;
 // Get all prescriptions
 const getAllPrescriptions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -80,9 +105,7 @@ const updatePrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
 exports.updatePrescription = updatePrescription;
 // Get patients prescription by patient's username
 const getpatientsPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("im hererrrr");
     try {
-        console.log("im hererrrr");
         const { username } = req.params;
         const patient = yield patientModel_1.default.findOne({ username });
         if (!patient) {
@@ -160,3 +183,20 @@ const getAllPrescriptionsDoctor = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.getAllPrescriptionsDoctor = getAllPrescriptionsDoctor;
+const addMedicineToPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { prescriptionId, } = req.query;
+        const { dosage, medicine, medicineName } = req.body;
+        // Validate the incoming data as necessary
+        const updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(prescriptionId, { $push: { Medicines: medicine } }, { new: true, runValidators: true } // Options to return the updated document and run schema validators
+        );
+        if (!updatedPrescription) {
+            return res.status(404).send({ message: 'Prescription not found' });
+        }
+        res.status(200).send({ message: 'Medicine added successfully', updatedPrescription });
+    }
+    catch (error) {
+        res.status(500).send({ message: 'Error adding medicine to prescription', error });
+    }
+});
+exports.addMedicineToPrescription = addMedicineToPrescription;

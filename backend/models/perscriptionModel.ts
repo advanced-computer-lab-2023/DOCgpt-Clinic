@@ -16,17 +16,20 @@ const prescriptionSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['filled','unfilled'],
+    default:"unfilled",
   },
   Medicines: [
     {
       medicineName:{
        type:String ,
-       required: true,
-
+       required: false,
 
       },
       dosage: {
+        type: Number,
+        required: false,
+      },
+      quantity: {
         type: Number,
         required: false,
       },
