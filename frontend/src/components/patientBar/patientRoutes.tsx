@@ -110,5 +110,18 @@ const appRoutes: RouteType[] = [
       },
     ],
   },
+  {
+    header: (
+      <Typography variant="h6" fontWeight="bold">
+        Prescriptions
+      </Typography>
+    ),
+    child: [
+      {
+        path: "/patient/prescriptions",
+        state: "View prescriptions",
+      },
+    ],
+  },
 ];
 export default appRoutes;

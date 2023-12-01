@@ -17,15 +17,15 @@ const prescriptionSchema = new mongoose_1.default.Schema({
         type: Date,
         default: Date.now,
     },
-    filled: {
-        type: Boolean,
-        default: false,
+    status: {
+        type: String,
+        default: "unfilled",
     },
     Medicines: [
         {
             medicineName: {
                 type: String,
-                required: true,
+                required: false,
             },
             dosage: {
                 type: Number,
