@@ -25,7 +25,7 @@ exports.appointmentSchema = new mongoose_1.default.Schema({
     },
     type: {
         type: String,
-        enum: ['new appointment', 'Follow up'],
+        enum: ['new appointment', 'Follow up', 'Regular'],
         required: false
     },
     price: {

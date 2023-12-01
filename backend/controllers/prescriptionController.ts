@@ -64,8 +64,6 @@ export const updatePrescription = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to update prescription' });
   }
 };
-
-
 // Get patients prescription by patient's username
 export const getpatientsPrescription = async (req: Request, res: Response) => {
     console.log("im hererrrr");
