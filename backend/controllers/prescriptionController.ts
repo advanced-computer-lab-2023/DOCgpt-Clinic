@@ -90,3 +90,4 @@ export const getpatientsPrescription = async (req: Request, res: Response) => {
       res.status(500).json({ error: 'Failed to fetch prescription' });
     }
   };
+ 

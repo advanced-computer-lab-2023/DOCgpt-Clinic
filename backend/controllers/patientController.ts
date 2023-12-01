@@ -2,6 +2,7 @@ import { NextFunction, Request, Response, Router } from 'express';
 import Patientmodel from '../models/patientModel';
 import packageModel from '../models/packageModel'; 
 import appointmentModel from '../models/appointmentModel';
+import prescriptionModel from '../models/perscriptionModel';
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -1042,3 +1043,44 @@ export const deletePatientDocs =  async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Internal server error.' });
   }
 }
+export const getAllPrescriptionsForPatient = async (req: Request, res: Response) => {
+  try {
+     const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    const patientUsername = tokenDB && tokenDB.username;
+
+    if (!patientUsername) {
+      return res.status(400).json({ error: 'Patient username is required' });
+    }
+
+    const prescriptions = await prescriptionModel.find({ patientUsername });
+
+    return res.status(200).json({ prescriptions });
+  } catch (error) {
+    console.error('Error getting prescriptions for patient:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+export const getPrescriptionDetails = async (req: Request, res: Response) => {
+  try {
+    const { prescriptionId } = req.body;
+
+    if (!prescriptionId) {
+      return res.status(400).json({ error: 'Prescription ID is required' });
+    }
+
+    const prescription = await prescriptionModel.findById(prescriptionId);
+
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescription not found' });
+    }
+
+    return res.status(200).json({ prescription });
+  } catch (error) {
+    console.error('Error getting prescription details:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+

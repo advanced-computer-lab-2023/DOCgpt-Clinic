@@ -18,6 +18,24 @@ const prescriptionSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  Medicines: [
+    {
+      medicineName:{
+       type:String ,
+       required: true,
+
+
+      },
+      dosage: {
+        type: Number,
+        required: false,
+      },
+      quantity: {
+        type: Number,
+        required: false,
+      },
+    },
+  ],
 });
 
 const Prescription = mongoose.model('Prescription', prescriptionSchema);

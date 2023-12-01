@@ -25,6 +25,8 @@ import {
   openPatientDocument,
   uploadPatintDocs,
   deletePatientDocs,
+  getAllPrescriptionsForPatient,
+  getPrescriptionDetails
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 import fs from 'fs';
@@ -88,6 +90,13 @@ router.patch('/linkFamilyMember',linkFamilyMember)
 
 // Create a route for viewing wallet amount
 router.get('/viewWalletAmount',verifyTokenPatient, viewWalletAmount);
+
+//sprint 3
+router.get('/getAllPrescriptionsForPatient',getAllPrescriptionsForPatient);
+router.get('/getPrescriptionDetails',getPrescriptionDetails);
+
+
+
 
 
 const storage = multer.diskStorage({
