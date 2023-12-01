@@ -110,6 +110,7 @@ const createNotificationWithCurrentDate = (patientUsername, subject, msg) => __a
             subject,
             msg,
         });
+        notification.save();
         console.log('Notification created:', notification);
         return notification;
     }

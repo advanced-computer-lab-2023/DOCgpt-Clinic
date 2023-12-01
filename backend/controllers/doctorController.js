@@ -26,6 +26,7 @@ const patientModel_2 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const healthRecordModel_2 = __importDefault(require("../models/healthRecordModel"));
 const requestModel_1 = __importDefault(require("../models/requestModel"));
+const appointmentController_1 = require("./appointmentController");
 const fs_1 = __importDefault(require("fs"));
 const getDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctors = yield doctorModel_1.default.find().exec();
@@ -820,6 +821,7 @@ const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
             yield appointment.save();
             res.status(200).json({ updatedAppointment });
             //Send Notificationss(system & mail)//username DOC & PATIENT
+            yield (0, appointmentController_1.createNotificationWithCurrentDate)(appointment.patient, "Appointment Rescheduled", `Your appointment has been rescheduled by Doctor: ${username}`);
         }
     }
     catch (error) {
@@ -864,11 +866,15 @@ const acceptFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, fu
             request.status = "accepted";
             yield request.save();
             const doctor = yield doctorModel_2.default.findOne({ username });
+            var notificationSubject = "";
+            var notificationMessage = "";
             if (doctor) {
                 const newDate = request.followUpDate;
                 if (newDate) {
                     doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
                 }
+                notificationSubject = "Follow Up Scheduled Successfully";
+                notificationMessage = `Your follow up appointment request has been accepted by Doctor: ${doctor.username}`;
                 yield doctor.save();
             }
             //Send Notificationss(system & mail)//username DOC & PATIENT
@@ -882,6 +888,15 @@ const acceptFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 paid: true,
                 scheduledBy: request.requestedBy,
             });
+            if (request.requestedBy != request.patient) {
+                // send to request.patient and request.requestedBy
+                (0, appointmentController_1.createNotificationWithCurrentDate)(request.patient, notificationSubject, notificationMessage);
+                (0, appointmentController_1.createNotificationWithCurrentDate)(request.requestedBy, notificationSubject, notificationMessage);
+            }
+            else {
+                //send to request.patient
+                (0, appointmentController_1.createNotificationWithCurrentDate)(request.patient, notificationSubject, notificationMessage);
+            }
             return res.status(200).json({ appointment });
         }
     }
@@ -893,12 +908,37 @@ const acceptFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, fu
 exports.acceptFollowUpRequest = acceptFollowUpRequest;
 const rejectFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+        var username;
+        if (tokenDB) {
+            username = tokenDB.username;
+        }
+        else {
+            return res.status(404).json({ error: 'username not found' });
+        }
+        const doctor = doctorModel_2.default.findOne({ username });
+        if (!doctor) {
+            return res.status(404).json({ error: 'doctor not found' });
+        }
         const { requestId } = req.body;
         const request = yield requestModel_1.default.findById(requestId);
         if (request) {
             request.status = "rejected";
             yield request.save();
             //Send Notificationss(system & mail)//username DOC & PATIENT
+            const notificationSubject = "Follow Up Rejected";
+            const notificationMessage = `Your follow up request has been rejected by Doctor: ${username}`;
+            if (request.requestedBy != request.patient) {
+                // send to request.patient and request.requestedBy
+                const patientNotification = yield (0, appointmentController_1.createNotificationWithCurrentDate)(request.patient, notificationSubject, notificationMessage);
+                const requestedByPatientNoti = yield (0, appointmentController_1.createNotificationWithCurrentDate)(request.requestedBy, notificationSubject, notificationMessage);
+            }
+            else {
+                //send to request.patient
+                (0, appointmentController_1.createNotificationWithCurrentDate)(request.patient, notificationSubject, notificationMessage);
+            }
             return res.status(200).json({ message: "Request rejected successfully" });
         }
     }

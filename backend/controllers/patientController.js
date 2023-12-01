@@ -21,6 +21,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
+const appointmentController_1 = require("./appointmentController");
 // create a new workout
 const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Request reached controller");
@@ -962,6 +963,8 @@ const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
         }
         const { appointmentId, date } = req.body;
         const newDate = new Date(date);
+        var notificationText = "";
+        var notificationSubject = "";
         const appointment = yield appointmentModel_1.default.findById(appointmentId);
         if (appointment) {
             const updatedAppointment = yield appointmentModel_2.default.create({
@@ -978,12 +981,24 @@ const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
                 doctor.timeslots.push({ date: appointment.date });
                 // await doctor.save();
                 doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date && timeslot.date.getTime() !== newDate.getTime());
+                notificationText = `Your appointment has been rescheduled for ${new Date(date)}. 
+                      Doctor: ${doctor.username}`;
                 yield doctor.save();
                 appointment.status = "cancelled";
                 const updatedAppointment = yield appointment.save();
                 res.status(200).json({ updatedAppointment });
             }
             //Send Notificationss(system & mail)
+            notificationSubject = "Appointment Rescheduled Successfully";
+            if (username != appointment.patient) {
+                //send notification to username and appointment.patient
+                (0, appointmentController_1.createNotificationWithCurrentDate)(username, notificationSubject, notificationText);
+                (0, appointmentController_1.createNotificationWithCurrentDate)(appointment.patient, notificationSubject, notificationText);
+            }
+            else {
+                //send notification to username
+                (0, appointmentController_1.createNotificationWithCurrentDate)(username, notificationSubject, notificationText);
+            }
         }
     }
     catch (error) {

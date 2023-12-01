@@ -13,6 +13,7 @@ import patientModel from "../models/patientModel";
 import packageModel from "../models/packageModel";
 import healthRecordModel from "../models/healthRecordModel";
 import requestModel from "../models/requestModel";
+import { createNotificationWithCurrentDate } from "./appointmentController";
 import fs from 'fs';
 
 export const getDoctors = async (req: Request, res: Response) => {
@@ -925,7 +926,7 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
 
    
     //Send Notificationss(system & mail)//username DOC & PATIENT
-  
+    await createNotificationWithCurrentDate(appointment.patient, "Appointment Rescheduled", `Your appointment has been rescheduled by Doctor: ${username}`);
 
   }
 } catch (error) {
@@ -980,6 +981,11 @@ export const acceptFollowUpRequest = async(req: Request, res: Response) => {
     await request.save();
 
     const doctor = await doctorModel.findOne({ username});
+
+    
+var notificationSubject = "";
+var notificationMessage = "";
+
 if(doctor){
   const newDate = request.followUpDate;
 
@@ -988,6 +994,8 @@ if(doctor){
     timeslot.date.getTime() !== newDate.getTime()
   );
   }
+   notificationSubject = "Follow Up Scheduled Successfully";
+   notificationMessage = `Your follow up appointment request has been accepted by Doctor: ${doctor.username}`;
   await doctor.save();
 }
 
@@ -1006,9 +1014,13 @@ if(doctor){
 
     if(request.requestedBy!=request.patient){
       // send to request.patient and request.requestedBy
+      createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);
+      createNotificationWithCurrentDate(request.requestedBy, notificationSubject, notificationMessage);
+
     }
     else{
       //send to request.patient
+      createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);
     }
 
 
@@ -1025,7 +1037,22 @@ if(doctor){
 
 export const rejectFollowUpRequest = async(req: Request, res: Response) => {
   try {
-   
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
+
+    var username;
+  if(tokenDB){
+    username=tokenDB.username;
+  }
+  else{
+    return res.status(404).json({ error: 'username not found' });
+  }
+  
+  const doctor = doctorModel.findOne({ username});
+  if(!doctor){
+    return res.status(404).json({ error: 'doctor not found' });
+  }
 
   const {requestId}= req.body;
 
@@ -1035,12 +1062,17 @@ export const rejectFollowUpRequest = async(req: Request, res: Response) => {
     await request.save();
 
     //Send Notificationss(system & mail)//username DOC & PATIENT
-
+   const notificationSubject = "Follow Up Rejected";
+   const notificationMessage = `Your follow up request has been rejected by Doctor: ${username}`;
     if(request.requestedBy!=request.patient){
       // send to request.patient and request.requestedBy
+      const patientNotification= await createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);
+      const requestedByPatientNoti= await createNotificationWithCurrentDate(request.requestedBy, notificationSubject, notificationMessage);
     }
     else{
       //send to request.patient
+      createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);
+
     }
 
     

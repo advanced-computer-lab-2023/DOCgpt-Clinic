@@ -8,6 +8,7 @@ import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
+import { createNotificationWithCurrentDate } from "./appointmentController";
 
 // create a new workout
 export const createPatient = async (req: Request, res: Response) => {
@@ -1103,7 +1104,8 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
 
     const { appointmentId, date } = req.body;
     const newDate = new Date(date);
-
+    var notificationText = "";
+    var notificationSubject = ""; 
     const appointment = await appointmentModel.findById(appointmentId);
     if (appointment) {
       const updatedAppointment = await AppointmentModel.create({
@@ -1116,6 +1118,7 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
       const doctor = await doctorModel.findOne({
         username: appointment.doctor,
       });
+      
       if (doctor) {
         doctor.timeslots.push({ date: appointment.date });
         // await doctor.save();
@@ -1124,6 +1127,10 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
           (timeslot: any) =>
             timeslot.date && timeslot.date.getTime() !== newDate.getTime()
         );
+
+        notificationText = `Your appointment has been rescheduled for ${new Date(date)}. 
+                      Doctor: ${doctor.username}`;
+
         await doctor.save();
         appointment.status = "cancelled";
 
@@ -1132,12 +1139,21 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
       }
       //Send Notificationss(system & mail)
 
+      notificationSubject = "Appointment Rescheduled Successfully";
 
       if(username!=appointment.patient){
         //send notification to username and appointment.patient
+
+        
+
+        createNotificationWithCurrentDate(username,notificationSubject,notificationText);
+        createNotificationWithCurrentDate(appointment.patient,notificationSubject,notificationText);
+
       }
       else{
         //send notification to username
+        createNotificationWithCurrentDate(username,notificationSubject,notificationText);
+
       }
     }
   } catch (error) {

@@ -121,7 +121,7 @@ export const createNotificationWithCurrentDate = async (patientUsername : any , 
       subject ,
       msg,
     });
-
+    notification.save();
     console.log('Notification created:', notification);
     return notification;
   } catch (error) {
