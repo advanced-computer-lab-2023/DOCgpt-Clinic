@@ -12,9 +12,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendOTPByEmail = void 0;
+exports.sendAnEmail = void 0;
 const nodemailer_1 = __importDefault(require("nodemailer"));
-const sendOTPByEmail = (email, subject, text) => __awaiter(void 0, void 0, void 0, function* () {
+const sendAnEmail = (email, subject, text) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transporter = nodemailer_1.default.createTransport({
             host: "smtp.gmail.com",
@@ -22,12 +22,12 @@ const sendOTPByEmail = (email, subject, text) => __awaiter(void 0, void 0, void 
             port: 587,
             secure: false,
             auth: {
-                user: "shahenda.maisara@gmail.com",
-                pass: "dacs ntqi tmcd bjcx",
+                user: "docgpt7@gmail.com",
+                pass: "uvmd bdfx iypf flvo",
             },
         });
         yield transporter.sendMail({
-            from: "shahenda.maisara@gmail.com",
+            from: "docgpt Clinic",
             to: email,
             subject: subject,
             text: text,
@@ -40,4 +40,4 @@ const sendOTPByEmail = (email, subject, text) => __awaiter(void 0, void 0, void 
         return error;
     }
 });
-exports.sendOTPByEmail = sendOTPByEmail;
+exports.sendAnEmail = sendAnEmail;

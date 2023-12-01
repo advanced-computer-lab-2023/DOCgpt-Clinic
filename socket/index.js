@@ -1,6 +1,6 @@
 const io = require("socket.io")(3200, {
     cors: {
-      origin: "http://localhost:3002",
+      origin: "http://localhost:3000",
     },
   });
   
@@ -32,10 +32,17 @@ const io = require("socket.io")(3200, {
     //send and get message
     socket.on("sendMessage", ({ senderusername, recieverusername, text }) => {
       const user = getUser(recieverusername);
-      io.to(user.socketId).emit("getMessage", {
-        senderusername,
-        text,
-      });
+    
+      // Check if user is defined before emitting the message
+      if (user && user.socketId) {
+        io.to(user.socketId).emit("getMessage", {
+          senderusername,
+          text,
+        });
+      } else {
+        // Handle the case where the user is not found or has no socketId
+        console.error(`User ${recieverusername} not found or has no socketId`);
+      }
     });
   
     //when disconnect

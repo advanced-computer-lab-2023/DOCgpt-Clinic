@@ -1,6 +1,6 @@
 import  nodemailer from "nodemailer";
 
-export const sendOTPByEmail = async (email : string , subject : string, text :any ) => {
+export const sendAnEmail = async (email : string , subject : string, text :any ) => {
 	try {
 		const transporter = nodemailer.createTransport({
 			host: "smtp.gmail.com" ,
@@ -8,13 +8,13 @@ export const sendOTPByEmail = async (email : string , subject : string, text :an
 			port: 587,
 			secure: false ,
 			auth: {
-				user:"shahenda.maisara@gmail.com",
-				pass: "dacs ntqi tmcd bjcx",
+				user:"docgpt7@gmail.com",
+				pass: "uvmd bdfx iypf flvo",
 			},
 		});
 
 		await transporter.sendMail({
-			from:"shahenda.maisara@gmail.com" ,
+			from:"docgpt Clinic" ,
 			to: email,
 			subject: subject,
 			text: text,

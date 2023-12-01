@@ -3,8 +3,10 @@ import AppointmentModel from "../models/appointmentModel";
 import DoctorModel from '../models/doctorModel'; // Import your Doctor model
 import tokenModel from "../models/tokenModel";
 import patientModel from "../models/patientModel";
+import notificationtModel from "../models/notificationModel";
 
 import Stripe from 'stripe';
+import { sendAnEmail } from "./nodemailer";
 
 
 require('dotenv').config();
@@ -109,6 +111,25 @@ export const complete = async(req: Request, res: Response) => {
 }
 
 
+export const createNotificationWithCurrentDate = async (patientUsername : any , subject : any ,msg : any) => {
+  try {
+    const currentDate = new Date();
+
+    const notification = await notificationtModel.create({
+      patientUsername,
+      date: currentDate,
+      subject ,
+      msg,
+    });
+
+    console.log('Notification created:', notification);
+    return notification;
+  } catch (error) {
+    console.error('Error creating notification:', error);
+    throw error; // Re-throw the error to handle it in the calling function
+  }
+};
+
 export const createAppointment = async (req: Request, res: Response) => {
   const doctorUsername = req.body.doctorUsername;
   const date = req.body.date;
@@ -139,10 +160,14 @@ export const createAppointment = async (req: Request, res: Response) => {
     }
 
     const newDate = new Date(date);
-    doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number } }) =>
-      timeslot.date.getTime() !== newDate.getTime()
+    doctor.timeslots = doctor.timeslots.filter((timeslot: { date?: { getTime: () => number } }) =>
+      !(
+        timeslot.date &&
+        timeslot.date.getTime() === newDate.getTime()
+      )
     );
-
+    
+    
     await doctor.save();
 
     const appointment = await AppointmentModel.create({
@@ -153,10 +178,36 @@ export const createAppointment = async (req: Request, res: Response) => {
       type: type,
       price: price,
     });
+     
+    const patientEmail = patient.email; // Adjust this based on your patient model structure
+    const emailSubject = 'Appointment Confirmation';
+    const emailText = `Your appointment has been scheduled for ${new Date(date)}. 
+                      Doctor: ${doctor.username}
+                      Type: ${type}
+                      Price: ${price}`;
 
-    return appointment;
-  } catch (error) {
-    return res.status(500).json({ message: 'An error occurred', error });
+
+    const doctorEmail = doctor.email; // Adjust this based on your patient model structure
+    const emailText1 = `An  appointment has been scheduled for ${new Date(date)}. 
+                                        patient: ${username}
+                                        Type: ${type}
+                                        Price: ${price}`;
+    // Assuming sendOTPByEmail returns a Promise, use await here if needed
+     const not=  await sendAnEmail(patientEmail, emailSubject, emailText);
+     const not2=  await sendAnEmail(doctorEmail, emailSubject, emailText1);
+
+    console.log("im hereree");
+    // Create a notification for the patient
+     const nn= await createNotificationWithCurrentDate(username,emailSubject,emailText);
+     const nnn= await createNotificationWithCurrentDate(doctorUsername,emailSubject,emailText1);
+
+     return res.status(201).json({ message: 'Appointment done', appointment });
+    
+  }
+  catch (error : any) {
+    console.error("An error occurred:", error); // Log the full error object for debugging
+
+    return res.status(500).json({ message: 'An error occurred', error: error.message });
   }
 };
 
@@ -375,6 +426,96 @@ export const createAppointment22 = async (req: Request, res: Response,username:s
     });
 
     return appointment;
+  } catch (error) {
+    return res.status(500).json({ message: 'An error occurred', error });
+  }
+};
+
+export const cancelAppointment = async (req: Request, res: Response) => {
+  const doctorUsername = req.body.doctorUsername;
+  const date = req.body.date;
+  const status = 'cancelled';
+  const type = 'new appointment';
+  const price = Number(req.body.price);
+
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+
+    if (!tokenDB) {
+      return res.status(404).json({ error: 'Token not found' });
+    }
+
+    const username = tokenDB.username;
+    const patient = await patientModel.findOne({ username });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    const doctor = await DoctorModel.findOne({ username: doctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ message: 'Doctor not found app' });
+    }
+    const newTimeSlot = {
+      date: date
+    };
+    doctor.timeslots.push(newTimeSlot);
+    const currentDate = new Date();
+    const givenDate = new Date(date); // Replace with your actual date
+    
+    const timeDifference = currentDate.getTime() - givenDate.getTime();
+    
+    // Check if the time difference is greater than or equal to 24 hours (in milliseconds)
+    const isMorethan24Hours = timeDifference >= 24 * 60 * 60 * 1000;
+    
+    if (!isMorethan24Hours) {
+      doctor.walletBalance = doctor.walletBalance-  price;
+      patient.walletBalance = patient.walletBalance +price;
+      await patient.save();
+      console.log(patient);
+    }
+    await doctor.save();
+
+   
+    const existingAppointment = await AppointmentModel.findOneAndUpdate(
+      {
+        doctor: doctorUsername,
+        patient: username,
+        date: new Date(date),
+      },
+      { $set: { status: 'cancelled' } },
+      { new: true } // Return the updated document
+    );
+
+    if (!existingAppointment) {
+      return res.status(404).json({ message: 'Appointment not found' });
+    }
+
+    const patientEmail = patient.email; 
+    const emailSubject = 'Appointment cancelled ';
+    const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
+                      Doctor: ${doctor.username}
+                      Type: ${type}
+                      Price: ${price}`;
+ const doctorEmail = doctor.email; 
+const emailText1 = `Your appointment with this date   ${new Date(date)} has been cancelled. 
+                                        patient: ${patient.username}
+                                        Type: ${type}
+                                        Price: ${price}`;
+     const patientMail=  await sendAnEmail(patientEmail, emailSubject, emailText);
+     const docMail=  await sendAnEmail(doctorEmail, emailSubject, emailText1);
+
+
+    console.log("im hereree");
+    // Create a notification for the patient
+     const patientNotification= await createNotificationWithCurrentDate(username,emailSubject,emailText);
+     const doctorNotification= await createNotificationWithCurrentDate(doctorUsername,emailSubject,emailText1);
+
+     return res.status(201).json({ message: 'Appointment Cancelled' });
+    
   } catch (error) {
     return res.status(500).json({ message: 'An error occurred', error });
   }
