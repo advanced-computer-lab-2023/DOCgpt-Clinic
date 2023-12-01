@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTodayAppointments = exports.deletePatientDocs = exports.openPatientDocument = exports.uploadPatintDocs = exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.getSessionPrice = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
+exports.getPrescriptionDetails = exports.getAllPrescriptionsForPatient = exports.getTodayAppointments = exports.deletePatientDocs = exports.openPatientDocument = exports.uploadPatintDocs = exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.getSessionPrice = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
+const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const path_1 = __importDefault(require("path"));
@@ -71,7 +72,7 @@ const getPatients = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     res.status(200).json(Patients);
 });
 exports.getPatients = getPatients;
-const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
+const perscriptionModel_2 = __importDefault(require("../models/perscriptionModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const getPrescriptionsByUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -99,7 +100,7 @@ const getPrescriptionsByUser = (req, res) => __awaiter(void 0, void 0, void 0, f
         if (doctorUsername) {
             filters.doctorUsername = doctorUsername;
         }
-        const prescriptions = yield perscriptionModel_1.default.find(filters).exec();
+        const prescriptions = yield perscriptionModel_2.default.find(filters).exec();
         res.status(200).json(prescriptions);
     }
     catch (error) {
@@ -882,6 +883,42 @@ const deletePatientDocs = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.deletePatientDocs = deletePatientDocs;
+const getAllPrescriptionsForPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const patientUsername = tokenDB && tokenDB.username;
+        if (!patientUsername) {
+            return res.status(400).json({ error: 'Patient username is required' });
+        }
+        const prescriptions = yield perscriptionModel_1.default.find({ patientUsername });
+        return res.status(200).json({ prescriptions });
+    }
+    catch (error) {
+        console.error('Error getting prescriptions for patient:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getAllPrescriptionsForPatient = getAllPrescriptionsForPatient;
+const getPrescriptionDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { prescriptionId } = req.body;
+        if (!prescriptionId) {
+            return res.status(400).json({ error: 'Prescription ID is required' });
+        }
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).json({ error: 'Prescription not found' });
+        }
+        return res.status(200).json({ prescription });
+    }
+    catch (error) {
+        console.error('Error getting prescription details:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getPrescriptionDetails = getPrescriptionDetails;
 const getTodayAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];

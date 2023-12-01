@@ -70,4 +70,7 @@ router.get('/doctorDocuments', doctorController_1.getDoctorDocuments);
 router.get('/doctorDocuments/:filename', doctorController_1.serveDoctorDocument);
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorController_1.uploadAndSubmitReqDocs);
+//sprint 3
+router.post('/addOrUpdateDosage', doctorController_1.addOrUpdateDosage);
+router.patch('/updateUnfilledPrescription', doctorController_1.updateUnfilledPrescription);
 exports.default = router;

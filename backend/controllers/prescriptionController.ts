@@ -105,32 +105,7 @@ export const updatePrescription = async (req: Request, res: Response) => {
   }
 };
 // Get patients prescription by patient's username
-export const getpatientsPrescription = async (req: Request, res: Response) => {
-
-    try {
-
-
-      const { username } = req.params;
-  
-      const patient = await Patient.findOne({ username });
-      if (!patient) {
-        return res.status(404).json({ error: 'Patient not found' });
-      }
-  
-      const prescription = await Prescription.find({ patientUsername: username });
-      if (!prescription) {
-        return res.status(404).json({ error: 'Prescription not found' });
-      }
-  
-      res.json(prescription);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch prescription' });
-    }
-  };
-
-
-
-  // Get all prescriptions for a specific patient by patient's username
+// Get all prescriptions for a specific patient by patient's username
 export const getAllPrescriptionsPatient = async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers['authorization'];
@@ -163,66 +138,81 @@ export const getAllPrescriptionsPatient = async (req: Request, res: Response) =>
       res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
   }
 };
-
-
-
-
-
-export const getAllPrescriptionsDoctor = async (req: Request, res: Response) => {
+export const getPrescriptionDetails = async (req: Request, res: Response) => {
   try {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    const tokenDB = await tokenModel.findOne({ token });
-    const username = tokenDB && tokenDB.username;
+    const { prescriptionId } = req.body;
 
-      // Check if the patient exists
-      const doctor = await doctorModel.findOne({ username });
-      if (!doctor) {
-          return res.status(404).json({ error: 'Patient not found' });
-      }
+    if (!prescriptionId) {
+      return res.status(400).json({ error: 'Prescription ID is required' });
+    }
 
-      // Find all prescriptions for the patient
-      const prescriptions = await Prescription.find({ doctorUsername: username })
-          .populate('patientUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
-          .select('patientUsername date status Medicines');
+    const prescription = await Prescription.findById(prescriptionId);
 
-      // Construct response with full prescription details
-      const prescriptionDetails = prescriptions.map(prescription => ({
-          PatientName: prescription.patientUsername, // Replace with just 'doctorUsername' if it's not a reference
-          date: prescription.date,
-          status: prescription.status,
-          medicines: prescription.Medicines
-      }));
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescription not found' });
+    }
 
-      // Respond with the detailed prescriptions
-      res.json(prescriptionDetails);
+    return res.status(200).json({ prescription });
   } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+    console.error('Error getting prescription details:', error);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-
-
-export const addMedicineToPrescription = async (req: Request, res: Response) => {
-  try {
-
-    const { prescriptionId,  } = req.query;
-      const { dosage, medicine,medicineName } = req.body;
-
-      // Validate the incoming data as necessary
-
-      const updatedPrescription = await Prescription.findByIdAndUpdate(
-          prescriptionId,
-          { $push: { Medicines: medicine } },
-          { new: true, runValidators: true } // Options to return the updated document and run schema validators
-      );
-
-      if (!updatedPrescription) {
-          return res.status(404).send({ message: 'Prescription not found' });
-      }
-
-      res.status(200).send({ message: 'Medicine added successfully', updatedPrescription });
-  } catch (error) {
-      res.status(500).send({ message: 'Error adding medicine to prescription', error });
-  }
-};
+  export const getAllPrescriptionsDoctor = async (req: Request, res: Response) => {
+    try {
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+      const tokenDB = await tokenModel.findOne({ token });
+      const username = tokenDB && tokenDB.username;
+  
+        // Check if the patient exists
+        const doctor = await doctorModel.findOne({ username });
+        if (!doctor) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+  
+        // Find all prescriptions for the patient
+        const prescriptions = await Prescription.find({ doctorUsername: username })
+            .populate('patientUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
+            .select('patientUsername date status Medicines');
+  
+        // Construct response with full prescription details
+        const prescriptionDetails = prescriptions.map(prescription => ({
+            PatientName: prescription.patientUsername, // Replace with just 'doctorUsername' if it's not a reference
+            date: prescription.date,
+            status: prescription.status,
+            medicines: prescription.Medicines
+        }));
+  
+        // Respond with the detailed prescriptions
+        res.json(prescriptionDetails);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+    }
+  };
+  
+  
+  
+  export const addMedicineToPrescription = async (req: Request, res: Response) => {
+    try {
+  
+      const { prescriptionId,  } = req.query;
+        const { dosage, medicine,medicineName } = req.body;
+  
+        // Validate the incoming data as necessary
+  
+        const updatedPrescription = await Prescription.findByIdAndUpdate(
+            prescriptionId,
+            { $push: { Medicines: medicine } },
+            { new: true, runValidators: true } // Options to return the updated document and run schema validators
+        );
+  
+        if (!updatedPrescription) {
+            return res.status(404).send({ message: 'Prescription not found' });
+        }
+  
+        res.status(200).send({ message: 'Medicine added successfully', updatedPrescription });
+    } catch (error) {
+        res.status(500).send({ message: 'Error adding medicine to prescription', error });
+    }
+  };

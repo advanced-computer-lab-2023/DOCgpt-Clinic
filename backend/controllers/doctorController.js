@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getTodayAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.getTodayAppointments = exports.updateUnfilledPrescription = exports.addOrUpdateDosage = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const path_1 = __importDefault(require("path"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -25,6 +25,7 @@ const adminModel_1 = __importDefault(require("../models/adminModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const healthRecordModel_2 = __importDefault(require("../models/healthRecordModel"));
+const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const fs_1 = __importDefault(require("fs"));
 const getDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctors = yield doctorModel_1.default.find().exec();
@@ -784,6 +785,71 @@ const getContentType = (filename) => {
     }
 };
 exports.getContentType = getContentType;
+const addOrUpdateDosage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { prescriptionId, medicineName, dosage } = req.body;
+        if (!prescriptionId || !medicineName || !dosage) {
+            return res.status(400).json({ error: 'Prescription ID, medicine name, and dosage are required' });
+        }
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).json({ error: 'Prescription not found' });
+        }
+        // Check if the medicine is already in the prescription
+        const existingMedicine = prescription.Medicines.find((medicine) => medicine.medicineName === medicineName);
+        if (existingMedicine) {
+            // Update dosage if the medicine is already in the prescription
+            existingMedicine.dosage = dosage;
+        }
+        else {
+            // Add the medicine with dosage if it's not in the prescription
+            prescription.Medicines.push({ medicineName, dosage });
+        }
+        // Save the updated prescription
+        yield prescription.save();
+        return res.status(200).json({ message: 'Dosage added/updated successfully', prescription });
+    }
+    catch (error) {
+        console.error('Error adding/updating dosage:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.addOrUpdateDosage = addOrUpdateDosage;
+const updateUnfilledPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { prescriptionId, medicineName, dosage, quantity } = req.body;
+        if (!prescriptionId || !medicineName || !dosage || !quantity) {
+            return res.status(400).json({ error: 'Prescription ID, medicine name, quantity and dosage are required' });
+        }
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).json({ error: 'Prescription not found' });
+        }
+        // Check if the prescription is already filled
+        if (prescription.filled) {
+            return res.status(400).json({ error: 'Prescription has already been filled' });
+        }
+        // Check if the medicine is already in the prescription
+        const existingMedicine = prescription.Medicines.find((medicine) => medicine.medicineName === medicineName);
+        if (existingMedicine) {
+            // Update dosage if the medicine is already in the prescription
+            existingMedicine.dosage = dosage;
+            existingMedicine.quantity = quantity;
+        }
+        else {
+            // Add the medicine with dosage if it's not in the prescription
+            prescription.Medicines.push({ medicineName, dosage, quantity });
+        }
+        // Save the updated prescription
+        yield prescription.save();
+        return res.status(200).json({ message: 'Prescription updated successfully', prescription });
+    }
+    catch (error) {
+        console.error('Error updating prescription:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.updateUnfilledPrescription = updateUnfilledPrescription;
 const getTodayAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];

@@ -40,6 +40,9 @@ router.post('/changePassPatient', patientController_1.changePassword);
 router.patch('/linkFamilyMember', patientController_1.linkFamilyMember);
 // Create a route for viewing wallet amount
 router.get('/viewWalletAmount', patientController_1.verifyTokenPatient, patientController_1.viewWalletAmount);
+//sprint 3
+router.get('/getAllPrescriptionsForPatient', patientController_1.getAllPrescriptionsForPatient);
+router.get('/getPrescriptionDetails', patientController_1.getPrescriptionDetails);
 router.get('/getTodApp', patientController_1.verifyTokenPatient, patientController_1.getTodayAppointments);
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
