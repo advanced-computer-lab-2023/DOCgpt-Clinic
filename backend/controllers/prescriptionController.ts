@@ -107,28 +107,59 @@ export const updatePrescription = async (req: Request, res: Response) => {
 
 
 // Get patients prescription by patient's username
-export const getpatientsPrescription = async (req: Request, res: Response) => {
+// Get all prescriptions for a specific patient by patient's username
+export const getAllPrescriptionsPatient = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    const username = tokenDB && tokenDB.username;
 
-    try {
-
-
-      const { username } = req.params;
-  
+      // Check if the patient exists
       const patient = await Patient.findOne({ username });
       if (!patient) {
-        return res.status(404).json({ error: 'Patient not found' });
+          return res.status(404).json({ error: 'Patient not found' });
       }
-  
-      const prescription = await Prescription.find({ patientUsername: username });
-      if (!prescription) {
-        return res.status(404).json({ error: 'Prescription not found' });
-      }
-  
-      res.json(prescription);
-    } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch prescription' });
+
+      // Find all prescriptions for the patient
+      const prescriptions = await Prescription.find({ patientUsername: username })
+          .populate('doctorUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
+          .select('doctorUsername date status Medicines');
+
+      // Construct response with full prescription details
+      const prescriptionDetails = prescriptions.map(prescription => ({
+          doctorName: prescription.doctorUsername, // Replace with just 'doctorUsername' if it's not a reference
+          date: prescription.date,
+          status: prescription.status,
+          medicines: prescription.Medicines
+      }));
+
+      // Respond with the detailed prescriptions
+      res.json(prescriptionDetails);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+  }
+};
+export const getPrescriptionDetails = async (req: Request, res: Response) => {
+  try {
+    const { prescriptionId } = req.body;
+
+    if (!prescriptionId) {
+      return res.status(400).json({ error: 'Prescription ID is required' });
     }
-  };
+
+    const prescription = await Prescription.findById(prescriptionId);
+
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescription not found' });
+    }
+
+    return res.status(200).json({ prescription });
+  } catch (error) {
+    console.error('Error getting prescription details:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
   export const getAllPrescriptionsDoctor = async (req: Request, res: Response) => {
     try {
       const authHeader = req.headers['authorization'];
@@ -186,3 +217,4 @@ export const getpatientsPrescription = async (req: Request, res: Response) => {
     } catch (error) {
         res.status(500).send({ message: 'Error adding medicine to prescription', error });
     }
+  };
