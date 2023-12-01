@@ -621,6 +621,7 @@ try{
 };
 
 import { createReadStream, createWriteStream } from 'fs';
+import appointmentModel from "../models/appointmentModel";
 
 export const uploadAndSubmitReqDocs = async (req: Request, res: Response) => {
   const uploadedFiles = req.files as Express.Multer.File[];
@@ -872,4 +873,24 @@ export const getContentType = (filename: string) => {
     default:
       return 'application/octet-stream';
   }
+};
+export const getTodayAppointments = async (req: Request, res: Response) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+  const tokenDB = await tokenModel.findOne({ token });
+  console.log(token);
+
+  const doctorUsername = tokenDB?.username;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0 for the start of the day
+
+  const appointments = await appointmentModel
+    .find({
+      doctor: doctorUsername,
+      date: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) }, // Filter for today's appointments
+    })
+    .exec();
+
+  res.status(200).json(appointments);
 };

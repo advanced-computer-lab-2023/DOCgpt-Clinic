@@ -40,6 +40,7 @@ router.post('/changePassPatient', patientController_1.changePassword);
 router.patch('/linkFamilyMember', patientController_1.linkFamilyMember);
 // Create a route for viewing wallet amount
 router.get('/viewWalletAmount', patientController_1.verifyTokenPatient, patientController_1.viewWalletAmount);
+router.get('/getTodApp', patientController_1.verifyTokenPatient, patientController_1.getTodayAppointments);
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         const uploadFolderP = path_1.default.join(__dirname, '../uploadsPatient'); // The folder where files will be saved (inside your project)
