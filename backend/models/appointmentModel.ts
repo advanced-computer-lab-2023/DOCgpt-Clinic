@@ -40,6 +40,11 @@ export const appointmentSchema = new mongoose.Schema({
         default: false, 
         required: false,
       },
+      scheduledBy:{
+        type: String,
+        required: true 
+
+      }
 
 });
 
