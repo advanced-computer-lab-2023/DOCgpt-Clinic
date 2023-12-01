@@ -19,6 +19,9 @@ import  Approuter from '../backend/routes/appRouter';
 import bcrypt from 'bcrypt';
 import express, { Request, Response ,NextFunction } from 'express';
 import Payment from './routes/payment'
+import message from './routes/Message'
+import convos from './routes/Conversation'
+
 import Stripe from 'stripe';
 
 
@@ -53,8 +56,8 @@ app.use('/routes/healthRecord', Healthrecords);
 app.use('/routes/otp',Approuter);
 app.use('/routes', subscriptionRoute);
 app.use('/routes/pay',Payment);
-
-
+app.use('/routes/messages',message);
+app.use('/routes/conversation',convos);
 
 console.log('Routes mounted!')
 
@@ -127,7 +130,7 @@ if (!process.env.STRIPE_SECRET_KEY)
      const tokenn = await tokenModel.create({token,username,role:role})
      console.log("Received login succes");
         req.app.locals.username=username
-     res.status(200).json({user,token,role})}
+     res.status(200).json({user,username,token,role})}
 
      catch(error){
       const err = error as Error;
@@ -170,7 +173,8 @@ if (!process.env.STRIPE_SECRET_KEY)
  
   
 
-  import Doctor  from "./models/doctorModel"; // Import the Doctor model
+ 
+
 
 
 

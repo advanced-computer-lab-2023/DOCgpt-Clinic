@@ -60,7 +60,7 @@ const SendResetmail = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     console.log(OTP);
     const text = `Your OTP is: ${OTP}`;
     const subject = 'Reset Forgotten Password';
-    const sent = yield (0, nodemailer_1.sendOTPByEmail)(email, subject, text);
+    const sent = yield (0, nodemailer_1.sendAnEmail)(email, subject, text);
     res.json({ message: 'OTP sent successfully' });
 });
 exports.SendResetmail = SendResetmail;

@@ -1,75 +1,78 @@
 import { Button, Card, Container, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
-interface HealthRecord{
-    patient: string,
-    MedicalHistory:{
-        Allergies: [String],
-        PastMedicalConditions: [String],
-        Comments: [String]
-    },
-        MedicationList: {
-            CurrentMedications: {
-                Names: [String],
-                 //IMAGE URL
-                Prescriptions: [String],
-            },
-            PastMedications: {
-                Names: [String],
-                //IMAGE URL
-                Prescriptions:[String],
-            },
-            Comments: [String]
-        },
-        VitalSigns:{
-            BloodPressure: {
-                type: Number,
-            },
-            HeartRate: {
-                type: Number,
-            }, 
-            Height:{
-                type: Number,
-            },
-            Weight: {
-                type: Number,
-            },
-            Comments: [String]
-        },
-        Laboratory: {
-            //IMAGES URI
-            BloodTests: [String],
-            XRays: [String],
-            Other:[String],
-            Comments: [String]
-        },
-        GeneralComments: [String],
-        GeneralImages: [String]
+interface HealthRecord {
+  patient: string;
+  MedicalHistory: {
+    Allergies: [String];
+    PastMedicalConditions: [String];
+    Comments: [String];
+  };
+  MedicationList: {
+    CurrentMedications: {
+      Names: [String];
+      //IMAGE URL
+      Prescriptions: [String];
+    };
+    PastMedications: {
+      Names: [String];
+      //IMAGE URL
+      Prescriptions: [String];
+    };
+    Comments: [String];
+  };
+  VitalSigns: {
+    BloodPressure: {
+      type: Number;
+    };
+    HeartRate: {
+      type: Number;
+    };
+    Height: {
+      type: Number;
+    };
+    Weight: {
+      type: Number;
+    };
+    Comments: [String];
+  };
+  Laboratory: {
+    //IMAGES URI
+    BloodTests: [String];
+    XRays: [String];
+    Other: [String];
+    Comments: [String];
+  };
+  GeneralComments: [String];
+  GeneralImages: [String];
 }
 
 interface PatientProps {
-    patient: any,
-    doctor: any
+  patient: any;
+  doctor: any;
 }
 
-const Patient = ({patient, doctor}: PatientProps) => {
-    const navigate = useNavigate();
-    const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
-    const fetchHealthRecord = async () => {
-        console.log('Fetching Health Record of this Patient...');
-        try {
-        const response = await axios.get(`/routes/doctors/HealthRecord?patientUsername=${username}`);
-        console.log('Response:', response);
-        setHealthRecord(response.data);
-        } catch (error) {
-        console.error('Error:', error);
-        }
-    };
-    useEffect(() => {
-        fetchHealthRecord();
-    }, []);
+const Patient = ({ patient, doctor }: PatientProps) => {
+  const navigate = useNavigate();
+  const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
+  const [response, setResponse] = useState<any>(null);
+  const fetchHealthRecord = async () => {
+    console.log("Fetching Health Record of this Patient...");
+    try {
+      const response = await axios.get(
+        `/routes/doctors/HealthRecord?patientUsername=${username}`
+      );
+      console.log("Response:", response);
+      setHealthRecord(response.data);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    fetchHealthRecord();
+  }, []);
 
     if(!patient){
         return null;
@@ -85,25 +88,95 @@ const Patient = ({patient, doctor}: PatientProps) => {
         }
     };
 
-    const healthRecordClick = () => {
-        if(username && (!healthRecord)){
-            const params = new URLSearchParams();
-            params.append('patient', username);
-            navigate(`/doctor/healthRecordEmpty?${params.toString()}`);
+  const healthRecordClick = () => {
+    if (username && !healthRecord) {
+      const params = new URLSearchParams();
+      params.append("patient", username);
+      navigate(`/doctor/healthRecordEmpty?${params.toString()}`);
+    } else if (username && healthRecord) {
+      const params = new URLSearchParams();
+      params.append("patient", username);
+      navigate(`/doctor/patientHealthRecord?${params.toString()}`);
+    }
+  };
+  const handleCreateConversation = async ({ name }: { name: string }) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        "/routes/conversation/startConv",
+        {
+          secondusername: name,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-        else if(username && (healthRecord)){
-            const params = new URLSearchParams();
-            params.append('patient', username);
-            navigate(`/doctor/patientHealthRecord?${params.toString()}`);
+      );
+      localStorage.setItem("recieverusername", name);
+      setResponse(response.data);
+      console.log(response.data._id);
+      navigate(`/chat/${response.data._id}`);
+    } catch (error) {
+      console.error("Error creating conversation:", error);
+    }
+  };
+  const addPresc = async (name: any) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        "/routes/prescriptions",
+        {
+          patientUsername: name,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-    } 
-    return(
-        <Card style={{padding: '20px', margin: '10px', display: 'flex', justifyContent:'space-between', alignItems:'center'}} >
-            <Container onClick={handleClick}>
-            <Typography> Patient Name: {name}</Typography>
-            </Container>
-            <Button variant="contained" onClick={healthRecordClick}> Health Record</Button>
-        </Card>
-    );
-}
-export default Patient
+      );
+  
+      // Extract prescriptionId from the response
+      const prescriptionId = response.data._id;
+  
+      // Append prescriptionId to the URL
+      const newWindow = window.open(
+        `http://localhost:3001/doctormed/${prescriptionId}`,
+        "_blank"
+      );
+  
+      if (!newWindow) {
+        console.error("Unable to open a new window.");
+      }
+    } catch (error) {
+      console.error("Error in addPresc:", error);
+    }
+  };
+  return (
+    <Card
+      style={{
+        padding: "20px",
+        margin: "10px",
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      }}
+    >
+      <Container onClick={handleClick}>
+        <Typography> Patient Name: {name}</Typography>
+      </Container>
+      <Button variant="contained" onClick={healthRecordClick}>
+        {" "}
+        Health Record
+      </Button>
+      <Button
+        variant="contained"
+        onClick={() => handleCreateConversation({ name })}
+      >
+        Create Conversation
+      </Button>
+      <Button variant="contained" onClick={() => addPresc(name)}> Add Prescription</Button>
+    </Card>
+  );
+};
+export default Patient;

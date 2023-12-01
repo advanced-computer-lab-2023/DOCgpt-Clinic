@@ -14,16 +14,15 @@ const prescriptionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  filled: {
-    type: Boolean,
-    default: false,
+  status: {
+    type: String,
+    default:"unfilled",
   },
   Medicines: [
     {
       medicineName:{
        type:String ,
-       required: true,
-
+       required: false,
 
       },
       dosage: {

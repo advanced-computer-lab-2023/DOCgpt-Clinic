@@ -27,6 +27,7 @@ import {
   deletePatientDocs,
   getAllPrescriptionsForPatient,
   getPrescriptionDetails
+  getTodayAppointments,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 import fs from 'fs';
@@ -97,7 +98,7 @@ router.get('/getPrescriptionDetails',getPrescriptionDetails);
 
 
 
-
+router.get('/getTodApp',verifyTokenPatient,getTodayAppointments)
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

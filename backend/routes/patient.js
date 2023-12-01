@@ -43,6 +43,7 @@ router.get('/viewWalletAmount', patientController_1.verifyTokenPatient, patientC
 //sprint 3
 router.get('/getAllPrescriptionsForPatient', patientController_1.getAllPrescriptionsForPatient);
 router.get('/getPrescriptionDetails', patientController_1.getPrescriptionDetails);
+router.get('/getTodApp', patientController_1.verifyTokenPatient, patientController_1.getTodayAppointments);
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         const uploadFolderP = path_1.default.join(__dirname, '../uploadsPatient'); // The folder where files will be saved (inside your project)

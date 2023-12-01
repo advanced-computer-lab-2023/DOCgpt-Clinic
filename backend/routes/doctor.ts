@@ -7,7 +7,7 @@ import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStat
    viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, 
    acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots,
     commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, addOrUpdateDosage,
-    getDoctorDocuments, updateUnfilledPrescription} from "../controllers/doctorController";
+    getDoctorDocuments, getTodayAppointments, updateUnfilledPrescription} from "../controllers/doctorController";
 import multer from "multer";
 import path from 'path';
 import fs from "fs"
@@ -26,6 +26,7 @@ router.get("/upcomingApp", viewUpcomingAppointments);
 router.get("/pastApp", viewPastAppointments);
 router.get("/appointmentsByDate", getAppointmentByDate);
 router.get("/appointmentsByStatus", getAppointmentByStatus);
+router.get("/todayapp",getTodayAppointments);
 
 //HEALTH RECORDS
 router.get("/HealthRecords", viewHealthRecords);
