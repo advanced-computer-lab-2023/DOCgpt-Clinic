@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import fs from 'fs';
+import axios from 'axios';
 
 
 // create a new workout
@@ -15,7 +16,7 @@ export const createPatient = async (req: Request, res: Response) => {
     console.log('Request reached controller')
 
   try {
-    const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription ,gender} = req.body;
+    const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription ,gender, deliveryAddress} = req.body;
     const emailExists=await Patientmodel.findOne({email}) ;
     const emailExists2=await doctorModel.findOne({email})
     const emailExists3=await adminModel.findOne({email})
@@ -47,16 +48,30 @@ export const createPatient = async (req: Request, res: Response) => {
     if (!validatePassword(password)) {
       return res.status(400).json({ message: 'Invalid password' });
     }
-    const patient = await Patientmodel.create({ username,name,email,password:hash,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription ,gender});
-console.log('Patient created!', patient)
+    const patient = await Patientmodel.create({ username,name,email,password:hash,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription ,gender, deliveryAddress,
+      carts: [], // Initialize with an empty array for carts
+      orders: [],});
+      console.log("i reached");
+
+      const idResponse = await axios.post('http://localhost:3000/api/cart/createCart',
+      { 
+        username}
+      );
+      console.log(idResponse.data)
+
+
+      patient.carts.push(idResponse.data.id);
+      await patient.save();
+           
+    console.log('Patient created!', patient)
 
     res.status(200).json(patient);
-  } catch (error) {
+     } catch (error) {
     
     const err = error as Error;
 console.log('Error creating patient') 
 
-    res.status(400).json({ error: err.message });
+    res.status(505).json({ error: err.message });
   }
 };
 

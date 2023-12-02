@@ -12,7 +12,10 @@ router.post('/prescriptions', prescriptionController_1.createPrescription);
 router.get('/prescriptions', prescriptionController_1.getAllPrescriptions);
 // Update a prescription
 router.put('/prescriptions/:id', prescriptionController_1.updatePrescription);
+//sprint 3
 router.get('/getAllPrescriptionsPatient', prescriptionController_1.getAllPrescriptionsPatient);
+router.get('/getPrescriptionDetails', prescriptionController_1.getPrescriptionDetails);
 router.get('/getAllPrescriptionsDoctor', prescriptionController_1.getAllPrescriptionsDoctor);
 router.post('/addMedTopresc/:prescriptionId', prescriptionController_1.addMedtoPresc);
+router.get('/addToCart', prescriptionController_1.addPrescriptionToCart);
 exports.default = router;
