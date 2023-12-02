@@ -231,13 +231,14 @@ const addPrescriptionToCart = (req, res) => __awaiter(void 0, void 0, void 0, fu
                 medicineName
             });
             const medicinePrice = Number(priceResponse.data.medicinePrice);
-            const v = { medicineId, quantity, medicineName, medicinePrice };
+            const v = { medicineId, quantity, medicineName, medicinePrice, prescriptionId };
             // Add medicine information to the array
             medicineInfoArray.push({
                 medicineName,
                 medicineId,
                 medicinePrice,
-                quantity
+                quantity,
+                prescriptionId
             });
             try {
                 const nn = yield axios_1.default.post('http://localhost:3000/api/cart/addMed', v, {
@@ -248,8 +249,11 @@ const addPrescriptionToCart = (req, res) => __awaiter(void 0, void 0, void 0, fu
             }
             catch (error) {
                 console.error('Error adding medicine to cart:', error);
+                return res.status(500).json({ error });
             }
         }
+        prescription.status == "filled";
+        yield prescription.save();
         // Respond with the accumulated medicine information
         return res.status(200).json({
             message: 'Prescription added to cart successfully',
