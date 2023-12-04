@@ -42,7 +42,7 @@ export const patientSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
-    validate: [validatePassword, 'Password must be at least 8 characters long'],
+    // validate: [validatePassword, 'Password must be at least 8 characters long'],
     
   },
   dateofbirth: {
@@ -134,7 +134,13 @@ export const patientSchema = new mongoose.Schema({
     type: Number,
     required: true,
     default: 2000,
-    }
+    },
+    deliveryAddress: [{
+      type: String,
+      required: false,
+    }],
+    carts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Cart' }],
+    orders: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Order' }],
 });
 
 function validatePassword(password: string) {

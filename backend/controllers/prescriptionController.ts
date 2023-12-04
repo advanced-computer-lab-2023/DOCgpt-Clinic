@@ -2,12 +2,22 @@ import { Request, Response } from 'express';
 import Prescription from '../models/perscriptionModel';
 import Doctor from '../models/doctorModel';
 import Patient from '../models/patientModel';
+import tokenModel from '../models/tokenModel';
+import doctorModel from '../models/doctorModel';
+import axios from 'axios';
+
 
 // Create a new prescription
 export const createPrescription = async (req: Request, res: Response) => {
     try {
-      const { doctorUsername, patientUsername, filled } = req.body;
-        console.log("hi am herre");
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+      const tokenDB = await tokenModel.findOne({ token });
+      const doctorUsername = tokenDB && tokenDB.username;
+
+
+
+      const {  patientUsername} = req.body;
       // Check if the doctor exists
       const doctor = await Doctor.findOne({ username: doctorUsername });
       if (!doctor) {
@@ -22,8 +32,7 @@ export const createPrescription = async (req: Request, res: Response) => {
   
       const prescription  = new Prescription({
         doctorUsername,
-        patientUsername,
-        filled,
+        patientUsername
       });
   
       const savedPrescription = await prescription.save();
@@ -32,7 +41,40 @@ export const createPrescription = async (req: Request, res: Response) => {
       res.status(500).json({ error: 'Failed to create prescription' });
     }
   };
+// Adjust the path accordingly
 
+export const addMedtoPresc = async (req: Request, res: Response) => {
+  try {
+    const prescriptionId = req.params.prescriptionId;
+
+    const { medicineName, quantity,dosage } = req.body; // Additional details from the request body
+ console.log(medicineName);
+ console.log(dosage);
+ console.log(quantity);
+    // Find the prescription and update it
+    const updatedPrescription = await Prescription.findByIdAndUpdate(
+      prescriptionId,
+      {
+        $push: {
+          Medicines: {
+            medicineName,
+            dosage,
+            quantity,
+          },
+        },
+      },
+      { new: true }
+    );
+console.log("ana henaaaaaa");
+    // Send success response
+    res.status(200).send({ message: 'Medicine added to prescription successfully.', updatedPrescription });
+  } catch (error) {
+    // Handle errors
+    res.status(500).send({ message: 'Error adding medicine to prescription', error });
+  }
+};
+
+  
 // Get all prescriptions
 export const getAllPrescriptions = async (req: Request, res: Response) => {
   try {
@@ -47,11 +89,11 @@ export const getAllPrescriptions = async (req: Request, res: Response) => {
 export const updatePrescription = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { filled } = req.body;
+    const { status } = req.body;
 
     const updatedPrescription = await Prescription.findByIdAndUpdate(
       id,
-      { filled },
+      { status },
       { new: true }
     );
 
@@ -64,29 +106,192 @@ export const updatePrescription = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to update prescription' });
   }
 };
-
-
 // Get patients prescription by patient's username
-export const getpatientsPrescription = async (req: Request, res: Response) => {
-    console.log("im hererrrr");
+// Get all prescriptions for a specific patient by patient's username
+export const getAllPrescriptionsPatient = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    const username = tokenDB && tokenDB.username;
 
-    try {
-        console.log("im hererrrr");
-
-      const { username } = req.params;
-  
+      // Check if the patient exists
       const patient = await Patient.findOne({ username });
       if (!patient) {
-        return res.status(404).json({ error: 'Patient not found' });
+          return res.status(404).json({ error: 'Patient not found' });
       }
+      // Find all prescriptions for the patient
+      const prescriptions = await Prescription.find({ patientUsername: username })
+          .populate('doctorUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
+          .select('doctorUsername date status Medicines');
+
+      // Construct response with full prescription details
+      const prescriptionDetails = prescriptions.map(prescription => ({
+          doctorName: prescription.doctorUsername, // Replace with just 'doctorUsername' if it's not a reference
+          date: prescription.date,
+          status: prescription.status,
+          medicines: prescription.Medicines
+      }));
+
+      // Respond with the detailed prescriptions
+      res.json(prescriptionDetails);
+  } catch (error) {
+      res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+  }
+};
+export const getPrescriptionDetails = async (req: Request, res: Response) => {
+  try {
+    const { prescriptionId } = req.body;
+
+    if (!prescriptionId) {
+      return res.status(400).json({ error: 'Prescription ID is required' });
+    }
+
+    const prescription = await Prescription.findById(prescriptionId);
+
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescription not found' });
+    }
+
+    return res.status(200).json({ prescription });
+  } catch (error) {
+    console.error('Error getting prescription details:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+  export const getAllPrescriptionsDoctor = async (req: Request, res: Response) => {
+    try {
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+      const tokenDB = await tokenModel.findOne({ token });
+      const username = tokenDB && tokenDB.username;
+        // Check if the patient exists
+        const doctor = await doctorModel.findOne({ username });
+        if (!doctor) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
   
-      const prescription = await Prescription.find({ patientUsername: username });
+        // Find all prescriptions for the patient
+        const prescriptions = await Prescription.find({ doctorUsername: username })
+            .populate('patientUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
+            .select('patientUsername date status Medicines');
+  
+        // Construct response with full prescription details
+        const prescriptionDetails = prescriptions.map(prescription => ({
+            PatientName: prescription.patientUsername, // Replace with just 'doctorUsername' if it's not a reference
+            date: prescription.date,
+            status: prescription.status,
+            medicines: prescription.Medicines
+        }));
+  
+        // Respond with the detailed prescriptions
+        res.json(prescriptionDetails);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch prescriptions for the patient' });
+    }
+  };
+  
+  
+  
+  export const addMedicineToPrescription = async (req: Request, res: Response) => {
+    try {
+  
+      const { prescriptionId,  } = req.query;
+        const { dosage, medicine,medicineName } = req.body;
+    
+        const updatedPrescription = await Prescription.findByIdAndUpdate(
+            prescriptionId,
+            { $push: { Medicines: medicine } },
+            { new: true, runValidators: true } // Options to return the updated document and run schema validators
+        );
+  
+        if (!updatedPrescription) {
+            return res.status(404).send({ message: 'Prescription not found' });
+        }
+        res.status(200).send({ message: 'Medicine added successfully', updatedPrescription });
+    } catch (error) {
+        res.status(500).send({ message: 'Error adding medicine to prescription', error });
+    }
+  };
+
+
+
+
+  export const addPrescriptionToCart = async (req: Request, res: Response) => {
+    try {
+
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+      const tokenDB = await tokenModel.findOne({ token });
+      const username = tokenDB && tokenDB.username;
+  
+        // Check if the patient exists
+        const patient = await Patient.findOne({ username });
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+      const medicineInfoArray = [];
+
+      const { prescriptionId } = req.body;
+  
+      // Find the prescription by ID
+      const prescription = await Prescription.findById(prescriptionId);
       if (!prescription) {
         return res.status(404).json({ error: 'Prescription not found' });
       }
   
-      res.json(prescription);
+    
+    for (const medicine of prescription.Medicines) {
+      const { medicineName, dosage, quantity } = medicine;
+
+      
+        // Get medicine ID
+        const idResponse = await axios.post('http://localhost:3000/api/medicines/getId', {
+          medicineName
+        });
+        const medicineId = idResponse.data.medicineId;
+        console.log(idResponse);
+
+        // Get medicine price
+        const priceResponse = await axios.post('http://localhost:3000/api/medicines/getPrice', {
+          medicineName
+        });
+        const medicinePrice = Number(priceResponse.data.medicinePrice);
+
+        const v= { medicineId , quantity ,medicineName,medicinePrice ,  prescriptionId} ;
+        
+
+        // Add medicine information to the array
+        medicineInfoArray.push({
+          medicineName,
+          medicineId,
+          medicinePrice,
+          quantity,
+          prescriptionId
+        });
+
+        try {
+         const nn =  await axios.post('http://localhost:3000/api/cart/addMed', v, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+        } catch (error) {
+          console.error('Error adding medicine to cart:', error);
+          return res.status(500).json({ error });
+
+        }
+        
+      }
+            prescription.status=="filled";
+            await prescription.save();
+      // Respond with the accumulated medicine information
+      return res.status(200).json({
+        message: 'Prescription added to cart successfully',
+        medicines: medicineInfoArray,
+      });
     } catch (error) {
-      res.status(500).json({ error: 'Failed to fetch prescription' });
+      console.log('Error adding prescription to cart:', error);
+      return res.status(500).json({ error: 'Error adding prescription to cart' });
     }
   };

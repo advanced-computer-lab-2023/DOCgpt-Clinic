@@ -154,7 +154,7 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
             date: new Date(date),
             type: type,
             price: price,
-            scheduledBy: username,
+            scheduledBy: username
         });
         const patientEmail = patient.email; // Adjust this based on your patient model structure
         const emailSubject = 'Appointment Confirmation';
@@ -336,8 +336,19 @@ const createAppointment22 = (req, res, username) => __awaiter(void 0, void 0, vo
     const type = 'new appointment';
     const price = Number(req.body.price);
     try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        if (!tokenDB) {
+            return res.status(404).json({ error: 'Token not found' });
+        }
+        const username2 = tokenDB.username;
         const patient = yield patientModel_1.default.findOne({ username });
         if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+        const famMember = yield patientModel_1.default.findOne({ username });
+        if (!famMember) {
             return res.status(404).json({ error: 'Patient not found' });
         }
         const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
@@ -354,6 +365,7 @@ const createAppointment22 = (req, res, username) => __awaiter(void 0, void 0, vo
             date: new Date(date),
             type: type,
             price: price,
+            scheduledBy: username2
         });
         return appointment;
     }
@@ -389,11 +401,14 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         };
         doctor.timeslots.push(newTimeSlot);
         const currentDate = new Date();
-        const givenDate = new Date(date); // Replace with your actual date
-        const timeDifference = currentDate.getTime() - givenDate.getTime();
-        // Check if the time difference is greater than or equal to 24 hours (in milliseconds)
-        const isMorethan24Hours = timeDifference >= 24 * 60 * 60 * 1000;
-        if (!isMorethan24Hours) {
+        const givenDate = new Date(date);
+        const timeDifference = givenDate.getTime() - currentDate.getTime();
+        console.log(currentDate.getTime());
+        console.log(givenDate.getTime());
+        // Check if the time difference is less than 24 hours (in milliseconds)
+        const isLessthan24Hours = timeDifference < 24 * 60 * 60 * 1000;
+        console.log(timeDifference);
+        if (!isLessthan24Hours) {
             doctor.walletBalance = doctor.walletBalance - price;
             patient.walletBalance = patient.walletBalance + price;
             yield patient.save();

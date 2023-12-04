@@ -3,7 +3,8 @@ import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStat
   searchPatient, selectPatient, updateDoctorAffiliation, 
   updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord,
    viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, 
-   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,acceptFollowUpRequest,rejectFollowUpRequest} from "../controllers/doctorController";
+   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,acceptFollowUpRequest,rejectFollowUpRequest,addOrUpdateDosage,updateUnfilledPrescription} from "../controllers/doctorController";
+ 
 import multer from "multer";
 import path from 'path';
 import fs from "fs"
@@ -107,5 +108,9 @@ router.post('/rescheduleApp',rescheduleAppointments);
 router.patch('/acceptFollowUpRequest', acceptFollowUpRequest);
 router.patch('/rejectFollowUpRequest', rejectFollowUpRequest);
 
-export default router;
 
+//sprint 3
+router.post('/addOrUpdateDosage', addOrUpdateDosage);
+router.patch('/updateUnfilledPrescription',updateUnfilledPrescription);
+
+export default router;

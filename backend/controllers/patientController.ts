@@ -9,31 +9,25 @@ import jwt from "jsonwebtoken";
 import path from "path";
 import fs from "fs";
 import { createNotificationWithCurrentDate } from "./appointmentController";
+import axios from 'axios';
+import prescriptionModel from '../models/perscriptionModel';
 
 // create a new workout
 export const createPatient = async (req: Request, res: Response) => {
   console.log("Request reached controller");
 
   try {
-    const {
-      username,
-      name,
-      email,
-      password,
-      dateofbirth,
-      mobilenumber,
-      emergencyContact,
-      healthPackageSubscription,
-      gender,
-    } = req.body;
-    const emailExists = await Patientmodel.findOne({ email });
-    const emailExists2 = await doctorModel.findOne({ email });
-    const emailExists3 = await adminModel.findOne({ email });
-    const usernameExists = await Patientmodel.findOne({ username });
-    const usernameExists2 = await doctorModel.findOne({ username });
-    const usernameExists3 = await adminModel.findOne({ username });
-    if (emailExists) {
-      return res.status(401).json({ message: "email exists" });
+    const { username,name,email,password,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription ,gender, deliveryAddress} = req.body;
+    const emailExists=await Patientmodel.findOne({email}) ;
+    const emailExists2=await doctorModel.findOne({email})
+    const emailExists3=await adminModel.findOne({email})
+    const usernameExists=await Patientmodel.findOne({username});
+    const usernameExists2=await doctorModel.findOne({username});
+    const usernameExists3=await adminModel.findOne({username});
+    if(emailExists){
+    
+      return res.status(401).json({ message: 'email exists' });
+    
     }
     if (emailExists2) {
       return res.status(401).json({ message: "email exists" });
@@ -55,25 +49,30 @@ export const createPatient = async (req: Request, res: Response) => {
     if (!validatePassword(password)) {
       return res.status(400).json({ message: "Invalid password" });
     }
-    const patient = await Patientmodel.create({
-      username,
-      name,
-      email,
-      password: hash,
-      dateofbirth,
-      mobilenumber,
-      emergencyContact,
-      healthPackageSubscription,
-      gender,
-    });
-    console.log("Patient created!", patient);
+    const patient = await Patientmodel.create({ username,name,email,password:hash,dateofbirth,mobilenumber,emergencyContact, healthPackageSubscription ,gender, deliveryAddress,
+      carts: [], // Initialize with an empty array for carts
+      orders: [],});
+      console.log("i reached");
+
+      const idResponse = await axios.post('http://localhost:3000/api/cart/createCart',
+      { 
+        username}
+      );
+      console.log(idResponse.data)
+
+
+      patient.carts.push(idResponse.data.id);
+      await patient.save();
+           
+    console.log('Patient created!', patient)
 
     res.status(200).json(patient);
-  } catch (error) {
+     } catch (error) {
+    
     const err = error as Error;
     console.log("Error creating patient");
 
-    res.status(400).json({ error: err.message });
+    res.status(505).json({ error: err.message });
   }
 };
 
@@ -1263,3 +1262,43 @@ export const sendRequestFollowUp = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error." });
   }
 };
+// export const getAllPrescriptionsForPatient = async (req: Request, res: Response) => {
+//   try {
+//      const authHeader = req.headers['authorization'];
+//     const token = authHeader && authHeader.split(' ')[1];
+//     const tokenDB = await tokenModel.findOne({ token });
+//     const patientUsername = tokenDB && tokenDB.username;
+
+//     if (!patientUsername) {
+//       return res.status(400).json({ error: 'Patient username is required' });
+//     }
+
+//     const prescriptions = await prescriptionModel.find({ patientUsername });
+
+//     return res.status(200).json({ prescriptions });
+//   } catch (error) {
+//     console.error('Error getting prescriptions for patient:', error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
+// export const getPrescriptionDetails = async (req: Request, res: Response) => {
+//   try {
+//     const { prescriptionId } = req.body;
+
+//     if (!prescriptionId) {
+//       return res.status(400).json({ error: 'Prescription ID is required' });
+//     }
+
+//     const prescription = await prescriptionModel.findById(prescriptionId);
+
+//     if (!prescription) {
+//       return res.status(404).json({ error: 'Prescription not found' });
+//     }
+
+//     return res.status(200).json({ prescription });
+//   } catch (error) {
+//     console.error('Error getting prescription details:', error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
+

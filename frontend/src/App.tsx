@@ -86,9 +86,7 @@ function App() {
         // <Route path="/doctor/main" Component={DoctorMain} />
         // <Route path="/doctor/login" Component={DoctorLogin} />
         //{" "}
-        <Route
-          path="/patient/prescriptions/:username"
-          element={<PatientPrescriptions />}
+        <Route path="/patient/prescriptions" element={<PatientPrescriptions />}
         />
         <Route path="/patient/home" element={<HomePage />} />
         <Route path="/patient/link" element={<LinkFamilyMember />} />

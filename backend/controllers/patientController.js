@@ -22,11 +22,12 @@ const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const appointmentController_1 = require("./appointmentController");
+const axios_1 = __importDefault(require("axios"));
 // create a new workout
 const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Request reached controller");
     try {
-        const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription, gender, } = req.body;
+        const { username, name, email, password, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription, gender, deliveryAddress } = req.body;
         const emailExists = yield patientModel_1.default.findOne({ email });
         const emailExists2 = yield doctorModel_2.default.findOne({ email });
         const emailExists3 = yield adminModel_1.default.findOne({ email });
@@ -56,24 +57,23 @@ const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         if (!validatePassword(password)) {
             return res.status(400).json({ message: "Invalid password" });
         }
-        const patient = yield patientModel_1.default.create({
-            username,
-            name,
-            email,
-            password: hash,
-            dateofbirth,
-            mobilenumber,
-            emergencyContact,
-            healthPackageSubscription,
-            gender,
+        const patient = yield patientModel_1.default.create({ username, name, email, password: hash, dateofbirth, mobilenumber, emergencyContact, healthPackageSubscription, gender, deliveryAddress,
+            carts: [],
+            orders: [], });
+        console.log("i reached");
+        const idResponse = yield axios_1.default.post('http://localhost:3000/api/cart/createCart', {
+            username
         });
-        console.log("Patient created!", patient);
+        console.log(idResponse.data);
+        patient.carts.push(idResponse.data.id);
+        yield patient.save();
+        console.log('Patient created!', patient);
         res.status(200).json(patient);
     }
     catch (error) {
         const err = error;
-        console.log("Error creating patient");
-        res.status(400).json({ error: err.message });
+        console.log('Error creating patient');
+        res.status(505).json({ error: err.message });
     }
 });
 exports.createPatient = createPatient;
@@ -1097,3 +1097,35 @@ const sendRequestFollowUp = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.sendRequestFollowUp = sendRequestFollowUp;
+// export const getAllPrescriptionsForPatient = async (req: Request, res: Response) => {
+//   try {
+//      const authHeader = req.headers['authorization'];
+//     const token = authHeader && authHeader.split(' ')[1];
+//     const tokenDB = await tokenModel.findOne({ token });
+//     const patientUsername = tokenDB && tokenDB.username;
+//     if (!patientUsername) {
+//       return res.status(400).json({ error: 'Patient username is required' });
+//     }
+//     const prescriptions = await prescriptionModel.find({ patientUsername });
+//     return res.status(200).json({ prescriptions });
+//   } catch (error) {
+//     console.error('Error getting prescriptions for patient:', error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
+// export const getPrescriptionDetails = async (req: Request, res: Response) => {
+//   try {
+//     const { prescriptionId } = req.body;
+//     if (!prescriptionId) {
+//       return res.status(400).json({ error: 'Prescription ID is required' });
+//     }
+//     const prescription = await prescriptionModel.findById(prescriptionId);
+//     if (!prescription) {
+//       return res.status(404).json({ error: 'Prescription not found' });
+//     }
+//     return res.status(200).json({ prescription });
+//   } catch (error) {
+//     console.error('Error getting prescription details:', error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// };

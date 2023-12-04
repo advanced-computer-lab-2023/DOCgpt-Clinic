@@ -73,4 +73,7 @@ router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), doctorContr
 router.post('/rescheduleApp', doctorController_1.rescheduleAppointments);
 router.patch('/acceptFollowUpRequest', doctorController_1.acceptFollowUpRequest);
 router.patch('/rejectFollowUpRequest', doctorController_1.rejectFollowUpRequest);
+//sprint 3
+router.post('/addOrUpdateDosage', doctorController_1.addOrUpdateDosage);
+router.patch('/updateUnfilledPrescription', doctorController_1.updateUnfilledPrescription);
 exports.default = router;

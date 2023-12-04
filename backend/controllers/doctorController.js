@@ -847,6 +847,71 @@ const getTodayAppointments = (req, res) => __awaiter(void 0, void 0, void 0, fun
     res.status(200).json(appointments);
 });
 exports.getTodayAppointments = getTodayAppointments;
+const addOrUpdateDosage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { prescriptionId, medicineName, dosage } = req.body;
+        if (!prescriptionId || !medicineName || !dosage) {
+            return res.status(400).json({ error: 'Prescription ID, medicine name, and dosage are required' });
+        }
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).json({ error: 'Prescription not found' });
+        }
+        // Check if the medicine is already in the prescription
+        const existingMedicine = prescription.Medicines.find((medicine) => medicine.medicineName === medicineName);
+        if (existingMedicine) {
+            // Update dosage if the medicine is already in the prescription
+            existingMedicine.dosage = dosage;
+        }
+        else {
+            // Add the medicine with dosage if it's not in the prescription
+            prescription.Medicines.push({ medicineName, dosage });
+        }
+        // Save the updated prescription
+        yield prescription.save();
+        return res.status(200).json({ message: 'Dosage added/updated successfully', prescription });
+    }
+    catch (error) {
+        console.error('Error adding/updating dosage:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.addOrUpdateDosage = addOrUpdateDosage;
+const updateUnfilledPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { prescriptionId, medicineName, dosage, quantity } = req.body;
+        if (!prescriptionId || !medicineName || !dosage || !quantity) {
+            return res.status(400).json({ error: 'Prescription ID, medicine name, quantity and dosage are required' });
+        }
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).json({ error: 'Prescription not found' });
+        }
+        // Check if the prescription is already filled
+        if (prescription.status == "filled") {
+            return res.status(400).json({ error: 'Prescription has already been filled' });
+        }
+        // Check if the medicine is already in the prescription
+        const existingMedicine = prescription.Medicines.find((medicine) => medicine.medicineName === medicineName);
+        if (existingMedicine) {
+            // Update dosage if the medicine is already in the prescription
+            existingMedicine.dosage = dosage;
+            existingMedicine.quantity = quantity;
+        }
+        else {
+            // Add the medicine with dosage if it's not in the prescription
+            prescription.Medicines.push({ medicineName, dosage, quantity });
+        }
+        // Save the updated prescription
+        yield prescription.save();
+        return res.status(200).json({ message: 'Prescription updated successfully', prescription });
+    }
+    catch (error) {
+        console.error('Error updating prescription:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.updateUnfilledPrescription = updateUnfilledPrescription;
 //accept/reject follow up request 
 const acceptFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
