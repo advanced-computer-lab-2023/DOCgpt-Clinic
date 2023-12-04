@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.updateUnfilledPrescription = exports.addOrUpdateDosage =exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const path_1 = __importDefault(require("path"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -27,6 +27,8 @@ const packageModel_1 = __importDefault(require("../models/packageModel"));
 const healthRecordModel_2 = __importDefault(require("../models/healthRecordModel"));
 const requestModel_1 = __importDefault(require("../models/requestModel"));
 const appointmentController_1 = require("./appointmentController");
+const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
+
 const fs_1 = __importDefault(require("fs"));
 const getDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctors = yield doctorModel_1.default.find().exec();

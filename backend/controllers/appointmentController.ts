@@ -135,7 +135,6 @@ export const createAppointment = async (req: Request, res: Response) => {
   const date = req.body.date;
   const status = 'upcoming';
   const type = 'Regular';
-  const type = 'Regular';
   const price = Number(req.body.price);
 
   try {
@@ -181,7 +180,6 @@ export const createAppointment = async (req: Request, res: Response) => {
       type: type,
       price: price,
       scheduledBy: username
-      scheduledBy: username,
     });
      
     const patientEmail = patient.email; // Adjust this based on your patient model structure

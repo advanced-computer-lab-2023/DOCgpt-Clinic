@@ -12,6 +12,7 @@ import adminModel from "../models/adminModel";
 import patientModel from "../models/patientModel";
 import packageModel from "../models/packageModel";
 import healthRecordModel from "../models/healthRecordModel";
+import prescriptionModel from '../models/perscriptionModel';
 import requestModel from "../models/requestModel";
 import { createNotificationWithCurrentDate } from "./appointmentController";
 import fs from 'fs';
