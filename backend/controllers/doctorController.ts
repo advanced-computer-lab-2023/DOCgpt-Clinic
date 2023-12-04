@@ -947,7 +947,7 @@ export const updateUnfilledPrescription = async (req: Request, res: Response) =>
       return res.status(404).json({ error: 'Prescription not found' });
     }
     // Check if the prescription is already filled
-    if (prescription.filled) {
+    if (prescription.status=="filled") {
       return res.status(400).json({ error: 'Prescription has already been filled' });
     }
     // Check if the medicine is already in the prescription
