@@ -12,12 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.addPrescriptionToCart = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
 exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
 const doctorModel_2 = __importDefault(require("../models/doctorModel"));
+const axios_1 = __importDefault(require("axios"));
 // Create a new prescription
 const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -189,7 +191,6 @@ const addMedicineToPrescription = (req, res) => __awaiter(void 0, void 0, void 0
     try {
         const { prescriptionId, } = req.query;
         const { dosage, medicine, medicineName } = req.body;
-        // Validate the incoming data as necessary
         const updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(prescriptionId, { $push: { Medicines: medicine } }, { new: true, runValidators: true } // Options to return the updated document and run schema validators
         );
         if (!updatedPrescription) {
@@ -202,3 +203,69 @@ const addMedicineToPrescription = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.addMedicineToPrescription = addMedicineToPrescription;
+const addPrescriptionToCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const username = tokenDB && tokenDB.username;
+        // Check if the patient exists
+        const patient = yield patientModel_1.default.findOne({ username });
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+        const medicineInfoArray = [];
+        const { prescriptionId } = req.body;
+        // Find the prescription by ID
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).json({ error: 'Prescription not found' });
+        }
+        for (const medicine of prescription.Medicines) {
+            const { medicineName, dosage, quantity } = medicine;
+            // Get medicine ID
+            const idResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getId', {
+                medicineName
+            });
+            const medicineId = idResponse.data.medicineId;
+            console.log(idResponse);
+            // Get medicine price
+            const priceResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getPrice', {
+                medicineName
+            });
+            const medicinePrice = Number(priceResponse.data.medicinePrice);
+            const v = { medicineId, quantity, medicineName, medicinePrice, prescriptionId };
+            // Add medicine information to the array
+            medicineInfoArray.push({
+                medicineName,
+                medicineId,
+                medicinePrice,
+                quantity,
+                prescriptionId
+            });
+            try {
+                const nn = yield axios_1.default.post('http://localhost:3000/api/cart/addMed', v, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+            }
+            catch (error) {
+                console.error('Error adding medicine to cart:', error);
+                return res.status(500).json({ error });
+            }
+        }
+        prescription.status == "filled";
+        yield prescription.save();
+        // Respond with the accumulated medicine information
+        return res.status(200).json({
+            message: 'Prescription added to cart successfully',
+            medicines: medicineInfoArray,
+        });
+    }
+    catch (error) {
+        console.log('Error adding prescription to cart:', error);
+        return res.status(500).json({ error: 'Error adding prescription to cart' });
+    }
+});
+exports.addPrescriptionToCart = addPrescriptionToCart;
