@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getAllPrescriptionsPatient = exports.getpatientsPrescription = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
+exports.checkifexists = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -104,24 +104,6 @@ const updatePrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.updatePrescription = updatePrescription;
 // Get patients prescription by patient's username
-const getpatientsPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { username } = req.params;
-        const patient = yield patientModel_1.default.findOne({ username });
-        if (!patient) {
-            return res.status(404).json({ error: 'Patient not found' });
-        }
-        const prescription = yield perscriptionModel_1.default.find({ patientUsername: username });
-        if (!prescription) {
-            return res.status(404).json({ error: 'Prescription not found' });
-        }
-        res.json(prescription);
-    }
-    catch (error) {
-        res.status(500).json({ error: 'Failed to fetch prescription' });
-    }
-});
-exports.getpatientsPrescription = getpatientsPrescription;
 // Get all prescriptions for a specific patient by patient's username
 const getAllPrescriptionsPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -153,6 +135,24 @@ const getAllPrescriptionsPatient = (req, res) => __awaiter(void 0, void 0, void 
     }
 });
 exports.getAllPrescriptionsPatient = getAllPrescriptionsPatient;
+const getPrescriptionDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { prescriptionId } = req.body;
+        if (!prescriptionId) {
+            return res.status(400).json({ error: 'Prescription ID is required' });
+        }
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).json({ error: 'Prescription not found' });
+        }
+        return res.status(200).json({ prescription });
+    }
+    catch (error) {
+        console.error('Error getting prescription details:', error);
+        return res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getPrescriptionDetails = getPrescriptionDetails;
 const getAllPrescriptionsDoctor = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const authHeader = req.headers['authorization'];
@@ -200,3 +200,26 @@ const addMedicineToPrescription = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.addMedicineToPrescription = addMedicineToPrescription;
+const checkifexists = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.patientUsername;
+        // Check if the username is present
+        if (!username) {
+            return res.status(401).json({ error: 'Invalid username' });
+        }
+        // Assuming you want to check if a medicine with a specific name exists
+        const medicineName = req.body.medName;
+        console.log(medicineName);
+        // Check if the medicine exists in the prescriptions for the user
+        const medicineExists = yield perscriptionModel_1.default.findOne({
+            patientUsername: username,
+            'Medicines.medicineName': medicineName,
+        });
+        res.json({ exists: !!medicineExists });
+    }
+    catch (error) {
+        console.error('Error checking if medicine exists:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.checkifexists = checkifexists;
