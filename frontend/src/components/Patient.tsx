@@ -74,19 +74,19 @@ const Patient = ({ patient, doctor }: PatientProps) => {
     fetchHealthRecord();
   }, []);
 
-  if (!patient) {
-    return null;
-  }
-  const { name, username } = patient;
-
-  const handleClick = () => {
-    // Add your click event handling logic here
-    if (username) {
-      const params = new URLSearchParams();
-      params.append("patient", username);
-      navigate(`/doctor/patientInfo?${params.toString()}`);
+    if(!patient){
+        return null;
     }
-  };
+    const {name, username} = patient;
+    
+    const handleClick = () => {
+        // Add your click event handling logic here
+        if(username){
+            const params = new URLSearchParams();
+            params.append('patient', username);
+            navigate(`/doctor/patientInfo?${params.toString()}`);
+        }
+    };
 
   const healthRecordClick = () => {
     if (username && !healthRecord) {
@@ -121,6 +121,37 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       console.error("Error creating conversation:", error);
     }
   };
+  const addPresc = async (name: any) => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.post(
+        "/routes/prescriptions",
+        {
+          patientUsername: name,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+  
+      // Extract prescriptionId from the response
+      const prescriptionId = response.data._id;
+  
+      // Append prescriptionId to the URL
+      const newWindow = window.open(
+        `http://localhost:3001/doctormed/${prescriptionId}`,
+        "_blank"
+      );
+  
+      if (!newWindow) {
+        console.error("Unable to open a new window.");
+      }
+    } catch (error) {
+      console.error("Error in addPresc:", error);
+    }
+  };
   return (
     <Card
       style={{
@@ -144,6 +175,7 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       >
         Create Conversation
       </Button>
+      <Button variant="contained" onClick={() => addPresc(name)}> Add Prescription</Button>
     </Card>
   );
 };

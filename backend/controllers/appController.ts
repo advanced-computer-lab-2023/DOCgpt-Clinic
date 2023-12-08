@@ -1,6 +1,6 @@
 import otpGenerator from 'otp-generator';
 import { Request, Response } from 'express';
-import { sendOTPByEmail } from './nodemailer';
+import { sendAnEmail } from './nodemailer';
 import patientModel from '../models/patientModel';
 import Doctor from '../models/doctorModel';
 import adminModel from '../models/adminModel';
@@ -56,7 +56,7 @@ export const SendResetmail = async (req: Request, res: Response) => {
   console.log(OTP);
   const text = `Your OTP is: ${OTP}`;
   const subject = 'Reset Forgotten Password';
-  const sent = await sendOTPByEmail(email, subject, text);
+  const sent = await sendAnEmail(email, subject, text);
 
   res.json({ message: 'OTP sent successfully' });
 };

@@ -1,9 +1,10 @@
-// PatientPrescriptions.js
+// DOCTOR Prescriptions.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import PrescriptionCard from '../../components/prescription'; // Adjust the import path
-import PatientAppBar from '../../components/patientBar/patientBar';
+import DrPrescription from '../../components/DrPrescription'; 
+import DrawerAppBar from '../../components/Doctor bar/doctorBar';
 import { Grid, Typography } from '@mui/material';
+
 interface Medicine {
   medicineName: string;
   dosage: string;
@@ -11,13 +12,13 @@ interface Medicine {
   _id: string;
 }
 interface Prescription {
-  doctorName: string;
+  PatientName: string;
   date: string;
   status: string;
   medicines: Medicine[];
   _id: string;
 }
-const PatientPrescriptions = () => {
+const DrPrescriptions = () => {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
 
 
@@ -25,7 +26,7 @@ const PatientPrescriptions = () => {
     const fetchPrescriptions = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        const response = await axios.get('/routes/getAllPrescriptionsPatient', {
+        const response = await axios.get('/routes/getAllPrescriptionsDoctor', {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`, // Replace with your authentication token
@@ -43,14 +44,14 @@ const PatientPrescriptions = () => {
 
   return (
     <>
-    <PatientAppBar />
+    <DrawerAppBar />
     <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
       MY PRESCRIPTIONS   
       </Typography>
     <Grid container spacing={2} >
       {prescriptions.map((prescription, index) => (
         <Grid item key={index}>
-            <PrescriptionCard prescription={prescription} />
+            <DrPrescription prescription={prescription} />
         </Grid>
       ))}
     </Grid>
@@ -59,4 +60,4 @@ const PatientPrescriptions = () => {
   );
 };
 
-export default PatientPrescriptions;
+export default DrPrescriptions;

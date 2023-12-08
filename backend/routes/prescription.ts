@@ -6,6 +6,8 @@ import {
   getAllPrescriptionsPatient,
   getAllPrescriptionsDoctor,
   addMedtoPresc,
+  getPrescriptionDetails,
+  addPrescriptionToCart,
   deleteMedicineFromPresc,
   viewMedicineNamesInPrescription,
   updateMedicineInPrescription
@@ -22,11 +24,14 @@ router.get('/prescriptions', getAllPrescriptions);
 router.put('/prescriptions/:id', updatePrescription);
 router.get('/viewMedicineNamesInPrescription', viewMedicineNamesInPrescription);
 router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
+router.get('/getPrescriptionDetails',getPrescriptionDetails);
 router.get('/getAllPrescriptionsDoctor', getAllPrescriptionsDoctor);
 router.post('/addMedTopresc/:prescriptionId', addMedtoPresc);
-router.delete('/removeMedFromPresc', deleteMedicineFromPresc);
-router.patch('/updateMedicineInPrescription', updateMedicineInPrescription);
+router.get('/addToCart',  addPrescriptionToCart);
 
+
+router.delete('/removeMedFromPresc', deleteMedicineFromPresc);
+router.put('/updateMedicineInPrescription', updateMedicineInPrescription);
 
 
 export default router;

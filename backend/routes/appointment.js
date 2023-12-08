@@ -11,6 +11,7 @@ router.get("/", appointmentController_1.getAppointments);
 router.get("/getAll", appointmentController_1.getAllAppointments);
 router.get("/appP", appointmentController_1.getPapp);
 router.patch("/completed", appointmentController_1.complete);
+router.post("/cancelAppointment", appointmentController_1.cancelAppointment);
 router.post("/makeApp", appointmentController_1.paymenttt);
 router.post("/makeAppForFam", appointmentController_1.payment2);
 exports.default = router;

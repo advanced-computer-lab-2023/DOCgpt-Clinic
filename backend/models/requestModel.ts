@@ -1,14 +1,8 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
- interface IAppointment extends Document {
-    status: string;
-    doctor: string;
-    patient: string;
-    date: Date;
-  }
 
-export const appointmentSchema = new mongoose.Schema({
-    status: {
+export const requestSchema = new mongoose.Schema({
+    Appointmentstatus: {
         type: String,
         enum: ['upcoming', 'completed', 'cancelled', 'rescheduled'],
         required: false
@@ -21,7 +15,7 @@ export const appointmentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    date:{
+    AppointmentDate:{  //old appoitment date
         type: Date,
         required: true
     },
@@ -44,10 +38,21 @@ export const appointmentSchema = new mongoose.Schema({
         type: String,
         required: false,
       },
-      
+      status:{
+        type: String,
+        enum: ['pending', 'accepted', 'rejected'],
+        required: false
+      },
+      followUpDate:{
+        type: Date,
+        required: false
+      },
+      requestedBy:{
+        type: String,
+        required: false,
+      }
+  });
 
-});
+const requestModel= mongoose.model('request', requestSchema);
 
-const appointmentModel= mongoose.model('appoinment', appointmentSchema);
-
-export default appointmentModel;
+export default requestModel;

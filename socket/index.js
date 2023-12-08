@@ -39,17 +39,12 @@ io.on("connection", (socket) => {
         senderusername,
         text,
       });
-    } else {
-      // Handle the case where the user is not found or has no socketId
-      console.error(`User ${recieverusername} not found or has no socketId`);
-    }
-  });
+    });
   
-
-  //when disconnect
-  socket.on("disconnect", () => {
-    console.log("a user disconnected!");
-    removeUser(socket.id);
-    io.emit("getUsers", users);
+    //when disconnect
+    socket.on("disconnect", () => {
+      console.log("a user disconnected!");
+      removeUser(socket.id);
+      io.emit("getUsers", users);
+    });
   });
-});
