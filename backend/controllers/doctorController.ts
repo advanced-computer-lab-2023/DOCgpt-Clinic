@@ -622,6 +622,7 @@ try{
 
 import { createReadStream, createWriteStream } from 'fs';
 import appointmentModel from "../models/appointmentModel";
+import Prescription from "../models/perscriptionModel";
 
 export const uploadAndSubmitReqDocs = async (req: Request, res: Response) => {
   const uploadedFiles = req.files as Express.Multer.File[];
@@ -893,4 +894,40 @@ export const getTodayAppointments = async (req: Request, res: Response) => {
     .exec();
 
   res.status(200).json(appointments);
+};
+export const addprescription = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    const doctorUsername = tokenDB && tokenDB.username;
+
+
+
+    const {  patientUsername, status,Medicines } = req.body;
+      console.log("hi am herre");
+    // Check if the doctor exists
+    const doctor = await DoctorModel.findOne({ username: doctorUsername });
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found' });
+    }
+
+    // Check if the patient exists
+    const patient = await PatientModel.findOne({ username: patientUsername });
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    const prescription  = new Prescription({
+      doctorUsername,
+      patientUsername,
+      status,
+      Medicines
+    });
+
+    const savedPrescription = await prescription.save();
+    res.json(savedPrescription);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to create prescription' });
+  }
 };

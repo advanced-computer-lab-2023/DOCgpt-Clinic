@@ -12,4 +12,10 @@ router.post('/prescriptions', prescriptionController_1.createPrescription);
 router.get('/prescriptions', prescriptionController_1.getAllPrescriptions);
 // Update a prescription
 router.put('/prescriptions/:id', prescriptionController_1.updatePrescription);
+router.get('/viewMedicineNamesInPrescription', prescriptionController_1.viewMedicineNamesInPrescription);
+router.get('/getAllPrescriptionsPatient', prescriptionController_1.getAllPrescriptionsPatient);
+router.get('/getAllPrescriptionsDoctor', prescriptionController_1.getAllPrescriptionsDoctor);
+router.post('/addMedTopresc/:prescriptionId', prescriptionController_1.addMedtoPresc);
+router.delete('/removeMedFromPresc', prescriptionController_1.deleteMedicineFromPresc);
+router.patch('/updateMedicineInPrescription', prescriptionController_1.updateMedicineInPrescription);
 exports.default = router;

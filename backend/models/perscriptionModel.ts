@@ -1,4 +1,3 @@
-
 import mongoose, { Document, Model, Schema } from 'mongoose';
 
 const prescriptionSchema = new mongoose.Schema({
@@ -14,10 +13,27 @@ const prescriptionSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
-  filled: {
-    type: Boolean,
-    default: false,
+  status: {
+    type: String,
+    default:"unfilled",
   },
+  Medicines: [
+    {
+      medicineName:{
+       type:String ,
+       required: false,
+
+      },
+      dosage: {
+        type: Number,
+        required: false,
+      },
+      quantity: {
+        type: Number,
+        required: false,
+      },
+    },
+  ],
 });
 
 const Prescription = mongoose.model('Prescription', prescriptionSchema);

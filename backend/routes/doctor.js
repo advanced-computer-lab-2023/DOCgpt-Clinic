@@ -31,6 +31,7 @@ router.post("/addHealthRecord", doctorController_1.addHealthRecord);
 router.patch("/updateEmail", doctorController_1.updateDoctorEmail);
 router.patch("/updateRate", doctorController_1.updateDoctorHourlyRate);
 router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
+router.post("/addprescription", doctorController_1.addprescription);
 //create follow up
 router.post("/followup", doctorController_1.createfollowUp);
 router.patch("/addtimeslot", doctorController_1.addTimeSlots);

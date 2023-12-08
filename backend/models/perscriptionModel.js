@@ -17,10 +17,26 @@ const prescriptionSchema = new mongoose_1.default.Schema({
         type: Date,
         default: Date.now,
     },
-    filled: {
-        type: Boolean,
-        default: false,
+    status: {
+        type: String,
+        default: "unfilled",
     },
+    Medicines: [
+        {
+            medicineName: {
+                type: String,
+                required: false,
+            },
+            dosage: {
+                type: Number,
+                required: false,
+            },
+            quantity: {
+                type: Number,
+                required: false,
+            },
+        },
+    ],
 });
 const Prescription = mongoose_1.default.model('Prescription', prescriptionSchema);
 exports.default = Prescription;
