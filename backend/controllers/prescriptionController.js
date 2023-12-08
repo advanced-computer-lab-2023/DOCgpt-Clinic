@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getAllPrescriptionsPatient = exports.getpatientsPrescription = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
+exports.updateMedicineInPrescription = exports.getAllPrescriptionsDoctor = exports.getAllPrescriptionsPatient = exports.getpatientsPrescription = exports.updatePrescription = exports.getAllPrescriptions = exports.viewMedicineNamesInPrescription = exports.addMedtoPresc = exports.deleteMedicineFromPresc = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -49,33 +49,87 @@ const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.createPrescription = createPrescription;
 // Adjust the path accordingly
+const deleteMedicineFromPresc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const prescriptionId = req.query.prescriptionId; // Consider using req.params if using route parameters
+        const { medicineName } = req.body; // Extract medicineName from req.body
+        // Ensure that medicineName is provided
+        if (!medicineName) {
+            return res.status(400).send({ message: 'Medicine name is required.' });
+        }
+        const updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(prescriptionId, { $pull: { Medicines: { medicineName } } }, // Assumes medicineName is a direct field
+        { new: true });
+        if (!updatedPrescription) {
+            return res.status(404).send({ message: 'Prescription not found or medicine not in prescription.' });
+        }
+        res.status(200).send({ message: 'Medicine removed from prescription successfully.', updatedPrescription });
+    }
+    catch (error) {
+        res.status(500).send({ message: 'Error removing medicine from prescription', error });
+    }
+});
+exports.deleteMedicineFromPresc = deleteMedicineFromPresc;
 const addMedtoPresc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const prescriptionId = req.params.prescriptionId;
-        const { medicineName, quantity, dosage } = req.body; // Additional details from the request body
-        console.log(medicineName);
-        console.log(dosage);
-        console.log(quantity);
-        // Find the prescription and update it
-        const updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(prescriptionId, {
-            $push: {
-                Medicines: {
-                    medicineName,
-                    dosage,
-                    quantity,
+        const { medicineName, quantity, dosage } = req.body;
+        // Find the prescription and check if the medicine already exists
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).send({ message: 'Prescription not found.' });
+        }
+        const existingMedicineIndex = prescription.Medicines.findIndex(med => med.medicineName === medicineName);
+        let updatedPrescription;
+        if (existingMedicineIndex !== -1) {
+            // Medicine exists, increment the quantity
+            const incrementQuantity = { [`Medicines.${existingMedicineIndex}.quantity`]: quantity };
+            updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(prescriptionId, { $inc: incrementQuantity }, { new: true });
+        }
+        else {
+            // Medicine does not exist, add as a new entry
+            updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(prescriptionId, {
+                $push: {
+                    Medicines: {
+                        medicineName,
+                        dosage,
+                        quantity,
+                    },
                 },
-            },
-        }, { new: true });
-        console.log("ana henaaaaaa");
-        // Send success response
+            }, { new: true });
+        }
         res.status(200).send({ message: 'Medicine added to prescription successfully.', updatedPrescription });
     }
     catch (error) {
-        // Handle errors
         res.status(500).send({ message: 'Error adding medicine to prescription', error });
     }
 });
 exports.addMedtoPresc = addMedtoPresc;
+const viewMedicineNamesInPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        // Extracting prescriptionId from query parameters
+        const prescriptionId = req.query.prescriptionId;
+        if (!prescriptionId) {
+            return res.status(400).send({ message: 'Prescription ID is required.' });
+        }
+        // Find the prescription by ID and select only the Medicines array
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId).select('Medicines');
+        if (!prescription) {
+            return res.status(404).send({ message: 'Prescription not found.' });
+        }
+        // Extract medicineName, dosage, and quantity from each item in the Medicines array
+        const medicines = prescription.Medicines.map(medicine => ({
+            medicineName: medicine.medicineName,
+            dosage: medicine.dosage,
+            quantity: medicine.quantity
+        }));
+        // Send the list of medicines (including name, dosage, and quantity) as a response
+        res.status(200).send({ medicines });
+    }
+    catch (error) {
+        res.status(500).send({ message: 'Error retrieving medicines from prescription', error });
+    }
+});
+exports.viewMedicineNamesInPrescription = viewMedicineNamesInPrescription;
 // Get all prescriptions
 const getAllPrescriptions = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -183,20 +237,30 @@ const getAllPrescriptionsDoctor = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.getAllPrescriptionsDoctor = getAllPrescriptionsDoctor;
-const addMedicineToPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updateMedicineInPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { prescriptionId, } = req.query;
-        const { dosage, medicine, medicineName } = req.body;
-        // Validate the incoming data as necessary
-        const updatedPrescription = yield perscriptionModel_1.default.findByIdAndUpdate(prescriptionId, { $push: { Medicines: medicine } }, { new: true, runValidators: true } // Options to return the updated document and run schema validators
-        );
-        if (!updatedPrescription) {
-            return res.status(404).send({ message: 'Prescription not found' });
+        const prescriptionId = req.query.prescriptionId; // Consider using req.params if using route parameters
+        const { medicineName, quantity, dosage } = req.body;
+        console.log("aa ");
+        // Find the prescription
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        if (!prescription) {
+            return res.status(404).send({ message: 'Prescription not found.' });
         }
-        res.status(200).send({ message: 'Medicine added successfully', updatedPrescription });
+        // Find the index of the medicine to update in the Medicines array
+        const medicineIndex = prescription.Medicines.findIndex((med) => med.medicineName === medicineName);
+        if (medicineIndex === -1) {
+            return res.status(404).send({ message: 'Medicine not found in the prescription.' });
+        }
+        // Update the medicine details
+        prescription.Medicines[medicineIndex].quantity = quantity;
+        prescription.Medicines[medicineIndex].dosage = dosage;
+        // Save the updated prescription
+        const updatedPrescription = yield prescription.save();
+        res.status(200).send({ message: 'Medicine details updated successfully.', updatedPrescription });
     }
     catch (error) {
-        res.status(500).send({ message: 'Error adding medicine to prescription', error });
+        res.status(500).send({ message: 'Error updating medicine details in prescription', error });
     }
 });
-exports.addMedicineToPrescription = addMedicineToPrescription;
+exports.updateMedicineInPrescription = updateMedicineInPrescription;

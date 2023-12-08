@@ -6,6 +6,9 @@ import {
   getAllPrescriptionsPatient,
   getAllPrescriptionsDoctor,
   addMedtoPresc,
+  deleteMedicineFromPresc,
+  viewMedicineNamesInPrescription,
+  updateMedicineInPrescription
 } from '../controllers/prescriptionController';
 
 const router = express.Router();
@@ -18,11 +21,12 @@ router.get('/prescriptions', getAllPrescriptions);
 
 // Update a prescription
 router.put('/prescriptions/:id', updatePrescription);
-
+router.get('/viewMedicineNamesInPrescription', viewMedicineNamesInPrescription);
 router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
 router.get('/getAllPrescriptionsDoctor', getAllPrescriptionsDoctor);
 router.post('/addMedTopresc/:prescriptionId', addMedtoPresc);
-
+router.delete('/removeMedFromPresc', deleteMedicineFromPresc);
+router.put('/updateMedicineInPrescription', updateMedicineInPrescription);
 
 
 export default router;
