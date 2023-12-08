@@ -43,38 +43,114 @@ export const createPrescription = async (req: Request, res: Response) => {
   };
 // Adjust the path accordingly
 
-export const addMedtoPresc = async (req: Request, res: Response) => {
-  try {
-    const prescriptionId = req.params.prescriptionId;
 
-    const { medicineName, quantity,dosage } = req.body; // Additional details from the request body
- console.log(medicineName);
- console.log(dosage);
- console.log(quantity);
-    // Find the prescription and update it
+
+
+  
+export const deleteMedicineFromPresc = async (req: Request, res: Response) => {
+  try {
+    const prescriptionId = req.query.prescriptionId; // Consider using req.params if using route parameters
+    const { medicineName } = req.body; // Extract medicineName from req.body
+
+    // Ensure that medicineName is provided
+    if (!medicineName) {
+      return res.status(400).send({ message: 'Medicine name is required.' });
+    }
+
     const updatedPrescription = await Prescription.findByIdAndUpdate(
       prescriptionId,
-      {
-        $push: {
-          Medicines: {
-            medicineName,
-            dosage,
-            quantity,
-          },
-        },
-      },
+      { $pull: { Medicines: { medicineName } } }, // Assumes medicineName is a direct field
       { new: true }
     );
-console.log("ana henaaaaaa");
-    // Send success response
-    res.status(200).send({ message: 'Medicine added to prescription successfully.', updatedPrescription });
+
+    if (!updatedPrescription) {
+      return res.status(404).send({ message: 'Prescription not found or medicine not in prescription.' });
+    }
+
+    res.status(200).send({ message: 'Medicine removed from prescription successfully.', updatedPrescription });
   } catch (error) {
-    // Handle errors
-    res.status(500).send({ message: 'Error adding medicine to prescription', error });
+    res.status(500).send({ message: 'Error removing medicine from prescription', error });
   }
 };
 
-  
+
+export const addMedtoPresc = async (req: Request, res: Response) => {
+  try {
+    const prescriptionId = req.params.prescriptionId;
+    const { medicineName, quantity, dosage } = req.body;
+
+    // Find the prescription and check if the medicine already exists
+    const prescription = await Prescription.findById(prescriptionId);
+    if (!prescription) {
+      return res.status(404).send({ message: 'Prescription not found.' });
+    }
+
+    const existingMedicineIndex = prescription.Medicines.findIndex(med => med.medicineName === medicineName);
+
+    let updatedPrescription;
+
+    if (existingMedicineIndex !== -1) {
+      // Medicine exists, increment the quantity
+      const incrementQuantity = { [`Medicines.${existingMedicineIndex}.quantity`]: quantity };
+      updatedPrescription = await Prescription.findByIdAndUpdate(
+        prescriptionId,
+        { $inc: incrementQuantity },
+        { new: true }
+      );
+    } else {
+      // Medicine does not exist, add as a new entry
+      updatedPrescription = await Prescription.findByIdAndUpdate(
+        prescriptionId,
+        {
+          $push: {
+            Medicines: {
+              medicineName,
+              dosage,
+              quantity,
+            },
+          },
+        },
+        { new: true }
+      );
+    }
+
+    res.status(200).send({ message: 'Medicine added to prescription successfully.', updatedPrescription });
+  } catch (error) {
+    res.status(500).send({ message: 'Error adding medicine to prescription', error });
+  }
+};
+export const viewMedicineNamesInPrescription = async (req: Request, res: Response) => {
+  try {
+    // Extracting prescriptionId from query parameters
+    const prescriptionId = req.query.prescriptionId as string;
+
+    if (!prescriptionId) {
+      return res.status(400).send({ message: 'Prescription ID is required.' });
+    }
+
+    // Find the prescription by ID and select only the Medicines array
+    const prescription = await Prescription.findById(prescriptionId).select('Medicines');
+
+    if (!prescription) {
+      return res.status(404).send({ message: 'Prescription not found.' });
+    }
+
+    // Extract medicineName, dosage, and quantity from each item in the Medicines array
+    const medicines = prescription.Medicines.map(medicine => ({
+      medicineName: medicine.medicineName,
+      dosage: medicine.dosage,
+      quantity: medicine.quantity
+    }));
+    
+    // Send the list of medicines (including name, dosage, and quantity) as a response
+    res.status(200).send({ medicines });
+  } catch (error) {
+    res.status(500).send({ message: 'Error retrieving medicines from prescription', error });
+  }
+};
+
+
+
 // Get all prescriptions
 export const getAllPrescriptions = async (req: Request, res: Response) => {
   try {
@@ -325,3 +401,36 @@ export const getPrescriptionDetails = async (req: Request, res: Response) => {
       return res.status(500).json({ error: 'Error adding prescription to cart' });
     }
   };
+
+
+
+export const updateMedicineInPrescription = async (req: Request, res: Response) => {
+
+  try {
+
+    const prescriptionId = req.query.prescriptionId; // Consider using req.params if using route parameters
+    const { medicineName, quantity, dosage } = req.body;
+console.log("aa ");
+    // Find the prescription
+    const prescription = await Prescription.findById(prescriptionId);
+
+    if (!prescription) {
+      return res.status(404).send({ message: 'Prescription not found.' });
+    }
+
+    // Find the index of the medicine to update in the Medicines array
+    const medicineIndex = prescription.Medicines.findIndex((med) => med.medicineName === medicineName);
+    if (medicineIndex === -1) {
+      return res.status(404).send({ message: 'Medicine not found in the prescription.' });
+    }
+
+    // Update the medicine details
+    prescription.Medicines[medicineIndex].quantity = quantity;
+    prescription.Medicines[medicineIndex].dosage = dosage;
+    // Save the updated prescription
+    const updatedPrescription = await prescription.save();
+    res.status(200).send({ message: 'Medicine details updated successfully.', updatedPrescription });
+  } catch (error) {
+    res.status(500).send({ message: 'Error updating medicine details in prescription', error });
+  }
+};

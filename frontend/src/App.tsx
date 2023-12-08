@@ -65,6 +65,7 @@ import Chat from "./components/chat";
 import SelectedPrescription from "./pages/patient/SelectedPres";
 import DrPrescription from "./pages/doctor/DrPrescription";
 import DrSelectedPrescription from "./pages/doctor/DrSelectedPres";
+import PrescriptionDetailsPage from "./components/presciptionDetails";
 import AllChatsPage from "./pages/patient/allchatsPagePatient";
 import AllchatsDoctor from "./pages/doctor/allchatsDoctor";
 function App() {
@@ -110,7 +111,6 @@ function App() {
           path="/patient/walletAmount"
           element={<ViewWalletAmountPage />}
         />
-        <Route path="/all-chats-patient" element={<AllChatsPage />} />
         <Route path="/doctor/walletAmount" element={<ViewWalletAmount />} />
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
