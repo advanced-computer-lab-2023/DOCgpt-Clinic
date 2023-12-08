@@ -77,7 +77,7 @@ export const createDoctors = async (req: Request, res: Response) => {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
-    const dateOfBirth = req.body.dateOfBirth;
+    const dateOfBirth = req.body.dateOfBirth; 
     const hourlyRate = req.body.hourlyRate;
     const affiliation = req.body.affiliation;
     const speciality = req.body.speciality;

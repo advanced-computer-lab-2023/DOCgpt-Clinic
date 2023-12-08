@@ -59,6 +59,7 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
                         <Button onClick={handleFollowUpClicked}>
                             Schedule Follow up
                         </Button>
+
                 </Grid>
             </Grid>
         </Card>
