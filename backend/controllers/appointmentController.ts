@@ -121,7 +121,7 @@ export const createNotificationWithCurrentDate = async (patientUsername : any , 
       subject ,
       msg,
     });
-
+    notification.save();
     console.log('Notification created:', notification);
     return notification;
   } catch (error) {
@@ -159,6 +159,8 @@ export const createAppointment = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Doctor not found app' });
     }
 
+    console.log("ana hena");
+    
     const newDate = new Date(date);
     doctor.timeslots = doctor.timeslots.filter((timeslot: { date?: { getTime: () => number } }) =>
       !(

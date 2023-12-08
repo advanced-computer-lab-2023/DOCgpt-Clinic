@@ -62,6 +62,11 @@ import ViewWalletAmount from "./components/viewWalletAmountDoctor";
 import TodayAppointmentsComponent from "./pages/doctor/todaysappDOC";
 import TodayAppointmentsPatient from "./pages/patient/todaysappP";
 import Chat from "./components/chat";
+import SelectedPrescription from "./pages/patient/SelectedPres";
+import DrPrescription from "./pages/doctor/DrPrescription";
+import DrSelectedPrescription from "./pages/doctor/DrSelectedPres";
+import AllChatsPage from "./pages/patient/allchatsPagePatient";
+import AllchatsDoctor from "./pages/doctor/allchatsDoctor";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -86,7 +91,9 @@ function App() {
         // <Route path="/doctor/main" Component={DoctorMain} />
         // <Route path="/doctor/login" Component={DoctorLogin} />
         //{" "}
-        <Route path="/patient/prescriptions" element={<PatientPrescriptions />}
+        <Route
+          path="/patient/prescriptions"
+          element={<PatientPrescriptions />}
         />
         <Route path="/patient/home" element={<HomePage />} />
         <Route path="/patient/link" element={<LinkFamilyMember />} />
@@ -103,6 +110,7 @@ function App() {
           path="/patient/walletAmount"
           element={<ViewWalletAmountPage />}
         />
+        <Route path="/all-chats-patient" element={<AllChatsPage />} />
         <Route path="/doctor/walletAmount" element={<ViewWalletAmount />} />
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
@@ -144,6 +152,7 @@ function App() {
           path="/view-doctor-documents"
           element={<ViewDoctorDocuments />}
         />
+        <Route path="/all-chats-doctor" element={<AllchatsDoctor />} />
         <Route
           path="/health-package-subscription/:packageName"
           Component={HealthPackageSubscriptionPage}
@@ -162,6 +171,9 @@ function App() {
         <Route path="/changepasswordpatient" Component={ChangePassword} />
         <Route path="/changepassworddoctor" Component={ChangePasswordDoctor} />
         <Route path="/changepasswordadmin" Component={ChangePasswordAdmin} />
+        <Route path="/selectedPres/:id" Component={SelectedPrescription} />
+        <Route path="/DrselectedPres/:id" Component={DrSelectedPrescription} />
+        <Route path="/doctor/DrPrescription" Component={DrPrescription} />
       </Routes>
     </Router>
   );

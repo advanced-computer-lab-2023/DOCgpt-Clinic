@@ -30,6 +30,7 @@ router.get("/pastApp", patientController_2.viewPastAppointments);
 router.get("/upcomingApp", patientController_1.viewUpcomingAppointments);
 router.get("/getAppByDate", patientController_1.getAppointmentByDate);
 router.get("/getAppByStatus", patientController_1.getAppointmentByStatus);
+router.get("/getpatientdocnames", patientController_1.getPatientDocNames);
 //HEALTH RECORD
 router.get("/healthRecord", patientController_1.viewMyHealthRecord);
 //sprint 2
@@ -59,4 +60,7 @@ const uploadsPatient = (0, multer_1.default)({ storage });
 router.patch('/uploadDocs', uploadsPatient.array('documents', 1), patientController_1.verifyTokenPatient, patientController_1.uploadPatintDocs);
 router.get('/patientDocument/:filename', patientController_1.openPatientDocument);
 router.patch('/deleteDocs', patientController_1.deletePatientDocs);
+router.patch('/rescheduleAppointments', patientController_1.rescheduleAppointments);
+router.get('/viewFamAppointments', patientController_1.viewFamAppointments);
+router.post('/requestFollowUp', patientController_1.sendRequestFollowUp);
 exports.default = router;

@@ -8,6 +8,7 @@ import {
   addMedtoPresc,
   getPrescriptionDetails,
   checkifexists,
+  addPrescriptionToCart
 } from '../controllers/prescriptionController';
 
 const router = express.Router();
@@ -26,6 +27,8 @@ router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
 router.get('/getPrescriptionDetails',getPrescriptionDetails);
 router.get('/getAllPrescriptionsDoctor', getAllPrescriptionsDoctor);
 router.post('/addMedTopresc/:prescriptionId', addMedtoPresc);
+router.get('/addToCart',  addPrescriptionToCart);
+
 
 
 

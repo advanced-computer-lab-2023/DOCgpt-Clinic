@@ -110,6 +110,7 @@ const createNotificationWithCurrentDate = (patientUsername, subject, msg) => __a
             subject,
             msg,
         });
+        notification.save();
         console.log('Notification created:', notification);
         return notification;
     }
@@ -141,6 +142,7 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         if (!doctor) {
             return res.status(404).json({ message: 'Doctor not found app' });
         }
+        console.log("ana hena");
         const newDate = new Date(date);
         doctor.timeslots = doctor.timeslots.filter((timeslot) => !(timeslot.date &&
             timeslot.date.getTime() === newDate.getTime()));

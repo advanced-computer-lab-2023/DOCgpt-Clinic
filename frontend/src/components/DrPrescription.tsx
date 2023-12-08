@@ -11,15 +11,15 @@ interface Medicine {
 }
 
 interface Prescription {
-  doctorName: string;
+  PatientName: string;
   date: string;
   status: string;
   medicines: Medicine[];
   _id: string;
 }
 
-const PrescriptionCard: React.FC<{ prescription: Prescription }> = ({ prescription }) => {
-  const { doctorName, date, status, medicines, _id} = prescription;
+const DrPrescriptionCard: React.FC<{ prescription: Prescription }> = ({ prescription }) => {
+  const { PatientName, date, status, medicines, _id} = prescription;
 const navigate=useNavigate();
   const handleDownload = () => {
     console.log('Download button clicked');
@@ -29,10 +29,10 @@ const navigate=useNavigate();
   //   console.log('Checkout button clicked');
   // };
   console.log(prescription._id);
-  console.log(prescription.doctorName);
+  console.log(prescription.PatientName);
   const handleCardClick = (id:String) => {
     console.log(id);
-    navigate(`/selectedPres/${id}`);
+    navigate(`/DrselectedPres/${id}`);
   };
   const formattedDate = prescription && new Date(prescription.date).toISOString().split('T')[0];
 
@@ -48,7 +48,7 @@ const navigate=useNavigate();
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary" gutterBottom>
-              <strong>Doctor:</strong> {doctorName}
+              <strong>Patient:</strong> {PatientName}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -76,4 +76,4 @@ const navigate=useNavigate();
   
 };  
 
-export default PrescriptionCard;
+export default DrPrescriptionCard;
