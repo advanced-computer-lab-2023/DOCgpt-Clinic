@@ -17,5 +17,6 @@ router.get('/getAllPrescriptionsPatient', prescriptionController_1.getAllPrescri
 router.get('/getPrescriptionDetails', prescriptionController_1.getPrescriptionDetails);
 router.get('/getAllPrescriptionsDoctor', prescriptionController_1.getAllPrescriptionsDoctor);
 router.post('/addMedTopresc/:prescriptionId', prescriptionController_1.addMedtoPresc);
-router.get('/addToCart', prescriptionController_1.addPrescriptionToCart);
+router.post('/addToCart', prescriptionController_1.addPrescriptionToCart);
+router.post('/changeStatus', prescriptionController_1.changeStatus);
 exports.default = router;

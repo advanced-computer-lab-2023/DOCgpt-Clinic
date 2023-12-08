@@ -7,7 +7,8 @@ import {
   getAllPrescriptionsDoctor,
   addMedtoPresc,
   getPrescriptionDetails,
-  addPrescriptionToCart
+  addPrescriptionToCart , 
+  changeStatus
 } from '../controllers/prescriptionController';
 
 const router = express.Router();
@@ -26,7 +27,9 @@ router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
 router.get('/getPrescriptionDetails',getPrescriptionDetails);
 router.get('/getAllPrescriptionsDoctor', getAllPrescriptionsDoctor);
 router.post('/addMedTopresc/:prescriptionId', addMedtoPresc);
-router.get('/addToCart',  addPrescriptionToCart);
+router.post('/addToCart',  addPrescriptionToCart);
+router.post('/changeStatus',  changeStatus);
+
 
 
 

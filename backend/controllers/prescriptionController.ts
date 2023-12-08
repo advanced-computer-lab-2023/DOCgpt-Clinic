@@ -123,14 +123,15 @@ export const getAllPrescriptionsPatient = async (req: Request, res: Response) =>
       // Find all prescriptions for the patient
       const prescriptions = await Prescription.find({ patientUsername: username })
           .populate('doctorUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
-          .select('doctorUsername date status Medicines');
+          .select(' id doctorUsername date status Medicines');
 
       // Construct response with full prescription details
       const prescriptionDetails = prescriptions.map(prescription => ({
           doctorName: prescription.doctorUsername, // Replace with just 'doctorUsername' if it's not a reference
           date: prescription.date,
           status: prescription.status,
-          medicines: prescription.Medicines
+          medicines: prescription.Medicines ,
+          _id : prescription._id 
       }));
 
       // Respond with the detailed prescriptions
@@ -224,11 +225,16 @@ export const getPrescriptionDetails = async (req: Request, res: Response) => {
       const token = authHeader && authHeader.split(' ')[1];
       const tokenDB = await tokenModel.findOne({ token });
       const username = tokenDB && tokenDB.username;
-  
+      console.log(token);
+
+      console.log(username);
         // Check if the patient exists
         const patient = await Patient.findOne({ username });
         if (!patient) {
+          console.log("im i the error");
+          
             return res.status(404).json({ error: 'Patient not found' });
+            
         }
       const medicineInfoArray = [];
 
@@ -271,7 +277,7 @@ export const getPrescriptionDetails = async (req: Request, res: Response) => {
         });
 
         try {
-         const nn =  await axios.post('http://localhost:3000/api/cart/addMed', v, {
+         const nn =  await axios.post('http://localhost:3000/api/cart/addToCart', v, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -293,5 +299,43 @@ export const getPrescriptionDetails = async (req: Request, res: Response) => {
     } catch (error) {
       console.log('Error adding prescription to cart:', error);
       return res.status(500).json({ error: 'Error adding prescription to cart' });
+    }
+  };
+
+
+
+
+  export const changeStatus = async (req: Request, res: Response) => {
+    try {
+      const { prescriptionId } = req.body;
+  
+      // Check if the prescription ID is provided
+      if (!prescriptionId) {
+        return res.status(400).json({ error: 'Prescription ID is required.' });
+      }
+  
+      // Find the prescription by ID
+      const prescription = await Prescription.findById(prescriptionId);
+  
+      // Check if the prescription exists
+      if (!prescription) {
+        return res.status(404).json({ error: 'Prescription not found.' });
+      }
+  
+      // Update the prescription status
+       if(prescription.status=="filled"){
+        prescription.status="unfilled";
+       }
+       else{
+        prescription.status="filled"
+       }
+      // Save the updated prescription
+      await prescription.save();
+  
+      // Respond with the updated prescription
+      res.json({ message: 'Prescription status updated successfully.', prescription });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
   };
