@@ -130,7 +130,8 @@ export const getAllPrescriptionsPatient = async (req: Request, res: Response) =>
           doctorName: prescription.doctorUsername, // Replace with just 'doctorUsername' if it's not a reference
           date: prescription.date,
           status: prescription.status,
-          medicines: prescription.Medicines
+          medicines: prescription.Medicines,
+          _id:prescription._id
       }));
 
       // Respond with the detailed prescriptions
@@ -141,7 +142,7 @@ export const getAllPrescriptionsPatient = async (req: Request, res: Response) =>
 };
 export const getPrescriptionDetails = async (req: Request, res: Response) => {
   try {
-    const { prescriptionId } = req.body;
+    const { prescriptionId } = req.query;
 
     if (!prescriptionId) {
       return res.status(400).json({ error: 'Prescription ID is required' });
@@ -159,6 +160,7 @@ export const getPrescriptionDetails = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
   export const getAllPrescriptionsDoctor = async (req: Request, res: Response) => {
     try {
       const authHeader = req.headers['authorization'];
@@ -181,7 +183,9 @@ export const getPrescriptionDetails = async (req: Request, res: Response) => {
             PatientName: prescription.patientUsername, // Replace with just 'doctorUsername' if it's not a reference
             date: prescription.date,
             status: prescription.status,
-            medicines: prescription.Medicines
+            medicines: prescription.Medicines,
+            _id:prescription._id
+
         }));
   
         // Respond with the detailed prescriptions

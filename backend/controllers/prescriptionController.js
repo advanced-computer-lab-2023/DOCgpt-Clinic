@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addPrescriptionToCart = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
+exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -126,7 +127,8 @@ const getAllPrescriptionsPatient = (req, res) => __awaiter(void 0, void 0, void 
             doctorName: prescription.doctorUsername,
             date: prescription.date,
             status: prescription.status,
-            medicines: prescription.Medicines
+            medicines: prescription.Medicines,
+            _id: prescription._id
         }));
         // Respond with the detailed prescriptions
         res.json(prescriptionDetails);
@@ -138,7 +140,7 @@ const getAllPrescriptionsPatient = (req, res) => __awaiter(void 0, void 0, void 
 exports.getAllPrescriptionsPatient = getAllPrescriptionsPatient;
 const getPrescriptionDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { prescriptionId } = req.body;
+        const { prescriptionId } = req.query;
         if (!prescriptionId) {
             return res.status(400).json({ error: 'Prescription ID is required' });
         }
@@ -174,7 +176,8 @@ const getAllPrescriptionsDoctor = (req, res) => __awaiter(void 0, void 0, void 0
             PatientName: prescription.patientUsername,
             date: prescription.date,
             status: prescription.status,
-            medicines: prescription.Medicines
+            medicines: prescription.Medicines,
+            _id: prescription._id
         }));
         // Respond with the detailed prescriptions
         res.json(prescriptionDetails);
