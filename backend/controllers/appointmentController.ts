@@ -121,7 +121,7 @@ export const createNotificationWithCurrentDate = async (patientUsername : any , 
       subject ,
       msg,
     });
-
+    notification.save();
     console.log('Notification created:', notification);
     return notification;
   } catch (error) {
@@ -134,7 +134,7 @@ export const createAppointment = async (req: Request, res: Response) => {
   const doctorUsername = req.body.doctorUsername;
   const date = req.body.date;
   const status = 'upcoming';
-  const type = 'new appointment';
+  const type = 'Regular';
   const price = Number(req.body.price);
 
   try {
@@ -159,6 +159,8 @@ export const createAppointment = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Doctor not found app' });
     }
 
+    console.log("ana hena");
+    
     const newDate = new Date(date);
     doctor.timeslots = doctor.timeslots.filter((timeslot: { date?: { getTime: () => number } }) =>
       !(
@@ -177,6 +179,7 @@ export const createAppointment = async (req: Request, res: Response) => {
       date: new Date(date),
       type: type,
       price: price,
+      scheduledBy: username
     });
      
     const patientEmail = patient.email; // Adjust this based on your patient model structure
@@ -397,9 +400,23 @@ export const createAppointment22 = async (req: Request, res: Response,username:s
 
   try {
    
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
+
+    if (!tokenDB) {
+      return res.status(404).json({ error: 'Token not found' });
+    }
+
+    const username2 = tokenDB.username;
     const patient = await patientModel.findOne({ username });
 
     if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    const famMember = await patientModel.findOne({ username });
+
+    if (!famMember) {
       return res.status(404).json({ error: 'Patient not found' });
     }
 
@@ -423,6 +440,7 @@ export const createAppointment22 = async (req: Request, res: Response,username:s
       date: new Date(date),
       type: type,
       price: price,
+      scheduledBy:username2
     });
 
     return appointment;
@@ -464,14 +482,17 @@ export const cancelAppointment = async (req: Request, res: Response) => {
     };
     doctor.timeslots.push(newTimeSlot);
     const currentDate = new Date();
-    const givenDate = new Date(date); // Replace with your actual date
+const givenDate = new Date(date);
     
-    const timeDifference = currentDate.getTime() - givenDate.getTime();
-    
-    // Check if the time difference is greater than or equal to 24 hours (in milliseconds)
-    const isMorethan24Hours = timeDifference >= 24 * 60 * 60 * 1000;
-    
-    if (!isMorethan24Hours) {
+const timeDifference =   givenDate.getTime()- currentDate.getTime() ;
+console.log(currentDate.getTime());
+console.log(givenDate.getTime());
+
+
+// Check if the time difference is less than 24 hours (in milliseconds)
+const isLessthan24Hours = timeDifference < 24 * 60 * 60 * 1000;
+console.log(timeDifference);
+    if (!isLessthan24Hours) {
       doctor.walletBalance = doctor.walletBalance-  price;
       patient.walletBalance = patient.walletBalance +price;
       await patient.save();

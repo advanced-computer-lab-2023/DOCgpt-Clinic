@@ -12,6 +12,9 @@ import adminModel from "../models/adminModel";
 import patientModel from "../models/patientModel";
 import packageModel from "../models/packageModel";
 import healthRecordModel from "../models/healthRecordModel";
+import prescriptionModel from '../models/perscriptionModel';
+import requestModel from "../models/requestModel";
+import { createNotificationWithCurrentDate } from "./appointmentController";
 import fs from 'fs';
 
 export const getDoctors = async (req: Request, res: Response) => {
@@ -298,7 +301,8 @@ const doctorUsername=tokenDB?.username;
           doctor: doctorUsername,
           patient: patientUsername,
           date: date,
-          type:type
+          type:type,
+          scheduledBy: doctorUsername
       });
 
       res.status(201).json(appoinment);
@@ -622,6 +626,7 @@ try{
 
 import { createReadStream, createWriteStream } from 'fs';
 import appointmentModel from "../models/appointmentModel";
+import doctorModel from "../models/doctorModel";
 
 export const uploadAndSubmitReqDocs = async (req: Request, res: Response) => {
   const uploadedFiles = req.files as Express.Multer.File[];
@@ -874,6 +879,63 @@ export const getContentType = (filename: string) => {
       return 'application/octet-stream';
   }
 };
+
+
+export const rescheduleAppointments = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
+
+    var username;
+  if(tokenDB){
+    username=tokenDB.username;
+  }
+  else{
+    return res.status(404).json({ error: 'username not found' });
+  }
+    
+  const { appointmentId, date} = req.body;
+  const newDate = new Date(date);
+  
+  const appointment = await appointmentModel.findById(appointmentId);
+ 
+  if(appointment){
+    const updatedAppointment = await AppointmentModel.create({
+      status: "rescheduled",
+      doctor: appointment.doctor,
+      patient: appointment.patient,
+      date: newDate, // Convert date to Date object
+      scheduledBy: username,
+  });
+
+    const doctor = await doctorModel.findOne({ username: username });
+
+    if(doctor){
+      doctor.timeslots.push({ date: appointment.date });
+      doctor.timeslots = doctor.timeslots.filter((timeslot: any) =>
+      timeslot.date && timeslot.date.getTime() !== newDate.getTime()
+
+    );
+      await doctor.save();
+
+    }
+    appointment.status = "cancelled";
+
+    await appointment.save();
+    res.status(200).json({ updatedAppointment });
+
+   
+    //Send Notificationss(system & mail)//username DOC & PATIENT
+    await createNotificationWithCurrentDate(appointment.patient, "Appointment Rescheduled", `Your appointment has been rescheduled by Doctor: ${username}`);
+
+  }
+} catch (error) {
+    console.error("Error handling file remove:", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+};
+
 export const getTodayAppointments = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -893,4 +955,209 @@ export const getTodayAppointments = async (req: Request, res: Response) => {
     .exec();
 
   res.status(200).json(appointments);
+};
+
+
+//accept/reject follow up request 
+
+export const acceptFollowUpRequest = async(req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
+
+    var username;
+  if(tokenDB){
+    username=tokenDB.username;
+  }
+  else{
+    return res.status(404).json({ error: 'username not found' });
+  }
+
+  const {requestId}= req.body;
+
+  const request = await requestModel.findById(requestId);
+  if(request){
+    request.status = "accepted";
+    await request.save();
+
+    const doctor = await doctorModel.findOne({ username});
+
+    
+var notificationSubject = "";
+var notificationMessage = "";
+
+if(doctor){
+  const newDate = request.followUpDate;
+
+  if(newDate){
+  doctor.timeslots = doctor.timeslots.filter((timeslot: { date: { getTime: () => number } }) =>
+    timeslot.date.getTime() !== newDate.getTime()
+  );
+  }
+   notificationSubject = "Follow Up Scheduled Successfully";
+   notificationMessage = `Your follow up appointment request has been accepted by Doctor: ${doctor.username}`;
+  await doctor.save();
+}
+
+    //Send Notificationss(system & mail)//username DOC & PATIENT
+
+    const appointment = await AppointmentModel.create({
+      status: "upcoming",
+      doctor: request.doctor,
+      patient: request.patient,
+      date: request.followUpDate, // Convert date to Date object
+      type: "Follow up",
+      price: 0,
+      paid: true,
+      scheduledBy: request.requestedBy,
+    });
+
+    if(request.requestedBy!=request.patient){
+      // send to request.patient and request.requestedBy
+      createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);
+      createNotificationWithCurrentDate(request.requestedBy, notificationSubject, notificationMessage);
+
+    }
+    else{
+      //send to request.patient
+      createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);
+    }
+
+
+
+    return res.status(200).json({ appointment });
+    
+
+  }
+}catch (error) {
+    console.error("Error accept Req", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+}
+
+export const rejectFollowUpRequest = async(req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
+
+    var username;
+  if(tokenDB){
+    username=tokenDB.username;
+  }
+  else{
+    return res.status(404).json({ error: 'username not found' });
+  }
+  
+  const doctor = doctorModel.findOne({ username});
+  if(!doctor){
+    return res.status(404).json({ error: 'doctor not found' });
+  }
+
+  const {requestId}= req.body;
+
+  const request = await requestModel.findById(requestId);
+  if(request){
+    request.status = "rejected";
+    await request.save();
+
+    //Send Notificationss(system & mail)//username DOC & PATIENT
+   const notificationSubject = "Follow Up Rejected";
+   const notificationMessage = `Your follow up request has been rejected by Doctor: ${username}`;
+    if(request.requestedBy!=request.patient){
+      // send to request.patient and request.requestedBy
+      const patientNotification= await createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);
+      const requestedByPatientNoti= await createNotificationWithCurrentDate(request.requestedBy, notificationSubject, notificationMessage);
+    }
+    else{
+      //send to request.patient
+      createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);
+
+    }
+
+    
+    return res.status(200).json({ message: "Request rejected successfully" });
+  }
+}catch (error) {
+    console.error("Error accept Req", error);
+    res.status(500).json({ error: "Internal server error." });
+  }
+}
+export const addOrUpdateDosage = async (req: Request, res: Response) => {
+  try {
+    const { prescriptionId, medicineName, dosage } = req.body;
+
+    if (!prescriptionId || !medicineName || !dosage) {
+      return res.status(400).json({ error: 'Prescription ID, medicine name, and dosage are required' });
+    }
+
+    const prescription = await prescriptionModel.findById(prescriptionId);
+
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescription not found' });
+    }
+
+    // Check if the medicine is already in the prescription
+    const existingMedicine = prescription.Medicines.find(
+      (medicine) => medicine.medicineName === medicineName
+    );
+
+    if (existingMedicine) {
+      // Update dosage if the medicine is already in the prescription
+      existingMedicine.dosage = dosage;
+    } else {
+      // Add the medicine with dosage if it's not in the prescription
+      prescription.Medicines.push({ medicineName, dosage });
+    }
+
+    // Save the updated prescription
+    await prescription.save();
+
+    return res.status(200).json({ message: 'Dosage added/updated successfully', prescription });
+  } catch (error) {
+    console.error('Error adding/updating dosage:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+export const updateUnfilledPrescription = async (req: Request, res: Response) => {
+  try {
+    const { prescriptionId, medicineName, dosage, quantity } = req.body;
+
+    if (!prescriptionId || !medicineName || !dosage || !quantity) {
+      return res.status(400).json({ error: 'Prescription ID, medicine name, quantity and dosage are required' });
+    }
+
+    const prescription = await prescriptionModel.findById(prescriptionId);
+
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescription not found' });
+    }
+    // Check if the prescription is already filled
+    if (prescription.status=="filled") {
+      return res.status(400).json({ error: 'Prescription has already been filled' });
+    }
+    // Check if the medicine is already in the prescription
+    const existingMedicine = prescription.Medicines.find(
+      (medicine) => medicine.medicineName === medicineName
+    );
+
+    if (existingMedicine) {
+      // Update dosage if the medicine is already in the prescription
+      existingMedicine.dosage = dosage;
+      existingMedicine.quantity= quantity;
+    } else {
+      // Add the medicine with dosage if it's not in the prescription
+      prescription.Medicines.push({ medicineName, dosage, quantity });
+    }
+   
+
+    // Save the updated prescription
+    await prescription.save();
+
+    return res.status(200).json({ message: 'Prescription updated successfully', prescription });
+  } catch (error) {
+    console.error('Error updating prescription:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
 };

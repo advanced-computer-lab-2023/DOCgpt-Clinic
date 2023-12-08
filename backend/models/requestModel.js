@@ -3,10 +3,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.appointmentSchema = void 0;
+exports.requestSchema = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
-exports.appointmentSchema = new mongoose_1.default.Schema({
-    status: {
+exports.requestSchema = new mongoose_1.default.Schema({
+    Appointmentstatus: {
         type: String,
         enum: ['upcoming', 'completed', 'cancelled', 'rescheduled'],
         required: false
@@ -19,7 +19,7 @@ exports.appointmentSchema = new mongoose_1.default.Schema({
         type: String,
         required: true
     },
-    date: {
+    AppointmentDate: {
         type: Date,
         required: true
     },
@@ -42,6 +42,19 @@ exports.appointmentSchema = new mongoose_1.default.Schema({
         type: String,
         required: false,
     },
+    status: {
+        type: String,
+        enum: ['pending', 'accepted', 'rejected'],
+        required: false
+    },
+    followUpDate: {
+        type: Date,
+        required: false
+    },
+    requestedBy: {
+        type: String,
+        required: false,
+    }
 });
-const appointmentModel = mongoose_1.default.model('appoinment', exports.appointmentSchema);
-exports.default = appointmentModel;
+const requestModel = mongoose_1.default.model('request', exports.requestSchema);
+exports.default = requestModel;

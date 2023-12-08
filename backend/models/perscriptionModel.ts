@@ -1,5 +1,5 @@
-
 import mongoose, { Document, Model, Schema } from 'mongoose';
+
 
 const prescriptionSchema = new mongoose.Schema({
   doctorUsername: {
