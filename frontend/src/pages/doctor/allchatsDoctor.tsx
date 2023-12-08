@@ -112,7 +112,7 @@ const AllChatsDoctor: React.FC = () => {
     if (clickedConversation) {
       const otherUsername = getOtherUsername(clickedConversation);
       localStorage.setItem("recieverusername", otherUsername);
-      navigate(`/chat/${conversationId}`);
+      navigate(`/chatDoctor/${conversationId}`);
     } else {
       console.error(`Conversation with ID ${conversationId} not found.`);
     }
@@ -151,7 +151,7 @@ const AllChatsDoctor: React.FC = () => {
         localStorage.setItem("recieverusername", selectedPatient);
         setResponse(response.data);
         console.log(response.data._id);
-        navigate(`/chat/${response.data._id}`);
+        navigate(`/chatDoctor/${response.data._id}`);
       } catch (error) {
         console.error("Error creating conversation:", error);
       }

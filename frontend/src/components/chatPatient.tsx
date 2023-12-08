@@ -24,7 +24,7 @@ interface Message {
   text: string;
 }
 
-const Chat = () => {
+const ChatPatient = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setarrivalMessage] = useState<{
@@ -35,7 +35,7 @@ const Chat = () => {
   const [openDialog, setOpenDialog] = useState(true); // Open the dialog by default
 
   const { conversationId } = useParams<{ conversationId: string }>();
-  const socket = useRef(io("ws://localhost:3201"));
+  const socket = useRef(io("ws://localhost:3202"));
   const chatContainer = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const username = localStorage.getItem("username");
@@ -114,14 +114,15 @@ const Chat = () => {
       console.error("Error sending message:", error);
     }
   };
-  // const handleCloseDialog = () => {
-  //   setOpenDialog(false);
-  //   navigate("/all-chats-patient"); // Replace "/your-specific-page" with your actual page path
-  // };
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    navigate("/all-chats-patient"); // Replace "/your-specific-page" with your actual page path
+  };
   return (
     <Container>
       <Dialog
         open={openDialog}
+        onClose={handleCloseDialog}
         maxWidth="xl"
         style={{
           width: 1000,
@@ -163,9 +164,9 @@ const Chat = () => {
                   style={{
                     backgroundColor:
                       message.sender === username ? "#2196f3" : "#e0e0e0",
-                    padding: "10px",
-                    borderRadius: "8px",
-                    maxWidth: "70%",
+                    padding: "5px",
+                    borderRadius: "10px",
+                    maxWidth: "50%",
                     position: "relative", // Adjusted positioning
                   }}
                 >
@@ -198,4 +199,4 @@ const Chat = () => {
     </Container>
   );
 };
-export default Chat;
+export default ChatPatient;

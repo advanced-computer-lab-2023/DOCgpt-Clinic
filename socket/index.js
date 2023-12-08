@@ -1,8 +1,10 @@
-const io = require("socket.io")(3201, {
-  cors: {
-    origin: "http://localhost:3002",
-  },
-});
+
+  const io = require("socket.io")(3202, {
+    cors: {
+      origin: ["http://localhost:3002", "http://localhost:3001"],
+    },
+  });
+
 
 let users = [];
 
