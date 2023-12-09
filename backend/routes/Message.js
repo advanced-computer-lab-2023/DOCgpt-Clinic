@@ -8,4 +8,5 @@ const messageController_1 = require("../controllers/messageController");
 const router = express_1.default.Router();
 router.post('/addMessage', messageController_1.createMessage);
 router.get('/getMessages/:conversationId', messageController_1.getMsgs);
+router.get('/getLastMessage', messageController_1.getLastMessage);
 exports.default = router;

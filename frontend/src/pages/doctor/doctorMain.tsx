@@ -1,48 +1,90 @@
-import React, { useEffect, useState } from 'react';
-import { Doctor as DoctorModel } from '../../models/doctor';
-import Doctor from '../../components/Doctor';
-import { Button, Container, Grid, Typography } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import { Doctor as DoctorModel } from "../../models/doctor";
+import Doctor from "../../components/Doctor";
+import {
+  Button,
+  Container,
+  Grid,
+  Typography,
+  Paper,
+  List,
+  ListItem,
+  ListItemText,
+} from "@mui/material";
+import axios from "axios";
 
 function DoctorMain() {
   const [doctor, setDoctor] = useState<DoctorModel | null>(null);
+  const [todaysAppointments, setTodaysAppointments] = useState<any[]>([]);
   const doctorUsername = doctor?.username;
-  
+
   useEffect(() => {
     async function fetchDoctorData() {
       try {
-        const token=localStorage.getItem("authToken")
-        const response = await fetch(`/routes/doctors/getDoctor`,{
-          headers:{
-            Authorization:`Bearer ${token}`
-          }
-        }
-        );
-        if (response.ok) {
-          const doctorData: DoctorModel = await response.json();
+        const token = localStorage.getItem("authToken");
+
+        // Fetch doctor data
+        const doctorResponse = await fetch(`/routes/doctors/getDoctor`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (doctorResponse.ok) {
+          const doctorData: DoctorModel = await doctorResponse.json();
           setDoctor(doctorData);
+
+          // Fetch today's appointments for the doctor
+          const appointmentsResponse = await axios.get(
+            "/routes/doctors/todayapp",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setTodaysAppointments(appointmentsResponse.data);
         } else {
-          console.error('Failed to fetch doctor data');
+          console.error("Failed to fetch doctor data");
         }
       } catch (error) {
         console.error(error);
-        alert('An error occurred while fetching doctor data');
+        alert("An error occurred while fetching data");
       }
     }
 
     fetchDoctorData();
   }, []); // An empty dependency array means this effect runs once on component mount.
-
-  // empty array executes the function only one time
-  // no array executes the function every render 
-  
-
-
+  const handleStartMeeting = () => {
+    window.open("https://zoom.us/s/83812339297#success", "_blank");
+  };
   return (
     <Container>
       {doctor ? (
-        <Doctor 
-          doctor={doctor} 
-          doctorUsername={doctorUsername}/>
+        <>
+          <Doctor doctor={doctor} doctorUsername={doctorUsername} />
+          <Typography variant="h5" gutterBottom>
+            Today's Appointments
+          </Typography>
+          <Paper elevation={3} style={{ padding: 20 }}>
+            <List>
+              {todaysAppointments.map((appointment) => (
+                <ListItem key={appointment._id}>
+                  <ListItemText
+                    primary={appointment.patient}
+                    secondary={`Date: ${new Date(
+                      appointment.date
+                    ).toLocaleString()}`}
+                  />
+                  <button onClick={() => handleStartMeeting()}>
+                    Start Meeting
+                  </button>
+                </ListItem>
+              ))}
+            </List>
+          </Paper>
+        </>
       ) : (
         <p>Loading...</p>
       )}

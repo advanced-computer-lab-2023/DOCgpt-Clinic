@@ -26,31 +26,7 @@ const navigate=useNavigate();
     console.log('Download button clicked');
   };
 
-  const handleCheckout = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-    console.log(token); 
-    const prescriptionId = _id;
-
-    const response = await axios.post('/routes/addToCart', {
-      prescriptionId,
-    }, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      },
-    });
-
-    window.location.href = 'http://localhost:3001/CartView';
-
-  } catch (error: any) {
-    console.log("Error:", error); // Check what the error object contains
-
-  }
- // Log the response message
-
-      // If the backend call succeeds, navigate to another page (e.g., '/success')
-    
-  };
+  
   console.log(prescription._id);
   console.log(prescription.PatientName);
   const handleCardClick = (id:String) => {

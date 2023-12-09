@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.changeStatus = exports.updateMedicineInPrescription = exports.addPrescriptionToCart = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.viewMedicineNamesInPrescription = exports.addMedtoPresc = exports.deleteMedicineFromPresc = exports.createPrescription = void 0;
+exports.changeStatus = exports.updateMedicineInPrescription = exports.addPrescriptionToCart = exports.checkifexists = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.viewMedicineNamesInPrescription = exports.addMedtoPresc = exports.deleteMedicineFromPresc = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -256,18 +256,39 @@ const addMedicineToPrescription = (req, res) => __awaiter(void 0, void 0, void 0
     }
 });
 exports.addMedicineToPrescription = addMedicineToPrescription;
+const checkifexists = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const username = req.body.patientUsername;
+        // Check if the username is present
+        if (!username) {
+            return res.status(401).json({ error: 'Invalid username' });
+        }
+        // Assuming you want to check if a medicine with a specific name exists
+        const medicineName = req.body.medName;
+        console.log(medicineName);
+        // Check if the medicine exists in the prescriptions for the user
+        const medicineExists = yield perscriptionModel_1.default.findOne({
+            patientUsername: username,
+            'Medicines.medicineName': medicineName,
+        });
+        console.log("ana hena");
+        res.json({ exists: !!medicineExists });
+    }
+    catch (error) {
+        console.error('Error checking if medicine exists:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.checkifexists = checkifexists;
 const addPrescriptionToCart = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
         const tokenDB = yield tokenModel_1.default.findOne({ token });
         const username = tokenDB && tokenDB.username;
-        console.log(token);
-        console.log(username);
         // Check if the patient exists
         const patient = yield patientModel_1.default.findOne({ username });
         if (!patient) {
-            console.log("im i the error");
             return res.status(404).json({ error: 'Patient not found' });
         }
         const medicineInfoArray = [];
@@ -279,39 +300,24 @@ const addPrescriptionToCart = (req, res) => __awaiter(void 0, void 0, void 0, fu
         }
         for (const medicine of prescription.Medicines) {
             const { medicineName, dosage, quantity } = medicine;
-            // Get medicine ID
-            const idResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getId', {
-                medicineName
-            });
-            const medicineId = idResponse.data.medicineId;
-            console.log(idResponse);
-            // Get medicine price
-            const priceResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getPrice', {
-                medicineName
-            });
-            const medicinePrice = Number(priceResponse.data.medicinePrice);
-            const v = { medicineId, quantity, medicineName, medicinePrice, prescriptionId };
-            // Add medicine information to the array
-            medicineInfoArray.push({
-                medicineName,
-                medicineId,
-                medicinePrice,
-                quantity,
-                prescriptionId
-            });
             try {
-                const nn = yield axios_1.default.post('http://localhost:3000/api/cart/addToCart', v, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                // Get medicine ID
+                const idResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getId', { medicineName });
+                const medicineId = idResponse.data.medicineId;
+                // Get medicine price
+                const priceResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getPrice', { medicineName });
+                const medicinePrice = Number(priceResponse.data.medicinePrice);
+                const cartItem = { medicineId, quantity, medicineName, medicinePrice, prescriptionId };
+                // Add medicine information to the array
+                medicineInfoArray.push(cartItem);
+                // Add the item to the cart
+                yield axios_1.default.post('http://localhost:3000/api/cart/addToCart', cartItem, { headers: { Authorization: `Bearer ${token}` } });
             }
             catch (error) {
                 console.error('Error adding medicine to cart:', error);
-                return res.status(500).json({ error });
+                return res.status(500).json({ error: `Error adding medicine to cart: ${error.message}` });
             }
         }
-        prescription.status == "filled";
         yield prescription.save();
         // Respond with the accumulated medicine information
         return res.status(200).json({
@@ -320,8 +326,8 @@ const addPrescriptionToCart = (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     catch (error) {
-        console.log('Error adding prescription to cart:', error);
-        return res.status(500).json({ error: 'Error adding prescription to cart' });
+        console.error('Error adding prescription to cart:', error);
+        return res.status(500).json({ error: `Error adding prescription to cart: ${error.message}` });
     }
 });
 exports.addPrescriptionToCart = addPrescriptionToCart;

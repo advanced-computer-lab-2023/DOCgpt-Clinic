@@ -75,7 +75,6 @@ const getCountP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(404).json({ error: 'User not found' });
         }
         const notificationsCount = yield notificationModel_1.default.countDocuments({ patientUsername: username });
-        console.log(notificationsCount);
         res.json({ notificationsCount });
     }
     catch (error) {

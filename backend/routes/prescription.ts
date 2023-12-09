@@ -7,6 +7,7 @@ import {
   getAllPrescriptionsDoctor,
   addMedtoPresc,
   getPrescriptionDetails,
+  checkifexists,
   addPrescriptionToCart , 
   changeStatus,
   deleteMedicineFromPresc,
@@ -33,6 +34,9 @@ router.post('/addToCart',  addPrescriptionToCart);
 router.post('/changeStatus',  changeStatus);
 
 
+
+
+router.post('/checkmedicineexists',checkifexists);
 router.delete('/removeMedFromPresc', deleteMedicineFromPresc);
 router.put('/updateMedicineInPrescription', updateMedicineInPrescription);
 
