@@ -9,7 +9,7 @@ interface Timeslot {
 
 
 const ViewMyTimeSlots: React.FC = () => {
-    const selectedPatient = localStorage.getItem("selectedPatient");
+    const selectedAppointmentId = localStorage.getItem("selectedAppointmentId");
 
     const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
     const [selectedTimeslot, setSelectedTimeslot] = useState<Timeslot>();
@@ -37,15 +37,15 @@ const ViewMyTimeSlots: React.FC = () => {
     // Handle the selected timeslot as needed
     setSelectedTimeslot(selectedTimeslot);
   };
-  const submitFollowUp = () => {
-        createFollowUp();
+  const submitTimeSlot = () => {
+        doReschedule();
   }
-    const createFollowUp = async () => {
+    const doReschedule = async () => {
             try {
                 const token = localStorage.getItem("authToken");
                 if(selectedTimeslot){
-                    const response = await axios.post('/routes/doctors/followup', {
-                        patient: selectedPatient,
+                    const response = await axios.post('/routes/doctors/rescheduleApp', {
+                        appointmentId: selectedAppointmentId,
                         date: selectedTimeslot.date
                     }, {
                         headers: {
@@ -61,8 +61,7 @@ const ViewMyTimeSlots: React.FC = () => {
 
   return (
     <Container>
-        <p>Patient: {selectedPatient}</p>
-      <h2>Your Timeslots</h2>
+      <h2>Choose A Timeslot</h2>
       {timeslots.length === 0 ? (
         <p>No timeslots available</p>
       ) : (
@@ -85,7 +84,7 @@ const ViewMyTimeSlots: React.FC = () => {
           {/* Add other details of the selected timeslot as needed */}
         </div>
       )}
-      <Button onClick={submitFollowUp}> Submit</Button>
+      <Button onClick={submitTimeSlot}> Submit</Button>
     </Container>
   );
 };

@@ -1,10 +1,9 @@
-import styles from "../styles/Doctor.module.css";
+import React, { useState } from "react";
 import { Doctor as DoctorModel } from "../models/doctor";
-import { Button, Card, Stack, Typography } from "@mui/material";
+import { Button, Paper, Stack, Typography, useTheme } from "@mui/material";
 import UpdateDoctorEmail from "./UpdateDoctorEmail";
 import UpdateDoctorRate from "./UpdateDoctorRate";
 import UpdateDoctorHospital from "./UpdateDoctorHospital";
-import React, { useState } from "react";
 
 interface DoctorProps {
   doctor: DoctorModel;
@@ -14,12 +13,16 @@ interface DoctorProps {
 const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
   const [showUpdateEmailDialog, setshowUpdateEmailDialog] = useState(false);
   const [showUpdateRateDialog, setshowUpdateRateDialog] = useState(false);
-  const [showUpdateHospitalDialog, setshowUpdateHospitalDialog] =
-    useState(false);
-  // You can render an empty state, an error message, or return null
+  const [showUpdateHospitalDialog, setshowUpdateHospitalDialog] = useState(
+    false
+  );
+
+  const theme = useTheme();
+
   if (!doctor) {
-    return null; // Or render an empty state or error message
+    return null;
   }
+
   const {
     username,
     name,
@@ -31,76 +34,82 @@ const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
     email,
   } = doctor;
 
+  const paperStyle = {
+    padding: '50px', // Increase padding
+    width: '95%',    // Increase width
+    fontSize: '24px', // Increase font size
+  };
+
+  const titleStyle = {
+    fontSize: '32px',            // Increase title font size
+    color: theme.palette.primary.main,
+    fontWeight: 'bold',
+  };
+
   return (
-    <Card className={styles.doctorCard}>
+    <Paper elevation={3} style={paperStyle}>
       <Stack spacing={4}>
-        <Typography variant="h3"> Welcome, Dr. {name}</Typography>
+        <Typography variant="h3" style={titleStyle}>
+          Welcome, Dr. {name}
+        </Typography>
 
-        <div className={styles.cardSubtitles}>
-          Username:
-          <span className={styles.cardText}>{username}</span>
-        </div>
+        <div>
+          <Typography variant="body1">
+            Username: {username}
+          </Typography>
 
-        <div className={styles.cardSubtitles}>
-          Speciality:
-          <span className={styles.cardText}>{speciality}</span>
-        </div>
+          <Typography variant="body1">
+            Speciality: {speciality}
+          </Typography>
 
-        <div className={styles.cardSubtitles}>
-          Affiliation:
-          <span className={styles.cardText}>{affiliation}</span>
-          <Button onClick={() => setshowUpdateHospitalDialog(true)}>
-            Edit
-          </Button>
-        </div>
-        {showUpdateHospitalDialog && (
-          <UpdateDoctorHospital
-            onDismiss={() => setshowUpdateHospitalDialog(false)}
-            onSaved={() => {}}
-            doctorUsername={doctorUsername}
-          />
-        )}
-        <div className={styles.cardSubtitles}>
-          Hourly Rate:
-          <span className={styles.cardText}>{hourlyRate}</span>
-          <Button onClick={() => setshowUpdateRateDialog(true)}>Edit</Button>
-        </div>
-        {showUpdateRateDialog && (
-          <UpdateDoctorRate
-            onDismiss={() => setshowUpdateRateDialog(false)}
-            onSaved={() => {}}
-            doctorUsername={doctorUsername}
-          />
-        )}
+          <Typography variant="body1">
+            Affiliation: {affiliation}
+            <Button onClick={() => setshowUpdateHospitalDialog(true)}>
+              Edit
+            </Button>
+          </Typography>
+          {showUpdateHospitalDialog && (
+            <UpdateDoctorHospital
+              onDismiss={() => setshowUpdateHospitalDialog(false)}
+              onSaved={() => {}}
+              doctorUsername={doctorUsername}
+            />
+          )}
 
-        <div className={styles.cardSubtitles}>
-          Educational Background:{" "}
-          <span className={styles.cardText}>{educationalBackground}</span>{" "}
-        </div>
+          <Typography variant="body1">
+            Hourly Rate: {hourlyRate}
+            <Button onClick={() => setshowUpdateRateDialog(true)}>Edit</Button>
+          </Typography>
+          {showUpdateRateDialog && (
+            <UpdateDoctorRate
+              onDismiss={() => setshowUpdateRateDialog(false)}
+              onSaved={() => {}}
+              doctorUsername={doctorUsername}
+            />
+          )}
 
-        <div className={styles.cardSubtitles}>
-          Date Of Birth:
-          <span className={styles.cardText}>
-            {" "}
-            {new Date(dateOfBirth).toLocaleDateString()}{" "}
-            {/* Use toLocaleDateString() */}
-          </span>
-        </div>
+          <Typography variant="body1">
+            Educational Background: {educationalBackground}
+          </Typography>
 
-        <div className={styles.cardSubtitles}>
-          Email:
-          <span className={styles.cardText}>{email}</span>
-          <Button onClick={() => setshowUpdateEmailDialog(true)}>Edit</Button>
+          <Typography variant="body1">
+            Date Of Birth: {new Date(dateOfBirth).toLocaleDateString()}{" "}
+          </Typography>
+
+          <Typography variant="body1">
+            Email: {email}
+            <Button onClick={() => setshowUpdateEmailDialog(true)}>Edit</Button>
+          </Typography>
+          {showUpdateEmailDialog && (
+            <UpdateDoctorEmail
+              onDismiss={() => setshowUpdateEmailDialog(false)}
+              onSaved={() => {}}
+              doctorUsername={doctorUsername}
+            />
+          )}
         </div>
-        {showUpdateEmailDialog && (
-          <UpdateDoctorEmail
-            onDismiss={() => setshowUpdateEmailDialog(false)}
-            onSaved={() => {}}
-            doctorUsername={doctorUsername}
-          />
-        )}
       </Stack>
-    </Card>
+    </Paper>
   );
 };
 

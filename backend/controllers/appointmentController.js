@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cancelAppointment = exports.createAppointment22 = exports.payWithCredit = exports.payment2 = exports.paymenttt = exports.createAppointment = exports.createNotificationWithCurrentDate = exports.complete = exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = void 0;
+exports.getAppointmentById = exports.cancelAppointment = exports.createAppointment22 = exports.payWithCredit = exports.payment2 = exports.paymenttt = exports.createAppointment = exports.createNotificationWithCurrentDate = exports.complete = exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = void 0;
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel")); // Import your Doctor model
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
@@ -378,7 +378,7 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'cancelled';
-    const type = 'new appointment';
+    const type = 'Regular';
     const price = Number(req.body.price);
     try {
         const authHeader = req.headers['authorization'];
@@ -448,3 +448,9 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.cancelAppointment = cancelAppointment;
+const getAppointmentById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { appointmentId } = req.query;
+    const appointment = yield appointmentModel_1.default.findById(appointmentId);
+    return res.status(200).json({ appointment });
+});
+exports.getAppointmentById = getAppointmentById;

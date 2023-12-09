@@ -63,7 +63,7 @@ export default function SignIn() {
         navigate(`/patient/home`);
       }
       if (role == "doctor") {
-        navigate(`/doctor/home`);
+        navigate(`/doctor/todayapp`);
       }
       if (role == "admin") {
         navigate(`/admin/home`);

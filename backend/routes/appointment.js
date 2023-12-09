@@ -14,4 +14,5 @@ router.patch("/completed", appointmentController_1.complete);
 router.post("/cancelAppointment", appointmentController_1.cancelAppointment);
 router.post("/makeApp", appointmentController_1.paymenttt);
 router.post("/makeAppForFam", appointmentController_1.payment2);
+router.get("/getAppointmentById", appointmentController_1.getAppointmentById);
 exports.default = router;
