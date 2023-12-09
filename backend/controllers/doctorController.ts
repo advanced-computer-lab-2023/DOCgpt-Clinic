@@ -186,7 +186,34 @@ export const viewMyPatients = async (req: Request, res: Response) => {
     res.status(200).json(patients);
     // res.status(200).json(patients);
 };
+export const viewMyPatientsUsername = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const tokenDB = await tokenModel.findOne({ token });
 
+    if (!tokenDB) {
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
+
+    const doctorUsername = tokenDB.username;
+    const appointments = await AppointmentModel.find({ doctor: doctorUsername }).exec();
+
+    const usernames: string[] = [];
+
+    for (const appointment of appointments) {
+      const username = appointment.patient;
+      if (!usernames.includes(username)) {
+        usernames.push(username);
+      }
+    }
+
+    res.status(200).json(usernames);
+  } catch (error) {
+    console.error('Error fetching patient usernames:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 export const viewPatientsUpcoming = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -1134,9 +1161,9 @@ export const updateUnfilledPrescription = async (req: Request, res: Response) =>
       return res.status(404).json({ error: 'Prescription not found' });
     }
     // Check if the prescription is already filled
-    if (prescription.status=="filled") {
-      return res.status(400).json({ error: 'Prescription has already been filled' });
-    }
+    // if (prescription.status=="filled") {
+    //   return res.status(400).json({ error: 'Prescription has already been filled' });
+    // }
     // Check if the medicine is already in the prescription
     const existingMedicine = prescription.Medicines.find(
       (medicine) => medicine.medicineName === medicineName

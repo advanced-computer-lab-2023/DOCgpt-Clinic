@@ -2,6 +2,8 @@ import * as React from "react";
 import { useState } from "react";
 import { To, useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import ForumIcon from "@mui/icons-material/Forum";
 import {
   AppBar,
   Box,
@@ -76,6 +78,10 @@ export default function DrawerAppBar() {
   };
   const handleViewWalletBalance = () => {
     setIsWalletOpen(!isWalletOpen); // Toggle the wallet sidebar
+  };
+  const handleChatClick = () => {
+    // Redirect to the page displaying all conversations
+    navigate("/all-chats-patient");
   };
   const handleLogout = async () => {
     try {
@@ -183,6 +189,9 @@ export default function DrawerAppBar() {
             <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
               Logout
             </Button>
+            <IconButton style={{ color: "blue" }} onClick={handleChatClick}>
+              <ForumIcon />
+            </IconButton>
           </Box>
           <Box sx={{ display: "flex" }}>
             {isWalletOpen && (

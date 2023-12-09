@@ -30,6 +30,7 @@ router.get("/pastApp", patientController_2.viewPastAppointments);
 router.get("/upcomingApp", patientController_1.viewUpcomingAppointments);
 router.get("/getAppByDate", patientController_1.getAppointmentByDate);
 router.get("/getAppByStatus", patientController_1.getAppointmentByStatus);
+router.get("/getpatientdocnames", patientController_1.getPatientDocNames);
 //HEALTH RECORD
 router.get("/healthRecord", patientController_1.viewMyHealthRecord);
 //sprint 2
