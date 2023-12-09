@@ -1,22 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Doctor as DoctorModel } from '../../models/doctor';
-import Doctor from '../../components/Doctor';
-import { Button, Container, Grid, Typography } from '@mui/material';
+import { Button, Container, Typography } from '@mui/material';
+import Doctor from '../../components/Doctor'; // Import the Doctor component
 
 function DoctorMain() {
   const [doctor, setDoctor] = useState<DoctorModel | null>(null);
   const doctorUsername = doctor?.username;
-  
+
   useEffect(() => {
     async function fetchDoctorData() {
       try {
-        const token=localStorage.getItem("authToken")
-        const response = await fetch(`/routes/doctors/getDoctor`,{
-          headers:{
-            Authorization:`Bearer ${token}`
+        const token = localStorage.getItem("authToken");
+        const response = await fetch(`/routes/doctors/getDoctor`, {
+          headers: {
+            Authorization: `Bearer ${token}`
           }
-        }
-        );
+        });
+
         if (response.ok) {
           const doctorData: DoctorModel = await response.json();
           setDoctor(doctorData);
@@ -30,19 +30,12 @@ function DoctorMain() {
     }
 
     fetchDoctorData();
-  }, []); // An empty dependency array means this effect runs once on component mount.
-
-  // empty array executes the function only one time
-  // no array executes the function every render 
-  
-
+  }, []);
 
   return (
     <Container>
       {doctor ? (
-        <Doctor 
-          doctor={doctor} 
-          doctorUsername={doctorUsername}/>
+        <Doctor doctor={doctor} doctorUsername={doctorUsername} />
       ) : (
         <p>Loading...</p>
       )}

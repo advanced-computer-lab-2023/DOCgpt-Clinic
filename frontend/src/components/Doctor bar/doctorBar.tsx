@@ -16,10 +16,13 @@ import {
   ListItemText,
   Toolbar,
   Typography,
+  Menu,
+  MenuItem, // Import Menu and MenuItem
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
 import WalletIcon from "@mui/icons-material/Wallet";
+import PersonIcon from "@mui/icons-material/Person"; // Import PersonIcon
 import ViewWalletAmount from "../viewWalletAmountDoctor";
 
 import { ReactNode } from "react";
@@ -28,10 +31,9 @@ import appRoutes from "./doctorRoutes";
 const drawerWidth = 240;
 //const navItems = ["Home", "About", "Pharmacy", "Contact", "Login"];
 const navItems = [
-  { name: "Home", path: "/doctor/home" },
+  { name: "Home", path: "/doctor/todayapp" },
   { name: "Clinic", path: "/doctor/home" },
-  { name: "About", path: "/doctor/home" },
-  { name: "Contact", path: "/doctor/home" },
+ 
 ];
 
 export type RouteType = {
@@ -52,6 +54,7 @@ export type links = {
 export default function DrawerAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isWalletOpen, setIsWalletOpen] = useState(false); // State to manage the wallet sidebar
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null); // State for the anchor element of the menu
 
   const { username } = useParams();
   const navigate = useNavigate();
@@ -63,6 +66,11 @@ export default function DrawerAppBar() {
   const handleViewWalletBalance = () => {
     setIsWalletOpen(!isWalletOpen); // Toggle the wallet sidebar
   };
+  const handleMyProfileClick = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/doctor/home");
+  };
+
 
   const navigateTo = (route: To) => {
     navigate(route);
@@ -92,6 +100,14 @@ export default function DrawerAppBar() {
     } catch (error) {
       console.error("An error occurred:", error);
     }
+  };
+
+  
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
   };
   const renderMenuItems = (items: RouteType[]) => {
     return (
@@ -131,6 +147,16 @@ export default function DrawerAppBar() {
       {renderMenuItems(appRoutes)}
     </Box>
   );
+
+  const handleMywallet = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/doctor/walletAmount");
+  };
+  const handlechangepassword = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/changepassworddoctor");
+  };
+  
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -178,31 +204,18 @@ export default function DrawerAppBar() {
                 {item.name}
               </Button>
             ))}
-            <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
-              Logout
-            </Button>
           </Box>
-          <Box sx={{ display: "flex" }}>
-            {isWalletOpen && (
-              <Drawer
-                variant="temporary"
-                open={isWalletOpen}
-                onClose={handleViewWalletBalance}
-                ModalProps={{
-                  keepMounted: true, // Better open performance on mobile.
-                }}
-                sx={{
-                  display: { xs: "block", sm: "block" },
-                  "& .MuiDrawer-paper": {
-                    boxSizing: "border-box",
-                    width: drawerWidth,
-                  },
-                }}
-              >
-                {/* Render the ViewWalletBalance component in the wallet sidebar */}
-              </Drawer>
-            )}
-          </Box>
+          {/* User Menu */}
+          <IconButton
+            color="primary"
+            aria-label="User Menu"
+            aria-controls="user-menu"
+            aria-haspopup="true"
+            onClick={handleOpenMenu}
+          >
+            <PersonIcon />
+          </IconButton>
+          {/* User Menu */}
         </Toolbar>
       </AppBar>
       <nav>
@@ -224,9 +237,25 @@ export default function DrawerAppBar() {
           {drawer}
         </Drawer>
       </nav>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box component="main" sx={{ p: 9 }}>
         <Toolbar />
       </Box>
+
+      {/* User Menu */}
+      <Menu
+  anchorEl={anchorEl}
+  open={Boolean(anchorEl)}
+  onClose={handleCloseMenu}
+>
+  <MenuItem onClick={handleMyProfileClick}>My Profile</MenuItem>
+  <MenuItem onClick={handleMywallet}>My Wallet</MenuItem> {/* Add onClick here */}
+    <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
+  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+
+
+</Menu>
+      {/* User Menu */}
     </Box>
   );
 }
+
