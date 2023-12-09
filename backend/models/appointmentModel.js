@@ -38,7 +38,6 @@ exports.appointmentSchema = new mongoose_1.default.Schema({
         default: false,
         required: false,
     },
-
     scheduledBy: {
         type: String,
         required: false,
