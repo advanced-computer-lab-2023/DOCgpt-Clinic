@@ -35,7 +35,7 @@ const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         const usernameExists2 = yield doctorModel_2.default.findOne({ username });
         const usernameExists3 = yield adminModel_1.default.findOne({ username });
         if (emailExists) {
-            return res.status(401).json({ message: "email exists" });
+            return res.status(401).json({ message: 'email exists' });
         }
         if (emailExists2) {
             return res.status(401).json({ message: "email exists" });
@@ -72,7 +72,7 @@ const createPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     catch (error) {
         const err = error;
-        console.log('Error creating patient');
+        console.log("Error creating patient");
         res.status(505).json({ error: err.message });
     }
 });
@@ -973,6 +973,7 @@ const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
                 patient: appointment.patient,
                 date: newDate,
                 scheduledBy: username,
+                type: appointment.type
             });
             const doctor = yield doctorModel_2.default.findOne({
                 username: appointment.doctor,

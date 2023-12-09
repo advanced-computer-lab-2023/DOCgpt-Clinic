@@ -1113,6 +1113,7 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
         patient: appointment.patient,
         date: newDate, // Convert date to Date object
         scheduledBy: username,
+        type: appointment.type
       });
       const doctor = await doctorModel.findOne({
         username: appointment.doctor,

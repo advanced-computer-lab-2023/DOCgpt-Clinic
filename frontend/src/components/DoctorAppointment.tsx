@@ -14,33 +14,20 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
     if (!appointment) {
         return null; // Or render an empty state or error message
     }
-    const {status, patient, date, type} = appointment;
+    const {status, patient, date, type, _id} = appointment;
     const appointmentDate = new Date(date).toISOString().split('T')[0];
 
-    const handleAppointmentCompleted = async () => {
-        try {
-            const token=localStorage.getItem("authToken")
-            const response = await axios.patch(`/routes/appointments/completed`, {
-              // Add any additional data you want to include in the request body
-                status: status,
-                patient: patient,
-                date: date
-            },
-            {
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
-            });
-        
-            console.log('Appointment marked as completed:', response.data);
-        } catch (error) {
-            console.error('Error marking appointment as completed:', error);
-        }
+    const handleAppointmentReschedule = () => {
+        localStorage.setItem("selectedAppointmentId", _id);
+        navigate("/doctor/reschedule");
     } 
 
     const handleFollowUpClicked = () =>{
         localStorage.setItem("selectedPatient", patient);
         navigate("/doctor/followUp");
+    }
+    const handleCancel = () =>{
+        
     }
 
     return(
@@ -53,11 +40,14 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
                     <Typography> Type: {type}</Typography>
                 </Grid>
                 <Grid item xs={6} style={{display:'flex', justifyContent:'end', alignItems:'center'}}>
-                        <Button onClick={handleAppointmentCompleted}>
-                            Completed
+                        <Button onClick={handleAppointmentReschedule}>
+                            Reschedule
                         </Button>
                         <Button onClick={handleFollowUpClicked}>
                             Schedule Follow up
+                        </Button>
+                        <Button onClick={handleCancel}>
+                            Cancel
                         </Button>
                 </Grid>
             </Grid>

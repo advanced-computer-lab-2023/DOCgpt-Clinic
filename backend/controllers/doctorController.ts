@@ -77,7 +77,7 @@ export const createDoctors = async (req: Request, res: Response) => {
     const name = req.body.name;
     const email = req.body.email;
     const password = req.body.password;
-    const dateOfBirth = req.body.dateOfBirth;
+    const dateOfBirth = req.body.dateOfBirth; 
     const hourlyRate = req.body.hourlyRate;
     const affiliation = req.body.affiliation;
     const speciality = req.body.speciality;
@@ -448,7 +448,7 @@ function validatePassword(password: string) {
     }
   
     // Regular expression pattern to check for at least one capital letter and one number
-    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
+    const pattern = /^(?=.[A-Z])(?=.\d)/;
   
     // Use the test method to check if the password matches the pattern
     if (!pattern.test(password)) {
@@ -907,6 +907,7 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
       patient: appointment.patient,
       date: newDate, // Convert date to Date object
       scheduledBy: username,
+      type: appointment.type
   });
 
     const doctor = await doctorModel.findOne({ username: username });
@@ -1161,3 +1162,44 @@ export const updateUnfilledPrescription = async (req: Request, res: Response) =>
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
+
+export const viewRequests = async (req: Request, res: Response) => {
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token: token });
+
+    var username;
+  if(tokenDB){
+    username=tokenDB.username;
+  }
+  else{
+    return res.status(404).json({ error: 'username not found' });
+  }
+  
+  const doctor = doctorModel.findOne({ username});
+  if(!doctor){
+    return res.status(404).json({ error: 'doctor not found' });
+  }
+
+
+  const requests = await requestModel.find({doctor: username});
+  return res.status(200).json({requests});
+
+
+
+}catch (error) {
+  console.error("Error accept Req", error);
+  res.status(500).json({ error: "Internal server error." });
+}
+}
+
+
+
+export const getDoctorByUsername = async (req: Request, res: Response) => {
+  const {doctorUsername}= req.query;
+  const doctor = await DoctorModel.find({username: doctorUsername});
+  return res.status(200).json({ doctor });
+}

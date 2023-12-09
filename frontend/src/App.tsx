@@ -61,7 +61,14 @@ import ChangePasswordAdmin from "./components/changePasswordadmin";
 import ViewWalletAmount from "./components/viewWalletAmountDoctor";
 import TodayAppointmentsComponent from "./pages/doctor/todaysappDOC";
 import TodayAppointmentsPatient from "./pages/patient/todaysappP";
+
+import DoctorReschedule from "./pages/doctor/DoctorReschedule";
+
 import Chat from "./components/chat";
+import ViewFollowUpRequests from "./pages/doctor/ViewFollowUpRequests";
+import RequestFollowUp from "./pages/patient/RequestFollowUp";
+import PatientReschedule from "./pages/patient/PatientReschedule";
+import ViewFamMemAppointments from "./pages/patient/ViewFamMemAppointments";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -162,6 +169,14 @@ function App() {
         <Route path="/changepasswordpatient" Component={ChangePassword} />
         <Route path="/changepassworddoctor" Component={ChangePasswordDoctor} />
         <Route path="/changepasswordadmin" Component={ChangePasswordAdmin} />
+      
+      
+        <Route path="/doctor/reschedule" Component={DoctorReschedule} />
+        <Route path="/doctor/followUpRequests" Component={ViewFollowUpRequests} />
+
+        <Route path="/patient/followUp" Component={RequestFollowUp} />
+        <Route path="/patient/reschedule" Component={PatientReschedule} />
+        <Route path="/patient/famMemAppointments" Component={ViewFamMemAppointments} />
       </Routes>
     </Router>
   );
