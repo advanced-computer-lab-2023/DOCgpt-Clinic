@@ -13,6 +13,7 @@ router.get("/", doctorController_1.getDoctors);
 router.get("/getDoctor", doctorController_1.getDoctor);
 router.get("/searchPatient", doctorController_1.searchPatient);
 router.get("/viewMyPatients", doctorController_1.viewMyPatients);
+router.get("/viewMyPatientsUsername", doctorController_1.viewMyPatientsUsername);
 router.get("/selectPatient", doctorController_1.selectPatient);
 router.get("/viewPatientsUpcoming", doctorController_1.viewPatientsUpcoming);
 //APPOINTMENTS 
@@ -76,4 +77,6 @@ router.patch('/rejectFollowUpRequest', doctorController_1.rejectFollowUpRequest)
 //sprint 3
 router.post('/addOrUpdateDosage', doctorController_1.addOrUpdateDosage);
 router.patch('/updateUnfilledPrescription', doctorController_1.updateUnfilledPrescription);
+router.get('/viewRequests', doctorController_1.viewRequests);
+router.get('/getDoctorByUsername', doctorController_1.getDoctorByUsername);
 exports.default = router;

@@ -11,3 +11,30 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.dark-section {
+  display: flex; /* Use flexbox */
+  background-color: #333; /* Dark background color */
+  color: #fff; /* Light text color */
+  padding: 50px; /* Adjust padding based on your design */
+ 
+}
+
+.clinic-info {
+  display: flex; /* Use flexbox */
+  align-items: center; /* Center vertically */
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.clinic-logo {
+  align-items:left;
+  max-width: 100px; /* Adjust the size of the logo */
+  margin-right: 20px; /* Add margin for spacing */
+}
+
+.clinic-hours{
+  display: flex; /* Use flexbox */
+  align-items: right; /* Center vertically */
+  max-width: 600px;
+  margin: 0 auto;
+}

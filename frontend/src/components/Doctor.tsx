@@ -8,6 +8,8 @@ import UpdateDoctorHospital from "./UpdateDoctorHospital";
 interface DoctorProps {
   doctor: DoctorModel;
   doctorUsername: any;
+  doctor: DoctorModel;
+  doctorUsername: any;
 }
 
 const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {

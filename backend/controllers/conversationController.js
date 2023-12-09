@@ -46,11 +46,19 @@ const createConv = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
 exports.createConv = createConv;
 // get convs of user
 const getConv = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    const tokenDB = yield tokenModel_1.default.findOne({ token });
-    const firstusername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
-    const convos = yield conversation_1.default.find({ firstusername: firstusername });
-    res.status(201).json(convos);
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const username = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
+        const convos = yield conversation_1.default.find({
+            $or: [{ firstusername: username }, { secondusername: username }],
+        });
+        res.status(200).json(convos);
+    }
+    catch (error) {
+        console.error("Error fetching conversations:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
 });
 exports.getConv = getConv;

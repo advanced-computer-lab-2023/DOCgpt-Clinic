@@ -37,8 +37,8 @@ const navigate=useNavigate();
   const formattedDate = prescription && new Date(prescription.date).toISOString().split('T')[0];
 
   return (
-    <button onClick={() => handleCardClick(_id)}>
-<Card style={{ width: '400px', padding: '20px', margin: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+    <div style={{margin:'left', justifyContent: 'center', alignItems: 'center' }}>
+      <Card  style={{ borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', height: '300px', width: '500px' }}>
         <Grid container justifyContent="center" alignItems="center" spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h6" align="center">
@@ -46,32 +46,32 @@ const navigate=useNavigate();
             </Typography>
             <Divider style={{ margin: '8px 0' }} />
           </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body1" color="textSecondary" gutterBottom>
+          <Grid item xs={12} >
+            <Typography marginRight='30px' align="right"  fontSize="h3" color="textSecondary" gutterBottom >
+               {formattedDate}
+            </Typography>
+          </Grid>
+          <Grid item xs={12 }>
+            <Typography align="center" fontSize="h3" color="textSecondary" gutterBottom>
               <strong>Doctor:</strong> {doctorName}
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography variant="body2" color="textSecondary" gutterBottom>
-            <strong>Date:</strong> {formattedDate}
-            </Typography>
-          </Grid>
-          <Grid item xs={12}>
-            <Typography variant="body2" color="textSecondary" gutterBottom>
+            <Typography align="center" fontSize="h3" color="textSecondary" gutterBottom>
               <strong>Status:</strong> {status}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Divider style={{ margin: '8px 0' }} />
           </Grid>
-          <Grid item xs={12}>
-            <Button variant="outlined" color="primary" fullWidth>
+          <Grid container justifyContent="center" alignItems="center"item xs={12}>
+            <Button variant="contained" onClick={() => handleCardClick(_id)} >
               View Prescription
             </Button>
           </Grid>
         </Grid>
       </Card>
-    </button>
+      </div>
   );
   
 };  

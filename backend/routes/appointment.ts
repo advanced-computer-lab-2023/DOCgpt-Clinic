@@ -1,6 +1,6 @@
 import express from "express";
 import { createAppointment, getAllAppointments,
-     getAppointments, getPapp , complete, paymenttt, payment2 , cancelAppointment } from "../controllers/appointmentController";
+     getAppointments, getPapp , complete, paymenttt, payment2 , cancelAppointment, getAppointmentById } from "../controllers/appointmentController";
 
 
 
@@ -16,4 +16,6 @@ router.post("/cancelAppointment",cancelAppointment)
 router.post("/makeApp",paymenttt)
 router.post("/makeAppForFam",payment2)
 
+
+router.get("/getAppointmentById", getAppointmentById);
 export default router;

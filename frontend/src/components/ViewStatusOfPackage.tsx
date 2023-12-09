@@ -44,12 +44,16 @@ const ViewStatusOfPackage = () => {
 
   return (
     <div style={{ height: 400, width: '100%' }}>
-      <h2>Health Package Status</h2>
+      {/* <h2>Health Package Status</h2> */}
       <DataGrid
-        rows={healthPackageStatus}
-        columns={columns}
-        autoPageSize
-        checkboxSelection
+       rows={healthPackageStatus}
+       columns={columns}
+       disableRowSelectionOnClick
+       disableColumnSelector
+       disableColumnMenu
+       autoPageSize
+       
+        
       />
     </div>
   );

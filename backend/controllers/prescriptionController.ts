@@ -294,6 +294,32 @@ export const getPrescriptionDetails = async (req: Request, res: Response) => {
     }
   };
 
+  
+  export const checkifexists = async (req: Request, res: Response) => {
+    try {
+      const username=req.body.patientUsername;
+      // Check if the username is present
+      if (!username) {
+        return res.status(401).json({ error: 'Invalid username' });
+      }
+  
+      // Assuming you want to check if a medicine with a specific name exists
+      const medicineName = req.body.medName;
+      console.log(medicineName)
+      // Check if the medicine exists in the prescriptions for the user
+      const medicineExists = await Prescription.findOne({
+        patientUsername: username,
+        'Medicines.medicineName': medicineName,
+      });
+  console.log("ana hena");
+      res.json({ exists: !!medicineExists });
+    } catch (error) {
+      console.error('Error checking if medicine exists:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
+    }
+  };
+  
+
 
 
 

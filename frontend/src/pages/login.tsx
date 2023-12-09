@@ -50,6 +50,7 @@ export default function SignIn() {
       });
       const token = response.data.token;
       const username = response.data.username;
+      console.log(token);
       localStorage.setItem("authToken", token);
       localStorage.setItem("username", username);
       const role = response.data.role;

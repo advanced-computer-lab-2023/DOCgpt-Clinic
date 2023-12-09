@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response, Router } from 'express';
 import tokenModel from '../models/tokenModel';
 import message from '../models/message';
+import Conversation from '../models/conversation';
 
 export const createMessage = async (req: Request, res: Response) => {
     const authHeader = req.headers['authorization'];
@@ -30,4 +31,28 @@ export const getMsgs= async (req: Request, res: Response) => {
       }
     
 
+}
+export const getLastMessage = async (req: Request, res: Response) => {
+  try {
+    const conversationId = req.query.conversationId as string;
+
+    // Check if the conversation exists
+    const conversation = await Conversation.findById(conversationId);
+    if (!conversation) {
+      return res.status(404).json({ error: 'Conversation not found' });
+    }
+
+    // Fetch the last message for the conversation
+    const lastMessage = await message.findOne({ conversationId }).sort({ createdAt: -1 });
+
+
+    if (!lastMessage) {
+      return res.status(404).json({ error: 'No messages found for the conversation' });
+    }
+
+    res.status(200).json(lastMessage);
+  } catch (error) {
+    console.error('Error fetching last message:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
 }

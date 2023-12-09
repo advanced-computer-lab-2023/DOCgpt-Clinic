@@ -5,7 +5,9 @@ import Doctor from '../../components/Doctor'; // Import the Doctor component
 
 function DoctorMain() {
   const [doctor, setDoctor] = useState<DoctorModel | null>(null);
+  const [todaysAppointments, setTodaysAppointments] = useState<any[]>([]);
   const doctorUsername = doctor?.username;
+
 
   useEffect(() => {
     async function fetchDoctorData() {
@@ -20,12 +22,24 @@ function DoctorMain() {
         if (response.ok) {
           const doctorData: DoctorModel = await response.json();
           setDoctor(doctorData);
+
+          // Fetch today's appointments for the doctor
+          const appointmentsResponse = await axios.get(
+            "/routes/doctors/todayapp",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          setTodaysAppointments(appointmentsResponse.data);
         } else {
-          console.error('Failed to fetch doctor data');
+          console.error("Failed to fetch doctor data");
         }
       } catch (error) {
         console.error(error);
-        alert('An error occurred while fetching doctor data');
+        alert("An error occurred while fetching data");
       }
     }
 

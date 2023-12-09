@@ -37,13 +37,20 @@ export const createConv = async (req: Request, res: Response) => {
 
 // get convs of user
 
-export const getConv= async (req: Request, res: Response) => {
+export const getConv = async (req: Request, res: Response) => {
+  try {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     const tokenDB = await tokenModel.findOne({ token });
 
-    const firstusername=tokenDB?.username;
-    const convos =await Conversation.find({firstusername:firstusername});
-    res.status(201).json(convos);
-
-}
+    const username = tokenDB?.username;
+    const convos = await Conversation.find({
+      $or: [{ firstusername: username }, { secondusername: username }],
+    });
+    
+    res.status(200).json(convos);
+  } catch (error) {
+    console.error("Error fetching conversations:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};

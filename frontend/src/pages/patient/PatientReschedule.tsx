@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Button, Card, Container } from '@mui/material';
@@ -8,44 +9,42 @@ interface Timeslot {
 }
 
 
-const ViewMyTimeSlots: React.FC = () => {
-    const selectedPatient = localStorage.getItem("selectedPatient");
+const PatientReschedule: React.FC = () => {
 
+    const selectedAppointmentId = localStorage.getItem("selectedAppointmentId");
+    const selectedDoctor = localStorage.getItem("selectedDoctor");
     const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
     const [selectedTimeslot, setSelectedTimeslot] = useState<Timeslot>();
 
     useEffect(() => {
-        // Fetch timeslots from the backend
-        const fetchData = async () => {
-        try {
-            const token = localStorage.getItem("authToken");
-            const response = await axios.get('/routes/doctors/getSlots', {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            setTimeslots(response.data.timeslots);
-        } catch (error) {
-            console.error('Error fetching timeslots:', error);
-        }
-    };
-
-    fetchData();
-  }, []); // Empty dependency array ensures that this effect runs only once on component mount
+      // Fetch doctor data only if selectedDoctor is defined
+        const fetchDoctorData = async () => {
+          try {
+            const response = await axios.get(`/routes/doctors/getDoctorByUsername?doctorUsername=${selectedDoctor}`);
+            console.log(response.data.doctor[0]);
+            setTimeslots(response.data.doctor[0].timeslots);
+            console.log(response.data.doctor[0].timeslots);
+            
+          } catch (error) {
+            console.error('Error fetching doctor data:', error);
+          }
+        };
+        fetchDoctorData();
+    }, []);
 
   const handleTimeslotSelect = (selectedTimeslot: Timeslot) => {
     // Handle the selected timeslot as needed
     setSelectedTimeslot(selectedTimeslot);
   };
-  const submitFollowUp = () => {
-        createFollowUp();
+  const submitTimeSlot = () => {
+        doReschedule();
   }
-    const createFollowUp = async () => {
+    const doReschedule = async () => {
             try {
                 const token = localStorage.getItem("authToken");
                 if(selectedTimeslot){
-                    const response = await axios.post('/routes/doctors/followup', {
-                        patient: selectedPatient,
+                    const response = await axios.patch('/routes/patient/rescheduleAppointments', {
+                        appointmentId: selectedAppointmentId,
                         date: selectedTimeslot.date
                     }, {
                         headers: {
@@ -61,8 +60,8 @@ const ViewMyTimeSlots: React.FC = () => {
 
   return (
     <Container>
-        <p>Patient: {selectedPatient}</p>
-      <h2>Your Timeslots</h2>
+      
+      <h2>Choose A Timeslot</h2>
       {timeslots.length === 0 ? (
         <p>No timeslots available</p>
       ) : (
@@ -85,9 +84,9 @@ const ViewMyTimeSlots: React.FC = () => {
           {/* Add other details of the selected timeslot as needed */}
         </div>
       )}
-      <Button onClick={submitFollowUp}> Submit</Button>
+      <Button onClick={submitTimeSlot}> Submit</Button>
     </Container>
   );
 };
 
-export default ViewMyTimeSlots;
+export default PatientReschedule;
