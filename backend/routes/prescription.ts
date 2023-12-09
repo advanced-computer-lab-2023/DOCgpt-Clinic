@@ -7,7 +7,11 @@ import {
   getAllPrescriptionsDoctor,
   addMedtoPresc,
   getPrescriptionDetails,
-  addPrescriptionToCart
+  checkifexists,
+  addPrescriptionToCart,
+  deleteMedicineFromPresc,
+  viewMedicineNamesInPrescription,
+  updateMedicineInPrescription
 } from '../controllers/prescriptionController';
 
 const router = express.Router();
@@ -20,8 +24,7 @@ router.get('/prescriptions', getAllPrescriptions);
 
 // Update a prescription
 router.put('/prescriptions/:id', updatePrescription);
-
-//sprint 3
+router.get('/viewMedicineNamesInPrescription', viewMedicineNamesInPrescription);
 router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
 router.get('/getPrescriptionDetails',getPrescriptionDetails);
 router.get('/getAllPrescriptionsDoctor', getAllPrescriptionsDoctor);
@@ -29,6 +32,11 @@ router.post('/addMedTopresc/:prescriptionId', addMedtoPresc);
 router.get('/addToCart',  addPrescriptionToCart);
 
 
+
+
+router.post('/checkmedicineexists',checkifexists);
+router.delete('/removeMedFromPresc', deleteMedicineFromPresc);
+router.put('/updateMedicineInPrescription', updateMedicineInPrescription);
 
 
 export default router;

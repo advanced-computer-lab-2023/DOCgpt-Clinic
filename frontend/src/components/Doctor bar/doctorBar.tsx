@@ -21,7 +21,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
 import WalletIcon from "@mui/icons-material/Wallet";
 import ViewWalletAmount from "../viewWalletAmountDoctor";
-
+import ForumIcon from "@mui/icons-material/Forum";
 import { ReactNode } from "react";
 import appRoutes from "./doctorRoutes";
 
@@ -67,6 +67,10 @@ export default function DrawerAppBar() {
   const navigateTo = (route: To) => {
     navigate(route);
     setIsDrawerOpen(false);
+  };
+  const handleChatClick = () => {
+    // Redirect to the page displaying all conversations
+    navigate("/all-chats-doctor");
   };
   const handleLogout = async () => {
     try {
@@ -181,6 +185,9 @@ export default function DrawerAppBar() {
             <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
               Logout
             </Button>
+            <IconButton style={{ color: "blue" }} onClick={handleChatClick}>
+              <ForumIcon />
+            </IconButton>
           </Box>
           <Box sx={{ display: "flex" }}>
             {isWalletOpen && (

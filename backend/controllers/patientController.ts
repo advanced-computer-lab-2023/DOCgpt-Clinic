@@ -478,6 +478,37 @@ export const getPatientAppointments = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+export const getPatientDocNames = async (req: Request, res: Response) => {
+  console.log("im in");
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    console.log(token);
+
+    const patientUsername = tokenDB?.username;
+
+    const appointments = await AppointmentModel.find({ patient: patientUsername }).exec();
+
+    // Use a Set to keep track of unique doctor usernames
+    const uniqueDoctorNamesSet = new Set<string>();
+
+    // Add each doctor name to the Set
+    appointments.forEach(appointment => {
+      if (appointment.doctor) {
+        uniqueDoctorNamesSet.add(appointment.doctor);
+      }
+    });
+
+    // Convert Set back to an array
+    const uniqueDoctorNames = Array.from(uniqueDoctorNamesSet);
+
+    res.status(200).json(uniqueDoctorNames);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 //VIEW PAST APPOINTMENTS
 export const viewPastAppointments = async (req: Request, res: Response) => {

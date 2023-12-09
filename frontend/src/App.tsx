@@ -64,7 +64,15 @@ import TodayAppointmentsPatient from "./pages/patient/todaysappP";
 
 import DoctorReschedule from "./pages/doctor/DoctorReschedule";
 
-import Chat from "./components/chat";
+import Chat from "./components/chatPatient";
+import SelectedPrescription from "./pages/patient/SelectedPres";
+import DrPrescription from "./pages/doctor/DrPrescription";
+import DrSelectedPrescription from "./pages/doctor/DrSelectedPres";
+import PrescriptionDetailsPage from "./components/presciptionDetails";
+import AllChatsPage from "./pages/patient/allchatsPagePatient";
+import AllchatsDoctor from "./pages/doctor/allchatsDoctor";
+import ChatPatient from "./components/chatPatient";
+import ChatDoctor from "./components/chatDoctor";
 import ViewFollowUpRequests from "./pages/doctor/ViewFollowUpRequests";
 import RequestFollowUp from "./pages/patient/RequestFollowUp";
 import PatientReschedule from "./pages/patient/PatientReschedule";
@@ -93,7 +101,9 @@ function App() {
         // <Route path="/doctor/main" Component={DoctorMain} />
         // <Route path="/doctor/login" Component={DoctorLogin} />
         //{" "}
-        <Route path="/patient/prescriptions" element={<PatientPrescriptions />}
+        <Route
+          path="/patient/prescriptions"
+          element={<PatientPrescriptions />}
         />
         <Route path="/patient/home" element={<HomePage />} />
         <Route path="/patient/link" element={<LinkFamilyMember />} />
@@ -143,7 +153,8 @@ function App() {
           path="/patient/viewtodapp"
           Component={TodayAppointmentsPatient}
         />
-        <Route path="/chat/:conversationId" element={<Chat />} />
+        <Route path="/chatPatient/:conversationId" element={<ChatPatient />} />
+        <Route path="/chatDoctor/:conversationId" element={<ChatDoctor />} />
         <Route path="/doctor/followUp" element={<ViewMyTimeSlots />} />
         <Route path="/patient/doctorinfo" Component={DoctorInfo} />
         <Route path="/patient/ViewMyFam/:date/:price" Component={ViewMyFam} />
@@ -151,6 +162,8 @@ function App() {
           path="/view-doctor-documents"
           element={<ViewDoctorDocuments />}
         />
+        <Route path="/all-chats-doctor" element={<AllchatsDoctor />} />
+        <Route path="/all-chats-patient" element={<AllChatsPage />} />
         <Route
           path="/health-package-subscription/:packageName"
           Component={HealthPackageSubscriptionPage}
@@ -177,6 +190,9 @@ function App() {
         <Route path="/patient/followUp" Component={RequestFollowUp} />
         <Route path="/patient/reschedule" Component={PatientReschedule} />
         <Route path="/patient/famMemAppointments" Component={ViewFamMemAppointments} />
+        <Route path="/selectedPres/:id" Component={SelectedPrescription} />
+        <Route path="/DrselectedPres/:id" Component={DrSelectedPrescription} />
+        <Route path="/doctor/DrPrescription" Component={DrPrescription} />
       </Routes>
     </Router>
   );

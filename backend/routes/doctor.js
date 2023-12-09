@@ -13,6 +13,7 @@ router.get("/", doctorController_1.getDoctors);
 router.get("/getDoctor", doctorController_1.getDoctor);
 router.get("/searchPatient", doctorController_1.searchPatient);
 router.get("/viewMyPatients", doctorController_1.viewMyPatients);
+router.get("/viewMyPatientsUsername", doctorController_1.viewMyPatientsUsername);
 router.get("/selectPatient", doctorController_1.selectPatient);
 router.get("/viewPatientsUpcoming", doctorController_1.viewPatientsUpcoming);
 //APPOINTMENTS 

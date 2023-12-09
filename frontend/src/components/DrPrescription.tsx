@@ -11,15 +11,15 @@ interface Medicine {
 }
 
 interface Prescription {
-  doctorName: string;
+  PatientName: string;
   date: string;
   status: string;
   medicines: Medicine[];
   _id: string;
 }
 
-const PrescriptionCard: React.FC<{ prescription: Prescription }> = ({ prescription }) => {
-  const { doctorName, date, status, medicines, _id} = prescription;
+const DrPrescriptionCard: React.FC<{ prescription: Prescription }> = ({ prescription }) => {
+  const { PatientName, date, status, medicines, _id} = prescription;
 const navigate=useNavigate();
   const handleDownload = () => {
     console.log('Download button clicked');
@@ -29,16 +29,16 @@ const navigate=useNavigate();
   //   console.log('Checkout button clicked');
   // };
   console.log(prescription._id);
-  console.log(prescription.doctorName);
+  console.log(prescription.PatientName);
   const handleCardClick = (id:String) => {
     console.log(id);
-    navigate(`/selectedPres/${id}`);
+    navigate(`/DrselectedPres/${id}`);
   };
   const formattedDate = prescription && new Date(prescription.date).toISOString().split('T')[0];
 
   return (
-    <div style={{margin:'left', justifyContent: 'center', alignItems: 'center' }}>
-      <Card  style={{ borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', height: '300px', width: '500px' }}>
+    <button onClick={() => handleCardClick(_id)}>
+<Card style={{ width: '400px', padding: '20px', margin: '20px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)' }}>
         <Grid container justifyContent="center" alignItems="center" spacing={2}>
           <Grid item xs={12}>
             <Typography variant="h6" align="center">
@@ -46,34 +46,34 @@ const navigate=useNavigate();
             </Typography>
             <Divider style={{ margin: '8px 0' }} />
           </Grid>
-          <Grid item xs={12} >
-            <Typography marginRight='30px' align="right"  fontSize="h3" color="textSecondary" gutterBottom >
-               {formattedDate}
-            </Typography>
-          </Grid>
-          <Grid item xs={12 }>
-            <Typography align="center" fontSize="h3" color="textSecondary" gutterBottom>
-              <strong>Doctor:</strong> {doctorName}
+          <Grid item xs={12}>
+            <Typography variant="body1" color="textSecondary" gutterBottom>
+              <strong>Patient:</strong> {PatientName}
             </Typography>
           </Grid>
           <Grid item xs={12}>
-            <Typography align="center" fontSize="h3" color="textSecondary" gutterBottom>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
+            <strong>Date:</strong> {formattedDate}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Status:</strong> {status}
             </Typography>
           </Grid>
           <Grid item xs={12}>
             <Divider style={{ margin: '8px 0' }} />
           </Grid>
-          <Grid container justifyContent="center" alignItems="center"item xs={12}>
-            <Button variant="contained" onClick={() => handleCardClick(_id)} >
+          <Grid item xs={12}>
+            <Button variant="outlined" color="primary" fullWidth>
               View Prescription
             </Button>
           </Grid>
         </Grid>
       </Card>
-      </div>
+    </button>
   );
   
 };  
 
-export default PrescriptionCard;
+export default DrPrescriptionCard;
