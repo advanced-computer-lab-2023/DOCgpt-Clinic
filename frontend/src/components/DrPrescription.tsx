@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import FileDownloadSharpIcon from '@mui/icons-material/FileDownloadSharp';
 import ShoppingCartCheckoutSharpIcon from '@mui/icons-material/ShoppingCartCheckoutSharp';
 import { Card, CardContent, Typography, Button, List, ListItem, ListItemText, Divider, Grid } from '@mui/material';
-import { useNavigate } from 'react-router-dom';import axios from 'axios';
-import Snackbar from "@mui/material/Snackbar";
-import MuiAlert from "@mui/material/Alert";
-
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 interface Medicine {
   medicineName: string;
   dosage: string;
@@ -14,34 +12,50 @@ interface Medicine {
 }
 
 interface Prescription {
-  doctorName: string;
+  PatientName: string;
   date: string;
   status: string;
   medicines: Medicine[];
   _id: string;
 }
 
-const PrescriptionCard: React.FC<{ prescription: Prescription }> = ({ prescription }) => {
-  const { doctorName, date, status, medicines, _id} = prescription;
-const navigate=useNavigate();  const [cart, setCart] = useState<Prescription | null>(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [error, setError] = useState<string>("");
-
-
-
-
+const DrPrescriptionCard: React.FC<{ prescription: Prescription }> = ({ prescription }) => {
+  const { PatientName, date, status, medicines, _id} = prescription;
+const navigate=useNavigate();
   const handleDownload = () => {
     console.log('Download button clicked');
   };
 
-  // const handleCheckout = () => {
-  //   console.log('Checkout button clicked');
-  // };
+  const handleCheckout = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+    console.log(token); 
+    const prescriptionId = _id;
+
+    const response = await axios.post('/routes/addToCart', {
+      prescriptionId,
+    }, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+    });
+
+    window.location.href = 'http://localhost:3001/CartView';
+
+  } catch (error: any) {
+    console.log("Error:", error); // Check what the error object contains
+
+  }
+ // Log the response message
+
+      // If the backend call succeeds, navigate to another page (e.g., '/success')
+    
+  };
   console.log(prescription._id);
-  console.log(prescription.doctorName);
+  console.log(prescription.PatientName);
   const handleCardClick = (id:String) => {
     console.log(id);
-    navigate(`/selectedPres/${id}`);
+    navigate(`/DrselectedPres/${id}`);
   };
   const formattedDate = prescription && new Date(prescription.date).toISOString().split('T')[0];
 
@@ -57,7 +71,7 @@ const navigate=useNavigate();  const [cart, setCart] = useState<Prescription | n
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1" color="textSecondary" gutterBottom>
-              <strong>Doctor:</strong> {doctorName}
+              <strong>Patient:</strong> {PatientName}
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -85,4 +99,4 @@ const navigate=useNavigate();  const [cart, setCart] = useState<Prescription | n
   
 };  
 
-export default PrescriptionCard;
+export default DrPrescriptionCard;

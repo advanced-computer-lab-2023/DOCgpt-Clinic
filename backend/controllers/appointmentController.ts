@@ -121,7 +121,7 @@ export const createNotificationWithCurrentDate = async (patientUsername : any , 
       subject ,
       msg,
     });
-
+    notification.save();
     console.log('Notification created:', notification);
     return notification;
   } catch (error) {
@@ -159,6 +159,8 @@ export const createAppointment = async (req: Request, res: Response) => {
       return res.status(404).json({ message: 'Doctor not found app' });
     }
 
+    console.log("ana hena");
+    
     const newDate = new Date(date);
     doctor.timeslots = doctor.timeslots.filter((timeslot: { date?: { getTime: () => number } }) =>
       !(
@@ -186,10 +188,18 @@ export const createAppointment = async (req: Request, res: Response) => {
                       Doctor: ${doctor.username}
                       Type: ${type}
                       Price: ${price}`;
+    const msg = `Your appointment has been scheduled for ${new Date(date)}. 
+                      Doctor: ${doctor.username}
+                      Type: ${type}
+                      Price: ${price}`;
 
 
     const doctorEmail = doctor.email; // Adjust this based on your patient model structure
     const emailText1 = `An  appointment has been scheduled for ${new Date(date)}. 
+                                        patient: ${username}
+                                        Type: ${type}
+                                        Price: ${price}`;
+    const msg1 = `An  appointment has been scheduled for ${new Date(date)}. 
                                         patient: ${username}
                                         Type: ${type}
                                         Price: ${price}`;
@@ -199,8 +209,8 @@ export const createAppointment = async (req: Request, res: Response) => {
 
     console.log("im hereree");
     // Create a notification for the patient
-     const nn= await createNotificationWithCurrentDate(username,emailSubject,emailText);
-     const nnn= await createNotificationWithCurrentDate(doctorUsername,emailSubject,emailText1);
+     const nn= await createNotificationWithCurrentDate(username,emailSubject,msg);
+     const nnn= await createNotificationWithCurrentDate(doctorUsername,emailSubject,msg1);
 
      return res.status(201).json({ message: 'Appointment done', appointment });
     

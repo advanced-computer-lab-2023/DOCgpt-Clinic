@@ -3,11 +3,8 @@ import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStat
   searchPatient, selectPatient, updateDoctorAffiliation, 
   updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord,
    viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, 
-   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, 
-   viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, 
-   acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots,
-    commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, addOrUpdateDosage,
-    getDoctorDocuments, getTodayAppointments, updateUnfilledPrescription} from "../controllers/doctorController";
+   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,acceptFollowUpRequest,rejectFollowUpRequest,addOrUpdateDosage,updateUnfilledPrescription} from "../controllers/doctorController";
+ 
 import multer from "multer";
 import path from 'path';
 import fs from "fs"
@@ -106,6 +103,10 @@ router.get('/doctorDocuments', getDoctorDocuments);
 
 // Create a route for uploading and submitting required documents
 router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
+
+router.post('/rescheduleApp',rescheduleAppointments);
+router.patch('/acceptFollowUpRequest', acceptFollowUpRequest);
+router.patch('/rejectFollowUpRequest', rejectFollowUpRequest);
 
 
 //sprint 3
