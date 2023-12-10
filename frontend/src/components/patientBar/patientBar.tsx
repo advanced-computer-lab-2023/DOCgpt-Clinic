@@ -16,6 +16,8 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Menu,
+  MenuItem,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -23,7 +25,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
 import WalletIcon from "@mui/icons-material/Wallet";
 import ViewWalletAmount from "../viewWalletAmountDoctor";
-
+import CustomizedBadges from './notificationIcon'
 import { ReactNode } from "react";
 import appRoutes from "./patientRoutes";
 import ViewWalletBalance from "../viewWalletPatient";
@@ -54,7 +56,8 @@ export type links = {
 export default function DrawerAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isWalletOpen, setIsWalletOpen] = useState(false); // State to manage the wallet sidebar
-
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false); // State for notification dropdown
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null); // Anchor element for notification dropdown
   const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
@@ -136,6 +139,22 @@ export default function DrawerAppBar() {
       </List>
     );
   };
+  const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
+    // Vibrate when the notification icon is clicked
+    if ('vibrate' in navigator) {
+      navigator.vibrate(200);
+    }
+
+    // Open the notification dropdown
+    setAnchorEl(event.currentTarget);
+    setIsNotificationOpen(true);
+  };
+
+  const handleNotificationClose = () => {
+    // Close the notification dropdown
+    setAnchorEl(null);
+    setIsNotificationOpen(false);
+  };
 
   const drawer = (
     <Box sx={{ textAlign: "center" }}>
@@ -214,6 +233,8 @@ export default function DrawerAppBar() {
               </Drawer>
             )}
           </Box>
+         {/* Notification Badge */}
+         <CustomizedBadges  />
         </Toolbar>
       </AppBar>
       <nav>

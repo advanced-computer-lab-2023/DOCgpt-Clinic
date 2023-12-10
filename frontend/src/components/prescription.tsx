@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import FileDownloadSharpIcon from '@mui/icons-material/FileDownloadSharp';
 import ShoppingCartCheckoutSharpIcon from '@mui/icons-material/ShoppingCartCheckoutSharp';
 import { Card, CardContent, Typography, Button, List, ListItem, ListItemText, Divider, Grid } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';import axios from 'axios';
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
+
 interface Medicine {
   medicineName: string;
   dosage: string;
@@ -20,7 +23,13 @@ interface Prescription {
 
 const PrescriptionCard: React.FC<{ prescription: Prescription }> = ({ prescription }) => {
   const { doctorName, date, status, medicines, _id} = prescription;
-const navigate=useNavigate();
+const navigate=useNavigate();  const [cart, setCart] = useState<Prescription | null>(null);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [error, setError] = useState<string>("");
+
+
+
+
   const handleDownload = () => {
     console.log('Download button clicked');
   };

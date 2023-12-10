@@ -21,6 +21,7 @@ import express, { Request, Response ,NextFunction } from 'express';
 import Payment from './routes/payment'
 import message from './routes/Message'
 import convos from './routes/Conversation'
+import notification from './routes/notification'
 
 import Stripe from 'stripe';
 
@@ -58,6 +59,8 @@ app.use('/routes', subscriptionRoute);
 app.use('/routes/pay',Payment);
 app.use('/routes/messages',message);
 app.use('/routes/conversation',convos);
+app.use('/routes/notifications',notification);
+
 
 console.log('Routes mounted!')
 

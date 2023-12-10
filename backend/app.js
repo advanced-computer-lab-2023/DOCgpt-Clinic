@@ -32,6 +32,7 @@ const express_1 = __importDefault(require("express"));
 const payment_1 = __importDefault(require("./routes/payment"));
 const Message_1 = __importDefault(require("./routes/Message"));
 const Conversation_1 = __importDefault(require("./routes/Conversation"));
+const notification_1 = __importDefault(require("./routes/notification"));
 const stripe_1 = __importDefault(require("stripe"));
 require('dotenv').config();
 // Express app
@@ -62,6 +63,7 @@ app.use('/routes', subscriptionRoute_1.default);
 app.use('/routes/pay', payment_1.default);
 app.use('/routes/messages', Message_1.default);
 app.use('/routes/conversation', Conversation_1.default);
+app.use('/routes/notifications', notification_1.default);
 console.log('Routes mounted!');
 // Connect to the database
 mongoose_1.default.connect(process.env.MONGO_URI)

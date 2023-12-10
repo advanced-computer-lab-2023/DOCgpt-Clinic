@@ -3,6 +3,7 @@ import FileDownloadSharpIcon from '@mui/icons-material/FileDownloadSharp';
 import ShoppingCartCheckoutSharpIcon from '@mui/icons-material/ShoppingCartCheckoutSharp';
 import { Card, CardContent, Typography, Button, List, ListItem, ListItemText, Divider, Grid } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 interface Medicine {
   medicineName: string;
   dosage: string;
@@ -25,9 +26,7 @@ const navigate=useNavigate();
     console.log('Download button clicked');
   };
 
-  // const handleCheckout = () => {
-  //   console.log('Checkout button clicked');
-  // };
+  
   console.log(prescription._id);
   console.log(prescription.PatientName);
   const handleCardClick = (id:String) => {
