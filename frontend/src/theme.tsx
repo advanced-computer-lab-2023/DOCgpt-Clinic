@@ -145,4 +145,4 @@ const theme = createTheme({
   // Add other theme properties as needed
 });
 
-export default theme;
+export default theme;

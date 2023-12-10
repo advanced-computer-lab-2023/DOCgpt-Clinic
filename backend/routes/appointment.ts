@@ -1,6 +1,7 @@
 import express from "express";
 import { createAppointment, getAllAppointments,
-     getAppointments, getPapp , complete, paymenttt, payment2 , cancelAppointment } from "../controllers/appointmentController";
+     getAppointments, getPapp , complete, paymenttt, payment2 , cancelAppointment, 
+     getAppointmentById  , cancelAppointmentDoc , cancelAppointmentFam} from "../controllers/appointmentController";
 
 
 
@@ -12,8 +13,13 @@ router.get("/getAll", getAllAppointments);
 router.get("/appP",getPapp);
 router.patch("/completed", complete);
 router.post("/cancelAppointment",cancelAppointment)
+router.post("/cancelAppointmentDoc",cancelAppointmentDoc);
+
+
 
 router.post("/makeApp",paymenttt)
 router.post("/makeAppForFam",payment2)
 
+
+router.get("/getAppointmentById", getAppointmentById);
 export default router;

@@ -51,6 +51,10 @@ const appRoutes: RouteType[] = [
         path: "/patient/viewMyappointments",
         state: "View My Appointments",
       },
+      {
+        path: "/patient/famMemAppointments",
+        state: "View Family Members' Appointments",
+      },
     ],
   },
 
