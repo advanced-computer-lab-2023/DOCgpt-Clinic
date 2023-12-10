@@ -63,3 +63,7 @@ export async function updateAffiliation(doctorHospital: DoctorHospital, doctorUs
     });
     return response.json();
 }
+
+export function updateUsername(updatedUsername: string, doctorUsername: string) {
+    throw new Error("Function not implemented.");
+}

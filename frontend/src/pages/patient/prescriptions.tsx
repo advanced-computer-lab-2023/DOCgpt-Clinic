@@ -4,6 +4,9 @@ import axios from 'axios';
 import PrescriptionCard from '../../components/prescription'; // Adjust the import path
 import PatientAppBar from '../../components/patientBar/patientBar';
 import { Grid, Typography } from '@mui/material';
+import logo from '../../logo.jpeg';
+import El7a2niInfo from '../../components/El7a2ni-info';
+
 interface Medicine {
   medicineName: string;
   dosage: string;
@@ -44,16 +47,17 @@ const PatientPrescriptions = () => {
   return (
     <>
     <PatientAppBar />
-    <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
+    <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}} padding={5}>
       MY PRESCRIPTIONS   
       </Typography>
-    <Grid container spacing={2} >
+    <Grid container spacing={2} justifyContent="center" alignItems="center">
       {prescriptions.map((prescription, index) => (
         <Grid item key={index}>
             <PrescriptionCard prescription={prescription} />
         </Grid>
       ))}
     </Grid>
+    <El7a2niInfo/>
     </>
 
   );

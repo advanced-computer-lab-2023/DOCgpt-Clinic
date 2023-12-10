@@ -63,4 +63,5 @@ router.patch('/deleteDocs', patientController_1.deletePatientDocs);
 router.patch('/rescheduleAppointments', patientController_1.rescheduleAppointments);
 router.get('/viewFamAppointments', patientController_1.viewFamAppointments);
 router.post('/requestFollowUp', patientController_1.sendRequestFollowUp);
+router.post('/calcpatientage', patientController_1.calcPatientAge);
 exports.default = router;

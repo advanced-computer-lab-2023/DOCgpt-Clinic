@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateMedicineInPrescription = exports.addPrescriptionToCart = exports.checkifexists = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.viewMedicineNamesInPrescription = exports.addMedtoPresc = exports.deleteMedicineFromPresc = exports.createPrescription = void 0;
+exports.changeStatus = exports.updateMedicineInPrescription = exports.addPrescriptionToCart = exports.checkifexists = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.viewMedicineNamesInPrescription = exports.addMedtoPresc = exports.deleteMedicineFromPresc = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -174,7 +174,7 @@ const getAllPrescriptionsPatient = (req, res) => __awaiter(void 0, void 0, void 
         // Find all prescriptions for the patient
         const prescriptions = yield perscriptionModel_1.default.find({ patientUsername: username })
             .populate('doctorUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
-            .select('doctorUsername date status Medicines');
+            .select(' id doctorUsername date status Medicines');
         // Construct response with full prescription details
         const prescriptionDetails = prescriptions.map(prescription => ({
             doctorName: prescription.doctorUsername,
@@ -300,39 +300,24 @@ const addPrescriptionToCart = (req, res) => __awaiter(void 0, void 0, void 0, fu
         }
         for (const medicine of prescription.Medicines) {
             const { medicineName, dosage, quantity } = medicine;
-            // Get medicine ID
-            const idResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getId', {
-                medicineName
-            });
-            const medicineId = idResponse.data.medicineId;
-            console.log(idResponse);
-            // Get medicine price
-            const priceResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getPrice', {
-                medicineName
-            });
-            const medicinePrice = Number(priceResponse.data.medicinePrice);
-            const v = { medicineId, quantity, medicineName, medicinePrice, prescriptionId };
-            // Add medicine information to the array
-            medicineInfoArray.push({
-                medicineName,
-                medicineId,
-                medicinePrice,
-                quantity,
-                prescriptionId
-            });
             try {
-                const nn = yield axios_1.default.post('http://localhost:3000/api/cart/addMed', v, {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                // Get medicine ID
+                const idResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getId', { medicineName });
+                const medicineId = idResponse.data.medicineId;
+                // Get medicine price
+                const priceResponse = yield axios_1.default.post('http://localhost:3000/api/medicines/getPrice', { medicineName });
+                const medicinePrice = Number(priceResponse.data.medicinePrice);
+                const cartItem = { medicineId, quantity, medicineName, medicinePrice, prescriptionId };
+                // Add medicine information to the array
+                medicineInfoArray.push(cartItem);
+                // Add the item to the cart
+                yield axios_1.default.post('http://localhost:3000/api/cart/addToCart', cartItem, { headers: { Authorization: `Bearer ${token}` } });
             }
             catch (error) {
                 console.error('Error adding medicine to cart:', error);
-                return res.status(500).json({ error });
+                return res.status(500).json({ error: `Error adding medicine to cart: ${error.message}` });
             }
         }
-        prescription.status == "filled";
         yield prescription.save();
         // Respond with the accumulated medicine information
         return res.status(200).json({
@@ -341,8 +326,8 @@ const addPrescriptionToCart = (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
     catch (error) {
-        console.log('Error adding prescription to cart:', error);
-        return res.status(500).json({ error: 'Error adding prescription to cart' });
+        console.error('Error adding prescription to cart:', error);
+        return res.status(500).json({ error: `Error adding prescription to cart: ${error.message}` });
     }
 });
 exports.addPrescriptionToCart = addPrescriptionToCart;
@@ -373,3 +358,34 @@ const updateMedicineInPrescription = (req, res) => __awaiter(void 0, void 0, voi
     }
 });
 exports.updateMedicineInPrescription = updateMedicineInPrescription;
+const changeStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { prescriptionId } = req.body;
+        // Check if the prescription ID is provided
+        if (!prescriptionId) {
+            return res.status(400).json({ error: 'Prescription ID is required.' });
+        }
+        // Find the prescription by ID
+        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
+        // Check if the prescription exists
+        if (!prescription) {
+            return res.status(404).json({ error: 'Prescription not found.' });
+        }
+        // Update the prescription status
+        if (prescription.status == "filled") {
+            prescription.status = "unfilled";
+        }
+        else {
+            prescription.status = "filled";
+        }
+        // Save the updated prescription
+        yield prescription.save();
+        // Respond with the updated prescription
+        res.json({ message: 'Prescription status updated successfully.', prescription });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.changeStatus = changeStatus;

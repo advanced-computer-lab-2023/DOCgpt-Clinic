@@ -16,6 +16,7 @@ router.get("/viewMyPatients", doctorController_1.viewMyPatients);
 router.get("/viewMyPatientsUsername", doctorController_1.viewMyPatientsUsername);
 router.get("/selectPatient", doctorController_1.selectPatient);
 router.get("/viewPatientsUpcoming", doctorController_1.viewPatientsUpcoming);
+router.post("/docspec", doctorController_1.viewDocSpeciality);
 //APPOINTMENTS 
 router.get("/allMyApp", doctorController_1.viewMyAppointments);
 router.get("/upcomingApp", doctorController_1.viewUpcomingAppointments);
@@ -50,6 +51,9 @@ router.post('/changePassDoc', doctorController_1.changePassword);
 router.get("/pendingDoctors", doctorController_1.getPendingDoctor);
 router.patch("/acceptRequest", doctorController_1.acceptDoctorRequest);
 router.patch("/rejectRequest", doctorController_1.rejecttDoctorRequest);
+router.patch("/removedoc", doctorController_1.removeDoc);
+router.post("/checkcontract", doctorController_1.checkcontact);
+router.post("/contactseen", doctorController_1.markContractAsSeen);
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         const uploadFolder = path_1.default.join(__dirname, '../uploads'); // The folder where files will be saved (inside your project)
@@ -78,4 +82,6 @@ router.patch('/rejectFollowUpRequest', doctorController_1.rejectFollowUpRequest)
 //sprint 3
 router.post('/addOrUpdateDosage', doctorController_1.addOrUpdateDosage);
 router.patch('/updateUnfilledPrescription', doctorController_1.updateUnfilledPrescription);
+router.get('/viewRequests', doctorController_1.viewRequests);
+router.get('/getDoctorByUsername', doctorController_1.getDoctorByUsername);
 exports.default = router;

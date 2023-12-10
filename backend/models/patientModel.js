@@ -8,7 +8,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const prescriptionSchema = new mongoose_1.default.Schema({
     doctorId: {
         type: mongoose_1.default.Schema.Types.ObjectId,
-        ref: 'Doctor',
+        ref: "Doctor",
         required: true,
     },
     date: {
@@ -37,8 +37,8 @@ exports.patientSchema = new mongoose_1.default.Schema({
     gender: {
         type: String,
         required: true,
-        enum: ['male', 'female', 'other', 'Female', 'Male'],
-        default: 'male',
+        enum: ["male", "female", "other", "Female", "Male"],
+        default: "male",
         // Add appropriate values based on your application
     },
     password: {
@@ -75,12 +75,22 @@ exports.patientSchema = new mongoose_1.default.Schema({
             },
             status: {
                 type: String,
-                enum: ['subscribed with renewal date', 'unsubscribed', 'cancelled with end date'],
+                enum: [
+                    "subscribed with renewal date",
+                    "unsubscribed",
+                    "cancelled with end date",
+                ],
                 required: true,
+            },
+            payedBy: {
+                type: String,
+                required: false,
             },
         },
     ],
-    familyMembers: [{ name: {
+    familyMembers: [
+        {
+            name: {
                 type: String,
                 required: true,
             },
@@ -102,7 +112,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
             },
             relationToPatient: {
                 type: String,
-                enum: ['wife', 'husband', 'child', 'sister', 'brothet'],
+                enum: ["wife", "husband", "child", "sister", "brothet"],
                 required: true,
             },
             healthPackageSubscription: [
@@ -121,25 +131,37 @@ exports.patientSchema = new mongoose_1.default.Schema({
                     },
                     status: {
                         type: String,
-                        enum: ['subscribed with renewal date', 'unsubscribed', 'cancelled with end date'],
+                        enum: [
+                            "subscribed with renewal date",
+                            "unsubscribed",
+                            "cancelled with end date",
+                        ],
                         required: true,
                     },
+                    payedBy: {
+                        type: String,
+                        required: false,
+                    },
                 },
-            ] }],
+            ],
+        },
+    ],
     walletBalance: {
         type: Number,
         required: true,
         default: 2000,
     },
-    deliveryAddress: [{
+    deliveryAddress: [
+        {
             type: String,
             required: false,
-        }],
-    carts: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Cart' }],
-    orders: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: 'Order' }],
+        },
+    ],
+    carts: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Cart" }],
+    orders: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: "Order" }],
 });
 function validatePassword(password) {
     return password.length >= 8; // Minimum password length of 8 characters
 }
-const patientModel = mongoose_1.default.model('patient', exports.patientSchema);
+const patientModel = mongoose_1.default.model("patient", exports.patientSchema);
 exports.default = patientModel;
