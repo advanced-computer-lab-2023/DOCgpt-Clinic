@@ -38,7 +38,6 @@ const defaultTheme = createTheme();
 
 export default function SignIn() {
   const navigate = useNavigate();
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -48,28 +47,36 @@ export default function SignIn() {
         username: data.get("username"),
         password: data.get("password"),
       });
+
       const token = response.data.token;
       const username = response.data.username;
       console.log(token);
       localStorage.setItem("authToken", token);
       localStorage.setItem("username", username);
+
       const role = response.data.role;
       const user = response.data.user;
-      console.log(user);
 
-      console.log(role);
-      console.log("succes");
-      if (role == "patient") {
+      if (role === "patient") {
         navigate(`/patient/home`);
-      }
-      if (role == "doctor") {
-        navigate(`/doctor/home`);
-      }
-      if (role == "admin") {
+      } else if (role === "doctor") {
+        const checkContactResponse = await axios.post(
+          "/routes/doctors/checkcontract",
+          {
+            username,
+          }
+        );
+
+        const hasSeenContract = checkContactResponse.data.hasSeenContract;
+
+        if (hasSeenContract) {
+          navigate(`/doctor/home`);
+        } else {
+          navigate(`/contract`);
+        }
+      } else if (role === "admin") {
         navigate(`/admin/home`);
       }
-      // Handle the response from the back-end (e.g., save the token and navigate to another page).
-      // You can use state management libraries like Redux or React context to manage the token and user data.
     } catch (error) {
       console.error("Login failed:", error);
       // Handle errors, e.g., display an error message to the user.

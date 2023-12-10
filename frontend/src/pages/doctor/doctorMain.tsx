@@ -64,26 +64,6 @@ function DoctorMain() {
       {doctor ? (
         <>
           <Doctor doctor={doctor} doctorUsername={doctorUsername} />
-          <Typography variant="h5" gutterBottom>
-            Today's Appointments
-          </Typography>
-          <Paper elevation={3} style={{ padding: 20 }}>
-            <List>
-              {todaysAppointments.map((appointment) => (
-                <ListItem key={appointment._id}>
-                  <ListItemText
-                    primary={appointment.patient}
-                    secondary={`Date: ${new Date(
-                      appointment.date
-                    ).toLocaleString()}`}
-                  />
-                  <button onClick={() => handleStartMeeting()}>
-                    Start Meeting
-                  </button>
-                </ListItem>
-              ))}
-            </List>
-          </Paper>
         </>
       ) : (
         <p>Loading...</p>

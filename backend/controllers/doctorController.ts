@@ -142,7 +142,20 @@ export const updateDoctorEmail = async (req: Request, res: Response) => {
         res.status(200).json(updatedDoctor);
     }
 };
-
+export const viewDocSpeciality = async (req: Request, res: Response) => {
+  const doctorname = req.body.doctorname; // Access the correct property from the request body
+  try {
+    const doctor = await DoctorModel.findOne({ username: doctorname }).exec();
+    if (doctor) {
+      res.status(200).json(doctor.speciality);
+    } else {
+      res.status(404).json({ error: 'Doctor not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching doctor speciality:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
 export const updateDoctorHourlyRate = async (req: Request, res: Response) => {
     const doctorUsername = req.query.doctorUsername;
     const newRate = req.body.hourlyRate;
@@ -610,7 +623,31 @@ export const changePassword = async (req: Request, res: Response) => {
       
     });
   };
-
+  export const removeDoc = async (req: Request, res: Response) => {
+    try {
+      const authHeader = req.headers['authorization'];
+      const token = authHeader && authHeader.split(' ')[1];
+  
+      // Find the token in the database
+      const tokenDB = await tokenModel.findOne({ token });
+  
+      // Find the doctor using the username from the token
+      const doctor = await DoctorModel.findOneAndDelete({ username: tokenDB?.username });
+  
+     
+        // Update the doctor's status to "rejected"
+       
+  
+        // Delete the token from the database
+        await tokenModel.deleteOne({ token });
+  
+        res.status(200).json({ message: 'Doctor rejected successfully' });
+       
+    } catch (error) {
+      console.error('Error rejecting doctor:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  };
   export const  acceptDoctorRequest = async (req: Request, res: Response) =>{
     const doctorUsername = req.query.doctorUsername;
 try{
@@ -1186,5 +1223,47 @@ export const updateUnfilledPrescription = async (req: Request, res: Response) =>
   } catch (error) {
     console.error('Error updating prescription:', error);
     return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+export const checkcontact = async (req: Request, res: Response) => {
+  try {
+    const doctorUsername = req.body.username;
+    const doctor = await doctorModel.findOne({ username: doctorUsername });
+
+    if (doctor) {
+      const hasSeenContract = doctor.hasSeenContract;
+      console.log(`Has seen contract: ${hasSeenContract}`);
+
+      res.status(200).json({ hasSeenContract });
+    } else {
+      res.status(404).json({ message: 'Doctor not found' });
+    }
+  } catch (error) {
+    console.error('Error checking contract status:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+export const markContractAsSeen = async (req: Request, res: Response) => {
+  try{
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  const tokenDB = await tokenModel.findOne({ token: token });
+const doctorUsername=tokenDB?.username;
+  const doctor = await doctorModel.findOne({ username: doctorUsername });
+
+    if (doctor) {
+      // Update the hasSeenContract status to true
+      doctor.hasSeenContract = true;
+
+      // Save the updated doctor information
+      await doctor.save();
+
+      res.status(200).json({ message: 'Contract marked as seen successfully' });
+    } else {
+      res.status(404).json({ message: 'Doctor not found' });
+    }
+  } catch (error) {
+    console.error('Error marking contract as seen:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };

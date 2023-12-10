@@ -30,6 +30,7 @@ import {
   getTodayAppointments,
   sendRequestFollowUp,
   getPatientDocNames,
+  calcPatientAge,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 import fs from 'fs';
@@ -124,5 +125,7 @@ router.patch('/deleteDocs', deletePatientDocs);
 router.patch('/rescheduleAppointments', rescheduleAppointments);
 router.get('/viewFamAppointments', viewFamAppointments);
 router.post('/requestFollowUp',sendRequestFollowUp)
+
+router.post('/calcpatientage',calcPatientAge)
 export default router;
 
