@@ -4,6 +4,7 @@ import axios from 'axios';
 import DrPrescription from '../../components/DrPrescription'; 
 import DrawerAppBar from '../../components/Doctor bar/doctorBar';
 import { Grid, Typography } from '@mui/material';
+import El7a2niInfo from '../../components/El7a2ni-info';
 
 interface Medicine {
   medicineName: string;
@@ -45,16 +46,17 @@ const DrPrescriptions = () => {
   return (
     <>
     <DrawerAppBar />
-    <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
+    <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}} padding={5}>
       MY PRESCRIPTIONS   
       </Typography>
-    <Grid container spacing={2} >
+    <Grid container spacing={2} justifyContent="center" alignItems="center">
       {prescriptions.map((prescription, index) => (
         <Grid item key={index}>
             <DrPrescription prescription={prescription} />
         </Grid>
       ))}
     </Grid>
+    <El7a2niInfo/>
     </>
 
   );

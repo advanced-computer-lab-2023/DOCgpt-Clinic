@@ -78,7 +78,7 @@ const SelectedPrescription = () => {
           <Container>
             <Divider style={{ margin: '16px 0' }} />
             <Typography variant="body1" color="textSecondary" gutterBottom>
-              <strong>Doctor:</strong> {prescription.doctorUsername}
+              <strong>Doctor: </strong> {prescription.doctorUsername}
             </Typography>
             <Typography variant="body2" color="textSecondary" gutterBottom>
               <strong>Date:</strong> {formattedDate}
