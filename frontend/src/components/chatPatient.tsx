@@ -1,9 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  Button,
   Container,
   TextField,
-  Typography,
   Paper,
   Avatar,
   IconButton,
@@ -14,9 +12,8 @@ import {
 import SendIcon from "@mui/icons-material/Send";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import { formatDistanceToNow } from "date-fns";
-import { enGB } from "date-fns/locale";
 
 interface Message {
   createdAt: number;

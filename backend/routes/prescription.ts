@@ -8,7 +8,8 @@ import {
   addMedtoPresc,
   getPrescriptionDetails,
   checkifexists,
-  addPrescriptionToCart,
+  addPrescriptionToCart , 
+  changeStatus,
   deleteMedicineFromPresc,
   viewMedicineNamesInPrescription,
   updateMedicineInPrescription
@@ -29,7 +30,8 @@ router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
 router.get('/getPrescriptionDetails',getPrescriptionDetails);
 router.get('/getAllPrescriptionsDoctor', getAllPrescriptionsDoctor);
 router.post('/addMedTopresc/:prescriptionId', addMedtoPresc);
-router.get('/addToCart',  addPrescriptionToCart);
+router.post('/addToCart',  addPrescriptionToCart);
+router.post('/changeStatus',  changeStatus);
 
 
 
@@ -37,6 +39,5 @@ router.get('/addToCart',  addPrescriptionToCart);
 router.post('/checkmedicineexists',checkifexists);
 router.delete('/removeMedFromPresc', deleteMedicineFromPresc);
 router.put('/updateMedicineInPrescription', updateMedicineInPrescription);
-
 
 export default router;

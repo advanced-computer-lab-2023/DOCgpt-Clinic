@@ -11,6 +11,7 @@ import {
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import PatientBar from "./patientBar/patientBar";
+import DoctorBar from "./Doctor bar/doctorBar";
 
 const theme = createTheme();
 
@@ -56,7 +57,7 @@ const ChangePasswordDoctor: React.FC = () => {
 
   return (
     <>
-      <PatientBar />
+      <DoctorBar />
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />

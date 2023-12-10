@@ -4,8 +4,9 @@ import { Typography, Button, Box, Container, Paper } from "@mui/material";
 import DrawerAppBar from "../../components/patientBar/patientBar";
 import Carousel from "../../components/Carousel";
 import logo from "../../logo.jpeg";
-import Footer from "../../components/El7a2niInfo";
+
 import TodayAppointmentsPatient from "./todaysappP";
+import El7a2niInfo from "../../components/El7a2ni-info";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -16,7 +17,8 @@ function HomePage() {
       <DrawerAppBar />
       <Carousel />
       <TodayAppointmentsPatient />
-      <Footer />
+
+      <El7a2niInfo />
     </>
   );
 }

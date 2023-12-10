@@ -1,16 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Doctor as DoctorModel } from "../../models/doctor";
-import Doctor from "../../components/Doctor";
-import {
-  Button,
-  Container,
-  Grid,
-  Typography,
-  Paper,
-  List,
-  ListItem,
-  ListItemText,
-} from "@mui/material";
+import { Button, Container, Typography } from "@mui/material";
+import Doctor from "../../components/Doctor"; // Import the Doctor component
 import axios from "axios";
 
 function DoctorMain() {
@@ -22,16 +13,14 @@ function DoctorMain() {
     async function fetchDoctorData() {
       try {
         const token = localStorage.getItem("authToken");
-
-        // Fetch doctor data
-        const doctorResponse = await fetch(`/routes/doctors/getDoctor`, {
+        const response = await fetch(`/routes/doctors/getDoctor`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
 
-        if (doctorResponse.ok) {
-          const doctorData: DoctorModel = await doctorResponse.json();
+        if (response.ok) {
+          const doctorData: DoctorModel = await response.json();
           setDoctor(doctorData);
 
           // Fetch today's appointments for the doctor
@@ -55,16 +44,12 @@ function DoctorMain() {
     }
 
     fetchDoctorData();
-  }, []); // An empty dependency array means this effect runs once on component mount.
-  const handleStartMeeting = () => {
-    window.open("https://zoom.us/s/83812339297#success", "_blank");
-  };
+  }, []);
+
   return (
     <Container>
       {doctor ? (
-        <>
-          <Doctor doctor={doctor} doctorUsername={doctorUsername} />
-        </>
+        <Doctor doctor={doctor} doctorUsername={doctorUsername} />
       ) : (
         <p>Loading...</p>
       )}

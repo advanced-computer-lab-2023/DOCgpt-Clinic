@@ -14,7 +14,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-import Footer from "../../components/El7a2niInfo";
+
 import PatientBar from "../../components/patientBar/patientBar";
 import { useNavigate } from "react-router-dom";
 

@@ -6,7 +6,7 @@ import DoctorMain from "./doctorMain";
 import Carousel from "react-material-ui-carousel";
 import MyCarousel from "../../components/Carousel";
 import TodayAppointmentsComponent from "./todaysappDOC";
-import El7a2niInfo from "../../components/El7a2niInfo";
+import El7a2niInfo from "../../components/El7a2ni-info";
 
 function HomePage() {
   const navigate = useNavigate();

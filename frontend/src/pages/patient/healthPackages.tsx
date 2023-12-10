@@ -1,10 +1,9 @@
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Box } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
 import PatientAppBar from "../../components/patientBar/patientBar";
 import HealthPackageComp from "../../components/healthPackageComp";
-import Footer from "../../components/El7a2niInfo";
 
 interface HealthPackage {
   name: string;
@@ -71,17 +70,23 @@ function HealthPackages() {
         >
           Available Health Packages
         </Typography>
-        {healthPackages &&
-          healthPackages.map((healthPackage, index) => (
-            <HealthPackageComp
-              key={index}
-              healthPackage={healthPackage}
-              healthPackages={subscribed}
-            ></HealthPackageComp>
-            // <SarahComp  healthPackage= {healthPackage}></SarahComp>
-          ))}
+        <Box
+          display="flex"
+          flexDirection="row"
+          flexWrap="wrap"
+          justifyContent="center"
+        >
+          {healthPackages &&
+            healthPackages.map((healthPackage, index) => (
+              <Box key={index} m={2} minWidth={300}>
+                <HealthPackageComp
+                  healthPackage={healthPackage}
+                  healthPackages={subscribed}
+                />
+              </Box>
+            ))}
+        </Box>
       </Container>
-      <Footer />
     </>
   );
 }

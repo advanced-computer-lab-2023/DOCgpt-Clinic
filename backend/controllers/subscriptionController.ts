@@ -15,7 +15,7 @@ if (!process.env.STRIPE_SECRET_KEY)
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
     const tokenDB = await tokenModel.findOne({ token });
-    const username = tokenDB && tokenDB.username;
+    const username  = tokenDB && tokenDB.username;
     const { packageName, paymentMethod } = req.body;
 
     if (!username || !packageName || !paymentMethod) {
@@ -57,7 +57,9 @@ if (!process.env.STRIPE_SECRET_KEY)
         name: packageName,
         startdate: '',
         enddate: '',
-        status: "subscribed with renewal date"
+        status: "subscribed with renewal date",
+        payedBy: username,
+        
       });
 
       await patient.save();
@@ -74,7 +76,8 @@ if (!process.env.STRIPE_SECRET_KEY)
           name: packageName,
           startdate: '',
           enddate: '',
-          status: "subscribed with renewal date"
+          status: "subscribed with renewal date",
+          payedBy: username,
         });
         await patient.save();
       }
@@ -88,7 +91,7 @@ if (!process.env.STRIPE_SECRET_KEY)
 };
 
 
-export const subscribeFamAsPatient = async (username: String, packageName: string) => {
+export const subscribeFamAsPatient = async (username: string, packageName: string) => {
   try {
   console.log("ANA HENA FAM AS PATIENT")
     if (!username || !packageName ) {
@@ -129,6 +132,7 @@ export const subscribeFamAsPatient = async (username: String, packageName: strin
       startdate: '',
       enddate: '',
       status: 'subscribed with renewal date',
+      payedBy: username,
     });
 
     await patient.save();
@@ -200,7 +204,8 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
           name: packageName,
           startdate: '',
           enddate: '',
-          status: "subscribed with renewal date"   
+          status: "subscribed with renewal date" ,
+          payedBy: username, 
         });
         const familyMemberUsername = familyMember.username;
         if(!familyMemberUsername)
@@ -221,7 +226,8 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
           name: packageName,
           startdate: '',
           enddate: '',
-          status: "subscribed with renewal date"   
+          status: "subscribed with renewal date",
+          payedBy: username,   
         });
         const familyMemberUsername = familyMember.username;
         if(!familyMemberUsername)
@@ -294,7 +300,7 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
     
     
     // Create an array to store health package details for the patient and family members
-    const healthPackages: { name: string; status: string; }[] = [];
+    const healthPackages: { name: string; status: string; patientName?: string; familyMemberName?: string }[] = [];
 
     // Include the patient's health package subscriptions
     if (patient.healthPackageSubscription && patient.healthPackageSubscription.length > 0) {
@@ -310,15 +316,14 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
     }
     else{
           for (const familyMember of patient.familyMembers) {
-       if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0) {
-  healthPackages.push(
-    ...familyMember.healthPackageSubscription.map(package1 => ({
-      patientName: patient.name,
-      name: package1.name,
-         familyMemberName:familyMember.name,
-      status: package1.status,
-   
-    }))
+            if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0 && familyMember.healthPackageSubscription[0].payedBy === patient.username) {
+              healthPackages.push(
+                ...familyMember.healthPackageSubscription.map((package1) => ({
+                  patientName: patient.name,
+                  name: package1.name,
+                  familyMemberName: familyMember.name,
+                  status: package1.status,
+                }))
   );
 }
 

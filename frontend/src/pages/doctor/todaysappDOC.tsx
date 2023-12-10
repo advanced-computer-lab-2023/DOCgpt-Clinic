@@ -13,7 +13,7 @@ import {
   Button,
   Typography,
 } from "@mui/material";
-import Footer from "../../components/El7a2niInfo";
+
 import { useNavigate } from "react-router-dom";
 
 // Define a type for the appointment object

@@ -116,7 +116,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: "Poppins",
+    fontFamily: "Poppins, sans-serif",
     h1: {
       fontSize: "2rem", // Set your desired font size
       fontWeight: "bold",
