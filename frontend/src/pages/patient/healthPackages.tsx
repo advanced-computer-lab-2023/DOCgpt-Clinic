@@ -1,4 +1,4 @@
-import { Container, Typography } from "@mui/material";
+import { Container, Typography, Box  } from "@mui/material";
 import axios from "axios";
 import {useEffect, useState } from "react";
 
@@ -65,21 +65,24 @@ function HealthPackages() {
     }, []);
 
 
-    return(
-        <>
-        <PatientAppBar/>
-        <Container style={{marginTop: '20px' }}>
-        <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
-        Available Health Packages
-      </Typography>
-           {healthPackages && healthPackages.map((healthPackage, index)=>(
-           <HealthPackageComp key={index} healthPackage={healthPackage} healthPackages={subscribed}></HealthPackageComp>
-            // <SarahComp  healthPackage= {healthPackage}></SarahComp>
-           ))}
+    return (
+      <>
+        <PatientAppBar />
+        <Container style={{ marginTop: '20px' }}>
+          <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center' }}>
+            Available Health Packages
+          </Typography>
+          <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center">
+            {healthPackages &&
+              healthPackages.map((healthPackage, index) => (
+                <Box key={index} m={2} minWidth={300}>
+                  <HealthPackageComp healthPackage={healthPackage} healthPackages={subscribed} />
+                </Box>
+              ))}
+          </Box>
         </Container>
-        </>
+      </>
     );
-
-}
+  }
 
 export default HealthPackages;

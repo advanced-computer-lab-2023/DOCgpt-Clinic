@@ -848,23 +848,6 @@ const getTodayAppointments = (req, res) => __awaiter(void 0, void 0, void 0, fun
     res.status(200).json(appointments);
 });
 exports.getTodayAppointments = getTodayAppointments;
-const getTodayAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    const tokenDB = yield tokenModel_1.default.findOne({ token });
-    console.log(token);
-    const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0); // Set hours, minutes, seconds, and milliseconds to 0 for the start of the day
-    const appointments = yield appointmentModel_2.default
-        .find({
-        doctor: doctorUsername,
-        date: { $gte: today, $lt: new Date(today.getTime() + 24 * 60 * 60 * 1000) }, // Filter for today's appointments
-    })
-        .exec();
-    res.status(200).json(appointments);
-});
-exports.getTodayAppointments = getTodayAppointments;
 //accept/reject follow up request 
 const acceptFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
