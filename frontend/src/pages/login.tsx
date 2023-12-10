@@ -166,7 +166,7 @@ export default function SignIn() {
             onClose={() => setOpenAlert(false)}
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         >
-            <MuiAlert severity="warning" sx={{ width: '100%', fontSize: '1.5rem' }}>
+            <MuiAlert severity="error" sx={{ width: '100%', fontSize: '1.5rem' }}>
                 Wrong Username Or Password
             </MuiAlert>
         </Snackbar>
