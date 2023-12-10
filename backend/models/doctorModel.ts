@@ -69,6 +69,11 @@ walletBalance: {
   type: Number,
   required: true,
   default: 0,
+  },
+  hasSeenContract:{
+    type:Boolean,
+    required: false,
+    default:false
   }
 
 });

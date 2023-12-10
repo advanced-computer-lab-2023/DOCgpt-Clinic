@@ -20,6 +20,7 @@ interface FamilyMemberPackage {
     startdate: string;
     enddate: string;
     status: string;
+    payedBy: string;
   };
 }
 
@@ -99,7 +100,7 @@ const UnsubscribePackageForMember: React.FC = () => {
         variant="h4"
         gutterBottom
       >
-        Unsubscribe Packages for Family Members
+        My Family Members Subscribed Packages
       </Typography>
       <Grid container spacing={2}>
         {Array.isArray(familyMembersAndPackages) &&

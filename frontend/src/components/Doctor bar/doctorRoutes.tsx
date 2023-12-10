@@ -47,10 +47,6 @@ const appRoutes: RouteType[] = [
         state: "View my appointments",
       },
       {
-        path: "/doctor/todayapp",
-        state: "View today's appointements",
-      },
-      {
         path: "/doctor/followUpRequests",
         state: "View Follow Up requests",
       },

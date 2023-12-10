@@ -54,7 +54,6 @@ function SignUpDoctor() {
       !data.get("hourlyrate") ||
       !data.get("affiliation") ||
       !data.get("speciality") ||
-
       !data.get("educationalBackground")
     ) {
       setFormErrors("Please fill out all fields");
@@ -71,13 +70,13 @@ function SignUpDoctor() {
         dateOfBirth: data.get("dateofbirth"),
         hourlyRate: data.get("hourlyrate"),
         affiliation: data.get("affiliation"),
-        speciality:data.get("speciality"),
+        speciality: data.get("speciality"),
         educationalBackground: data.get("educationalBackground"),
       });
 
       // Handle the response from the back-end as needed, e.g., show a success message or redirect the user.
       console.log("patient registered successfully :", response);
-      navigate("/contract");
+      navigate("/landing");
       // You can also redirect the user to the login page after a successful sign-up
       // history.push("/login"); // You need to import useHistory from 'react-router-dom'
     } catch (error) {
@@ -88,7 +87,7 @@ function SignUpDoctor() {
 
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>): void {
     throw new Error("Function not implemented.");
-}
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -213,11 +212,8 @@ function SignUpDoctor() {
                   autoComplete="educationalBackground"
                 />
               </Grid>
-             
-
-                </Grid>
-                <UploadAndSubmitReqDocs />
-
+            </Grid>
+            <UploadAndSubmitReqDocs />
 
             {formErrors && (
               <Typography color="error" align="center">
@@ -230,7 +226,7 @@ function SignUpDoctor() {
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
             >
-             Sign up 
+              Sign up
             </Button>
             <Grid container justifyContent="flex-end">
               <Grid item>

@@ -33,7 +33,6 @@ const drawerWidth = 240;
 const navItems = [
   { name: "Home", path: "/doctor/todayapp" },
   { name: "Clinic", path: "/doctor/home" },
- 
 ];
 
 export type RouteType = {
@@ -71,7 +70,6 @@ export default function DrawerAppBar() {
     navigate("/doctor/main");
   };
 
-
   const navigateTo = (route: To) => {
     navigate(route);
     setIsDrawerOpen(false);
@@ -106,7 +104,6 @@ export default function DrawerAppBar() {
     }
   };
 
-  
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -160,7 +157,6 @@ export default function DrawerAppBar() {
     // Redirect to the My Profile page ("/doctor/home")
     navigate("/changepassworddoctor");
   };
-  
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -188,16 +184,6 @@ export default function DrawerAppBar() {
           >
             CLINIC
           </Typography>
-          <IconButton
-            color="primary"
-            aria-label="Search"
-            onClick={() => {
-              // Handle search functionality
-            }}
-            sx={{ mr: 2, display: { sm: "block" } }}
-          >
-            <SearchIcon />
-          </IconButton>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item) => (
               <Button
@@ -253,19 +239,17 @@ export default function DrawerAppBar() {
 
       {/* User Menu */}
       <Menu
-  anchorEl={anchorEl}
-  open={Boolean(anchorEl)}
-  onClose={handleCloseMenu}
->
-  <MenuItem onClick={handleMyProfileClick}>My Profile</MenuItem>
-  <MenuItem onClick={handleMywallet}>My Wallet</MenuItem> {/* Add onClick here */}
-    <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
-  <MenuItem onClick={handleLogout}>Logout</MenuItem>
-
-
-</Menu>
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+      >
+        <MenuItem onClick={handleMyProfileClick}>My Profile</MenuItem>
+        <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>{" "}
+        {/* Add onClick here */}
+        <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      </Menu>
       {/* User Menu */}
     </Box>
   );
 }
-

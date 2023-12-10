@@ -3,7 +3,7 @@ import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStat
   searchPatient, selectPatient, updateDoctorAffiliation, 
   updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord,
    viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, 
-   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,acceptFollowUpRequest,rejectFollowUpRequest,addOrUpdateDosage,updateUnfilledPrescription, viewRequests, getDoctorByUsername, viewMyPatientsUsername} from "../controllers/doctorController";
+   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,acceptFollowUpRequest,rejectFollowUpRequest,addOrUpdateDosage,updateUnfilledPrescription, viewRequests, getDoctorByUsername, viewMyPatientsUsername, viewDocSpeciality, removeDoc, checkcontact, markContractAsSeen} from "../controllers/doctorController";
  
 import multer from "multer";
 import path from 'path';
@@ -18,6 +18,7 @@ router.get("/viewMyPatients", viewMyPatients);
 router.get("/viewMyPatientsUsername",viewMyPatientsUsername);
 router.get("/selectPatient", selectPatient);
 router.get("/viewPatientsUpcoming", viewPatientsUpcoming );
+router.post("/docspec",viewDocSpeciality)
 //APPOINTMENTS 
 router.get("/allMyApp", viewMyAppointments);
 router.get("/upcomingApp", viewUpcomingAppointments);
@@ -70,9 +71,9 @@ router.get("/pendingDoctors",getPendingDoctor);
 router.patch("/acceptRequest",acceptDoctorRequest);
 router.patch("/rejectRequest",rejecttDoctorRequest);
 
-
-
-
+router.patch("/removedoc",removeDoc)
+router.post("/checkcontract",checkcontact)
+router.post("/contactseen",markContractAsSeen)
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadFolder = path.join(__dirname, '../uploads'); // The folder where files will be saved (inside your project)

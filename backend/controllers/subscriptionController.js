@@ -55,7 +55,8 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
                 name: packageName,
                 startdate: '',
                 enddate: '',
-                status: "subscribed with renewal date"
+                status: "subscribed with renewal date",
+                payedBy: username,
             });
             yield patient.save();
             return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });
@@ -71,7 +72,8 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
                     name: packageName,
                     startdate: '',
                     enddate: '',
-                    status: "subscribed with renewal date"
+                    status: "subscribed with renewal date",
+                    payedBy: username,
                 });
                 yield patient.save();
             }
@@ -116,6 +118,7 @@ const subscribeFamAsPatient = (username, packageName) => __awaiter(void 0, void 
             startdate: '',
             enddate: '',
             status: 'subscribed with renewal date',
+            payedBy: username,
         });
         yield patient.save();
         return { message: 'Health package subscribed successfully', patient };
@@ -170,7 +173,8 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
                     name: packageName,
                     startdate: '',
                     enddate: '',
-                    status: "subscribed with renewal date"
+                    status: "subscribed with renewal date",
+                    payedBy: username,
                 });
                 const familyMemberUsername = familyMember.username;
                 if (!familyMemberUsername)
@@ -191,7 +195,8 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
                         name: packageName,
                         startdate: '',
                         enddate: '',
-                        status: "subscribed with renewal date"
+                        status: "subscribed with renewal date",
+                        payedBy: username,
                     });
                     const familyMemberUsername = familyMember.username;
                     if (!familyMemberUsername)
@@ -266,8 +271,8 @@ const viewHealthPackageStatus = (req, res) => __awaiter(void 0, void 0, void 0, 
         }
         else {
             for (const familyMember of patient.familyMembers) {
-                if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0) {
-                    healthPackages.push(...familyMember.healthPackageSubscription.map(package1 => ({
+                if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0 && familyMember.healthPackageSubscription[0].payedBy === patient.username) {
+                    healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => ({
                         patientName: patient.name,
                         name: package1.name,
                         familyMemberName: familyMember.name,

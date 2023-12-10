@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Doctor as DoctorModel } from '../../models/doctor';
-import { Button, Container, Typography } from '@mui/material';
-import Doctor from '../../components/Doctor'; // Import the Doctor component
+import React, { useEffect, useState } from "react";
+import { Doctor as DoctorModel } from "../../models/doctor";
+import { Button, Container, Typography } from "@mui/material";
+import Doctor from "../../components/Doctor"; // Import the Doctor component
+import axios from "axios";
 
 function DoctorMain() {
   const [doctor, setDoctor] = useState<DoctorModel | null>(null);
   const [todaysAppointments, setTodaysAppointments] = useState<any[]>([]);
   const doctorUsername = doctor?.username;
-
 
   useEffect(() => {
     async function fetchDoctorData() {
@@ -15,8 +15,8 @@ function DoctorMain() {
         const token = localStorage.getItem("authToken");
         const response = await fetch(`/routes/doctors/getDoctor`, {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         });
 
         if (response.ok) {

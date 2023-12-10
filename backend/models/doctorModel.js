@@ -69,6 +69,11 @@ const doctorSchema = new mongoose_1.default.Schema({
         type: Number,
         required: true,
         default: 0,
+    },
+    hasSeenContract: {
+        type: Boolean,
+        required: false,
+        default: false
     }
 });
 const doctorModel = mongoose_1.default.model('Doctor', doctorSchema);
