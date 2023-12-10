@@ -68,7 +68,7 @@ export default function DrawerAppBar() {
   };
   const handleMyProfileClick = () => {
     // Redirect to the My Profile page ("/doctor/home")
-    navigate("/doctor/home");
+    navigate("/doctor/main");
   };
 
 

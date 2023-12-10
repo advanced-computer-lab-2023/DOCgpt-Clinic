@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
-
 import {
   Table,
   TableBody,
@@ -14,8 +13,7 @@ import {
   Typography,
   Box,
 } from "@mui/material";
-
-// Define a type for the appointment object
+import Footer from "../../components/Footer"
 interface Appointment {
   _id: string;
   patient: string;
@@ -94,6 +92,8 @@ const TodayAppointmentsComponent: React.FC = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Footer />
+
     </div>
   );
 };
