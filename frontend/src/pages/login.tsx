@@ -13,7 +13,10 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
+import Snackbar from "@mui/material/Snackbar";
+import MuiAlert from "@mui/material/Alert";
 
 function Copyright(props: any) {
   return (
@@ -36,9 +39,14 @@ function Copyright(props: any) {
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
 
+function Alert(props:any) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 export default function SignIn() {
   const navigate = useNavigate();
+  const [openAlert, setOpenAlert] = useState(false);
 
+  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
@@ -72,25 +80,16 @@ export default function SignIn() {
       // You can use state management libraries like Redux or React context to manage the token and user data.
     } catch (error) {
       console.error("Login failed:", error);
-      // Handle errors, e.g., display an error message to the user.
-      if (axios.isAxiosError(error)) {
-        // Log the error response details
-        if (error.response) {
-          console.error(
-            "Error Response:",
-            error.response.status,
-            error.response.data
-          );
-        } else if (error.request) {
-          console.error("Error Request:", error.request);
-        } else {
-          console.error("Other Error:", error.message);
-        }
-      } else {
-        console.error("Unknown Error:", error);
-      }
+      console.log(error); // Add this line to log the complete error object
+    
+      // Display an alert for wrong username or password
+      setOpenAlert(true);
+
     }
   };
+  // const handleSnackbarClose = () => {
+  //   setOpenAlert(false);
+  // };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -161,6 +160,16 @@ export default function SignIn() {
         </Box>
         <Copyright sx={{ mt: 8, mb: 4 }} />
       </Container>
+      <Snackbar
+            open={openAlert}
+            autoHideDuration={2000}
+            onClose={() => setOpenAlert(false)}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        >
+            <MuiAlert severity="warning" sx={{ width: '100%', fontSize: '1.5rem' }}>
+                Wrong Username Or Password
+            </MuiAlert>
+        </Snackbar>
     </ThemeProvider>
   );
 }

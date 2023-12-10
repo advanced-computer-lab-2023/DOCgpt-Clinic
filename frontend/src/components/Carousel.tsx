@@ -13,7 +13,7 @@ const MyCarousel = () => {
       <Carousel >
         {items.map((item, index) => (
           <div key={index}>
-            <img src={item} alt={`carousel-item-${index}`} style={{ width: '100%', height: '85vh' }} />
+            <img src={item} alt={`carousel-item-${index}`} style={{ width: '100%', height: '90vh' }} />
             {/* You can customize the content of each carousel item here */}
           </div>
         ))}
