@@ -17,9 +17,6 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
       <Typography> Doctor: {doctor}</Typography>
       <Typography> Date: {appointmentDate}</Typography>
       <Typography> Status: {status}</Typography>
-      <Button variant="contained" color="primary" onClick={onStartChat}>
-        Start Chat
-      </Button>
     </Card>
   );
 };

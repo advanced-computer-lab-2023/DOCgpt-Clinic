@@ -29,6 +29,7 @@ import {
   viewFamAppointments,
   getTodayAppointments,
   sendRequestFollowUp,
+  getPatientDocNames,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 import fs from 'fs';
@@ -77,6 +78,7 @@ router.get("/pastApp", viewPastAppointments);
 router.get("/upcomingApp", viewUpcomingAppointments);
 router.get("/getAppByDate", getAppointmentByDate);
 router.get("/getAppByStatus", getAppointmentByStatus);
+router.get("/getpatientdocnames",getPatientDocNames);
 
 //HEALTH RECORD
 router.get("/healthRecord", viewMyHealthRecord);

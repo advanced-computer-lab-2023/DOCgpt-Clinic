@@ -61,11 +61,15 @@ import ChangePasswordAdmin from "./components/changePasswordadmin";
 import ViewWalletAmount from "./components/viewWalletAmountDoctor";
 import TodayAppointmentsComponent from "./pages/doctor/todaysappDOC";
 import TodayAppointmentsPatient from "./pages/patient/todaysappP";
-import Chat from "./components/chat";
+import Chat from "./components/chatPatient";
 import SelectedPrescription from "./pages/patient/SelectedPres";
 import DrPrescription from "./pages/doctor/DrPrescription";
 import DrSelectedPrescription from "./pages/doctor/DrSelectedPres";
 import PrescriptionDetailsPage from "./components/presciptionDetails";
+import AllChatsPage from "./pages/patient/allchatsPagePatient";
+import AllchatsDoctor from "./pages/doctor/allchatsDoctor";
+import ChatPatient from "./components/chatPatient";
+import ChatDoctor from "./components/chatDoctor";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -90,7 +94,9 @@ function App() {
         // <Route path="/doctor/main" Component={DoctorMain} />
         // <Route path="/doctor/login" Component={DoctorLogin} />
         //{" "}
-        <Route path="/patient/prescriptions" element={<PatientPrescriptions />}
+        <Route
+          path="/patient/prescriptions"
+          element={<PatientPrescriptions />}
         />
         <Route path="/patient/home" element={<HomePage />} />
         <Route path="/patient/link" element={<LinkFamilyMember />} />
@@ -107,7 +113,6 @@ function App() {
           path="/patient/walletAmount"
           element={<ViewWalletAmountPage />}
         />
-        
         <Route path="/doctor/walletAmount" element={<ViewWalletAmount />} />
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
@@ -141,7 +146,8 @@ function App() {
           path="/patient/viewtodapp"
           Component={TodayAppointmentsPatient}
         />
-        <Route path="/chat/:conversationId" element={<Chat />} />
+        <Route path="/chatPatient/:conversationId" element={<ChatPatient />} />
+        <Route path="/chatDoctor/:conversationId" element={<ChatDoctor />} />
         <Route path="/doctor/followUp" element={<ViewMyTimeSlots />} />
         <Route path="/patient/doctorinfo" Component={DoctorInfo} />
         <Route path="/patient/ViewMyFam/:date/:price" Component={ViewMyFam} />
@@ -149,6 +155,8 @@ function App() {
           path="/view-doctor-documents"
           element={<ViewDoctorDocuments />}
         />
+        <Route path="/all-chats-doctor" element={<AllchatsDoctor />} />
+        <Route path="/all-chats-patient" element={<AllChatsPage />} />
         <Route
           path="/health-package-subscription/:packageName"
           Component={HealthPackageSubscriptionPage}
@@ -167,10 +175,9 @@ function App() {
         <Route path="/changepasswordpatient" Component={ChangePassword} />
         <Route path="/changepassworddoctor" Component={ChangePasswordDoctor} />
         <Route path="/changepasswordadmin" Component={ChangePasswordAdmin} />
-
         <Route path="/selectedPres/:id" Component={SelectedPrescription} />
         <Route path="/DrselectedPres/:id" Component={DrSelectedPrescription} />
-        <Route path="/doctor/DrPrescription" Component={DrPrescription}/>
+        <Route path="/doctor/DrPrescription" Component={DrPrescription} />
       </Routes>
     </Router>
   );

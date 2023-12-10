@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addprescription = exports.updateUnfilledPrescription = exports.addOrUpdateDosage = exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.addprescription = exports.updateUnfilledPrescription = exports.addOrUpdateDosage = exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatientsUsername = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const path_1 = __importDefault(require("path"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -183,6 +183,31 @@ const viewMyPatients = (req, res) => __awaiter(void 0, void 0, void 0, function*
     // res.status(200).json(patients);
 });
 exports.viewMyPatients = viewMyPatients;
+const viewMyPatientsUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        if (!tokenDB) {
+            return res.status(401).json({ error: 'Unauthorized' });
+        }
+        const doctorUsername = tokenDB.username;
+        const appointments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
+        const usernames = [];
+        for (const appointment of appointments) {
+            const username = appointment.patient;
+            if (!usernames.includes(username)) {
+                usernames.push(username);
+            }
+        }
+        res.status(200).json(usernames);
+    }
+    catch (error) {
+        console.error('Error fetching patient usernames:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.viewMyPatientsUsername = viewMyPatientsUsername;
 const viewPatientsUpcoming = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -991,9 +1016,9 @@ const updateUnfilledPrescription = (req, res) => __awaiter(void 0, void 0, void 
             return res.status(404).json({ error: 'Prescription not found' });
         }
         // Check if the prescription is already filled
-        if (prescription.status == "filled") {
-            return res.status(400).json({ error: 'Prescription has already been filled' });
-        }
+        // if (prescription.status=="filled") {
+        //   return res.status(400).json({ error: 'Prescription has already been filled' });
+        // }
         // Check if the medicine is already in the prescription
         const existingMedicine = prescription.Medicines.find((medicine) => medicine.medicineName === medicineName);
         if (existingMedicine) {
