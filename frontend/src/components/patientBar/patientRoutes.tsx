@@ -104,10 +104,7 @@ const appRoutes: RouteType[] = [
         path: "/patient/viewMyhealthrecords",
         state: "View My Health Record",
       },
-      {
-        path: "/patient/walletAmount",
-        state: "View My wallet",
-      },
+    
     ],
   },
   {

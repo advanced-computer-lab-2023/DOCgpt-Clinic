@@ -3,6 +3,8 @@ import { Doctor as DoctorModel } from "../../models/doctor";
 import { Button, Container, Typography } from "@mui/material";
 import Doctor from "../../components/Doctor"; // Import the Doctor component
 import axios from "axios";
+import DoctorBar from "../../components/Doctor bar/doctorBar";
+import El7a2niInfo from "../../components/El7a2ni-info";
 
 function DoctorMain() {
   const [doctor, setDoctor] = useState<DoctorModel | null>(null);
@@ -40,13 +42,18 @@ function DoctorMain() {
   }, []);
 
   return (
+    <>
     <Container>
+      <DoctorBar />
       {doctor ? (
         <Doctor doctor={doctor} doctorUsername={doctorUsername} />
       ) : (
         <p>Loading...</p>
       )}
+   
     </Container>
+    <El7a2niInfo/>
+    </>
   );
 }
 

@@ -7,6 +7,9 @@ import ForumIcon from "@mui/icons-material/Forum";
 import logo from '../../logo.jpeg';
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import PersonIcon from "@mui/icons-material/Person";
+
+
 import {
   AppBar,
   Box,
@@ -256,6 +259,34 @@ const CustomListSubheader = styled(ListSubheader)(({ theme }) => ({
       {renderMenuItems(appRoutes)}
     </Box>
   );
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+  
+  const handleMywallet = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/patient/walletAmount");
+  };
+  const handlechangepassword = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/changepasswordpatient");
+  };
+  const handleMyProfileClick = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/");
+  };
+<IconButton
+  color="primary"
+  aria-label="User Menu"
+  aria-controls="user-menu"
+  aria-haspopup="true"
+  onClick={handleOpenMenu}
+>
+  <PersonIcon />
+</IconButton>
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -296,12 +327,8 @@ const CustomListSubheader = styled(ListSubheader)(({ theme }) => ({
             <Button key="Logout" sx={{ color: "black" }} onClick={openPharmacy}>
               Pharmacy
             </Button>
-            <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
-              Logout
-            </Button>
-            <IconButton style={{ color: "blue" }} onClick={handleChatClick}>
-              <ForumIcon />
-            </IconButton>
+           
+          
           </Box>
           <Box sx={{ display: "flex" }}>
             {isWalletOpen && (
@@ -324,9 +351,21 @@ const CustomListSubheader = styled(ListSubheader)(({ theme }) => ({
                 {/* Render the ViewWalletBalance component in the wallet sidebar */}
               </Drawer>
             )}
+  <IconButton style={{ color: "primary" }} onClick={handleChatClick}>
+              <ForumIcon />
+            </IconButton>
           </Box>
          {/* Notification Badge */}
          <CustomizedBadges  />
+         <IconButton
+            color="primary"
+            aria-label="User Menu"
+            aria-controls="user-menu"
+            aria-haspopup="true"
+            onClick={handleOpenMenu}
+          >
+            <PersonIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <nav>
@@ -352,6 +391,18 @@ const CustomListSubheader = styled(ListSubheader)(({ theme }) => ({
       <Box component="main">
         <Toolbar />
       </Box>
+      <Menu
+  anchorEl={anchorEl}
+  open={Boolean(anchorEl)}
+  onClose={handleCloseMenu}
+>
+ 
+  <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>
+  <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
+  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+</Menu>
     </Box>
   );
 }
+
+

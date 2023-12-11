@@ -16,6 +16,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import PatientBar from "../../components/patientBar/patientBar";
 
+
 function MyPatients() {
   const navigate = useNavigate();
   const [patients, setPatients] = useState<any[]>([]);
