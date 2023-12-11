@@ -67,7 +67,7 @@ export default function DrawerAppBar() {
   };
   const handleMyProfileClick = () => {
     // Redirect to the My Profile page ("/doctor/home")
-    navigate("/doctor/home");
+    navigate("/doctor/main");
   };
 
   const navigateTo = (route: To) => {
@@ -233,7 +233,7 @@ export default function DrawerAppBar() {
           {drawer}
         </Drawer>
       </nav>
-      <Box component="main" sx={{ p: 9 }}>
+      <Box component="main">
         <Toolbar />
       </Box>
 
