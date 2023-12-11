@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button, Card, Container } from '@mui/material';
+import { Button, Card, Container, Dialog, DialogActions, DialogContent, DialogTitle, List, ListItem, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 interface Timeslot {
   date: Date;
@@ -10,12 +11,12 @@ interface Timeslot {
 
 
 const PatientReschedule: React.FC = () => {
-
+  const [open, setOpen] = useState(true);
     const selectedAppointmentId = localStorage.getItem("selectedAppointmentId");
     const selectedDoctor = localStorage.getItem("selectedDoctor");
     const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
     const [selectedTimeslot, setSelectedTimeslot] = useState<Timeslot>();
-
+    const navigate = useNavigate();
     useEffect(() => {
       // Fetch doctor data only if selectedDoctor is defined
         const fetchDoctorData = async () => {
@@ -57,35 +58,67 @@ const PatientReschedule: React.FC = () => {
             }
         };
 
-
+        const handleClose = () => {
+          setOpen(false);
+          navigate("/patient/viewMyappointments");
+      };
   return (
-    <Container>
-      
-      <h2>Choose A Timeslot</h2>
-      {timeslots.length === 0 ? (
-        <p>No timeslots available</p>
-      ) : (
-        <Card>
-          <ul>
-            {timeslots.map((timeslot, index) => (
-    <li key={index} onClick={() => handleTimeslotSelect(timeslot)}>
-      {new Date(timeslot.date).toLocaleDateString()} {/* Display the timeslot date */}
-    </li>
-  ))}
+    <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+       <DialogTitle>
+        <Typography
+        variant="h4"
+        gutterBottom
+        color="primary"
+        style={{ textAlign: "center" }}
+        >
+        When would you like to reschedule?
+        </Typography>
+    </DialogTitle>
+    <DialogContent>
+  <Container>
+    {timeslots.length === 0 ? (
+      <Typography variant="body1">No timeslots available</Typography>
+    ) : (
+      <Card>
+        <List>
+          {timeslots.map((timeslot, index) => (
+            <ListItem
+              key={index}
+              button
+              onClick={() => handleTimeslotSelect(timeslot)}
+            >
+              {new Date(timeslot.date).toLocaleDateString()}
+            </ListItem>
+          ))}
+        </List>
+      </Card>
+    )}
 
-          </ul>
-        </Card>
-      )}
+    {selectedTimeslot && (
+      <Container>
+        <Typography variant="h5" gutterBottom>
+          Selected Timeslot
+        </Typography>
+        <Typography variant="body1">
+          {selectedTimeslot.date.toLocaleString()}
+        </Typography>
+        {/* Add other details of the selected timeslot as needed */}
+      </Container>
+    )}
+  </Container>
+</DialogContent>
+<DialogActions>
+  <Button
+    onClick={submitTimeSlot}
+    variant="contained"
+    size="large"
+    color="primary"
+  >
+    Submit
+  </Button>
+</DialogActions>
+    </Dialog>
 
-      {selectedTimeslot && (
-        <div>
-          <h3>Selected Timeslot</h3>
-          <p>{selectedTimeslot.date.toLocaleString()}</p>
-          {/* Add other details of the selected timeslot as needed */}
-        </div>
-      )}
-      <Button onClick={submitTimeSlot}> Submit</Button>
-    </Container>
   );
 };
 

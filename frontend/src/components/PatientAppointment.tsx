@@ -1,8 +1,14 @@
-import { Alert, Button, Card, Container, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Snackbar, Typography } from "@mui/material";
+import { Alert, Button, Card, Container, Dialog, DialogActions, DialogContent, DialogTitle, Grid, Snackbar, Stack, Typography } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import TaskAltRoundedIcon from '@mui/icons-material/TaskAltRounded';
+import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
+import RestoreRoundedIcon from '@mui/icons-material/RestoreRounded';
+import EventBusyRoundedIcon from '@mui/icons-material/EventBusyRounded';
+import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
+import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
+import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
 interface AppointmentProps {
   appointment: any;
   onStartChat: () => void;
@@ -19,8 +25,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   }
   const { status, doctor, date, _id, scheduledBy, type, paid } = appointment;
   const appointmentDate = new Date(date).toISOString().split("T")[0];
-  const isPaid = paid ? "Yes ;)" : "No :(";
-
+  const isPaid = paid ? "Paid" : "Not Paid";
   const handleAppointmentReschedule = () => {
     localStorage.setItem("selectedAppointmentId", _id);
     localStorage.setItem("selectedDoctor", doctor);
@@ -82,32 +87,78 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
+  const formattedDate = new Intl.DateTimeFormat("en-US", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "numeric",
+    minute: "numeric",
+  }).format(new Date(appointment.date));
 
   return (
-    <Card style={{ padding: "20px", margin: "10px" }}>
-      <Grid container>
-        <Grid item xs={6}>
-          {/* INFO */}
-          <Typography> Doctor: {doctor}</Typography>
-          <Typography> Date: {appointmentDate}</Typography>
-          <Typography> Status: {status}</Typography>
-          <Typography> Type: {type}</Typography>
-          <Typography> Scheduled By: {scheduledBy}</Typography>
-          <Typography> Paid: {isPaid}</Typography>
-        </Grid>
-        {/* BUTTONS */}
-        <Grid item xs={6} style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-          <Button variant="contained" color="primary" onClick={onStartChat}>
-            Start Chat
-          </Button>
-          <Button onClick={handleAppointmentReschedule}>Reschedule</Button>
-          <Button onClick={handleFollowUpClicked}>Request Follow up</Button>
-          <Button onClick={handleCancel} disabled={status === "cancelled"}>
-            Cancel
-          </Button>
-        </Grid>
-      </Grid>
+    <Card style={{padding:"10px", margin: "10px" , height: '250px', width: '600px'}}>
+      <Container style={{display: "flex", justifyContent: "center"}}>
+        <Stack spacing={2}>
+            {/* INFO */}
+            <Container>
 
+            <Typography variant="h6" style={{ fontWeight: "bold" }} gutterBottom>
+            {status === "completed" ? (
+                <TaskAltRoundedIcon color="success" style={{ marginRight: "5px" }} />
+              ) : status === "cancelled" ? (
+                <BlockRoundedIcon color="error" style={{ marginRight: "5px" }} />
+              ) : status === "upcoming" ? (
+                <NotificationsActiveRoundedIcon color="info" style={{ marginRight: "5px" }} />
+              ) : (
+                <RestoreRoundedIcon color="info" style={{ marginRight: "5px" }} />
+              )} {formattedDate}
+                </Typography>
+              <Typography style={{ fontWeight: "bold" , textAlign: "center"}}> With Dr. {doctor}</Typography>
+              <Typography display="flex" alignItems="center">
+              Status: {status}
+            </Typography>
+
+              <Typography> {type} Appointment</Typography>
+              <Typography>{isPaid}</Typography>
+              <Typography> Scheduled By {scheduledBy}</Typography>
+
+            </Container>
+          {/* BUTTONS */}
+
+          <Container style={{ display: "flex", justifyContent: "flex-end", marginTop: "10px" }}>
+  <Button
+    onClick={handleAppointmentReschedule}
+    variant="contained"
+    color="primary"
+    style={{ marginRight: "10px", borderRadius: "25px" }}
+  >
+    Reschedule
+  </Button>
+  <Button
+    onClick={handleFollowUpClicked}
+    variant="outlined"
+    color="secondary"
+    style={{ marginRight: "10px", borderRadius: "25px" }}
+  >
+    Request Follow up
+  </Button>
+  <Button
+    onClick={handleCancel}
+    disabled={status === "cancelled"}
+    variant="contained"
+    style={{
+      backgroundColor: status === "cancelled" ? "#CCCCCC" : "#FF5252",
+      borderRadius: "25px",
+    }}
+  >
+    {status === "cancelled" ? "Cancelled" : "Cancel"}
+  </Button>
+</Container>
+
+
+        </Stack> 
+      </Container>
       {/* Confirmation Dialog */}
       <Dialog open={isDialogOpen} onClose={handleCancelCancel}>
         <DialogTitle>Confirmation</DialogTitle>
