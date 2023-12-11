@@ -1,8 +1,10 @@
-const io = require("socket.io")(3200, {
-  cors: {
-    origin: "http://localhost:3002",
-  },
-});
+
+  const io = require("socket.io")(3202, {
+    cors: {
+      origin: ["http://localhost:3002", "http://localhost:3001"],
+    },
+  });
+
 
 let users = [];
 
@@ -39,17 +41,12 @@ io.on("connection", (socket) => {
         senderusername,
         text,
       });
-    } else {
-      // Handle the case where the user is not found or has no socketId
-      console.error("User ${recieverusername} not found or has no socketId");
-    }
-  });
+    });
   
-
-  //when disconnect
-  socket.on("disconnect", () => {
-    console.log("a user disconnected!");
-    removeUser(socket.id);
-    io.emit("getUsers", users);
-    });
-  });
+    //when disconnect
+    socket.on("disconnect", () => {
+      console.log("a user disconnected!");
+      removeUser(socket.id);
+      io.emit("getUsers", users);
+    });
+  });

@@ -50,7 +50,7 @@ const PasswordReset: React.FC = () => {
     try {
       // Make an API call to reset the password
       const response = await axios.post("/routes/otp/resetPassword", {
-        username,
+
         newPassword,
         confirmPassword,
       });
@@ -98,14 +98,7 @@ const PasswordReset: React.FC = () => {
         ) : null}
         {showPass ? (
           <div>
-            <TextField
-              label="Username"
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              fullWidth
-              margin="normal"
-            />
+
             <TextField
               label="New Password"
               type="password"

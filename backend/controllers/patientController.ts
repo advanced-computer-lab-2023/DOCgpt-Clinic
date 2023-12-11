@@ -478,6 +478,37 @@ export const getPatientAppointments = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+export const getPatientDocNames = async (req: Request, res: Response) => {
+  console.log("im in");
+  try {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel.findOne({ token });
+    console.log(token);
+
+    const patientUsername = tokenDB?.username;
+
+    const appointments = await AppointmentModel.find({ patient: patientUsername }).exec();
+
+    // Use a Set to keep track of unique doctor usernames
+    const uniqueDoctorNamesSet = new Set<string>();
+
+    // Add each doctor name to the Set
+    appointments.forEach(appointment => {
+      if (appointment.doctor) {
+        uniqueDoctorNamesSet.add(appointment.doctor);
+      }
+    });
+
+    // Convert Set back to an array
+    const uniqueDoctorNames = Array.from(uniqueDoctorNamesSet);
+
+    res.status(200).json(uniqueDoctorNames);
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 //VIEW PAST APPOINTMENTS
 export const viewPastAppointments = async (req: Request, res: Response) => {
@@ -1113,6 +1144,7 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
         patient: appointment.patient,
         date: newDate, // Convert date to Date object
         scheduledBy: username,
+        type: appointment.type
       });
       const doctor = await doctorModel.findOne({
         username: appointment.doctor,
@@ -1302,3 +1334,40 @@ export const sendRequestFollowUp = async (req: Request, res: Response) => {
 //   }
 // };
 
+export const calcPatientAge = async (req: Request, res: Response) => {
+  const username = req.body.username;
+
+  try {
+    // Find the patient by username
+    const patient = await Patientmodel.findOne({ username }).exec();
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    // Get the date of birth from the patient
+    const dateOfBirth = patient.dateofbirth;
+
+    if (!dateOfBirth) {
+      return res.status(400).json({ error: 'Date of birth not available for the patient' });
+    }
+
+    // Calculate the age
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    // Adjust age if the birthday hasn't occurred yet this year
+    const todayMonth = today.getMonth();
+    const birthDateMonth = birthDate.getMonth();
+    if (todayMonth < birthDateMonth || (todayMonth === birthDateMonth && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    // Send the age in the response
+    res.status(200).json({ age });
+  } catch (error) {
+    console.error('Error calculating patient age:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};

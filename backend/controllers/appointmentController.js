@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.cancelAppointment = exports.createAppointment22 = exports.payWithCredit = exports.payment2 = exports.paymenttt = exports.createAppointment = exports.createNotificationWithCurrentDate = exports.complete = exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = void 0;
+exports.getAppointmentById = exports.cancelAppointmentFam = exports.cancelAppointmentDoc = exports.cancelAppointment = exports.createAppointment22 = exports.payWithCredit = exports.payment2 = exports.paymenttt = exports.createAppointment = exports.createNotificationWithCurrentDate = exports.complete = exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = void 0;
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel")); // Import your Doctor model
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
@@ -162,8 +162,16 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
                       Doctor: ${doctor.username}
                       Type: ${type}
                       Price: ${price}`;
+        const msg = `Your appointment has been scheduled for ${new Date(date)}. 
+                      Doctor: ${doctor.username}
+                      Type: ${type}
+                      Price: ${price}`;
         const doctorEmail = doctor.email; // Adjust this based on your patient model structure
         const emailText1 = `An  appointment has been scheduled for ${new Date(date)}. 
+                                        patient: ${username}
+                                        Type: ${type}
+                                        Price: ${price}`;
+        const msg1 = `An  appointment has been scheduled for ${new Date(date)}. 
                                         patient: ${username}
                                         Type: ${type}
                                         Price: ${price}`;
@@ -172,8 +180,8 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const not2 = yield (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText);
-        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, emailText1);
+        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
+        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
         return res.status(201).json({ message: 'Appointment done', appointment });
     }
     catch (error) {
@@ -207,7 +215,6 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             if (!sessionUrl) {
                 return res.status(500).json({ error: 'Failed to create payment session' });
             }
-            console.log(doctor.walletBalance);
             doctor.walletBalance += price;
             yield doctor.save();
             const app = yield (0, exports.createAppointment)(req, res);
@@ -378,7 +385,7 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'cancelled';
-    const type = 'new appointment';
+    const type = 'Regular';
     const price = Number(req.body.price);
     try {
         const authHeader = req.headers['authorization'];
@@ -402,7 +409,7 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         doctor.timeslots.push(newTimeSlot);
         const currentDate = new Date();
         const givenDate = new Date(date);
-        const timeDifference = givenDate.getTime() - currentDate.getTime();
+        const timeDifference = currentDate.getTime() - givenDate.getTime();
         console.log(currentDate.getTime());
         console.log(givenDate.getTime());
         // Check if the time difference is less than 24 hours (in milliseconds)
@@ -448,3 +455,162 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.cancelAppointment = cancelAppointment;
+const cancelAppointmentDoc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const patientUsername = req.body.patientUsername;
+    const date = req.body.date;
+    const status = 'cancelled';
+    const type = 'Regular';
+    const price = Number(req.body.price);
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        if (!tokenDB) {
+            return res.status(404).json({ error: 'Token not found' });
+        }
+        const username = tokenDB.username;
+        const doctor = yield doctorModel_1.default.findOne({ username });
+        if (!doctor) {
+            return res.status(404).json({ error: 'doctor  not found' });
+        }
+        const patient = yield patientModel_1.default.findOne({ username: patientUsername });
+        if (!patient) {
+            return res.status(404).json({ message: 'patient not found app' });
+        }
+        const newTimeSlot = {
+            date: date
+        };
+        doctor.timeslots.push(newTimeSlot);
+        const currentDate = new Date();
+        const givenDate = new Date(date);
+        const timeDifference = currentDate.getTime() - givenDate.getTime();
+        console.log(currentDate.getTime());
+        console.log(givenDate.getTime());
+        // Check if the time difference is less than 24 hours (in milliseconds)
+        const isLessthan24Hours = timeDifference < 24 * 60 * 60 * 1000;
+        console.log(timeDifference);
+        if (!isLessthan24Hours) {
+            doctor.walletBalance = doctor.walletBalance - price;
+            patient.walletBalance = patient.walletBalance + price;
+            yield patient.save();
+            console.log(patient);
+        }
+        yield doctor.save();
+        const existingAppointment = yield appointmentModel_1.default.findOneAndUpdate({
+            doctor: username,
+            patient: patientUsername,
+            date: new Date(date),
+        }, { $set: { status: 'cancelled' } }, { new: true } // Return the updated document
+        );
+        if (!existingAppointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+        const patientEmail = patient.email;
+        const emailSubject = 'Appointment cancelled ';
+        const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
+                      Doctor: ${doctor.username}
+                      Type: ${type}
+                      Price: ${price}`;
+        const doctorEmail = doctor.email;
+        const emailText1 = `Your appointment with this date   ${new Date(date)} has been cancelled. 
+                                        patient: ${patient.username}
+                                        Type: ${type}
+                                        Price: ${price}`;
+        const patientMail = yield (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
+        const docMail = yield (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
+        console.log("im hereree");
+        // Create a notification for the patient
+        const patientNotification = yield (0, exports.createNotificationWithCurrentDate)(patientUsername, emailSubject, emailText);
+        const doctorNotification = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText1);
+        return res.status(201).json({ message: 'Appointment Cancelled' });
+    }
+    catch (error) {
+        return res.status(500).json({ message: 'An error occurred', error });
+    }
+});
+exports.cancelAppointmentDoc = cancelAppointmentDoc;
+const cancelAppointmentFam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorUsername = req.body.doctorUsername;
+    const famMember = req.body.famMember;
+    const date = req.body.date;
+    const status = 'cancelled';
+    const type = 'Regular';
+    const price = Number(req.body.price);
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        if (!tokenDB) {
+            return res.status(404).json({ error: 'Token not found' });
+        }
+        const username = tokenDB.username;
+        const patient = yield patientModel_1.default.findOne({ username });
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+        const fam = yield patientModel_1.default.findOne({ username: famMember });
+        if (!fam) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        if (!doctor) {
+            return res.status(404).json({ message: 'Doctor not found app' });
+        }
+        const newTimeSlot = {
+            date: date
+        };
+        doctor.timeslots.push(newTimeSlot);
+        const currentDate = new Date();
+        const givenDate = new Date(date);
+        const timeDifference = currentDate.getTime() - givenDate.getTime();
+        console.log(currentDate.getTime());
+        console.log(givenDate.getTime());
+        // Check if the time difference is less than 24 hours (in milliseconds)
+        const isLessthan24Hours = timeDifference < 24 * 60 * 60 * 1000;
+        console.log(timeDifference);
+        if (!isLessthan24Hours) {
+            doctor.walletBalance = doctor.walletBalance - price;
+            patient.walletBalance = patient.walletBalance + price;
+            yield patient.save();
+            console.log(patient);
+        }
+        yield doctor.save();
+        const existingAppointment = yield appointmentModel_1.default.findOneAndUpdate({
+            doctor: doctorUsername,
+            patient: famMember,
+            date: new Date(date),
+        }, { $set: { status: 'cancelled' } }, { new: true } // Return the updated document
+        );
+        if (!existingAppointment) {
+            return res.status(404).json({ message: 'Appointment not found' });
+        }
+        const patientEmail = fam.email;
+        const emailSubject = 'Appointment cancelled ';
+        const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
+                      Doctor: ${doctor.username}
+                      Type: ${type}
+                      Price: ${price}`;
+        const doctorEmail = doctor.email;
+        const emailText1 = `Your appointment with this date   ${new Date(date)} has been cancelled. 
+                                        patient: ${patient.username}
+                                        Type: ${type}
+                                        Price: ${price}`;
+        const patientMail = yield (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
+        const docMail = yield (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
+        console.log("im hereree");
+        // Create a notification for the patient
+        const patientNotification = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText);
+        const doctorNotification = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, emailText1);
+        return res.status(201).json({ message: 'Appointment Cancelled' });
+    }
+    catch (error) {
+        return res.status(500).json({ message: 'An error occurred', error });
+    }
+});
+exports.cancelAppointmentFam = cancelAppointmentFam;
+const getAppointmentById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { appointmentId } = req.query;
+    const appointment = yield appointmentModel_1.default.findById(appointmentId);
+    return res.status(200).json({ appointment });
+});
+exports.getAppointmentById = getAppointmentById;

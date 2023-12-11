@@ -24,8 +24,10 @@ router.get("/", doctorController_1.getDoctors);
 router.get("/getDoctor", doctorController_1.getDoctor);
 router.get("/searchPatient", doctorController_1.searchPatient);
 router.get("/viewMyPatients", doctorController_1.viewMyPatients);
+router.get("/viewMyPatientsUsername", doctorController_1.viewMyPatientsUsername);
 router.get("/selectPatient", doctorController_1.selectPatient);
 router.get("/viewPatientsUpcoming", doctorController_1.viewPatientsUpcoming);
+router.post("/docspec", doctorController_1.viewDocSpeciality);
 //APPOINTMENTS 
 router.get("/allMyApp", doctorController_1.viewMyAppointments);
 router.get("/upcomingApp", doctorController_1.viewUpcomingAppointments);
@@ -42,6 +44,7 @@ router.post("/addHealthRecord", doctorController_1.addHealthRecord);
 router.patch("/updateEmail", doctorController_1.updateDoctorEmail);
 router.patch("/updateRate", doctorController_1.updateDoctorHourlyRate);
 router.patch("/updateAffiliation", doctorController_1.updateDoctorAffiliation);
+router.post("/addprescription", doctorController_1.addprescription);
 //create follow up
 router.post("/followup", doctorController_1.createfollowUp);
 router.patch("/addtimeslot", doctorController_1.addTimeSlots);
@@ -57,9 +60,6 @@ router.post('/changePassDoc', doctorController_1.changePassword);
 router.get("/pendingDoctors", doctorController_1.getPendingDoctor);
 router.patch("/acceptRequest", doctorController_1.acceptDoctorRequest);
 router.patch("/rejectRequest", doctorController_1.rejecttDoctorRequest);
-// Define the path to the folder where uploaded documents are stored
-const uploadFolder = path_1.default.join(__dirname, 'uploads');
-// Configure multer
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         if (!fs_1.default.existsSync(uploadFolder)) {
@@ -168,4 +168,6 @@ router.patch('/rejectFollowUpRequest', doctorController_1.rejectFollowUpRequest)
 //sprint 3
 router.post('/addOrUpdateDosage', doctorController_1.addOrUpdateDosage);
 router.patch('/updateUnfilledPrescription', doctorController_1.updateUnfilledPrescription);
+router.get('/viewRequests', doctorController_1.viewRequests);
+router.get('/getDoctorByUsername', doctorController_1.getDoctorByUsername);
 exports.default = router;

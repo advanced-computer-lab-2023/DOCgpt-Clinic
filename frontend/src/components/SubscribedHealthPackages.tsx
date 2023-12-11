@@ -11,6 +11,8 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Container,
+  Grid,
 } from '@mui/material';
 
 interface ApiResponse {
@@ -19,6 +21,7 @@ interface ApiResponse {
     startdate?: string | Date;
     enddate?: string | Date;
     status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date';
+    payedBy: string;
   }[];
 }
 
@@ -82,51 +85,47 @@ const SubscribedHealthPackages = () => {
   };
 
   return (
-    <div>
-      <Typography color="primary" style={{ textAlign: 'center'}} variant="h4" gutterBottom>
-        Subscribed Packages
-      </Typography>
-      {subscribedPackages.length > 0 ? (
-        <Paper elevation={3} style={{ padding: '10px' }}>
-          <List>
-            {subscribedPackages.map((pkg, index) => (
-              <ListItem key={index}>
-                <ListItemText primary={pkg.name} />
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleRemoveSubscription(pkg.name)}
-                >
-                  Remove Subscription
-                </Button>
-              </ListItem>
-            ))}
-          </List>
-        </Paper>
-      ) : (
-        <Typography variant="body1">No subscribed packages found.</Typography>
-      )}
+    <Container>
+    <Typography color="primary" style={{ textAlign: 'center'}} variant="h4" gutterBottom>
+      My Subscribed Packages
+    </Typography>
+    <Grid container spacing={2}>
+      {Array.isArray(subscribedPackages) && subscribedPackages.map((pkg, index) => (
+        <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+          <Paper style={{ padding: '20px' }}>
+            <Typography variant="h6">Package Name: {pkg.name}</Typography>
+            <Typography>Status: {pkg.status}</Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => handleRemoveSubscription(pkg.name)}
+            >
+              Remove Subscription
+            </Button>
+          </Paper>
+        </Grid>
+      ))}
+    </Grid>
 
-      {/* Confirmation Dialog */}
-      <Dialog open={isConfirmationDialogOpen} onClose={handleCloseConfirmationDialog}>
-        <DialogTitle>Confirmation</DialogTitle>
-        <DialogContent>
-          <Typography>
-            Are you sure you want to cancel your subscription for "{selectedPackage}"?
-          </Typography>
-        </DialogContent>
-        <DialogActions>
+    {/* Confirmation Dialog */}
+    <Dialog open={isConfirmationDialogOpen} onClose={handleCloseConfirmationDialog}>
+      <DialogTitle>Confirmation</DialogTitle>
+      <DialogContent>
+        <Typography>
+          Are you sure you want to cancel your subscription for "{selectedPackage}"?
+        </Typography>
+      </DialogContent>
+      <DialogActions>
         <Button onClick={handleConfirmRemoveSubscription} color="primary" autoFocus>
-           Yes
-          </Button>
-          <Button onClick={handleCloseConfirmationDialog} color="primary">
-            No
-          </Button>
-        
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
+          Yes
+        </Button>
+        <Button onClick={handleCloseConfirmationDialog} color="primary">
+          No
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </Container>
+);
 };
 
 export default SubscribedHealthPackages;

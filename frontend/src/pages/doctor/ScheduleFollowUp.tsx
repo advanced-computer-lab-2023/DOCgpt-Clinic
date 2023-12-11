@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Button } from '@mui/material';
+import { Button, Card, Container } from '@mui/material';
 
 interface Timeslot {
   date: Date;
@@ -60,20 +60,22 @@ const ViewMyTimeSlots: React.FC = () => {
 
 
   return (
-    <div>
+    <Container>
         <p>Patient: {selectedPatient}</p>
       <h2>Your Timeslots</h2>
       {timeslots.length === 0 ? (
         <p>No timeslots available</p>
       ) : (
-        <ul>
-          {timeslots.map((timeslot, index) => (
-  <li key={index} onClick={() => handleTimeslotSelect(timeslot)}>
-    {new Date(timeslot.date).toLocaleDateString()} {/* Display the timeslot date */}
-  </li>
-))}
+        <Card>
+          <ul>
+            {timeslots.map((timeslot, index) => (
+    <li key={index} onClick={() => handleTimeslotSelect(timeslot)}>
+      {new Date(timeslot.date).toLocaleDateString()} {/* Display the timeslot date */}
+    </li>
+  ))}
 
-        </ul>
+          </ul>
+        </Card>
       )}
 
       {selectedTimeslot && (
@@ -84,7 +86,7 @@ const ViewMyTimeSlots: React.FC = () => {
         </div>
       )}
       <Button onClick={submitFollowUp}> Submit</Button>
-    </div>
+    </Container>
   );
 };
 

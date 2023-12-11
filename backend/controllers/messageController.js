@@ -12,9 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMsgs = exports.createMessage = void 0;
+exports.getLastMessage = exports.getMsgs = exports.createMessage = void 0;
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
 const message_1 = __importDefault(require("../models/message"));
+const conversation_1 = __importDefault(require("../models/conversation"));
 const createMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -45,3 +46,24 @@ const getMsgs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getMsgs = getMsgs;
+const getLastMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const conversationId = req.query.conversationId;
+        // Check if the conversation exists
+        const conversation = yield conversation_1.default.findById(conversationId);
+        if (!conversation) {
+            return res.status(404).json({ error: 'Conversation not found' });
+        }
+        // Fetch the last message for the conversation
+        const lastMessage = yield message_1.default.findOne({ conversationId }).sort({ createdAt: -1 });
+        if (!lastMessage) {
+            return res.status(404).json({ error: 'No messages found for the conversation' });
+        }
+        res.status(200).json(lastMessage);
+    }
+    catch (error) {
+        console.error('Error fetching last message:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.getLastMessage = getLastMessage;

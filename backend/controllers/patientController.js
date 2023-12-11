@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.getTodayAppointments = exports.deletePatientDocs = exports.openPatientDocument = exports.uploadPatintDocs = exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.getSessionPrice = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
 exports.sendRequestFollowUp = exports.getTodayAppointments = exports.viewFamAppointments = exports.rescheduleAppointments = exports.deletePatientDocs = exports.openPatientDocument = exports.uploadPatintDocs = exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.getSessionPrice = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
@@ -420,6 +421,33 @@ const getPatientAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
     }
 });
 exports.getPatientAppointments = getPatientAppointments;
+const getPatientDocNames = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("im in");
+    try {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        console.log(token);
+        const patientUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
+        const appointments = yield appointmentModel_2.default.find({ patient: patientUsername }).exec();
+        // Use a Set to keep track of unique doctor usernames
+        const uniqueDoctorNamesSet = new Set();
+        // Add each doctor name to the Set
+        appointments.forEach(appointment => {
+            if (appointment.doctor) {
+                uniqueDoctorNamesSet.add(appointment.doctor);
+            }
+        });
+        // Convert Set back to an array
+        const uniqueDoctorNames = Array.from(uniqueDoctorNamesSet);
+        res.status(200).json(uniqueDoctorNames);
+    }
+    catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({ error: "Internal server error" });
+    }
+});
+exports.getPatientDocNames = getPatientDocNames;
 //VIEW PAST APPOINTMENTS
 const viewPastAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
@@ -973,6 +1001,7 @@ const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
                 patient: appointment.patient,
                 date: newDate,
                 scheduledBy: username,
+                type: appointment.type
             });
             const doctor = yield doctorModel_2.default.findOne({
                 username: appointment.doctor,
@@ -1097,6 +1126,38 @@ const sendRequestFollowUp = (req, res) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.sendRequestFollowUp = sendRequestFollowUp;
+// export const getAllPrescriptionsForPatient = async (req: Request, res: Response) => {
+//   try {
+//      const authHeader = req.headers['authorization'];
+//     const token = authHeader && authHeader.split(' ')[1];
+//     const tokenDB = await tokenModel.findOne({ token });
+//     const patientUsername = tokenDB && tokenDB.username;
+//     if (!patientUsername) {
+//       return res.status(400).json({ error: 'Patient username is required' });
+//     }
+//     const prescriptions = await prescriptionModel.find({ patientUsername });
+//     return res.status(200).json({ prescriptions });
+//   } catch (error) {
+//     console.error('Error getting prescriptions for patient:', error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
+// export const getPrescriptionDetails = async (req: Request, res: Response) => {
+//   try {
+//     const { prescriptionId } = req.body;
+//     if (!prescriptionId) {
+//       return res.status(400).json({ error: 'Prescription ID is required' });
+//     }
+//     const prescription = await prescriptionModel.findById(prescriptionId);
+//     if (!prescription) {
+//       return res.status(404).json({ error: 'Prescription not found' });
+//     }
+//     return res.status(200).json({ prescription });
+//   } catch (error) {
+//     console.error('Error getting prescription details:', error);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// };
 // export const getAllPrescriptionsForPatient = async (req: Request, res: Response) => {
 //   try {
 //      const authHeader = req.headers['authorization'];

@@ -74,19 +74,19 @@ const Patient = ({ patient, doctor }: PatientProps) => {
     fetchHealthRecord();
   }, []);
 
-    if(!patient){
-        return null;
+  if (!patient) {
+    return null;
+  }
+  const { name, username } = patient;
+
+  const handleClick = () => {
+    // Add your click event handling logic here
+    if (username) {
+      const params = new URLSearchParams();
+      params.append("patient", username);
+      navigate(`/doctor/patientInfo?${params.toString()}`);
     }
-    const {name, username} = patient;
-    
-    const handleClick = () => {
-        // Add your click event handling logic here
-        if(username){
-            const params = new URLSearchParams();
-            params.append('patient', username);
-            navigate(`/doctor/patientInfo?${params.toString()}`);
-        }
-    };
+  };
 
   const healthRecordClick = () => {
     if (username && !healthRecord) {
@@ -99,28 +99,7 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       navigate(`/doctor/patientHealthRecord?${params.toString()}`);
     }
   };
-  const handleCreateConversation = async ({ name }: { name: string }) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      const response = await axios.post(
-        "/routes/conversation/startConv",
-        {
-          secondusername: name,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      localStorage.setItem("recieverusername", name);
-      setResponse(response.data);
-      console.log(response.data._id);
-      navigate(`/chat/${response.data._id}`);
-    } catch (error) {
-      console.error("Error creating conversation:", error);
-    }
-  };
+
   const addPresc = async (name: any) => {
     try {
       const token = localStorage.getItem("authToken");
@@ -135,22 +114,27 @@ const Patient = ({ patient, doctor }: PatientProps) => {
           },
         }
       );
-  
+
       // Extract prescriptionId from the response
       const prescriptionId = response.data._id;
-  
+
       // Append prescriptionId to the URL
       const newWindow = window.open(
         `http://localhost:3001/doctormed/${prescriptionId}`,
         "_blank"
       );
-  
+
       if (!newWindow) {
         console.error("Unable to open a new window.");
       }
     } catch (error) {
       console.error("Error in addPresc:", error);
     }
+  };
+  const buttonStyle = {
+    margin: "8px",
+    width: "350px", 
+    height:"50px",// Adjust the margin as needed
   };
   return (
     <Card
@@ -165,18 +149,29 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       <Container onClick={handleClick}>
         <Typography> Patient Name: {name}</Typography>
       </Container>
-      <Button variant="contained" onClick={healthRecordClick}>
-        {" "}
-        Health Record
-      </Button>
+
+      {/* Health Record Button */}
       <Button
         variant="contained"
-        onClick={() => handleCreateConversation({ name })}
+        color="primary"
+        style={buttonStyle}
+        onClick={healthRecordClick}
       >
-        Create Conversation
+        Health Record
       </Button>
-      <Button variant="contained" onClick={() => addPresc(name)}> Add Prescription</Button>
+
+      {/* Add Prescription Button */}
+      <Button
+        variant="contained"
+        color="primary"
+        style={buttonStyle}
+        onClick={() => addPresc(name)}
+      >
+        Add Prescription
+      </Button>
     </Card>
   );
+
+
 };
 export default Patient;

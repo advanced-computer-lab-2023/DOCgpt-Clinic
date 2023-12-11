@@ -116,7 +116,7 @@ const addFileInput = () => {
       localStorage.setItem("doctorUsername", String(formData.get("username")));
   
       console.log("doctor registered successfully:", response);
-      navigate("/contract");
+      navigate("/landing");
   
       // Handle file uploads
       const fileInput = document.getElementById("fileInput") as HTMLInputElement;
@@ -148,8 +148,10 @@ const addFileInput = () => {
       // Handle errors, e.g., display an error message to the user.
     }
   };
-  
 
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>): void {
+    throw new Error("Function not implemented.");
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>

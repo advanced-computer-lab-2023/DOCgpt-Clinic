@@ -116,7 +116,7 @@ export default function DrawerAppBar() {
   const drawer = (
     <Box sx={{ textAlign: "center" }}>
       <Typography variant="h6" sx={{ my: 2 }} color="black">
-       Clinic
+        Clinic
       </Typography>
       <Divider />
       {renderMenuItems(appRoutes)}
@@ -149,16 +149,6 @@ export default function DrawerAppBar() {
           >
             CLINIC
           </Typography>
-          <IconButton
-            color="primary"
-            aria-label="Search"
-            onClick={() => {
-              // Handle search functionality
-            }}
-            sx={{ mr: 2, display: { sm: "block" } }}
-          >
-            <SearchIcon />
-          </IconButton>
           <Box sx={{ display: { xs: "none", sm: "block" } }}>
             {navItems.map((item) => (
               <Button
@@ -194,7 +184,7 @@ export default function DrawerAppBar() {
           {drawer}
         </Drawer>
       </nav>
-      <Box component="main" sx={{ p: 3 }}>
+      <Box component="main">
         <Toolbar />
       </Box>
     </Box>

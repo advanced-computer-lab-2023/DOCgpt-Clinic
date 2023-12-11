@@ -1,41 +1,24 @@
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Typography, Button, Box, Container, Paper } from '@mui/material';
-import DrawerAppBar from '../../components/patientBar/patientBar';
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Typography, Button, Box, Container, Paper } from "@mui/material";
+import DrawerAppBar from "../../components/patientBar/patientBar";
+import Carousel from "../../components/Carousel";
+import logo from "../../logo.jpeg";
+
+import TodayAppointmentsPatient from "./todaysappP";
+import El7a2niInfo from "../../components/El7a2ni-info";
 
 function HomePage() {
   const navigate = useNavigate();
   const { username } = useParams();
 
-  const handleButtonClick = () => {
-    navigate('/other-page'); // Replace with the path of your other page
-  };
-
   return (
     <>
       <DrawerAppBar />
-      <Container>
-        <Paper
-          sx={{
-            // backgroundImage: 'url(/path/to/your/image.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            height: 400,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: 4,
-          }}
-        >
-          <Button variant="contained" color="primary" onClick={handleButtonClick}>
-            patient
-          </Button>
-        </Paper>
-        {/* <Typography variant="body1" paragraph>
-          This is your home page with a poster and a greeting.
-        </Typography> */}
-        {/* Add more content here */}
-      </Container>
+      <Carousel />
+      <TodayAppointmentsPatient />
+
+      <El7a2niInfo />
     </>
   );
 }
