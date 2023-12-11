@@ -215,7 +215,6 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             if (!sessionUrl) {
                 return res.status(500).json({ error: 'Failed to create payment session' });
             }
-            console.log(doctor.walletBalance);
             doctor.walletBalance += price;
             yield doctor.save();
             const app = yield (0, exports.createAppointment)(req, res);

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCountP = exports.getNotificationsD = exports.getNotificationsP = void 0;
+exports.getCountD = exports.getCountP = exports.getNotificationsD = exports.getNotificationsP = void 0;
 const notificationModel_1 = __importDefault(require("../models/notificationModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
@@ -83,3 +83,25 @@ const getCountP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getCountP = getCountP;
+const getCountD = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        if (!tokenDB) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const username = tokenDB.username;
+        const doctor = yield doctorModel_1.default.findOne({ username });
+        if (!doctor) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const notificationsCount = yield notificationModel_1.default.countDocuments({ patientUsername: username });
+        res.json({ notificationsCount });
+    }
+    catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+exports.getCountD = getCountD;

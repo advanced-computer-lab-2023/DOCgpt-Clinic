@@ -1,43 +1,25 @@
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Typography, Button, Box, Container, Paper } from '@mui/material';
-import AdminBar from '../../components/admin Bar/adminBar';
+import React from "react";
+import { useNavigate, useParams, Link } from "react-router-dom";
+import { Typography, Button, Box, Container, Paper } from "@mui/material";
+import AdminBar from "../../components/admin Bar/adminBar";
+import Carousel from "react-material-ui-carousel";
+import MyCarousel from "../../components/Carousel";
+import El7a2niInfo from "../../components/El7a2ni-info";
 
-function HomePage() {
+function AdminHomePage() {
   const navigate = useNavigate();
   const { username } = useParams();
 
-  const handleButtonClick = () => {
-    navigate('/other-page'); // Replace with the path of your other page
-  };
+  // Function to handle navigation to health record page
 
   return (
     <>
       <AdminBar />
-      <Container>
-        <Paper
-          sx={{
-            // backgroundImage: 'url(/path/to/your/image.jpg)',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            height: 400,
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginBottom: 4,
-          }}
-        >
-          <Button variant="contained" color="primary" onClick={handleButtonClick}>
-            admin
-          </Button>
-        </Paper>
-        {/* <Typography variant="body1" paragraph>
-          This is your home page with a poster and a greeting.
-        </Typography> */}
-        {/* Add more content here */}
-      </Container>
+      <MyCarousel />
+
+      <El7a2niInfo />
     </>
   );
 }
 
-export default HomePage;
+export default AdminHomePage;

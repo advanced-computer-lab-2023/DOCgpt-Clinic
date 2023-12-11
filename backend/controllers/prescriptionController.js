@@ -372,10 +372,7 @@ const changeStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             return res.status(404).json({ error: 'Prescription not found.' });
         }
         // Update the prescription status
-        if (prescription.status == "filled") {
-            prescription.status = "unfilled";
-        }
-        else {
+        if (prescription.status == "unfilled") {
             prescription.status = "filled";
         }
         // Save the updated prescription

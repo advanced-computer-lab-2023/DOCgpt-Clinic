@@ -255,7 +255,7 @@ export const paymenttt = async (req: Request, res: Response) => {
       if (!sessionUrl) {
         return res.status(500).json({ error: 'Failed to create payment session' });
       }
-        console.log(doctor.walletBalance)
+        
       doctor.walletBalance += price;
       await doctor.save();
 

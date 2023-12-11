@@ -98,6 +98,7 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
                         <Button onClick={handleCancel} disabled={status === "cancelled"}>
             Cancel
           </Button>
+
                 </Grid>
             </Grid>
             <Dialog open={isDialogOpen} onClose={handleCancelCancel}>
