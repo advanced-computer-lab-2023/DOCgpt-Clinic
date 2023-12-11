@@ -195,9 +195,7 @@ export default function DrawerAppBar() {
                 {item.name}
               </Button>
             ))}
-            <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
-              Logout
-            </Button>
+
             <IconButton style={{ color: "blue" }} onClick={handleChatClick}>
               <ForumIcon />
             </IconButton>

@@ -1,7 +1,8 @@
 import * as React from "react";
 import { useState } from "react";
 import { To, useNavigate } from "react-router-dom";
-import SearchIcon from "@mui/icons-material/Search";
+
+
 import {
   AppBar,
   Box,
@@ -16,20 +17,19 @@ import {
   ListItemText,
   Toolbar,
   Typography,
+  Menu,
+  MenuItem, // Import Menu and MenuItem
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
-
+import PersonIcon from "@mui/icons-material/Person"; // Import PersonIcon
 import { ReactNode } from "react";
 import appRoutes from "./adminRoutes";
 
 const drawerWidth = 240;
-//const navItems = ["Home", "About", "Pharmacy", "Contact", "Login"];
 const navItems = [
   { name: "Home", path: "/admin/home" },
   { name: "Clinic", path: "/admin/home" },
-  { name: "About", path: "/admin/home" },
-  { name: "Contact", path: "/admin/home" },
 ];
 
 export type RouteType = {
@@ -47,43 +47,58 @@ export type links = {
   element?: ReactNode;
 };
 
-export default function DrawerAppBar() {
+export default function AdminAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const navigate = useNavigate();
+
+
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null); // State for the anchor element of the menu
 
   const handleDrawerToggle = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
 
+  const navigate = useNavigate();
+
+const handleLogout = async () => {
+  try {
+    const token = localStorage.getItem("authToken");
+    const response = await fetch("/routes/admins/logoutAdmin", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`, // Include the user's token
+      },
+    });
+
+    if (response.ok) {
+      // Handle successful logout (e.g., clear local storage, redirect user)
+      console.log("User logged out successfully");
+      localStorage.removeItem("authToken");
+
+     // Redirect to your login page
+     navigate("/");
+    } else {
+      // Handle errors during logout
+      console.error("Logout failed");
+    }
+  } catch (error) {
+    console.error("An error occurred:", error);
+  }
+};
+
   const navigateTo = (route: To) => {
     navigate(route);
     setIsDrawerOpen(false);
   };
-  const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("authToken");
-      const response = await fetch("/routes/admins/logoutAdmin", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Include the user's token
-        },
-      });
 
-      if (response.ok) {
-        // Handle successful logout (e.g., clear local storage, redirect user)
-        console.log("User logged out successfully");
-        localStorage.removeItem("authToken");
-
-        navigate("/"); // Redirect to your login page
-      } else {
-        // Handle errors during logout
-        console.error("Logout failed");
-      }
-    } catch (error) {
-      console.error("An error occurred:", error);
-    }
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
   };
+
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
   const renderMenuItems = (items: RouteType[]) => {
     return (
       <List>
@@ -159,10 +174,33 @@ export default function DrawerAppBar() {
                 {item.name}
               </Button>
             ))}
-            <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
-              Logout
-            </Button>
           </Box>
+          {/* User Menu */}
+          <IconButton
+            color="primary"
+            aria-label="User Menu"
+            aria-controls="user-menu"
+            aria-haspopup="true"
+            onClick={handleOpenMenu}
+          >
+            <PersonIcon />
+          </IconButton>
+          {/* User Menu */}
+          {/* Dropdown Menu */}
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseMenu}
+          >
+            <MenuItem onClick={() => navigate("/admin/profile")}>
+              My Profile
+            </MenuItem>
+            <MenuItem onClick={() => navigate("/changepasswordadmin")}>
+              Change my Password
+            </MenuItem>
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+          </Menu>
+          {/* Dropdown Menu */}
         </Toolbar>
       </AppBar>
       <nav>

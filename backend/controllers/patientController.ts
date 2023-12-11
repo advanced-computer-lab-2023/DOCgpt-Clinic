@@ -922,6 +922,7 @@ export const viewWalletAmount = async (req: Request, res: Response) => {
     }
 
     const patient = await patientModel.findOne({ username }).exec();
+    
 
     if (!patient) {
       return res.status(404).json({ error: "Patient not found." });
