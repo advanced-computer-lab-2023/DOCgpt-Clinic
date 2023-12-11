@@ -19,19 +19,7 @@ export type links = {
 };
 
 const appRoutes: RouteType[] = [
-  {
-    header: (
-      <Typography variant="h6" fontWeight="bold">
-        Settings
-      </Typography>
-    ),
-    child: [
-      {
-        path: "/changepasswordpatient",
-        state: "Change Password",
-      },
-    ],
-  },
+  
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
@@ -104,10 +92,7 @@ const appRoutes: RouteType[] = [
         path: "/patient/viewMyhealthrecords",
         state: "View My Health Record",
       },
-      {
-        path: "/patient/walletAmount",
-        state: "View My wallet",
-      },
+    
     ],
   },
   {

@@ -1,6 +1,6 @@
 import React from "react";
 import Carousel from "react-material-ui-carousel";
-import image1 from "../Doc1.jpeg";
+import image1 from "../doctors.jpeg";
 import image2 from "../Doc2.jpeg";
 import image3 from "../Doc4.jpeg";
 
