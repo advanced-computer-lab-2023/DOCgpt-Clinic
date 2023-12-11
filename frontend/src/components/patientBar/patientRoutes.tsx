@@ -21,7 +21,7 @@ export type links = {
 const appRoutes: RouteType[] = [
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6">
         Settings
       </Typography>
     ),
@@ -34,7 +34,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6">
         Appointments
       </Typography>
     ),
@@ -56,7 +56,7 @@ const appRoutes: RouteType[] = [
 
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Family Members
       </Typography>
     ),
@@ -74,7 +74,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Health Packages
       </Typography>
     ),
@@ -95,7 +95,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Health Records
       </Typography>
     ),
@@ -112,7 +112,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Prescriptions
       </Typography>
     ),
