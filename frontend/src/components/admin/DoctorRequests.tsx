@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import AdminBar from "../../components/admin Bar/adminBar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 interface Doctor {
   _id: string;
@@ -28,6 +28,8 @@ interface Doctor {
 
 const DoctorRequests: React.FC = () => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const navigate = useNavigate();
+
 
   const handleAccept = async (doctorUsername: string) => {
     try {
@@ -181,8 +183,12 @@ const DoctorRequests: React.FC = () => {
                         {doctor.educationalBackground}
                       </Typography>
                       <br />
-                      <Link to="/view-doctor-documents">View Uploaded Documents</Link>
-                    </>
+                      <Link
+                      to={`/view-doctor-documents/${doctor.username}`}
+                      onClick={() => navigate(`/view-doctor-documents/${doctor.username}`, { state: { doctorUsername: doctor.username } })}
+                    >
+                      View Uploaded Documents
+                    </Link>                    </>
                   }
                 />
               </ListItem>

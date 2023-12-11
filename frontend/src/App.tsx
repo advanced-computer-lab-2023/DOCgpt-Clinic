@@ -144,7 +144,7 @@ function App() {
         <Route path="/patient/doctorinfo" Component={DoctorInfo} />
         <Route path="/patient/ViewMyFam/:date/:price" Component={ViewMyFam} />
         <Route
-          path="/view-doctor-documents"
+          path="/view-doctor-documents/:username"
           element={<ViewDoctorDocuments />}
         />
         <Route
