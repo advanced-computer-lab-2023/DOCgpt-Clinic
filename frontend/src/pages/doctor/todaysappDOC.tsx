@@ -14,6 +14,8 @@ import {
 } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
+import El7a2niInfo from "../../components/El7a2ni-info";
+import MyCarousel from "../../components/Carousel";
 
 // Define a type for the appointment object
 interface Appointment {
@@ -94,8 +96,10 @@ const TodayAppointmentsComponent: React.FC = () => {
     navigate(`/doctor/patientHealthRecord?${params.toString()}`);
   };
   return (
+    <>
     <div>
       <DoctorBar />
+      {/* <MyCarousel/> */}
       <Typography variant="h5" gutterBottom style={{ textAlign: "center" }}>
         Today's Appointments - {formatDate(new Date().toString())}
       </Typography>
@@ -152,8 +156,12 @@ const TodayAppointmentsComponent: React.FC = () => {
             Add Time Slots
           </Button>
         </div>
+
       )}
+    
     </div>
+      {/* <El7a2niInfo/> */}
+</>
   );
 };
 

@@ -18,6 +18,7 @@ interface Notification {
     date: Date;
     msg: string;
   }
+  
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
     right: -3,
