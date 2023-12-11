@@ -17,7 +17,7 @@ import DoctorLogin from "./pages/doctor/doctorLogin";
 import MyAppointments from "./pages/doctor/MyAppointments";
 import MyPatients from "./pages/doctor/MyPatients";
 import SignupDoctor from "./pages/doctor/signupDoctor";
-import ViewWalletAmountPage from "./pages/patient/viewWalletAmountPage";
+
 import HealthPackages from "./pages/patient/healthPackages";
 import contract from "./pages/doctor/contract";
 import DrawerAppBar from "./components/patientBar/patientBar";
@@ -77,6 +77,7 @@ import ViewFollowUpRequests from "./pages/doctor/ViewFollowUpRequests";
 import RequestFollowUp from "./pages/patient/RequestFollowUp";
 import PatientReschedule from "./pages/patient/PatientReschedule";
 import ViewFamMemAppointments from "./pages/patient/ViewFamMemAppointments";
+import ViewWalletAmountPatient from "./components/viewWalletPatient";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -116,11 +117,11 @@ function App() {
           element={<ViewFamilyMembers />}
         />
         // <Route path="/admin" Component={Admin} />
+        <Route path="/doctor/walletAmount" element={<ViewWalletAmount />} />
         <Route
           path="/patient/walletAmount"
-          element={<ViewWalletAmountPage />}
+          element={<ViewWalletAmountPatient />}
         />
-        <Route path="/doctor/walletAmount" element={<ViewWalletAmount />} />
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
         // <Route path="/doctor/patients" Component={MyPatients} />
@@ -182,14 +183,17 @@ function App() {
         <Route path="/changepasswordpatient" Component={ChangePassword} />
         <Route path="/changepassworddoctor" Component={ChangePasswordDoctor} />
         <Route path="/changepasswordadmin" Component={ChangePasswordAdmin} />
-      
-      
         <Route path="/doctor/reschedule" Component={DoctorReschedule} />
-        <Route path="/doctor/followUpRequests" Component={ViewFollowUpRequests} />
-
+        <Route
+          path="/doctor/followUpRequests"
+          Component={ViewFollowUpRequests}
+        />
         <Route path="/patient/followUp" Component={RequestFollowUp} />
         <Route path="/patient/reschedule" Component={PatientReschedule} />
-        <Route path="/patient/famMemAppointments" Component={ViewFamMemAppointments} />
+        <Route
+          path="/patient/famMemAppointments"
+          Component={ViewFamMemAppointments}
+        />
         <Route path="/selectedPres/:id" Component={SelectedPrescription} />
         <Route path="/DrselectedPres/:id" Component={DrSelectedPrescription} />
         <Route path="/doctor/DrPrescription" Component={DrPrescription} />

@@ -4,6 +4,9 @@ import { To, useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ForumIcon from "@mui/icons-material/Forum";
+import PersonIcon from "@mui/icons-material/Person";
+
+
 import {
   AppBar,
   Box,
@@ -52,6 +55,8 @@ export type links = {
   path: string;
   element?: ReactNode;
 };
+
+
 
 export default function DrawerAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -165,6 +170,34 @@ export default function DrawerAppBar() {
       {renderMenuItems(appRoutes)}
     </Box>
   );
+  const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+  
+  const handleMywallet = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/patient/walletAmount");
+  };
+  const handlechangepassword = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/changepasswordpatient");
+  };
+  const handleMyProfileClick = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/");
+  };
+<IconButton
+  color="primary"
+  aria-label="User Menu"
+  aria-controls="user-menu"
+  aria-haspopup="true"
+  onClick={handleOpenMenu}
+>
+  <PersonIcon />
+</IconButton>
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -205,12 +238,8 @@ export default function DrawerAppBar() {
             <Button key="Logout" sx={{ color: "black" }} onClick={openPharmacy}>
               Pharmacy
             </Button>
-            <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
-              Logout
-            </Button>
-            <IconButton style={{ color: "blue" }} onClick={handleChatClick}>
-              <ForumIcon />
-            </IconButton>
+           
+          
           </Box>
           <Box sx={{ display: "flex" }}>
             {isWalletOpen && (
@@ -232,9 +261,21 @@ export default function DrawerAppBar() {
                 {/* Render the ViewWalletBalance component in the wallet sidebar */}
               </Drawer>
             )}
+  <IconButton style={{ color: "primary" }} onClick={handleChatClick}>
+              <ForumIcon />
+            </IconButton>
           </Box>
          {/* Notification Badge */}
          <CustomizedBadges  />
+         <IconButton
+            color="primary"
+            aria-label="User Menu"
+            aria-controls="user-menu"
+            aria-haspopup="true"
+            onClick={handleOpenMenu}
+          >
+            <PersonIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <nav>
@@ -259,6 +300,18 @@ export default function DrawerAppBar() {
       <Box component="main">
         <Toolbar />
       </Box>
+      <Menu
+  anchorEl={anchorEl}
+  open={Boolean(anchorEl)}
+  onClose={handleCloseMenu}
+>
+ 
+  <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>
+  <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
+  <MenuItem onClick={handleLogout}>Logout</MenuItem>
+</Menu>
     </Box>
   );
 }
+
+

@@ -195,9 +195,7 @@ export default function DrawerAppBar() {
                 {item.name}
               </Button>
             ))}
-            <Button key="Logout" sx={{ color: "black" }} onClick={handleLogout}>
-              Logout
-            </Button>
+
             <IconButton style={{ color: "blue" }} onClick={handleChatClick}>
               <ForumIcon />
             </IconButton>
@@ -235,7 +233,7 @@ export default function DrawerAppBar() {
           {drawer}
         </Drawer>
       </nav>
-      <Box component="main" sx={{ p: 9 }}>
+      <Box component="main">
         <Toolbar />
       </Box>
 
