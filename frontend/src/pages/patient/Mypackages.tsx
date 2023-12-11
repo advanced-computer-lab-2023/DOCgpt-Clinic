@@ -11,7 +11,7 @@ const MyPackagesPage = () => {
     <div>
     <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
       All Packages   
-      </Typography>
+    </Typography>
       <ViewStatusOfPackage />
       {/* Other content for the My Packages page if needed */}
     </div>

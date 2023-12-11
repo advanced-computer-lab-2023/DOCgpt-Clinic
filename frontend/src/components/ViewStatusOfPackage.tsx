@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { styled } from '@mui/material';
 
 interface HealthPackageStatus {
   name: string;
   status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date' | 'Not subscribed';
   familyMemberName?: string; // Added familyMemberName property
 }
-
+const DataGridWrapper = styled('div')(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  borderRadius: '8px',
+}));
 const columns: GridColDef[] = [
   { field: 'name', headerName: 'Health Package Name', flex: 1 },
   { field: 'status', headerName: 'Status', flex: 1 },
