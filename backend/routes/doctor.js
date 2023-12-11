@@ -60,6 +60,12 @@ router.post('/changePassDoc', doctorController_1.changePassword);
 router.get("/pendingDoctors", doctorController_1.getPendingDoctor);
 router.patch("/acceptRequest", doctorController_1.acceptDoctorRequest);
 router.patch("/rejectRequest", doctorController_1.rejecttDoctorRequest);
+router.patch("/removedoc", doctorController_1.removeDoc);
+router.post("/checkcontract", doctorController_1.checkcontact);
+router.post("/contactseen", doctorController_1.markContractAsSeen);
+// Define the path to the folder where uploaded documents are stored
+const uploadFolder = path_1.default.join(__dirname, 'uploads');
+// Configure multer
 const storage = multer_1.default.diskStorage({
     destination: (req, file, cb) => {
         if (!fs_1.default.existsSync(uploadFolder)) {

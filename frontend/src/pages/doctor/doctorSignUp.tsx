@@ -149,10 +149,6 @@ const addFileInput = () => {
     }
   };
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>): void {
-    throw new Error("Function not implemented.");
-  }
-
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
