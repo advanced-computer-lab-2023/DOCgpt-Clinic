@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDoctorByUsername = exports.viewRequests = exports.markContractAsSeen = exports.checkcontact = exports.updateUnfilledPrescription = exports.addOrUpdateDosage = exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.removeDoc = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatientsUsername = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.viewDocSpeciality = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.addprescription = exports.getDoctorByUsername = exports.viewRequests = exports.markContractAsSeen = exports.checkcontact = exports.updateUnfilledPrescription = exports.addOrUpdateDosage = exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.removeDoc = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatientsUsername = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.viewDocSpeciality = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const path_1 = __importDefault(require("path"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -631,6 +631,7 @@ const getPendingDoctor = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.getPendingDoctor = getPendingDoctor;
 const fs_2 = require("fs");
 const appointmentModel_2 = __importDefault(require("../models/appointmentModel"));
+const perscriptionModel_2 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_2 = __importDefault(require("../models/doctorModel"));
 const uploadAndSubmitReqDocs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const uploadedFiles = req.files;
@@ -1150,3 +1151,35 @@ const getDoctorByUsername = (req, res) => __awaiter(void 0, void 0, void 0, func
     return res.status(200).json({ doctor });
 });
 exports.getDoctorByUsername = getDoctorByUsername;
+const addprescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const doctorUsername = tokenDB && tokenDB.username;
+        const { patientUsername, status, Medicines } = req.body;
+        console.log("hi am herre");
+        // Check if the doctor exists
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        if (!doctor) {
+            return res.status(404).json({ error: 'Doctor not found' });
+        }
+        // Check if the patient exists
+        const patient = yield patientModel_1.default.findOne({ username: patientUsername });
+        if (!patient) {
+            return res.status(404).json({ error: 'Patient not found' });
+        }
+        const prescription = new perscriptionModel_2.default({
+            doctorUsername,
+            patientUsername,
+            status,
+            Medicines
+        });
+        const savedPrescription = yield prescription.save();
+        res.json(savedPrescription);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Failed to create prescription' });
+    }
+});
+exports.addprescription = addprescription;

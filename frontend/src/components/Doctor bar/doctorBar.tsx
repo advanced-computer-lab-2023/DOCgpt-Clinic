@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState } from "react";
 import { To, useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
+import CustomizedBadges from "./notificationIcon";
 import {
   AppBar,
   Box,
@@ -200,6 +201,7 @@ export default function DrawerAppBar() {
             <IconButton style={{ color: "blue" }} onClick={handleChatClick}>
               <ForumIcon />
             </IconButton>
+            <CustomizedBadges />
           </Box>
           {/* User Menu */}
           <IconButton

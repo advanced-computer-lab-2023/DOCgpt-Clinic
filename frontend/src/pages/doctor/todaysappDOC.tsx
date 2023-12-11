@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
-
 import {
   Table,
   TableBody,

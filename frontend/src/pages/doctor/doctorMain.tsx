@@ -24,16 +24,9 @@ function DoctorMain() {
           setDoctor(doctorData);
 
           // Fetch today's appointments for the doctor
-          const appointmentsResponse = await axios.get(
-            "/routes/doctors/todayapp",
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
+        
 
-          setTodaysAppointments(appointmentsResponse.data);
+       
         } else {
           console.error("Failed to fetch doctor data");
         }

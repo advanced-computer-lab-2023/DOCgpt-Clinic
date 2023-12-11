@@ -16,7 +16,6 @@ import {
 } from '../controllers/prescriptionController';
 
 const router = express.Router();
-
 // Create a new prescription
 router.post('/prescriptions', createPrescription);
 

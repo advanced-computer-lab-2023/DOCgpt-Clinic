@@ -131,6 +131,11 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       console.error("Error in addPresc:", error);
     }
   };
+  const buttonStyle = {
+    margin: "8px",
+    width: "350px", 
+    height:"50px",// Adjust the margin as needed
+  };
   return (
     <Card
       style={{
@@ -144,16 +149,29 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       <Container onClick={handleClick}>
         <Typography> Patient Name: {name}</Typography>
       </Container>
-      <Button variant="contained" onClick={healthRecordClick}>
-        {" "}
+
+      {/* Health Record Button */}
+      <Button
+        variant="contained"
+        color="primary"
+        style={buttonStyle}
+        onClick={healthRecordClick}
+      >
         Health Record
       </Button>
 
-      <Button variant="contained" onClick={() => addPresc(name)}>
-        {" "}
+      {/* Add Prescription Button */}
+      <Button
+        variant="contained"
+        color="primary"
+        style={buttonStyle}
+        onClick={() => addPresc(name)}
+      >
         Add Prescription
       </Button>
     </Card>
   );
+
+
 };
 export default Patient;

@@ -1,59 +1,27 @@
+import React, { useEffect, useState } from "react";
 import {
   Container,
+  Typography,
+  Paper,
   IconButton,
   Stack,
   Switch,
   TextField,
-  Typography,
+  Grid,
+  Divider,
 } from "@mui/material";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import Patient from "../../components/Patient";
 import SearchIcon from "@mui/icons-material/Search";
-
-interface Patient {
-  _id: string;
-  username: string;
-  name: string;
-  email: string;
-  //   password: string;
-  //   dateOfBirth: string;
-  mobilenumber: number;
-  emergencyContact: {
-    fullName: string;
-    mobileNumber: string;
-    relation: string;
-  };
-  familyMembers: [
-    {
-      name: {
-        type: String;
-      };
-      nationalId: {
-        type: String;
-      };
-      age: {
-        type: Number;
-      };
-      gender: {
-        type: String;
-      };
-      relationToPatient: {
-        type: String;
-        enum: ["wife", "husband", "child"];
-      };
-    }
-  ];
-}
+import Patient from "../../components/Patient";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import PatientBar from "../../components/patientBar/patientBar";
 
 function MyPatients() {
-  //THE LOGIC OF VIEWING A DOCTOR'S PATIENTS
-  //THE LINK TO BACK
-  const [patients, setpatients] = useState<any[]>([]);
+  const navigate = useNavigate();
+  const [patients, setPatients] = useState<any[]>([]);
   const [allPatients, setAllPatients] = useState<any[]>([]);
   const [nameSearchTerm, setNameSearchTerm] = useState("");
-  const [upcoming, setupcoming] = useState(false);
+  const [upcoming, setUpcoming] = useState(false);
   const [doctorUsername, setDoctor] = useState("");
 
   const fetchPatients = async () => {
@@ -68,7 +36,7 @@ function MyPatients() {
       if (response) {
         console.log("Response:", response);
         const data = await response.data;
-        setpatients(data);
+        setPatients(data);
         setAllPatients(data);
       }
     } catch (error) {
@@ -104,7 +72,7 @@ function MyPatients() {
   async function searchPatients() {
     try {
       if (!nameSearchTerm) {
-        setpatients(allPatients);
+        setPatients(allPatients);
       }
       const token = localStorage.getItem("authToken");
       const response = await axios.get(
@@ -118,7 +86,7 @@ function MyPatients() {
       if (response) {
         console.log("Response:", response);
         const data = await response.data;
-        setpatients(data);
+        setPatients(data);
       } else {
         console.error("Failed to fetch doctor data");
       }
@@ -138,7 +106,7 @@ function MyPatients() {
       if (response) {
         console.log("Response:", response);
         const data = await response.data;
-        setpatients(data);
+        setPatients(data);
       } else {
         console.error("Failed to fetch doctor data");
       }
@@ -149,83 +117,93 @@ function MyPatients() {
 
   useEffect(() => {
     if (upcoming) {
-      //fetch upcomming patients from the backendd
-      //set filtered patients to the response
       getUpcomingPatients();
     } else {
-      setpatients(allPatients);
+      setPatients(allPatients);
     }
   }, [upcoming]);
 
   const handleUpcomingSwitch = () => {
-    setupcoming((prevSwitchState) => !prevSwitchState);
+    setUpcoming((prevSwitchState) => !prevSwitchState);
   };
 
-  //return
-  //THE VIEW (THE COMPONENTS)
-  //1- UPCOMING SWITCH
-  //2- SEARCH BAR TO SEARCH BY NAME
-  //3- LIST OF PATIENTS
-
-  // A PATIENT COMPONENT ITSELF SHOULD CONTAIN:
-  //1- A BUTTON TO THE HEALTH RECORDS PAGE/ EMPTY PAGE
-  //2- THE PATIENT ITSELF ON CLICK SHOULD NAVIGATE TO ANOTHER PAGE TO SHOW ITS INFO
   return (
-    <Container>
+    <>
+      <PatientBar />
       <Container>
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
+            flexDirection: "column",
             alignItems: "center",
+            minHeight: "100vh",
             padding: "20px",
           }}
         >
           <Typography variant="h3" style={{ fontWeight: "bold" }}>
-            Your Current Registered Patients
+            Current Registered Patients
           </Typography>
-        </div>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <TextField
-            label="Search by Name"
-            variant="outlined"
-            value={nameSearchTerm}
-            onChange={(e) => setNameSearchTerm(e.target.value)}
-          />
-
-          <IconButton onClick={searchPatients}>
-            <SearchIcon />
-          </IconButton>
-        </div>
-        <Stack>
-          <Typography>Upcoming:</Typography>
-          <div>
-            <Switch
-              checked={upcoming}
-              onChange={handleUpcomingSwitch}
-              name="upcoming-switch"
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              marginTop: "16px",
+            }}
+          >
+            <TextField
+              label="Search by Name"
+              variant="outlined"
+              value={nameSearchTerm}
+              onChange={(e) => setNameSearchTerm(e.target.value)}
+              style={{ marginRight: "8px" }}
             />
-            <span>{upcoming ? "Upcoming" : "All"}</span>
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <IconButton onClick={searchPatients}>
+                <SearchIcon />
+              </IconButton>
+              <Typography>Upcoming:</Typography>
+              <Switch
+                checked={upcoming}
+                onChange={handleUpcomingSwitch}
+                name="upcoming-switch"
+                style={{ marginLeft: "8px" }}
+              />
+            </div>
           </div>
-        </Stack>
-        <Container>
-          {patients &&
-            patients.map((patient) => (
-              <Patient patient={patient} doctor={doctorUsername} />
-            ))}
-          {/* {filteredPatients && filteredPatients.map((patient) => (
-                <Patient patient={patient}/>
-            ))} */}
-        </Container>
+
+          <Paper
+            elevation={3}
+            style={{
+              width: "55%",
+              marginTop: "16px",
+              padding: "16px",
+              maxHeight: "calc(100vh - 200px)",
+              overflowY: "auto",
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+              }}
+            >
+              {patients &&
+                patients.map((patient) => (
+                  <div key={patient._id}>
+                    <Patient
+                      patient={patient}
+                      doctor={doctorUsername}
+                    />
+                    <Divider style={{ margin: "16px 0" }} />
+                  </div>
+                ))}
+            </div>
+          </Paper>
+        </div>
       </Container>
-    </Container>
+    </>
   );
 }
 

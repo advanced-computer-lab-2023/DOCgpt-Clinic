@@ -9,4 +9,5 @@ const router = express_1.default.Router();
 router.get('/patient', notificationController_1.getNotificationsP);
 router.get('/doctor', notificationController_1.getNotificationsD);
 router.get('/countP', notificationController_1.getCountP);
+router.get('/countD', notificationController_1.getCountD);
 exports.default = router;

@@ -41,10 +41,21 @@ export const SendResetmail = async (req: Request, res: Response) => {
   const usernameExists = await patientModel.findOne({ email });
   const usernameExists2 = await Doctor.findOne({ email });
   const usernameExists3 = await adminModel.findOne({ email });
-
+ var user;
   if (!usernameExists && !usernameExists2 && !usernameExists3) {
     return res.status(404).send({ error: 'No user with this email' });
   }
+  if(usernameExists){
+     user=await patientModel.findOne({ email })
+  }
+  else if(usernameExists2){
+     user=await Doctor.findOne({ email });
+
+  }
+  else{
+   user=await adminModel.findOne({ email });
+  }
+  const username=user?.username
 
   const OTP = await otpGenerator.generate(6, {
     lowerCaseAlphabets: false,
@@ -53,6 +64,8 @@ export const SendResetmail = async (req: Request, res: Response) => {
   });
 
   req.app.locals.OTP = OTP;  
+  req.app.locals.name = username;  
+
   console.log(OTP);
   const text = `Your OTP is: ${OTP}`;
   const subject = 'Reset Forgotten Password';
@@ -72,7 +85,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     if (!req.app.locals.resetSession) {
       return res.status(403).json({ message: 'Access denied' });
     }
-    const username=req.body.username;
+    const username=req.app.locals.name;
     const newPassword = req.body.newPassword;
     const confirmPassword = req.body.confirmPassword;
  
@@ -95,6 +108,7 @@ export const resetPassword = async (req: Request, res: Response) => {
     if (!user) {
       throw Error('No user found');
     }
+    req.app.locals.name="null"
 
     if (newPassword !== confirmPassword) {
       return res.status(400).json({ message: 'New password and confirm password do not match' });

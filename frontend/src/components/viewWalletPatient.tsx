@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Button, Typography } from "@mui/material";
-
-interface ViewMyWalletAmount {
-  patientUsername: any;
-}
-
-const ViewWalletBalance: React.FC<ViewMyWalletAmount> = ({
-  patientUsername,
-}) => {
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import WalletIcon from "@mui/icons-material/Wallet";
+const ViewWalletAmountPatient: React.FC = () => {
   const [walletAmount, setWalletAmount] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
-
+  const [openDialog, setOpenDialog] = useState(true);
+  const navigate = useNavigate(); // Open the dialog by default
   const handleViewWalletBalance = async () => {
     try {
       //const response = await axios.get(`/routes/patient/viewWalletAmount?patientUsername=${patientUsername}`);
@@ -38,21 +42,36 @@ const ViewWalletBalance: React.FC<ViewMyWalletAmount> = ({
   useEffect(() => {
     // Fetch wallet balance when the component mounts
     handleViewWalletBalance();
-  }, [patientUsername]); // Trigger a fetch whenever the patientUsername changes
-
+  }, []); // Trigger a fetch whenever the patientUsername changes
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+    navigate("/PatientHome");
+  };
   return (
-    <div style={{ textAlign: "center", marginTop: "50px" }}>
-      <Typography variant="h6" color="primary">
-        Current Balance
-      </Typography>
-      {walletAmount !== null && (
-        <Typography variant="h4" color="black">
-          ${walletAmount.toFixed(2)}
-        </Typography>
-      )}
-      {error && <Typography color="error">{error}</Typography>}
-    </div>
+    <Dialog open={openDialog} onClose={handleCloseDialog}>
+      <DialogTitle>
+        <Box display="flex" alignItems="center">
+          <WalletIcon sx={{ fontSize: 32, marginRight: 1 }} />
+          <Typography variant="h6" color="primary">
+            Wallet Balance
+          </Typography>
+        </Box>
+      </DialogTitle>
+      <DialogContent>
+        {walletAmount !== null && (
+          <Typography variant="h4" color="textPrimary">
+            ${walletAmount.toFixed(2)}
+          </Typography>
+        )}
+        {error && <Typography color="error">{error}</Typography>}
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseDialog} color="primary">
+          Close
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 
-export default ViewWalletBalance;
+export default ViewWalletAmountPatient;
