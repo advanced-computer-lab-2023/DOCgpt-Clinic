@@ -4,6 +4,8 @@ import {useEffect, useState } from "react";
 
 import PatientAppBar from '../../components/patientBar/patientBar';
 import HealthPackageComp from "../../components/healthPackageComp";
+import El7a2niInfo from '../../components/El7a2ni-info';
+
 
 interface HealthPackage {
     name: string,
@@ -81,6 +83,9 @@ function HealthPackages() {
               ))}
           </Box>
         </Container>
+        <El7a2niInfo/>
+
+        
       </>
     );
   }

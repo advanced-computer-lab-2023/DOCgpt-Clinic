@@ -12,8 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addPrescriptionToCart = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
-exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.addMedtoPresc = exports.createPrescription = void 0;
+exports.changeStatus = exports.updateMedicineInPrescription = exports.addPrescriptionToCart = exports.checkifexists = exports.addMedicineToPrescription = exports.getAllPrescriptionsDoctor = exports.getPrescriptionDetails = exports.getAllPrescriptionsPatient = exports.updatePrescription = exports.getAllPrescriptions = exports.viewMedicineNamesInPrescription = exports.addMedtoPresc = exports.deleteMedicineFromPresc = exports.createPrescription = void 0;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
