@@ -19,19 +19,7 @@ export type links = {
 };
 
 const appRoutes: RouteType[] = [
-  {    header: (
-    <Typography variant="h6" fontWeight="bold">
-     Settings
-    </Typography>
-  ),
-  child: [
-    {
-      path: "/changepasswordadmin",
-      state: "Change Password",
-    },
-    
-  ],
-},
+ 
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
@@ -41,12 +29,9 @@ const appRoutes: RouteType[] = [
     child: [
       {
         path: "/AdminPage",
-        state: "add another admin",
+        state: "Admins",
       },
-      {
-        path: "/AdminPage",
-        state: "Remove admin",
-      },
+   
    
     ],
   },

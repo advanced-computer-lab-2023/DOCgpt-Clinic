@@ -8,8 +8,8 @@ const adminPage = () => {
         <div>
             <AdminBar/>
            <AdminList></AdminList>
-           <CreateAdminButton></CreateAdminButton>
-           <RemoveAdmin></RemoveAdmin>
+          
+         
 
 
         </div>
