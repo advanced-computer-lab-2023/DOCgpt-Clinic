@@ -9,13 +9,22 @@ import {
   TableRow,
   TableCell,
   IconButton,
+  Snackbar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
+import { Paper } from '@mui/material';
+
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import PersonIcon from "@mui/icons-material/Person";
 import AdminBar from "../../components/admin Bar/adminBar";
 import { Link, useNavigate } from "react-router-dom";
 import DoneIcon from "@mui/icons-material/Done";
 import ClearIcon from "@mui/icons-material/Clear";
+import MuiAlert from "@mui/material/Alert";
 
 interface Doctor {
   _id: string;
@@ -33,71 +42,95 @@ const DoctorRequests: React.FC = () => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [acceptedDoctors, setAcceptedDoctors] = useState<string[]>([]);
   const [rejectedDoctors, setRejectedDoctors] = useState<string[]>([]);
-  const navigate = useNavigate();
+  const [openAlert, setOpenAlert] = useState(false);
+  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
+  const [selectedDoctorToDelete, setSelectedDoctorToDelete] = useState<string | null>(null);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<'success' | 'error'>('success');
 
+const handleAccept = async (doctorUsername: string) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    console.log(`Accepting doctor with username: ${doctorUsername}`);
 
-  const handleAccept = async (doctorUsername: string) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      console.log(`Accepting doctor with username: ${doctorUsername}`);
+    // Call the acceptDoctorRequest API endpoint
+    const response = await axios.patch(
+      "/routes/doctors/acceptRequest",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: { doctorUsername },
+      }
+    );
 
-      // Call the acceptDoctorRequest API endpoint
-      const response = await axios.patch(
-        "/routes/doctors/acceptRequest",
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: { doctorUsername },
-        }
-      );
+    console.log("Doctor accepted successfully:", response.data);
 
-      console.log("Doctor accepted successfully:", response.data);
-      setAcceptedDoctors((prevAccepted) => [...prevAccepted, doctorUsername]);
+    // Show the success Snackbar
+    setOpenAlert(true);
 
-      // Implement additional logic if needed (e.g., updating state)
-    } catch (error) {
-      console.error("Error accepting doctor:", error);
-      // Implement error handling as needed
-    }
-  };
+    // Remove the doctor from the list
+    setDoctors((prevDoctors) => prevDoctors.filter((doctor) => doctor.username !== doctorUsername));
+    setSnackbarMessage('Doctor accepted successfully');
+    setSnackbarSeverity('success');
+    setOpenAlert(true);
+  } 
+  catch (error) {
+    console.error("Error accepting doctor:", error);
+    // Implement error handling as needed
+  }
+};
 
-  const handleReject = async (doctorUsername: string) => {
-    try {
-      const token = localStorage.getItem("authToken");
-      console.log(`Rejecting doctor with username: ${doctorUsername}`);
+const handleReject = async (doctorUsername: string) => {
+  try {
+    const token = localStorage.getItem("authToken");
+    console.log(`Rejecting doctor with username: ${doctorUsername}`);
 
-      // Call the rejectDoctorRequest API endpoint
-      const response = await axios.patch(
-        "/routes/doctors/rejectRequest",
-        null,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          params: { doctorUsername },
-        }
-      );
+    // Call the rejectDoctorRequest API endpoint
+    const response = await axios.patch(
+      "/routes/doctors/rejectRequest",
+      null,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: { doctorUsername },
+      }
+    );
 
-      console.log("Doctor rejected successfully:", response.data);
-      setRejectedDoctors((prevRejected) => [...prevRejected, doctorUsername]);
+    console.log("Doctor rejected successfully:", response.data);
 
-      // Implement additional logic if needed (e.g., updating state)
-    } catch (error) {
-      console.error("Error rejecting doctor:", error);
-      // Implement error handling as needed
-    }
-  };
+    // Show the success Snackbar
+    setOpenAlert(true);
+
+    // Remove the doctor from the list
+    setDoctors((prevDoctors) => prevDoctors.filter((doctor) => doctor.username !== doctorUsername));
+    setSnackbarMessage('Doctor deleted successfully');
+      setSnackbarSeverity('error');
+      setOpenAlert(true);
+  } catch (error) {
+    console.error("Error rejecting doctor:", error);
+    // Implement error handling as needed
+  }
+};
+
 
   const isDoctorAccepted = (doctorUsername: string) => {
     return acceptedDoctors.includes(doctorUsername);
   };
-
+  const headerCellStyle = {
+    backgroundColor: 'rgba(173, 216, 230, 0.4)', // Very light blue
+  };
   const isDoctorRejected = (doctorUsername: string) => {
     return rejectedDoctors.includes(doctorUsername);
   };
+  const openDeleteConfirmation = (doctorUsername: string) => {
+    setSelectedDoctorToDelete(doctorUsername);
+    setDeleteConfirmationOpen(true);
+  };
 
+  
   useEffect(() => {
     const fetchDoctors = async () => {
       try {
@@ -119,81 +152,111 @@ const DoctorRequests: React.FC = () => {
 
     fetchDoctors();
   }, []);
+ 
+  
 
   return (
     <>
       <AdminBar />
       <Container maxWidth="lg">
-        <Typography variant="h4" align="center" gutterBottom color="primary" >
+        <Typography variant="h4" align="center" gutterBottom color="customGrey">
           Pending Doctors
         </Typography>
-        <div style={{ maxHeight: "600px", overflowY: "auto" }}>
-          <div style={{ position: "sticky", top: 0, background: "white" }}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell>#</TableCell>
-                  <TableCell>Username</TableCell>
-                  <TableCell align="left">Hourly Rate</TableCell>
-                  <TableCell>Affiliation</TableCell>
-                  <TableCell align="left">Background</TableCell>
-                  <TableCell align="left">Email</TableCell>
-                  <TableCell align="left">Accept/Reject</TableCell>
-                   <TableCell align="center">Documents</TableCell>
+        <Paper style={{ maxHeight: "600px", overflowY: "auto" }}>
+          <Table stickyHeader>
+            <TableHead>
+            <TableRow>
+                <TableCell style={headerCellStyle}>#</TableCell>
+                <TableCell style={headerCellStyle}>Username</TableCell>
+                <TableCell style={headerCellStyle} align="left">Hourly Rate</TableCell>
+                <TableCell style={headerCellStyle} align="left">Affiliation</TableCell>
+                <TableCell style={headerCellStyle} align="left">Background</TableCell>
+                <TableCell style={headerCellStyle} align="left">Email</TableCell>
+                <TableCell style={headerCellStyle} align="center">Accept/Reject</TableCell>
+                <TableCell style={headerCellStyle} align="center">Documents</TableCell>
+              </TableRow>
 
+            </TableHead>
+            <TableBody>
+              {doctors.map((doctor, index) => (
+                <TableRow key={doctor._id} >
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{doctor.username}</TableCell>
+                  <TableCell align="left">{doctor.hourlyRate}</TableCell>
+                  <TableCell align="left">{doctor.affiliation}</TableCell>
+                  <TableCell align="left">{doctor.educationalBackground}</TableCell>
+                  <TableCell align="left">{doctor.email}</TableCell>
+                  <TableCell align="center">
+                    <IconButton
+                      color="primary"
+                      onClick={() => handleAccept(doctor.username)}
+                    >
+                      <DoneIcon style={{ color: "green" }} />
+                    </IconButton>
+                    <IconButton
+                      color="secondary"
+                      onClick={() => openDeleteConfirmation(doctor.username)}
+                    >
+                      <ClearIcon style={{ color: "red" }} />
+                    </IconButton>
+                  </TableCell>
+                  <TableCell align="center" color="#2196f3">
+  <Link
+    to="/view-doctor-documents"
+    
+    className="link-hover-effect"
+
+
+  >
+    View Uploaded Documents
+  </Link>
+</TableCell>
 
                 </TableRow>
-              </TableHead>
-            </Table>
-          </div>
-          <Table>
-          <TableBody>
-  {doctors.map((doctor, index) => (
-    <TableRow key={doctor._id}>
-      <TableCell>{index + 1}</TableCell>
-      <TableCell>{doctor.username}</TableCell>
-      <TableCell align="right">{doctor.hourlyRate}</TableCell>
-      <TableCell align="right">{doctor.affiliation}</TableCell>
-      <TableCell align="right">{doctor.educationalBackground}</TableCell>
-      <TableCell align="right">{doctor.email}</TableCell>
-      <TableCell align="right">
-        {isDoctorAccepted(doctor.username) ? (
-          <DoneIcon style={{ color: "green" }} />
-        ) : isDoctorRejected(doctor.username) ? (
-          <ClearIcon style={{ color: "red" }} />
-        ) : (
-          <>
-            <IconButton
-              color="primary"
-              onClick={() => handleAccept(doctor.username)}
-            >
-              <DoneIcon style={{ color: "green" }} />
-            </IconButton>
-            <IconButton
-              color="secondary"
-              onClick={() => handleReject(doctor.username)}
-            >
-              <ClearIcon style={{ color: "red" }} />
-            </IconButton>
-          </>
-        )}
-      </TableCell>
-      <TableCell align="right">
-      <Link
-                      to={`/view-doctor-documents/${doctor.username}`}
-                      onClick={() => navigate(`/view-doctor-documents/${doctor.username}`, { state: { doctorUsername: doctor.username } })}
-                    >
-                      View Uploaded Documents
-                    </Link>  
-      </TableCell>
-    </TableRow>
-  ))}
-</TableBody>
+              ))}
+            </TableBody>
           </Table>
-        </div>
+       
+          <Dialog
+  open={deleteConfirmationOpen}
+  onClose={() => setDeleteConfirmationOpen(false)}
+>
+  <DialogTitle>Delete Doctor</DialogTitle>
+  <DialogContent>
+    Are you sure you want to delete this doctor?
+  </DialogContent>
+  <DialogActions>
+    <Button
+      onClick={() => {
+        if (selectedDoctorToDelete !== null) {
+          handleReject(selectedDoctorToDelete);
+        }
+        setDeleteConfirmationOpen(false);
+      }}
+    >
+      Yes
+    </Button>
+    <Button onClick={() => setDeleteConfirmationOpen(false)}>No</Button>
+
+  </DialogActions>
+</Dialog>
+
+
+<Snackbar
+        open={openAlert}
+        autoHideDuration={2000}
+        onClose={() => setOpenAlert(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <MuiAlert severity={snackbarSeverity} sx={{ width: '100%', height: '50%', fontSize: '1.5rem' }}>
+          {snackbarMessage}
+        </MuiAlert>
+      </Snackbar>
+        </Paper>
       </Container>
     </>
   );
 };
+
 
 export default DoctorRequests;
