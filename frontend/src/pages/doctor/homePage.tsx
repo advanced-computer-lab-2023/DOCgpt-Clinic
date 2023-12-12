@@ -1,27 +1,24 @@
-import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Typography, Button, Box, Container, Paper } from '@mui/material';
-import DoctorBar from '../../components/Doctor bar/doctorBar';
-import DoctorMain from './doctorMain';
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Typography, Button, Box, Container, Paper } from "@mui/material";
+import DoctorBar from "../../components/Doctor bar/doctorBar";
+import DoctorMain from "./doctorMain";
+import Carousel from "react-material-ui-carousel";
+import MyCarousel from "../../components/Carousel";
+import TodayAppointmentsComponent from "./todaysappDOC";
+import El7a2niInfo from "../../components/El7a2ni-info";
 
 function HomePage() {
   const navigate = useNavigate();
   const { username } = useParams();
 
-  const handleButtonClick = () => {
-    navigate('/other-page'); // Replace with the path of your other page
-  };
-
   return (
     <>
       <DoctorBar />
-      <Container>
-        <DoctorMain></DoctorMain>
-        {/* <Typography variant="body1" paragraph>
-          This is your home page with a poster and a greeting.
-        </Typography> */}
-        {/* Add more content here */}
-      </Container>
+
+      <MyCarousel />
+      <TodayAppointmentsComponent />
+      <El7a2niInfo />
     </>
   );
 }

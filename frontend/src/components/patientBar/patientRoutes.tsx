@@ -19,22 +19,10 @@ export type links = {
 };
 
 const appRoutes: RouteType[] = [
+
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
-        Settings
-      </Typography>
-    ),
-    child: [
-      {
-        path: "/changepasswordpatient",
-        state: "Change Password",
-      },
-    ],
-  },
-  {
-    header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6">
         Appointments
       </Typography>
     ),
@@ -44,41 +32,27 @@ const appRoutes: RouteType[] = [
         state: "Reserve An Appointment",
       },
       {
-        path: "/patient/viewtodapp",
-        state: "view today's appointments",
-      },
-      {
         path: "/patient/viewMyappointments",
         state: "View My Appointments",
       },
-      {
-        path: "/patient/famMemAppointments",
-        state: "View Family Members' Appointments",
-      },
     ],
   },
-
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
-        Family Members
+      <Typography variant="h6" >
+        Prescriptions
       </Typography>
     ),
     child: [
       {
-        path: "/patient/viewFamilyMembers",
-        state: "Family members",
-      },
-
-      {
-        path: "/patient/link",
-        state: "link family member",
+        path: "/patient/prescriptions",
+        state: "View prescriptions",
       },
     ],
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Health Packages
       </Typography>
     ),
@@ -99,7 +73,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Health Records
       </Typography>
     ),
@@ -108,22 +82,28 @@ const appRoutes: RouteType[] = [
         path: "/patient/viewMyhealthrecords",
         state: "View My Health Record",
       },
-      {
-        path: "/patient/walletAmount",
-        state: "View My wallet",
-      },
+    
     ],
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
-        Prescriptions
+      <Typography variant="h6" >
+        Family Members
       </Typography>
     ),
     child: [
       {
-        path: "/patient/prescriptions",
-        state: "View prescriptions",
+        path: "/patient/viewFamilyMembers",
+        state: "Family members",
+      },
+
+      {
+        path: "/patient/link",
+        state: "link family member",
+      },
+      {
+        path: "/patient/famMemAppointments",
+        state: "View Family Members' Appointments",
       },
     ],
   },

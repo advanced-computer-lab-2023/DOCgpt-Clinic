@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDoctorByUsername = exports.viewRequests = exports.updateUnfilledPrescription = exports.addOrUpdateDosage = exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatientsUsername = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
+exports.updateUnfilledPrescription = exports.addOrUpdateDosage =exports.rejectFollowUpRequest = exports.acceptFollowUpRequest = exports.getTodayAppointments = exports.rescheduleAppointments = exports.getContentType = exports.serveDoctorDocument = exports.getDoctorDocuments = exports.viewWalletAmount = exports.commentsHealthRecord = exports.ViewMyTimeSlots = exports.calculateSessionPrice = exports.uploadAndSubmitReqDocs = exports.getPendingDoctor = exports.rejecttDoctorRequest = exports.acceptDoctorRequest = exports.verifyTokenDoctor = exports.changePassword = exports.logout = exports.createToken = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewPastAppointments = exports.viewUpcomingAppointments = exports.viewMyAppointments = exports.addHealthRecord = exports.viewHealthRecord = exports.viewHealthRecords = exports.createfollowUp = exports.removeTimeSlots = exports.addTimeSlots = exports.selectPatient = exports.viewPatientsUpcoming = exports.viewMyPatients = exports.updateDoctorAffiliation = exports.updateDoctorHourlyRate = exports.updateDoctorEmail = exports.createDoctors = exports.searchPatient = exports.getDoctor = exports.getDoctors = void 0;
 const path_1 = __importDefault(require("path"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -140,6 +140,23 @@ const updateDoctorEmail = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.updateDoctorEmail = updateDoctorEmail;
+const viewDocSpeciality = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const doctorname = req.body.doctorname; // Access the correct property from the request body
+    try {
+        const doctor = yield doctorModel_1.default.findOne({ username: doctorname }).exec();
+        if (doctor) {
+            res.status(200).json(doctor.speciality);
+        }
+        else {
+            res.status(404).json({ error: 'Doctor not found' });
+        }
+    }
+    catch (error) {
+        console.error('Error fetching doctor speciality:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.viewDocSpeciality = viewDocSpeciality;
 const updateDoctorHourlyRate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.query.doctorUsername;
     const newRate = req.body.hourlyRate;
@@ -173,6 +190,7 @@ const viewMyPatients = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const usernames = [];
     for (const appoinment of appointments) {
         const username = appoinment.patient;
+        console.log(username);
         const patient = yield patientModel_1.default.findOne({ username: username }).exec();
         if (!usernames.includes(username)) {
             patients.push(patient);
@@ -561,6 +579,25 @@ const verifyTokenDoctor = (req, res, next) => {
     }));
 };
 exports.verifyTokenDoctor = verifyTokenDoctor;
+const removeDoc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authHeader = req.headers['authorization'];
+        const token = authHeader && authHeader.split(' ')[1];
+        // Find the token in the database
+        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        // Find the doctor using the username from the token
+        const doctor = yield doctorModel_1.default.findOneAndDelete({ username: tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username });
+        // Update the doctor's status to "rejected"
+        // Delete the token from the database
+        yield tokenModel_1.default.deleteOne({ token });
+        res.status(200).json({ message: 'Doctor rejected successfully' });
+    }
+    catch (error) {
+        console.error('Error rejecting doctor:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+exports.removeDoc = removeDoc;
 const acceptDoctorRequest = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.query.doctorUsername;
     try {
@@ -595,6 +632,7 @@ const getPendingDoctor = (req, res) => __awaiter(void 0, void 0, void 0, functio
 exports.getPendingDoctor = getPendingDoctor;
 const fs_2 = require("fs");
 const appointmentModel_2 = __importDefault(require("../models/appointmentModel"));
+const perscriptionModel_2 = __importDefault(require("../models/perscriptionModel"));
 const doctorModel_2 = __importDefault(require("../models/doctorModel"));
 const uploadAndSubmitReqDocs = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const uploadedFiles = req.files;
@@ -975,99 +1013,3 @@ const rejectFollowUpRequest = (req, res) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.rejectFollowUpRequest = rejectFollowUpRequest;
-const addOrUpdateDosage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { prescriptionId, medicineName, dosage } = req.body;
-        if (!prescriptionId || !medicineName || !dosage) {
-            return res.status(400).json({ error: 'Prescription ID, medicine name, and dosage are required' });
-        }
-        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
-        if (!prescription) {
-            return res.status(404).json({ error: 'Prescription not found' });
-        }
-        // Check if the medicine is already in the prescription
-        const existingMedicine = prescription.Medicines.find((medicine) => medicine.medicineName === medicineName);
-        if (existingMedicine) {
-            // Update dosage if the medicine is already in the prescription
-            existingMedicine.dosage = dosage;
-        }
-        else {
-            // Add the medicine with dosage if it's not in the prescription
-            prescription.Medicines.push({ medicineName, dosage });
-        }
-        // Save the updated prescription
-        yield prescription.save();
-        return res.status(200).json({ message: 'Dosage added/updated successfully', prescription });
-    }
-    catch (error) {
-        console.error('Error adding/updating dosage:', error);
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-});
-exports.addOrUpdateDosage = addOrUpdateDosage;
-const updateUnfilledPrescription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const { prescriptionId, medicineName, dosage, quantity } = req.body;
-        if (!prescriptionId || !medicineName || !dosage || !quantity) {
-            return res.status(400).json({ error: 'Prescription ID, medicine name, quantity and dosage are required' });
-        }
-        const prescription = yield perscriptionModel_1.default.findById(prescriptionId);
-        if (!prescription) {
-            return res.status(404).json({ error: 'Prescription not found' });
-        }
-        // Check if the prescription is already filled
-        // if (prescription.status=="filled") {
-        //   return res.status(400).json({ error: 'Prescription has already been filled' });
-        // }
-        // Check if the medicine is already in the prescription
-        const existingMedicine = prescription.Medicines.find((medicine) => medicine.medicineName === medicineName);
-        if (existingMedicine) {
-            // Update dosage if the medicine is already in the prescription
-            existingMedicine.dosage = dosage;
-            existingMedicine.quantity = quantity;
-        }
-        else {
-            // Add the medicine with dosage if it's not in the prescription
-            prescription.Medicines.push({ medicineName, dosage, quantity });
-        }
-        // Save the updated prescription
-        yield prescription.save();
-        return res.status(200).json({ message: 'Prescription updated successfully', prescription });
-    }
-    catch (error) {
-        console.error('Error updating prescription:', error);
-        return res.status(500).json({ error: 'Internal server error' });
-    }
-});
-exports.updateUnfilledPrescription = updateUnfilledPrescription;
-const viewRequests = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const authHeader = req.headers["authorization"];
-        const token = authHeader && authHeader.split(" ")[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token: token });
-        var username;
-        if (tokenDB) {
-            username = tokenDB.username;
-        }
-        else {
-            return res.status(404).json({ error: 'username not found' });
-        }
-        const doctor = doctorModel_2.default.findOne({ username });
-        if (!doctor) {
-            return res.status(404).json({ error: 'doctor not found' });
-        }
-        const requests = yield requestModel_1.default.find({ doctor: username });
-        return res.status(200).json({ requests });
-    }
-    catch (error) {
-        console.error("Error accept Req", error);
-        res.status(500).json({ error: "Internal server error." });
-    }
-});
-exports.viewRequests = viewRequests;
-const getDoctorByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { doctorUsername } = req.query;
-    const doctor = yield doctorModel_1.default.find({ username: doctorUsername });
-    return res.status(200).json({ doctor });
-});
-exports.getDoctorByUsername = getDoctorByUsername;

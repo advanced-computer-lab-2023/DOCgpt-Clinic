@@ -21,19 +21,6 @@ const appRoutes: RouteType[] = [
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-        Settings
-      </Typography>
-    ),
-    child: [
-      {
-        path: "/changepassworddoctor",
-        state: "Change Password",
-      },
-    ],
-  },
-  {
-    header: (
-      <Typography variant="h6" fontWeight="bold">
         Appoinments
       </Typography>
     ),
@@ -45,10 +32,6 @@ const appRoutes: RouteType[] = [
       {
         path: "/doctor/appointments",
         state: "View my appointments",
-      },
-      {
-        path: "/doctor/todayapp",
-        state: "View today's appointements",
       },
       {
         path: "/doctor/followUpRequests",

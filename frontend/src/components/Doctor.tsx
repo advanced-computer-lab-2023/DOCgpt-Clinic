@@ -8,6 +8,7 @@ import UpdateDoctorHospital from "./UpdateDoctorHospital";
 interface DoctorProps {
   doctor: DoctorModel;
   doctorUsername: any;
+
 }
 
 const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
@@ -35,9 +36,10 @@ const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
   } = doctor;
 
   const paperStyle = {
-    padding: '50px', // Increase padding
-    width: '95%',    // Increase width
-    fontSize: '24px', // Increase font size
+    padding: '50px',
+    width: '95%',
+    fontSize: '24px',
+    margin: '60px auto', // Add margin to center the Paper vertically and create space
   };
 
   const titleStyle = {
@@ -47,7 +49,7 @@ const Doctor = ({ doctor, doctorUsername }: DoctorProps) => {
   };
 
   return (
-    <Paper elevation={3} style={paperStyle}>
+    <Paper elevation={9} style={paperStyle}>
       <Stack spacing={4}>
         <Typography variant="h3" style={titleStyle}>
           Welcome, Dr. {name}

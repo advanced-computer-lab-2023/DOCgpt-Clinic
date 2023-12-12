@@ -2,7 +2,7 @@ import { Button, Card, Container, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 interface HealthRecord {
   patient: string;
   MedicalHistory: {
@@ -54,8 +54,11 @@ interface PatientProps {
   doctor: any;
 }
 
+
+
 const Patient = ({ patient, doctor }: PatientProps) => {
   const navigate = useNavigate();
+  const [hoveredButton, setHoveredButton] = useState(false); // State to track button hover
   const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
   const [response, setResponse] = useState<any>(null);
   const fetchHealthRecord = async () => {
@@ -86,6 +89,20 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       params.append("patient", username);
       navigate(`/doctor/patientInfo?${params.toString()}`);
     }
+  };
+  const handleMouseEnter = () => {
+    setHoveredButton(true);
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredButton(false);
+  };
+  const buttonStyle = {
+    margin: "8px",
+    width: "250px",
+    height: "50px",
+    borderColor: "grey", // Blue border color
+    color: "black", // Set text color to black
   };
 
   const healthRecordClick = () => {
@@ -131,29 +148,67 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       console.error("Error in addPresc:", error);
     }
   };
-  return (
-    <Card
-      style={{
-        padding: "20px",
-        margin: "10px",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <Container onClick={handleClick}>
-        <Typography> Patient Name: {name}</Typography>
-      </Container>
-      <Button variant="contained" onClick={healthRecordClick}>
-        {" "}
-        Health Record
-      </Button>
+  const cardStyle = {
+    padding: "20px",
+    margin: "10px",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+     // Light blue border color
+  };
+  const iconStyle = {
+    fontSize: "95px", // Adjust the icon size as needed
+    color: "#777777", // Grey icon color
+    marginLeft:'22px',
+    marginBottom: '5px',
+    
+  };
 
-      <Button variant="contained" onClick={() => addPresc(name)}>
-        {" "}
-        Add Prescription
-      </Button>
+  const nameStyle = {
+    fontSize: "16px",
+    fontWeight: "bold", // Make the name bold
+    textAlign: "center", // Center the text
+  };
+  const buttonContainerStyle: React.CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+  };
+  return (
+    <Card style={cardStyle}>
+      <div style={{ display: "flex", alignItems: "center" }}>
+        <AccountCircleIcon style={iconStyle} />
+        <Typography variant="subtitle1" sx={nameStyle}>
+  {name}
+</Typography>
+      </div>
+  
+      <div style={buttonContainerStyle}>
+        {/* Health Record Button */}
+        <Button
+          variant="outlined"
+          style={buttonStyle}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={healthRecordClick}
+        >
+          Health Record
+        </Button>
+  
+        {/* Add Prescription Button */}
+        <Button
+          variant="outlined"
+          style={buttonStyle}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={() => addPresc(name)}
+        >
+          Add Prescription
+        </Button>
+      </div>
     </Card>
   );
+  
 };
+
 export default Patient;

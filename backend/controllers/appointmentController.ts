@@ -212,7 +212,7 @@ export const createAppointment = async (req: Request, res: Response) => {
      const nn= await createNotificationWithCurrentDate(username,emailSubject,msg);
      const nnn= await createNotificationWithCurrentDate(doctorUsername,emailSubject,msg1);
 
-     return res.status(201).json({ message: 'Appointment done', appointment });
+     return appointment ;
     
   }
   catch (error : any) {
@@ -248,15 +248,18 @@ export const paymenttt = async (req: Request, res: Response) => {
     }
 
     const pricee = price;
-
+    
     if (paymentMethod === 'card') {
-      const sessionUrl = await payWithCredit(req, res, price);
+      const numericPrice = typeof price === 'number' ? price : parseInt(price, 10);
+      const sessionUrl = await payWithCredit(req, res,  numericPrice);
 
       if (!sessionUrl) {
         return res.status(500).json({ error: 'Failed to create payment session' });
       }
-        console.log(doctor.walletBalance)
-      doctor.walletBalance += price;
+      console.log("Doctor's balance before update:", doctor.walletBalance);
+    
+      doctor.walletBalance += numericPrice;  
+      console.log("Doctor's balance after update:", doctor.walletBalance);
       await doctor.save();
 
       const app = await createAppointment(req, res);
@@ -269,17 +272,24 @@ export const paymenttt = async (req: Request, res: Response) => {
     }
 
     if (paymentMethod === 'wallet') {
+      const numericPrice = typeof price === 'number' ? price : parseInt(price, 10);
+
       if (patient.walletBalance < price) {
         res.status(400).json({ error: "Insufficient balance in the patient's wallet" });
         return;
       }
 
-      patient.walletBalance -= price;
-      await patient.save();
-
-      doctor.walletBalance = parseFloat(doctor.walletBalance) + parseFloat(price);
+      patient.walletBalance -= numericPrice;
+  await patient.save();
+    
+      console.log("Price:", numericPrice);
+      console.log("Doctor's balance before update:", doctor.walletBalance);
+    
+      doctor.walletBalance += numericPrice;  // This should now work as expected
+    
       await doctor.save();
-      console.log(doctor.walletBalance);
+    
+      console.log("Doctor's balance after update:", doctor.walletBalance);
       const app = await createAppointment(req, res);
 
       if (!app) {
@@ -501,13 +511,15 @@ console.log(givenDate.getTime());
 const isLessthan24Hours = timeDifference < 24 * 60 * 60 * 1000;
 console.log(timeDifference);
     if (!isLessthan24Hours) {
+      console.log("Doctor's balance before update:", doctor.walletBalance);
       doctor.walletBalance = doctor.walletBalance-  price;
+     
       patient.walletBalance = patient.walletBalance +price;
       await patient.save();
       console.log(patient);
     }
     await doctor.save();
-
+    console.log("Doctor's balance after update:", doctor.walletBalance);
    
     const existingAppointment = await AppointmentModel.findOneAndUpdate(
       {

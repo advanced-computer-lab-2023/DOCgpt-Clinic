@@ -922,6 +922,7 @@ export const viewWalletAmount = async (req: Request, res: Response) => {
     }
 
     const patient = await patientModel.findOne({ username }).exec();
+    
 
     if (!patient) {
       return res.status(404).json({ error: "Patient not found." });
@@ -1334,3 +1335,40 @@ export const sendRequestFollowUp = async (req: Request, res: Response) => {
 //   }
 // };
 
+export const calcPatientAge = async (req: Request, res: Response) => {
+  const username = req.body.username;
+
+  try {
+    // Find the patient by username
+    const patient = await Patientmodel.findOne({ username }).exec();
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
+    // Get the date of birth from the patient
+    const dateOfBirth = patient.dateofbirth;
+
+    if (!dateOfBirth) {
+      return res.status(400).json({ error: 'Date of birth not available for the patient' });
+    }
+
+    // Calculate the age
+    const today = new Date();
+    const birthDate = new Date(dateOfBirth);
+    let age = today.getFullYear() - birthDate.getFullYear();
+
+    // Adjust age if the birthday hasn't occurred yet this year
+    const todayMonth = today.getMonth();
+    const birthDateMonth = birthDate.getMonth();
+    if (todayMonth < birthDateMonth || (todayMonth === birthDateMonth && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+
+    // Send the age in the response
+    res.status(200).json({ age });
+  } catch (error) {
+    console.error('Error calculating patient age:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
