@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { Grid, Typography, Button, TextField, Container, Avatar, useTheme, Paper } from '@mui/material';
+import { Grid, Typography, Button, TextField, Container, Avatar, useTheme, Paper, TextFieldProps } from '@mui/material';
 import axios from 'axios';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { CSSProperties } from '@mui/material/styles/createMixins';
 import theme from '../theme';
+import { DatePicker } from '@mui/lab';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+
 
 interface DoctorAvailabilityProps {
   doctorUsername: any;
@@ -12,7 +16,7 @@ interface DoctorAvailabilityProps {
 const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername }) => {
   const theme = useTheme(); // Access the theme
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
-  const [inputDate, setInputDate] = useState<string>(''); // For input validation
+  const [inputDate, setInputDate] = useState<Date | null>(null);
 
   // Function to handle adding time slots to the database
   const addTimeSlotsToDatabase = async () => {
@@ -32,13 +36,22 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
     }
   };
 
-  const handleDateChange = (date: Date | null) => {
-    // You can add custom validation or formatting here
-    if (date) {
-      setSelectedDates((prevDates) => [...prevDates, date]);
-      setInputDate(''); // Clear input field after selecting a date
+  const handleDateChange = (newDate: Date | null) => {
+    if (newDate) {
+      const currentDate = new Date();
+      currentDate.setHours(0, 0, 0, 0); // Reset time to the start of the day
+  
+      // Check if the selected date is not in the past
+      if (newDate >= currentDate) {
+        setSelectedDates(prevDates => [...prevDates, newDate]);
+        setInputDate(newDate); // Update the inputDate for controlled DatePicker
+      } else {
+        // Optionally, you can show an error message here
+        console.log('Selected date is in the past.');
+      }
     }
   };
+  
 
   const handleRemoveDate = (index: number) => {
     setSelectedDates((prevDates) => {
@@ -71,28 +84,42 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
           </Grid>
           <div style={styles.space}></div> 
           <Grid item xs={12}>
-            {/* Use a date picker library (e.g., MUI's DatePicker) */}
-            <TextField
-              id="date"
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
               label="Select Date"
-              type="date"
-              InputLabelProps={{
-                shrink: true,
-              }}
               value={inputDate}
-              onChange={(e) => setInputDate(e.target.value)}
+              onChange={handleDateChange}
+              renderInput={(params: TextFieldProps) => <TextField {...params} />}
+              minDate={new Date()} // Disables all dates before today
             />
-          </Grid>
+          </LocalizationProvider>
+      </Grid>
           <div style={styles.space}></div> 
           <Grid item xs={12}>
             {/* Add CalendarMonthIcon beside the "Add Date" button */}
             <Button
               variant="contained"
               color="primary"
-              onClick={() => handleDateChange(new Date(inputDate))}
+              onClick={() => {
+                // Check if inputDate is valid
+                if (inputDate) {
+                  const newDate = new Date(inputDate);
+                  // Check if the date is valid
+                  if (!isNaN(newDate.getTime())) {
+                    handleDateChange(newDate);
+                  } else {
+                    console.log('Invalid date selected.');
+                    // Optionally, reset inputDate or show an error message
+                  }
+                } else {
+                  console.log('No date selected.');
+                  // Optionally, show an error message
+                }
+              }}
             >
               Add Date
             </Button>
+
           </Grid>
           <div style={styles.space}></div> 
           <Grid item xs={12}>

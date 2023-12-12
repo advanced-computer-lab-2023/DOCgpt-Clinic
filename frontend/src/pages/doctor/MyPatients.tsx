@@ -14,7 +14,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import Patient from "../../components/Patient";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import PatientBar from "../../components/patientBar/patientBar";
+import DrawAppBar from "../../components/Doctor bar/doctorBar";
 
 
 function MyPatients() {
@@ -130,7 +130,7 @@ function MyPatients() {
 
   return (
     <>
-      <PatientBar />
+      <DrawAppBar />
       <Container>
         <div
           style={{
