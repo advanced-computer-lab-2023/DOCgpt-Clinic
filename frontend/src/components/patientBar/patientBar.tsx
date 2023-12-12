@@ -6,7 +6,6 @@ import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ForumIcon from "@mui/icons-material/Forum";
 import PersonIcon from "@mui/icons-material/Person";
 
-
 import {
   AppBar,
   Box,
@@ -28,10 +27,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
 import WalletIcon from "@mui/icons-material/Wallet";
 import ViewWalletAmount from "../viewWalletAmountDoctor";
-import CustomizedBadges from './notificationIcon'
+import CustomizedBadges from "./notificationIcon";
 import { ReactNode } from "react";
 import appRoutes from "./patientRoutes";
 import ViewWalletBalance from "../viewWalletPatient";
+import theme from "../../theme";
 
 const drawerWidth = 240;
 //const navItems = ["Home", "About", "Pharmacy", "Contact", "Login"];
@@ -55,8 +55,6 @@ export type links = {
   path: string;
   element?: ReactNode;
 };
-
-
 
 export default function DrawerAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -146,7 +144,7 @@ export default function DrawerAppBar() {
   };
   const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
     // Vibrate when the notification icon is clicked
-    if ('vibrate' in navigator) {
+    if ("vibrate" in navigator) {
       navigator.vibrate(200);
     }
 
@@ -176,7 +174,7 @@ export default function DrawerAppBar() {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-  
+
   const handleMywallet = () => {
     // Redirect to the My Profile page ("/doctor/home")
     navigate("/patient/walletAmount");
@@ -189,15 +187,15 @@ export default function DrawerAppBar() {
     // Redirect to the My Profile page ("/doctor/home")
     navigate("/");
   };
-<IconButton
-  color="primary"
-  aria-label="User Menu"
-  aria-controls="user-menu"
-  aria-haspopup="true"
-  onClick={handleOpenMenu}
->
-  <PersonIcon />
-</IconButton>
+  <IconButton
+    color="primary"
+    aria-label="User Menu"
+    aria-controls="user-menu"
+    aria-haspopup="true"
+    onClick={handleOpenMenu}
+  >
+    <PersonIcon />
+  </IconButton>;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -238,8 +236,6 @@ export default function DrawerAppBar() {
             <Button key="Logout" sx={{ color: "black" }} onClick={openPharmacy}>
               Pharmacy
             </Button>
-           
-          
           </Box>
           <Box sx={{ display: "flex" }}>
             {isWalletOpen && (
@@ -261,13 +257,13 @@ export default function DrawerAppBar() {
                 {/* Render the ViewWalletBalance component in the wallet sidebar */}
               </Drawer>
             )}
-  <IconButton style={{ color: "primary" }} onClick={handleChatClick}>
+            <IconButton color="primary" onClick={handleChatClick}>
               <ForumIcon />
             </IconButton>
           </Box>
-         {/* Notification Badge */}
-         <CustomizedBadges  />
-         <IconButton
+          {/* Notification Badge */}
+          <CustomizedBadges />
+          <IconButton
             color="primary"
             aria-label="User Menu"
             aria-controls="user-menu"
@@ -301,17 +297,14 @@ export default function DrawerAppBar() {
         <Toolbar />
       </Box>
       <Menu
-  anchorEl={anchorEl}
-  open={Boolean(anchorEl)}
-  onClose={handleCloseMenu}
->
- 
-  <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>
-  <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
-  <MenuItem onClick={handleLogout}>Logout</MenuItem>
-</Menu>
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+      >
+        <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>
+        <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      </Menu>
     </Box>
   );
 }
-
-
