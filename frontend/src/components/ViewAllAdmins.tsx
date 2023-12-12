@@ -6,12 +6,12 @@ import {
   List,
   ListItem,
   ListItemText,
-  Card,
-  CardContent,
-  ListItemIcon,
+  Paper,
   Avatar,
+  Grid, // Import Grid component
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
+
 interface Admin {
   _id: string;
   username: string;
@@ -42,36 +42,31 @@ const AdminList: React.FC = () => {
 
   return (
     <Container maxWidth="sm">
-      <Typography variant="h4" align="center" gutterBottom>
+      <Typography variant="h1" align="center" gutterBottom>
         Admins List
       </Typography>
+      <Paper elevation={0} style={{ backgroundColor: 'rgba(173, 216, 230, 0.4)', padding: '228 ' }}>
       <List>
-        {admins.map((admin) => (
-          <React.Fragment key={admin._id}>
-            <ListItem alignItems="flex-start">
-              <ListItemIcon>
-                <Avatar>
-                  <PersonIcon />
-                </Avatar>
-              </ListItemIcon>
-              <ListItemText
-                primary={admin.username}
-                secondary={
-                  <>
-                    <Typography
-                      component="span"
-                      variant="body2"
-                      color="textSecondary"
-                    >
-                      ID: {admin._id}
-                    </Typography>
-                  </>
-                }
-              />
-            </ListItem>
-          </React.Fragment>
-        ))}
-      </List>
+          <Grid container spacing={5}>
+            {admins.map((admin, index) => (
+              <Grid item xs={12} sm={4} key={admin._id}>
+                {/* Increase the padding to make the paper larger */}
+                <Paper elevation={3} style={{ marginBottom: 16, padding: 48}}>
+                  <ListItem alignItems="flex-start">
+                    <Avatar>
+                      <PersonIcon />
+                    </Avatar>
+                    <ListItemText
+                      primary={admin.username}
+                      secondary={`ID: ${admin._id}`}
+                    />
+                  </ListItem>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
+        </List>
+      </Paper>
     </Container>
   );
 };

@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
 
+
 function MyPatients() {
   const navigate = useNavigate();
   const [patients, setPatients] = useState<any[]>([]);

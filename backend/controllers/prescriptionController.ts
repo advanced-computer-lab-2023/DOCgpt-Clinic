@@ -439,11 +439,8 @@ console.log("aa ");
       }
   
       // Update the prescription status
-       if(prescription.status=="filled"){
-        prescription.status="unfilled";
-       }
-       else{
-        prescription.status="filled"
+       if(prescription.status=="unfilled"){
+        prescription.status="filled";
        }
       // Save the updated prescription
       await prescription.save();
