@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
+import El7a2niInfo from "../components/El7a2ni-info";
 
 function Copyright(props: any) {
   return (
@@ -98,6 +99,7 @@ export default function SignIn() {
   // };
 
   return (
+    <>
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
@@ -177,5 +179,11 @@ export default function SignIn() {
         </MuiAlert>
       </Snackbar>
     </ThemeProvider>
+
+    {/* <El7a2niInfo /> */}
+
+    </>
+    
+    
   );
 }

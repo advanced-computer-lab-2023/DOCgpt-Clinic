@@ -9,9 +9,9 @@ const MyPackagesPage = () => {
     <>
     <PatientAppBar/>
     <div>
-    <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
-      All Packages   
-      </Typography>
+    <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}} marginTop="20px" marginBottom="100px">
+      All Packages History   
+    </Typography>
       <ViewStatusOfPackage />
       {/* Other content for the My Packages page if needed */}
     </div>

@@ -132,6 +132,10 @@ const theme = createTheme({
 
       color: "#202020", // Set your desired color
     },
+    h6:{
+      fontSize: "14px",
+      color: "#000000"
+    }
   },
   breakpoints: {
     values: {
