@@ -9,6 +9,10 @@ import EventBusyRoundedIcon from '@mui/icons-material/EventBusyRounded';
 import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
 import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
 import NotificationsRoundedIcon from '@mui/icons-material/NotificationsRounded';
+import DoctorIcon from '@mui/icons-material/LocalHospital';  // Replace with the actual MUI Doctor icon
+import PatientIcon from '@mui/icons-material/Person';        // Replace with the actual MUI Person icon
+import OtherIcon from '@mui/icons-material/PeopleAlt';      // Replace with the actual MUI PeopleAlt icon
+
 interface AppointmentProps {
   appointment: any;
   onStartChat: () => void;
@@ -23,12 +27,14 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   if (!appointment) {
     return null; // Or render an empty state or error message
   }
-  const { status, doctor, date, _id, scheduledBy, type, paid } = appointment;
+  const { status, doctor, date, _id, scheduledBy, type, paid, patient } = appointment;
   const appointmentDate = new Date(date).toISOString().split("T")[0];
   const isPaid = paid ? "Paid" : "Not Paid";
+  
   const handleAppointmentReschedule = () => {
     localStorage.setItem("selectedAppointmentId", _id);
     localStorage.setItem("selectedDoctor", doctor);
+    localStorage.setItem("oldDate", date);
     // create a route in app && a page in patient folder
     navigate("/patient/reschedule");
   };
@@ -86,6 +92,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
+    
   };
   const formattedDate = new Intl.DateTimeFormat("en-US", {
     weekday: "long",
@@ -103,25 +110,41 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
             {/* INFO */}
             <Container>
 
-            <Typography variant="h6" style={{ fontWeight: "bold" }} gutterBottom>
+            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             {status === "completed" ? (
-                <TaskAltRoundedIcon color="success" style={{ marginRight: "5px" }} />
+                <TaskAltRoundedIcon color="success" style={{ marginBottom: "5px", marginRight: "5px" }} />
               ) : status === "cancelled" ? (
-                <BlockRoundedIcon color="error" style={{ marginRight: "5px" }} />
+                <BlockRoundedIcon color="error" style={{ marginBottom: "5px", marginRight: "5px" }} />
               ) : status === "upcoming" ? (
-                <NotificationsActiveRoundedIcon color="info" style={{ marginRight: "5px" }} />
+                <NotificationsActiveRoundedIcon color="info" style={{ marginBottom: "5px", marginRight: "5px" }} />
               ) : (
-                <RestoreRoundedIcon color="info" style={{ marginRight: "5px" }} />
-              )} {formattedDate}
+                <RestoreRoundedIcon color="info" style={{ marginBottom: "5px", marginRight: "5px" }} />
+              )}
+            <Typography variant="h3" style={{ fontWeight: "bold" }} gutterBottom>
+            {formattedDate}
                 </Typography>
+            </div>
               <Typography style={{ fontWeight: "bold" , textAlign: "center"}}> With Dr. {doctor}</Typography>
               <Typography display="flex" alignItems="center">
               Status: {status}
             </Typography>
 
               <Typography> {type} Appointment</Typography>
-              <Typography>{isPaid}</Typography>
-              <Typography> Scheduled By {scheduledBy}</Typography>
+              {/* <Typography>{isPaid}</Typography> */}
+              <div style={{display: 'flex', alignItems: 'center'}}>
+              {scheduledBy === doctor ? (
+                <Typography> Scheduled by Dr. {scheduledBy}</Typography>
+              ): <Typography>Scheduled by {' '} {scheduledBy}</Typography>}
+              {scheduledBy === doctor ? (
+                <DoctorIcon color="primary" />
+              ) : scheduledBy === patient ? (
+                <PatientIcon color="primary" />
+              ) : (
+                <OtherIcon color="primary" />
+              )}
+              
+              </div>
+              
 
             </Container>
           {/* BUTTONS */}
@@ -130,6 +153,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   <Button
     onClick={handleAppointmentReschedule}
     variant="contained"
+    disabled={status === "cancelled"}
     color="primary"
     style={{ marginRight: "10px", borderRadius: "25px" }}
   >
@@ -138,7 +162,8 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   <Button
     onClick={handleFollowUpClicked}
     variant="outlined"
-    color="secondary"
+    disabled={status === "cancelled"}
+    color="primary"
     style={{ marginRight: "10px", borderRadius: "25px" }}
   >
     Request Follow up
