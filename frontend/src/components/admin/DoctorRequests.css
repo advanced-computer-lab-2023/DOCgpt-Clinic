@@ -9,4 +9,16 @@
   }
   
   /* Add more styles as needed */
-  
+  /* DoctorRequests.css */
+.lightBlueHeader {
+  background-color: rgba(173, 216, 230, 0.1) !important; /* Using !important to ensure override */
+}
+/* DoctorRequests.css */
+.link-hover-effect {
+  color: #2196F3;
+  text-decoration: none;
+}
+
+.link-hover-effect:hover {
+  text-decoration: underline;
+}
