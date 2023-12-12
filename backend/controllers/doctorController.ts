@@ -190,6 +190,7 @@ export const viewMyPatients = async (req: Request, res: Response) => {
     const usernames: any[] = [];
     for (const appoinment of appointments) {
         const username = appoinment.patient;
+        console.log(username)
         const patient = await PatientModel.findOne({ username: username}).exec();
         if(!usernames.includes(username)){
             patients.push(patient);

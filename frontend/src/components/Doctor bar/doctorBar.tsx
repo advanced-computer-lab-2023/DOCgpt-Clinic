@@ -233,7 +233,7 @@ export default function DrawerAppBar() {
           {drawer}
         </Drawer>
       </nav>
-      <Box component="main" sx={{ p: 9 }}>
+      <Box component="main" >
         <Toolbar />
       </Box>
 

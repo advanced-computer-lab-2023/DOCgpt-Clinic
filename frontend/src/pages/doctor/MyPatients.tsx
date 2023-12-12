@@ -14,7 +14,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import Patient from "../../components/Patient";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import PatientBar from "../../components/patientBar/patientBar";
+import DoctorBar from "../../components/Doctor bar/doctorBar";
+import El7a2niInfo from "../../components/El7a2ni-info";
 
 function MyPatients() {
   const navigate = useNavigate();
@@ -129,7 +130,7 @@ function MyPatients() {
 
   return (
     <>
-      <PatientBar />
+      <DoctorBar />
       <Container>
         <div
           style={{
@@ -143,35 +144,15 @@ function MyPatients() {
           <Typography variant="h3" style={{ fontWeight: "bold" }}>
             Current Registered Patients
           </Typography>
-
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginTop: "16px",
-            }}
-          >
-            <TextField
-              label="Search by Name"
-              variant="outlined"
-              value={nameSearchTerm}
-              onChange={(e) => setNameSearchTerm(e.target.value)}
-              style={{ marginRight: "8px" }}
-            />
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <IconButton onClick={searchPatients}>
-                <SearchIcon />
-              </IconButton>
-              <Typography>Upcoming:</Typography>
-              <Switch
-                checked={upcoming}
-                onChange={handleUpcomingSwitch}
-                name="upcoming-switch"
-                style={{ marginLeft: "8px" }}
-              />
-            </div>
-          </div>
-
+  
+          <TextField
+            label="Search by Name"
+            variant="outlined"
+            value={nameSearchTerm}
+            onChange={(e) => setNameSearchTerm(e.target.value)}
+            style={{ marginTop: "16px", width: "55%" }}
+          />
+  
           <Paper
             elevation={3}
             style={{
@@ -189,22 +170,42 @@ function MyPatients() {
                 alignItems: "center",
               }}
             >
-              {patients &&
-                patients.map((patient) => (
-                  <div key={patient._id}>
-                    <Patient
-                      patient={patient}
-                      doctor={doctorUsername}
-                    />
-                    <Divider style={{ margin: "16px 0" }} />
-                  </div>
-                ))}
+              {/* Upcoming switch */}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  marginBottom: "16px",
+                }}
+              >
+                <Typography>Upcoming:</Typography>
+                <Switch
+                  checked={upcoming}
+                  onChange={handleUpcomingSwitch}
+                  name="upcoming-switch"
+                  style={{ marginLeft: "8px" }}
+                />
+              </div>
+  
+              {patients && patients.length > 0 ? (
+  patients.map((patient) => (
+    <div key={patient._id}>
+      <Patient patient={patient} doctor={doctorUsername} />
+      <Divider style={{ margin: "16px 0" }} />
+    </div>
+  ))
+) : (
+  <Typography>No patients found.</Typography>
+)}
             </div>
           </Paper>
         </div>
       </Container>
+      <El7a2niInfo />
+      
     </>
   );
+  
 }
 
 export default MyPatients;
