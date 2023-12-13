@@ -165,17 +165,20 @@ function HealthRecord(){
                           </ul>
                         </Grid>
                         <Grid item xs={12}>
-                          <Typography>Past Medical Conditions:
-                            
-                          </Typography>
-                          <ul>
-                            {healthRecord.MedicalHistory.PastMedicalConditions.map(
-                              (item, index) => (
-                                <li key={index}>{item}</li>
-                              )
-                            )}
-                          </ul>
-                        </Grid>
+  <Typography>Past Medical Conditions:</Typography>
+  {healthRecord.MedicalHistory.PastMedicalConditions.length > 0 ? (
+    <ul>
+      {healthRecord.MedicalHistory.PastMedicalConditions.map(
+        (item, index) => (
+          <li key={index}>{item}</li>
+        )
+      )}
+    </ul>
+  ) : (
+    <Typography>No data provided</Typography>
+  )}
+</Grid>
+
                       </Grid>
                     </CardContent>
                   </Card>

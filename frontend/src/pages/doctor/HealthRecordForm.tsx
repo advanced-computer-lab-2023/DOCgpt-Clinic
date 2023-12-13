@@ -2,7 +2,7 @@ import { Button, Container, Grid, Paper, TextField, Typography } from "@mui/mate
 import axios from "axios";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import AddCircleIcon from '@mui/icons-material/AddCircle'; 
 interface FormValues {
     MedicalHistory: {
         Allergies: string[];
@@ -163,13 +163,16 @@ function HealthRecordForm(){
     //return
     //THE DISPLAY OF THE FORM
     //SIMPLE FORM, MAKE SURE IT INCLUDES ALL  THE QUESTIONS NEEDED TO GATHER THE INFO FOR CREATE HEALTH RECORD, GIVE SPACE FOR (NO ANSWER), INCLUDE BUTTONS TO UPLOAD IMAGES WHEN NEEDED, INCLUDE A GENERAL COMMENTS(NOTES) SECTION 
-
+   
     return(
     <Container component="main" maxWidth="md">
-        <Paper elevation={3} style={{ padding: 20, marginTop: 20 }}>
-            <Typography component="h1" variant="h5" align="center">
-            Medical History Form
-            </Typography>
+       <Paper elevation={3} style={{ padding: 20, marginTop: 20 }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
+        <AddCircleIcon style={{ color: 'red', fontSize: 48 }} />
+    </div>
+    <Typography component="h1" variant="h5" align="center">
+        Medical History Form
+    </Typography>
             <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
                 {/* Medical History Section */}
@@ -235,9 +238,22 @@ function HealthRecordForm(){
                 </Grid>
             </Grid>
 
-            <Button type="submit" variant="contained" color="primary" style={{ marginTop: 20 }}>
-                Submit
-            </Button>
+      
+            <Button
+  type="submit"
+  variant="contained"
+  style={{
+    backgroundColor: "#ccc", // Grey background color
+    color: "#fff", // Text color
+    transition: "background-color 0.3s ease", // Smooth transition on hover
+    marginTop: "20px", // Adjust the margin-top here
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ccc")} // Revert to grey on mouse out
+>
+  Submit
+</Button>
+
             </form>
         </Paper>
     </Container>    
