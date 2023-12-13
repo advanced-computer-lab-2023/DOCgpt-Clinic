@@ -182,7 +182,7 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         // Create a notification for the patient
         const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
         const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
-        return res.status(201).json({ message: 'Appointment done', appointment });
+        return appointment;
     }
     catch (error) {
         console.error("An error occurred:", error); // Log the full error object for debugging
@@ -225,14 +225,16 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         if (paymentMethod === 'wallet') {
             if (patient.walletBalance < price) {
-                res.status(400).json({ error: "Insufficient balance in the patient's wallet" });
-                return;
+                return res.status(400).json({ error: "Insufficient balance in the patient's wallet" });
             }
+            console.log(patient.walletBalance + "patient");
             patient.walletBalance -= price;
             yield patient.save();
-            doctor.walletBalance = parseFloat(doctor.walletBalance) + parseFloat(price);
+            console.log(patient.walletBalance + "patient");
+            console.log(doctor.walletBalance + "doctor");
+            doctor.walletBalance += price;
             yield doctor.save();
-            console.log(doctor.walletBalance);
+            console.log(doctor.walletBalance + "doctor");
             const app = yield (0, exports.createAppointment)(req, res);
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });

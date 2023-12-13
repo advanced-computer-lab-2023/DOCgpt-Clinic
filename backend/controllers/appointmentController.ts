@@ -212,7 +212,7 @@ export const createAppointment = async (req: Request, res: Response) => {
      const nn= await createNotificationWithCurrentDate(username,emailSubject,msg);
      const nnn= await createNotificationWithCurrentDate(doctorUsername,emailSubject,msg1);
 
-     return res.status(201).json({ message: 'Appointment done', appointment });
+               return appointment ;
     
   }
   catch (error : any) {
@@ -251,7 +251,6 @@ export const paymenttt = async (req: Request, res: Response) => {
 
     if (paymentMethod === 'card') {
       const sessionUrl = await payWithCredit(req, res, price);
-
       if (!sessionUrl) {
         return res.status(500).json({ error: 'Failed to create payment session' });
       }
@@ -270,16 +269,19 @@ export const paymenttt = async (req: Request, res: Response) => {
 
     if (paymentMethod === 'wallet') {
       if (patient.walletBalance < price) {
-        res.status(400).json({ error: "Insufficient balance in the patient's wallet" });
-        return;
+        return res.status(400).json({ error: "Insufficient balance in the patient's wallet" });
+       
       }
-
+        console.log(patient.walletBalance +"patient");
       patient.walletBalance -= price;
       await patient.save();
+      console.log(patient.walletBalance +"patient");
 
-      doctor.walletBalance = parseFloat(doctor.walletBalance) + parseFloat(price);
+      console.log(doctor.walletBalance +"doctor");
+      doctor.walletBalance +=price;
+
       await doctor.save();
-      console.log(doctor.walletBalance);
+      console.log(doctor.walletBalance +"doctor");
       const app = await createAppointment(req, res);
 
       if (!app) {
