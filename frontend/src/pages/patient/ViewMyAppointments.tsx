@@ -8,12 +8,18 @@ import {
   SelectChangeEvent,
   Stack,
   Switch,
+  TextField,
   Typography,
 } from "@mui/material";
 import PatientAppointment from "../../components/PatientAppointment";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import PatientAppBar from "../../components/patientBar/patientBar";
+import El7a2niInfo from "../../components/El7a2ni-info";
+import Box from "@mui/system/Box/Box";
+import Background from '../../Background.jpeg';
+
 function ViewMyAppointments() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const navigate = useNavigate();
@@ -132,122 +138,113 @@ function ViewMyAppointments() {
   }, [past]);
 
   return (
-    <Container>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h3" style={{ fontWeight: "bold" }}>
-          Your Appointments So Far..
-        </Typography>
-      </div>
-      <Grid container style={{ padding: "20px" }}>
-        <Grid item xs={3}>
-          <Stack>
-            <Typography>Choose Appointment Status:</Typography>
-            <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Status</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={status}
-                label="Status"
-                onChange={chooseStatus}
-              >
-                <MenuItem value={"upcoming"}>UpComing</MenuItem>
-                <MenuItem value={"completed"}>Completed</MenuItem>
-                <MenuItem value={"cancelled"}>Cancelled</MenuItem>
-                <MenuItem value={"rescheduled"}>Rescheduled</MenuItem>
-                <MenuItem value={"all"}>All</MenuItem>
-              </Select>
-            </FormControl>
-          </Stack>
-        </Grid>
-        <Grid
-          item
-          xs={3}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Stack>
-            <Typography>Pick a Date:</Typography>
-            <div>
-              <input
-                type="date"
-                value={selectedDate}
-                onChange={handleDateChange}
-              />
-              <p>{selectedDate}</p>
-            </div>
-          </Stack>
-        </Grid>
-        <Grid
-          item
-          xs={3}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Stack>
-            <Typography>Upcoming Appointments:</Typography>
-            <div>
-              <Switch
-                checked={upcoming}
-                onChange={handleUpcomingSwitch}
-                name="upcoming-switch"
-              />
-              <span>{upcoming ? "Upcoming" : "All"}</span>
-            </div>
-          </Stack>
-        </Grid>
-        <Grid
-          item
-          xs={3}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Stack>
-            <Typography>Past Appointments:</Typography>
-            <div>
-              <Switch
-                checked={past}
-                onChange={handlePastSwitch}
-                name="past-switch"
-              />
-              <span>{past ? "Past" : "All"}.</span>
-            </div>
-          </Stack>
-        </Grid>
-      </Grid>
+    <div
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '100vh',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >  
+    <>
+      <PatientAppBar />
       <Container>
-        {appointments &&
-          !filteredAppointments &&
-          appointments.map((appointment) => (
-            <PatientAppointment
-              appointment={appointment}
-              onStartChat={() => handleStartChat(appointment.patient)}
-            />
-          ))}
-        {filteredAppointments &&
-          filteredAppointments.map((appointment: any, index: number) => (
-            <PatientAppointment
-              appointment={appointment}
-              onStartChat={() => handleStartChat(appointment.doctor)}
-            />
-          ))}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            padding: "20px",
+          }}
+        >
+          <Typography variant="h1" style={{ fontWeight: "bold" }}>
+            Your Appointments So Far..
+          </Typography>
+        </div>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={4}>
+            <Stack direction="column" style={{ position: "sticky", top: 100 }}>
+              <Stack>
+                <Typography>Past Appointments:</Typography>
+                <div>
+                  <Switch
+                    checked={past}
+                    onChange={handlePastSwitch}
+                    name="past-switch"
+                  />
+                  <span>{past ? "Past" : "All"}</span>
+                </div>
+              </Stack>
+              <Box sx={{ marginTop: "10px" }} />{" "}
+              <Stack>
+                <Typography>Upcoming Appointments:</Typography>
+                <div>
+                  <Switch
+                    checked={upcoming}
+                    onChange={handleUpcomingSwitch}
+                    name="upcoming-switch"
+                  />
+                  <span>{upcoming ? "Upcoming" : "All"}</span>
+                </div>
+              </Stack>
+              <Box sx={{ marginTop: "10px" }} />{" "}
+              <FormControl fullWidth>
+                <Typography>Pick a Date:</Typography>
+                <TextField
+                  type="date"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  variant="outlined"
+                />
+              </FormControl>
+              <Box sx={{ marginTop: "10px" }} />{" "}
+              <Stack>
+                <Typography>Choose Appointment Status:</Typography>
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={status}
+                    label="Status"
+                    onChange={chooseStatus}
+                  >
+                    <MenuItem value={"upcoming"}>UpComing</MenuItem>
+                    <MenuItem value={"completed"}>Completed</MenuItem>
+                    <MenuItem value={"cancelled"}>Cancelled</MenuItem>
+                    <MenuItem value={"rescheduled"}>Rescheduled</MenuItem>
+                    <MenuItem value={"all"}>All</MenuItem>
+                  </Select>
+                </FormControl>
+              </Stack>
+              <Box sx={{ marginTop: "10px" }} />{" "}
+            </Stack>
+          </Grid>
+          <Grid item xs={12} md={8}>
+            <Container>
+              {appointments &&
+                !filteredAppointments &&
+                appointments.map((appointment) => (
+                  <PatientAppointment
+                    appointment={appointment}
+                    onStartChat={() => handleStartChat(appointment.patient)}
+                  />
+                ))}
+              {filteredAppointments &&
+                filteredAppointments.map((appointment: any, index: number) => (
+                  <PatientAppointment
+                    appointment={appointment}
+                    onStartChat={() => handleStartChat(appointment.doctor)}
+                  />
+                ))}
+            </Container>
+          </Grid>
+        </Grid>
       </Container>
-    </Container>
+      <El7a2niInfo />
+    </>
+    </div>
   );
 }
 

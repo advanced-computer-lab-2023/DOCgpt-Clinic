@@ -2,6 +2,9 @@ import { Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeE
 import React, { CSSProperties, useState } from 'react';
 import theme from '../theme';
 import DrawerAppBar from './patientBar/patientBar';
+import El7a2niInfo from "./El7a2ni-info";
+import Background from '../Background.jpeg';
+
 
 interface LinkFamilyMemberProps {
   // Add any additional props as needed
@@ -54,6 +57,15 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
   };
 
   return (
+    <div
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '100vh',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >    
     <>
       <DrawerAppBar />
       <Paper elevation={3} style={{ padding: '20px', width: '600px', height: '500px', margin: 'auto' }}>
@@ -107,7 +119,11 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
       </Paper>
+      <El7a2niInfo/>
+
     </>
+    </div>
+
   );
 };
 

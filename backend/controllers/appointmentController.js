@@ -183,6 +183,7 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
         const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
         return appointment;
+        return appointment;
     }
     catch (error) {
         console.error("An error occurred:", error); // Log the full error object for debugging
@@ -211,11 +212,14 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const pricee = price;
         if (paymentMethod === 'card') {
-            const sessionUrl = yield (0, exports.payWithCredit)(req, res, price);
+            const numericPrice = typeof price === 'number' ? price : parseInt(price, 10);
+            const sessionUrl = yield (0, exports.payWithCredit)(req, res, numericPrice);
             if (!sessionUrl) {
                 return res.status(500).json({ error: 'Failed to create payment session' });
             }
-            doctor.walletBalance += price;
+            console.log("Doctor's balance before update:", doctor.walletBalance);
+            doctor.walletBalance += numericPrice;
+            console.log("Doctor's balance after update:", doctor.walletBalance);
             yield doctor.save();
             const app = yield (0, exports.createAppointment)(req, res);
             if (!app) {
@@ -224,17 +228,17 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             return res.status(201).json({ message: 'Appointment done', app, sessionUrl });
         }
         if (paymentMethod === 'wallet') {
+            const numericPrice = typeof price === 'number' ? price : parseInt(price, 10);
             if (patient.walletBalance < price) {
                 return res.status(400).json({ error: "Insufficient balance in the patient's wallet" });
             }
-            console.log(patient.walletBalance + "patient");
-            patient.walletBalance -= price;
+            patient.walletBalance -= numericPrice;
             yield patient.save();
-            console.log(patient.walletBalance + "patient");
-            console.log(doctor.walletBalance + "doctor");
-            doctor.walletBalance += price;
+            console.log("Price:", numericPrice);
+            console.log("Doctor's balance before update:", doctor.walletBalance);
+            doctor.walletBalance += numericPrice; // This should now work as expected
             yield doctor.save();
-            console.log(doctor.walletBalance + "doctor");
+            console.log("Doctor's balance after update:", doctor.walletBalance);
             const app = yield (0, exports.createAppointment)(req, res);
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });
@@ -418,12 +422,14 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const isLessthan24Hours = timeDifference < 24 * 60 * 60 * 1000;
         console.log(timeDifference);
         if (!isLessthan24Hours) {
+            console.log("Doctor's balance before update:", doctor.walletBalance);
             doctor.walletBalance = doctor.walletBalance - price;
             patient.walletBalance = patient.walletBalance + price;
             yield patient.save();
             console.log(patient);
         }
         yield doctor.save();
+        console.log("Doctor's balance after update:", doctor.walletBalance);
         const existingAppointment = yield appointmentModel_1.default.findOneAndUpdate({
             doctor: doctorUsername,
             patient: username,

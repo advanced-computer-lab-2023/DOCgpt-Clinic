@@ -190,6 +190,7 @@ const viewMyPatients = (req, res) => __awaiter(void 0, void 0, void 0, function*
     const usernames = [];
     for (const appoinment of appointments) {
         const username = appoinment.patient;
+        console.log(username);
         const patient = yield patientModel_1.default.findOne({ username: username }).exec();
         if (!usernames.includes(username)) {
             patients.push(patient);

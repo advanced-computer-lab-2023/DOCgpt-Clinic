@@ -20,6 +20,8 @@ import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import left from '../../left1.jpeg'
 import right from '../../right.jpeg'
+import El7a2niInfo from '../../components/El7a2ni-info';
+
 
 import maleProfilePic from 'path/to/maleProfilePic.png';
 import femaleProfilePic from 'path/to/femaleProfilePic.png';
@@ -99,17 +101,16 @@ const ViewFamilyMembersPage = () => {
   return (
     <>
       <PatientAppBar />
-      <div style={{ maxWidth: '100%', overflowX: 'hidden' }}>
+      <div style={{  maxWidth: '100%', overflowX: 'hidden' }}>
         <Grid container style={{ marginTop: '10px', alignItems: 'stretch' }}>
-  
           {/* First Column */}
           <Grid item xs={12} md={3}  style={{ padding: 0 }}>
-            <div style={{ width: '100%', height: '100%', backgroundImage: `url(${left})`, backgroundSize: 'cover', backgroundPosition: 'center'  , right:'50px'}} />
+            <div style={{  minHeight:'500px' , width: '100%', height: '100%', backgroundImage: `url(${left})`, backgroundSize: 'cover', backgroundPosition: 'center'  , right:'50px'}} />
           </Grid>
   
           {/* Middle Column */}
-          <Grid item xs={12} md={6}>
-            <Paper elevation={3} style={{ padding: '20px', backgroundColor: '#f3f3f3' }}>
+          <Grid item xs={12} md={6} style={{minHeight:'500px' }}>
+            <Paper elevation={3} style={{ padding: '20px', backgroundColor: '#f3f3f3' , minHeight:'500px' }}>
               {/* Buttons at the top */}
               <div style={{ textAlign: 'center', marginBottom: '20px' }}>
                 <Button
@@ -164,11 +165,13 @@ const ViewFamilyMembersPage = () => {
   
           {/* Last Column */}
           <Grid item xs={12} md={3}  style={{ padding: 0 }}>
-            <div style={{ width: '100%', height: '100%', backgroundImage: `url(${right})`, backgroundSize: 'cover', backgroundPosition: '0px' }} />
+            <div style={{minHeight:'500px' ,  width: '100%', height: '100%', backgroundImage: `url(${right})`, backgroundSize: 'cover', backgroundPosition: '0px' }} />
           </Grid>
   
         </Grid>
       </div>
+      <El7a2niInfo/>
+
     </>
   );
   
