@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 import PatientAppBar from "../../components/patientBar/patientBar";
 import HealthPackageComp from "../../components/healthPackageComp";
+import El7a2niInfo from '../../components/El7a2ni-info';
+
 
 interface HealthPackage {
   name: string;
@@ -58,37 +60,27 @@ function HealthPackages() {
     fetchHealthPackages();
   }, []);
 
-  return (
-    <>
-      <PatientAppBar />
-      <Container style={{ marginTop: "20px" }}>
-        <Typography
-          variant="h4"
-          gutterBottom
-          color="primary"
-          style={{ textAlign: "center" }}
-        >
-          Available Health Packages
-        </Typography>
-        <Box
-          display="flex"
-          flexDirection="row"
-          flexWrap="wrap"
-          justifyContent="center"
-        >
-          {healthPackages &&
-            healthPackages.map((healthPackage, index) => (
-              <Box key={index} m={2} minWidth={300}>
-                <HealthPackageComp
-                  healthPackage={healthPackage}
-                  healthPackages={subscribed}
-                />
-              </Box>
-            ))}
-        </Box>
-      </Container>
-    </>
-  );
-}
+    return (
+      <>
+        <PatientAppBar />
+        <Container style={{ marginTop: '20px' }}>
+          <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center' }}>
+            Available Health Packages
+          </Typography>
+          <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center">
+            {healthPackages &&
+              healthPackages.map((healthPackage, index) => (
+                <Box key={index} m={2} minWidth={300}>
+                  <HealthPackageComp healthPackage={healthPackage} healthPackages={subscribed} />
+                </Box>
+              ))}
+          </Box>
+        </Container>
+        <El7a2niInfo/>
+
+        
+      </>
+    );
+  }
 
 export default HealthPackages;
