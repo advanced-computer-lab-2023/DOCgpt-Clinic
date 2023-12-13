@@ -13,7 +13,7 @@ import {
 import DocumentScannerIcon from '@mui/icons-material/DocumentScanner';
 import PersonIcon from "@mui/icons-material/Person";
 import AdminBar from "../../components/admin Bar/adminBar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DoneIcon from "@mui/icons-material/Done";
 import ClearIcon from "@mui/icons-material/Clear";
 
@@ -33,6 +33,8 @@ const DoctorRequests: React.FC = () => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [acceptedDoctors, setAcceptedDoctors] = useState<string[]>([]);
   const [rejectedDoctors, setRejectedDoctors] = useState<string[]>([]);
+  const navigate = useNavigate();
+
 
   const handleAccept = async (doctorUsername: string) => {
     try {
@@ -177,9 +179,12 @@ const DoctorRequests: React.FC = () => {
         )}
       </TableCell>
       <TableCell align="right">
-        <Link to="/view-doctor-documents">
-          Uploaded Documents
-        </Link>
+      <Link
+                      to={`/view-doctor-documents/${doctor.username}`}
+                      onClick={() => navigate(`/view-doctor-documents/${doctor.username}`, { state: { doctorUsername: doctor.username } })}
+                    >
+                      View Uploaded Documents
+                    </Link>  
       </TableCell>
     </TableRow>
   ))}

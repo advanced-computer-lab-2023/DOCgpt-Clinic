@@ -99,7 +99,7 @@ const TodayAppointmentsComponent: React.FC = () => {
     <>
     <div>
       <DoctorBar />
-      <MyCarousel/>
+      {/* <MyCarousel/> */}
       <Typography variant="h5" gutterBottom style={{ textAlign: "center" }}>
         Today's Appointments - {formatDate(new Date().toString())}
       </Typography>
@@ -160,7 +160,7 @@ const TodayAppointmentsComponent: React.FC = () => {
       )}
     
     </div>
-      <El7a2niInfo/>
+      {/* <El7a2niInfo/> */}
 </>
   );
 };
