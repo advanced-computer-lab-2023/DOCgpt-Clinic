@@ -23,13 +23,13 @@ const appRoutes: RouteType[] = [
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-        Admins
+       Admins
       </Typography>
     ),
     child: [
       {
         path: "/AdminPage",
-        state: "Admins",
+        state: " All Admins",
       },
    
    
@@ -44,7 +44,7 @@ const appRoutes: RouteType[] = [
     child: [
       {
         path: "/requests",
-        state: "View Doctor Requests",
+        state: "Doctor Requests",
       },
       {
         path: "/Doctor/Remove",
@@ -52,7 +52,7 @@ const appRoutes: RouteType[] = [
       },
       {
         path: "/admin/info",
-        state: "ViewDoctorInfo",
+        state: "Doctors Info",
       },
     ],
   },
@@ -86,16 +86,7 @@ const appRoutes: RouteType[] = [
         path: "/patient/PackagesPage",
         state: "Add Packages",
       },
-      {
-        path:"/hp",
-        state:"Update Packages",
-
-      },
-      {
-        path:"/hp",
-        state:"Delete Packages",
-
-      },
+      
     ],
       
    
@@ -104,23 +95,6 @@ const appRoutes: RouteType[] = [
 
 
 
-  // {
-  //   header: (
-  //     <Typography variant="h6" fontWeight="bold">
-  //       Family Members
-  //     </Typography>
-  //   ),
-  //   child: [
-  //     {
-  //       path: "/patient/viewFamilyMembers",
-  //       state: "Family members",
-  //     },
-  //     {
-  //       path: "/patient/home",
-  //       state: "make app",
-  //     },
-  //   ],
-  // },
 ];
 
 export default appRoutes;
