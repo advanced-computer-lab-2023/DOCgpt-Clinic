@@ -107,9 +107,16 @@ const UnsubscribePackageForMember: React.FC = () => {
           familyMembersAndPackages.map(
             (item: FamilyMemberPackage, index: number) => (
               <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
-                <Paper style={{ padding: "20px" }}>
-                  <Typography variant="h6">{item.familyMemberName}</Typography>
-                  <Typography>Package: {item.package.name}</Typography>
+                <Paper
+                  style={{ padding: "20px", transition: "box-shadow 0.3s" }}
+                  sx={{
+                    "&:hover": {
+                      boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)", // Add an outline on hover
+                    },
+                  }}
+                >  
+                  <Typography variant="h6">{item.package.name.charAt(0).toUpperCase() + item.package.name.slice(1)}</Typography>
+                  <Typography>{item.familyMemberName.charAt(0).toUpperCase() + item.familyMemberName.slice(1)}</Typography>
                   <Typography>Status: {item.package.status}</Typography>
                   <Button
                     variant="contained"
