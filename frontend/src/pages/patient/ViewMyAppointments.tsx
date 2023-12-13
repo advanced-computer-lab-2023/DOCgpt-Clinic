@@ -18,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
 import Box from "@mui/system/Box/Box";
+import Background from '../../Background.jpeg';
+
 function ViewMyAppointments() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const navigate = useNavigate();
@@ -136,6 +138,15 @@ function ViewMyAppointments() {
   }, [past]);
 
   return (
+    <div
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '100vh',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >  
     <>
       <PatientAppBar />
       <Container>
@@ -233,6 +244,7 @@ function ViewMyAppointments() {
       </Container>
       <El7a2niInfo />
     </>
+    </div>
   );
 }
 

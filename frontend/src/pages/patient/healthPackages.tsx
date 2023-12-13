@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import HealthPackageComp from "../../components/healthPackageComp";
 import El7a2niInfo from '../../components/El7a2ni-info';
+import Background from '../../Background.jpeg';
 
 
 interface HealthPackage {
@@ -61,11 +62,19 @@ function HealthPackages() {
   }, []);
 
     return (
-      <>
+      <div
+      style={{
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '100vh',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+      }}
+    >      <>
         <PatientAppBar />
         <Container style={{ marginTop: '20px' }}>
           <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center' }}>
-            Available Health Packages
+            <strong> Available Health Packages</strong>
           </Typography>
           <Box display="flex" flexDirection="row" flexWrap="wrap" justifyContent="center">
             {healthPackages &&
@@ -80,6 +89,7 @@ function HealthPackages() {
 
         
       </>
+      </div>
     );
   }
 
