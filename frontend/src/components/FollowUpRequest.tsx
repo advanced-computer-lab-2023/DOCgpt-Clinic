@@ -1,7 +1,8 @@
-import { Button, Card, Container, Grid, Typography } from "@mui/material";
+import { Button, Card, Container, Grid, IconButton, Typography } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import CheckIcon from '@mui/icons-material/Check';
+import CloseIcon from '@mui/icons-material/Close';
 
 interface RequestProps {
     request: any
@@ -13,7 +14,7 @@ const FollowUpRequest = ({ request }: RequestProps) => {
     }
     const {Appointmentstatus, patient, AppointmentDate, type, price, paid, followUpDate, _id, status} = request;
     
-    const isPaid = paid? "Yes ;)": "No :(";
+    const isPaid = paid? "Yes ": "No ";
 
     const oldAppointmentDate = new Date(AppointmentDate).toISOString().split('T')[0];
 
@@ -61,35 +62,36 @@ const FollowUpRequest = ({ request }: RequestProps) => {
         }
     };
 
-    return(
-        <Card style={{padding: '20px', margin: '10px'}}>
-            <Grid container>
-                <Grid item xs={6}>
-                    <Typography > <strong>Old Appointment:</strong></Typography>
-                    <Typography> With Patient: {patient}</Typography>
-                    <Typography> Date: {oldAppointmentDate}</Typography>
-                    <Typography> Status: {Appointmentstatus}</Typography>
-                    <Typography> Type: {type}</Typography>
-                    <Typography> Paid: {isPaid}</Typography>
-
-
-                    <Typography> <strong>Request:</strong></Typography>
-                    <Typography> On Date: {requestedfollowUpDate}</Typography>
-                    <Typography> Status: {status}</Typography>
-
+    return (
+        <Container>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Card style={{ padding: '20px', margin: '10px', height: '300px' }}>
+              <Grid container direction="column">
+                <Grid item xs={12}>
+                  <Typography variant="h3" color="primary" marginBottom="10px"> <strong>Old Appointment:</strong></Typography>
+                  <Typography variant="h6" color="text.secondary"><strong>With Patient:</strong>  {patient}</Typography>
+                  <Typography variant="h6" color="text.secondary"> {oldAppointmentDate}</Typography>
+                  <Typography variant="h6" color="text.secondary"><strong>Status:</strong>  {Appointmentstatus}</Typography>
+                  <Typography variant="h6" color="text.secondary" marginBottom="30px"> {type} Appointment </Typography>
+      
+                  <Typography variant="h3" color="primary" marginBottom="10px"> <strong>Request:</strong></Typography>
+                  <Typography variant="h6" color="text.secondary"><strong>{requestedfollowUpDate} </strong>  </Typography>
+                  <Typography variant="h6" color="text.secondary"><strong>Status: </strong>  {status}</Typography>
                 </Grid>
-                <Grid item xs={6} style={{display:'flex', justifyContent:'end', alignItems:'center'}}>
-                        <Button onClick={handleAccept}>
-                            Accept
-                        </Button>
-                        <Button onClick={handleReject}>
-                            Reject
-                        </Button>
+                <Grid item xs={12} style={{ marginBottom:'40px', marginRight: '40px', display: 'flex', justifyContent: 'flex-end' }}>
+                  <IconButton onClick={handleAccept} style={{ color: '#009688', marginRight: '10px', fontSize: '3rem'}}>
+                    <CheckIcon style={{ fontSize: '2rem' }} />
+                  </IconButton>
+                  <IconButton onClick={handleReject} style={{ color: 'red', marginRight: '10px', fontSize: '3rem' }}>
+                    <CloseIcon style={{ fontSize: '2rem' }} />
+                  </IconButton>
                 </Grid>
-            </Grid>
-        </Card>
-    );
-
+              </Grid>
+            </Card>
+          </div>
+        </Container>
+      );
+      
 }
 
 export default FollowUpRequest;

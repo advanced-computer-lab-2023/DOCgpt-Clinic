@@ -3,6 +3,10 @@ import axios from "axios";
 import { useEffect, useState} from "react";
 import { useLocation } from "react-router-dom";
 import DoctorAppointment from "../../components/DoctorAppointment";
+import DoctorBar from "../../components/Doctor bar/doctorBar";
+import El7a2niInfo from "../../components/El7a2ni-info";
+import Background from "../../Background.jpeg";
+
 
 function MyAppointments(){
 //THE LOGIC OF VIEWING A DOCTOR'S APPOINTMENTS
@@ -116,14 +120,26 @@ function MyAppointments(){
 //- THE INFO OF THE APPOINTMENTS (DATE, STATUS, PATIENT NAME DON'T CONATIN THE DOCTOR NAME AND DISPLAY THE INFO IN A PROPER WAY)
 
 return(
-    <Container>
+    <div
+      style={{
+        backgroundImage: `url(${Background})`,
+        backgroundSize: "cover",
+        minHeight: "100vh",
+        backgroundPosition: "center",
+        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)", // Increased shadow values
+      }}
+    >
+    <>
+    <DoctorBar />
+    <Container >
+    <div className="filterSection">
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-        <Typography variant="h3" style={{ fontWeight: 'bold'}}>Your Appointments So Far..</Typography>
+        <Typography color="primary" variant="h1" marginTop="30px" style={{ fontWeight: 'bold'}}>Your Appointments So Far..</Typography>
         </div>
         <Grid container style={{ padding: '20px'}}>
             <Grid item xs={3}>
                 <Stack>
-                    <Typography>Choose Appointment Status:</Typography>
+                    <Typography color="primary"> <strong> Choose Appointment Status: </strong></Typography>
                     <FormControl fullWidth>
                         <InputLabel id="demo-simple-select-label">Status</InputLabel>
                         <Select
@@ -144,7 +160,7 @@ return(
             </Grid>
             <Grid item xs={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <Stack>
-                    <Typography>Pick a Date:</Typography>
+                    <Typography color="primary"> <strong>Pick a Date: </strong></Typography>
                     <div>
                     <input
                         type="date"
@@ -159,7 +175,7 @@ return(
             </Grid>
             <Grid item xs={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <Stack>
-                    <Typography>Upcoming Appointments:</Typography>
+                <Typography color="primary"> <strong>Upcoming Appointments: </strong></Typography>
                     <div>
                     <Switch
                         checked={upcoming}
@@ -174,7 +190,7 @@ return(
             </Grid>
             <Grid item xs={3} style={{ display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                 <Stack>
-                    <Typography>Past Appointments:</Typography>
+                <Typography color="primary"> <strong>Past Appointments: </strong></Typography>
                     <div>
                     <Switch
                         checked={past}
@@ -189,14 +205,23 @@ return(
             </Grid>
         </Grid>
         <Container>
-            {appointments && !(filteredAppointments) && appointments.map((appointment) => (
-                <DoctorAppointment appointment={appointment}/>
-            ))}
-            {filteredAppointments && filteredAppointments.map((appointment: any, index: number) => (
-                <DoctorAppointment appointment={appointment}/>
-            ))}
-        </Container>
+                <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                </div>
+                <Grid container spacing={2} style={{ padding: '20px' }}>
+                    {filteredAppointments.map((appointment: any, index: number) => (
+                        <Grid item key={index} xs={12} md={6}>
+                            <DoctorAppointment appointment={appointment} />
+                        </Grid>
+                    ))}
+                </Grid>
+            </Container>
+            </div>
     </Container>
+    <El7a2niInfo />
+      
+    </>
+    </div>
+    
 );
 
 }
