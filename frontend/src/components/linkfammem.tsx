@@ -3,7 +3,7 @@ import React, { CSSProperties, useState } from 'react';
 import theme from '../theme';
 import DrawerAppBar from './patientBar/patientBar';
 import El7a2niInfo from "./El7a2ni-info";
-import Background from '../Background.jpeg';
+import Background from '../Background.png';
 
 
 interface LinkFamilyMemberProps {
@@ -65,8 +65,19 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
       backgroundPosition: 'center',
       boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
     }}
-  >    
+  >   
+  
     <>
+    <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(255, 255, 255, 0.5)', // White background with 50% transparency
+        }}
+      /> 
       <DrawerAppBar />
       <Paper elevation={3} style={{ padding: '20px', width: '600px', height: '500px', margin: 'auto' }}>
         <Typography variant="h5">Link Family Member</Typography>
