@@ -10,4 +10,5 @@ router.get('/patient', notificationController_1.getNotificationsP);
 router.get('/doctor', notificationController_1.getNotificationsD);
 router.get('/countP', notificationController_1.getCountP);
 router.get('/countD', notificationController_1.getCountD);
+router.post('/mark', notificationController_1.markAsRead);
 exports.default = router;

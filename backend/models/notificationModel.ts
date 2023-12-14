@@ -17,6 +17,11 @@ export const notificationSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    read:{
+        type: Boolean,
+        required: false,
+        default :false
+    },
   
 
 });
