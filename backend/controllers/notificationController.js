@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getCountD = exports.getCountP = exports.getNotificationsD = exports.getNotificationsP = void 0;
+exports.markAsRead = exports.getCountD = exports.getCountP = exports.getNotificationsD = exports.getNotificationsP = void 0;
 const notificationModel_1 = __importDefault(require("../models/notificationModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
+const notificationModel_2 = __importDefault(require("../models/notificationModel"));
 const getNotificationsP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const authHeader = req.headers['authorization'];
@@ -74,7 +75,7 @@ const getCountP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!patient) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const notificationsCount = yield notificationModel_1.default.countDocuments({ patientUsername: username });
+        const notificationsCount = yield notificationModel_1.default.countDocuments({ patientUsername: username, read: false });
         res.json({ notificationsCount });
     }
     catch (error) {
@@ -96,7 +97,7 @@ const getCountD = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!doctor) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const notificationsCount = yield notificationModel_1.default.countDocuments({ patientUsername: username });
+        const notificationsCount = yield notificationModel_1.default.countDocuments({ patientUsername: username, read: false });
         res.json({ notificationsCount });
     }
     catch (error) {
@@ -105,3 +106,31 @@ const getCountD = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getCountD = getCountD;
+const markAsRead = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const { notificationId } = req.body;
+        // Check if the prescription ID is provided
+        if (!notificationId) {
+            return res.status(400).json({ error: 'notification ID is required.' });
+        }
+        // Find the prescription by ID
+        const notification = yield notificationModel_2.default.findById(notificationId);
+        // Check if the prescription exists
+        if (!notification) {
+            return res.status(404).json({ error: 'notification not found.' });
+        }
+        // Update the prescription status
+        if (notification.read == false) {
+            notification.read = true;
+        }
+        // Save the updated prescription
+        yield notification.save();
+        // Respond with the updated prescription
+        res.json({ message: 'notification status updated successfully.', notification });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+exports.markAsRead = markAsRead;
