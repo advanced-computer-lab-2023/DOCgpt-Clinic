@@ -5,6 +5,8 @@ import DrPrescription from '../../components/DrPrescription';
 import DrawerAppBar from '../../components/Doctor bar/doctorBar';
 import { Grid, Typography } from '@mui/material';
 import El7a2niInfo from '../../components/El7a2ni-info';
+import Back from "../../components/backButton";
+
 
 interface Medicine {
   medicineName: string;
@@ -46,6 +48,7 @@ const DrPrescriptions = () => {
   return (
     <>
     <DrawerAppBar />
+    <Back/>
     <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}} padding={5}>
       MY PRESCRIPTIONS   
       </Typography>

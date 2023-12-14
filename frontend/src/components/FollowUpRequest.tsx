@@ -63,6 +63,7 @@ const FollowUpRequest = ({ request }: RequestProps) => {
     };
 
     return (
+        
         <Container>
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
             <Card style={{ padding: '20px', margin: '10px', height: '300px' }}>

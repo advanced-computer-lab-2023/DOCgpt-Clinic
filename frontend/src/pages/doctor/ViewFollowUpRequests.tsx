@@ -5,6 +5,7 @@ import FollowUpRequest from "../../components/FollowUpRequest";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
 import Background from "../../Background.jpeg";
+import Back from "../../components/backButton";
 
 function ViewFollowUpRequests(){
     // LOGIC
@@ -49,6 +50,7 @@ function ViewFollowUpRequests(){
         >
         <>
         <DoctorBar />
+        <Back/>
         <Container>
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
             <Typography marginTop="10px" marginBottom="30px" variant="h1" color="primary" style={{ fontWeight: 'bold'}}>Follow Up Requests</Typography>
