@@ -21,6 +21,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import DocDetails from "../../components/DocDetails";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
+import Background from '../../Background.jpeg';
+
 
 interface Doctor {
   name: string;
@@ -168,6 +170,15 @@ function ViewDoctors() {
   //2- THE PATIENT ITSELF ON CLICK SHOULD NAVIGATE TO ANOTHER PAGE TO SHOW ITS INFO
 
   return (
+    <div
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '100vh',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >  
     <>
       <PatientAppBar />
       <Container>
@@ -292,6 +303,7 @@ function ViewDoctors() {
       </Container>
       <El7a2niInfo/>
     </>
+    </div>
   );
 }
 

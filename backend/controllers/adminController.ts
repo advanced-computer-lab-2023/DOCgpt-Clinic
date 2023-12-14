@@ -107,7 +107,7 @@ export const createAdmin = async (req: Request, res: Response) => {
 
         try {
           const { username } = req.body;
-      console.log("ana fe climn");
+      console.log("ana fe climn");console.log("ana hena")
           // Find and delete the Doctor by username
           const deletedPatient = await patientModel.findOneAndDelete({ username });
       

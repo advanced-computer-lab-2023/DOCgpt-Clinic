@@ -2,7 +2,7 @@ import { Box, Button, Card, Container, Grid, Typography, Snackbar, Alert, Menu, 
 import axios from "axios";
 import { useEffect, useState } from "react";
 import UpdatePackageForm from "../components/UpdatePackageForm";
-import DeletePackageForm from '../components/DeletePackageForm';
+import DeletePackageForm from "../components/DeletePackageForm";
 import DrawerAppBar from "./admin Bar/adminBar";
 import El7a2niInfo from './El7a2ni-info';
 import AddPackage from './Package';
@@ -13,7 +13,6 @@ interface HealthPackage {
   medicineDiscount: number;
   familysubscribtionDiscount: number;
 }
-
 
 const HealthPackages = () => {
   const [healthPackages, setHealthPackages] = useState<HealthPackage[]>([]);

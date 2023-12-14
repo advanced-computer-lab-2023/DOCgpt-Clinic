@@ -4,9 +4,10 @@ import axios from 'axios';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { CSSProperties } from '@mui/material/styles/createMixins';
 import theme from '../theme';
-import { DatePicker } from '@mui/lab';
+import { DatePicker, DesktopTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import moment from 'moment';
 
 
 interface DoctorAvailabilityProps {
@@ -17,6 +18,8 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
   const theme = useTheme(); // Access the theme
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [inputDate, setInputDate] = useState<Date | null>(null);
+  const [inputTime, setInputTime] = useState<Date | null>(null);
+
 
   // Function to handle adding time slots to the database
   const addTimeSlotsToDatabase = async () => {
@@ -38,18 +41,20 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
 
   const handleDateChange = (newDate: Date | null) => {
     if (newDate) {
-      const currentDate = new Date();
-      currentDate.setHours(0, 0, 0, 0); // Reset time to the start of the day
-  
+      const currentDate = new Date();  
       // Check if the selected date is not in the past
       if (newDate >= currentDate) {
-        setSelectedDates(prevDates => [...prevDates, newDate]);
-        setInputDate(newDate); // Update the inputDate for controlled DatePicker
+        setSelectedDates((prevDates) => [...prevDates, newDate]);
+        setInputDate(newDate);
       } else {
-        // Optionally, you can show an error message here
         console.log('Selected date is in the past.');
       }
     }
+  };
+  
+
+  const handleTimeChange = (newTime: Date | null) => {
+    setInputTime(newTime);
   };
   
 
@@ -85,14 +90,20 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
           <div style={styles.space}></div> 
           <Grid item xs={12}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DatePicker
-              label="Select Date"
-              value={inputDate}
-              onChange={handleDateChange}
-              renderInput={(params: TextFieldProps) => <TextField {...params} />}
-              minDate={new Date()} // Disables all dates before today
+          <DatePicker
+      label="Select Date"
+      value={inputDate}
+      onChange={handleDateChange}
+      disablePast
+    />
+
+            <DesktopTimePicker
+              label="Select Time"
+              value={inputTime}
+              onChange={handleTimeChange}
             />
           </LocalizationProvider>
+
       </Grid>
           <div style={styles.space}></div> 
           <Grid item xs={12}>
