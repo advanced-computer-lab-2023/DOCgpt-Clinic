@@ -22,6 +22,8 @@ router.get('/doctor', adminController_2.viewDoctorInfo);
 router.post('/addPackage', adminController_2.addPackage);
 //delete package
 router.delete('/deletePa', adminController_2.deletePackageByName);
+// Example of setting up the route with express
+router.delete('/deleteHealthPackage/:name', adminController_2.deletePackageByName);
 //update package 
 router.patch('/updatePackage', adminController_2.updatePackage);
 //get package 
