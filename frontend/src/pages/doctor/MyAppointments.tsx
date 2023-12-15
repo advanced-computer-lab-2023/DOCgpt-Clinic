@@ -19,6 +19,7 @@ import DoctorAppointment from "../../components/DoctorAppointment";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
 import Background from "../../Background.jpeg";
+import DrawerAppBar from "../../components/Doctor bar/doctorBar";
 
 
 function MyAppointments() {
