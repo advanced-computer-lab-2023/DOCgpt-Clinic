@@ -183,7 +183,6 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
         const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
         return appointment;
-        return appointment;
     }
     catch (error) {
         console.error("An error occurred:", error); // Log the full error object for debugging
