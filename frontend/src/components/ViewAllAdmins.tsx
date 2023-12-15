@@ -6,20 +6,38 @@ import {
   List,
   ListItem,
   ListItemText,
-  Paper,
+  Card,
+  CardContent,
+  ListItemIcon,
   Avatar,
-  Grid, // Import Grid component
+  Paper,
+  Grid,
+  Button, // Import Button from @mui/material
+  Dialog, // Import Dialog from @mui/material
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+  Snackbar,
+  Box,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
+import DeleteIcon from "@mui/icons-material/Delete"; // Import DeleteIcon
+import PersonAddTwoToneIcon from '@mui/icons-material/PersonAddTwoTone'; // Import the add person icon
+import CreateAdminButton from './addAdmin'; // Update the path as necessary
 
 interface Admin {
   _id: string;
   username: string;
+  email: string;
   // Add other fields as needed
 }
 
 const AdminList: React.FC = () => {
   const [admins, setAdmins] = useState<Admin[]>([]);
+  const [selectedAdmin, setSelectedAdmin] = useState<Admin | null>(null); // Track the selected admin for removal
+  const [openDialog, setOpenDialog] = useState(false);
 
   useEffect(() => {
     const fetchAdmins = async () => {
@@ -40,33 +58,108 @@ const AdminList: React.FC = () => {
     fetchAdmins();
   }, []);
 
+  const handleRemoveAdmin = (admin: Admin) => {
+    setSelectedAdmin(admin);
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setSelectedAdmin(null);
+    setOpenDialog(false);
+  };
+
+  const handleConfirmRemove = async () => {
+    if (selectedAdmin) {
+      try {
+        const response = await axios.delete('/routes/admins/delete', {
+          data: { username: selectedAdmin.username },
+        });
+
+        if (response.status === 200) {
+          // Handle successful removal here (e.g., update the admins list)
+          const updatedAdmins = admins.filter((admin) => admin._id !== selectedAdmin._id);
+          setAdmins(updatedAdmins);
+        }
+      } catch (error) {
+        console.error('Error deleting admin:', error);
+      }
+
+      handleCloseDialog();
+    }
+  };
+
   return (
     <Container maxWidth="sm">
-      <Typography variant="h1" align="center" gutterBottom>
-        Admins List
-      </Typography>
-      <Paper elevation={0} style={{ backgroundColor: 'rgba(173, 216, 230, 0.4)', padding: '228 ' }}>
-      <List>
-          <Grid container spacing={5}>
-            {admins.map((admin, index) => (
-              <Grid item xs={12} sm={4} key={admin._id}>
-                {/* Increase the padding to make the paper larger */}
-                <Paper elevation={3} style={{ marginBottom: 16, padding: 48}}>
-                  <ListItem alignItems="flex-start">
-                    <Avatar>
-                      <PersonIcon />
-                    </Avatar>
-                    <ListItemText
-                      primary={admin.username}
-                      secondary={`ID: ${admin._id}`}
-                    />
-                  </ListItem>
-                </Paper>
-              </Grid>
-            ))}
+    
+      <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
+        <Typography variant="h4" align="center" style={{ padding: '20px' }} gutterBottom>
+          Admins List
+        </Typography>
+        <CreateAdminButton /> {/* This will render the "Add Admin" button */}
+      </Box>
+      <Grid container spacing={2}>
+        {admins.map((admin, index) => (
+          <Grid item xs={42} sm={16} md={13} key={admin._id}>
+                 <Paper elevation={14} style={{ marginBottom: 18, width: '100%' }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <ListItem alignItems="flex-start" style={{ flexGrow: 1 }}>
+                <ListItemIcon>
+                  <Avatar>
+                    <PersonIcon />
+                  </Avatar>
+                </ListItemIcon>
+                <ListItemText
+                  primary={admin.username}
+                  secondary={
+                    <>
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        color="textSecondary"
+                      >
+                        Email: {admin.email}
+                      </Typography>
+                    </>
+                  }
+                />
+                 </ListItem>
+                 <Button
+  onClick={() => handleRemoveAdmin(admin)}
+  variant="contained"
+  size="small"
+  style={{
+    marginLeft: "auto",
+    marginRight: 16,
+    backgroundColor: "#primary",
+    color: "#primary" 
+  }}
+>
+  <DeleteIcon style={{ color: "#primary" }} /> 
+</Button>
+
+              </div>
+            </Paper>
           </Grid>
-        </List>
-      </Paper>
+        ))}
+      </Grid>
+      {/* Confirmation Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Remove Admin</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to remove admin {selectedAdmin?.username}?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+       
+          <Button onClick={handleConfirmRemove} color="primary">
+            Remove
+          </Button>
+          <Button onClick={handleCloseDialog} color="primary">
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 };

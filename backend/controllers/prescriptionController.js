@@ -35,6 +35,7 @@ const createPrescription = (req, res) => __awaiter(void 0, void 0, void 0, funct
         // Check if the patient exists
         const patient = yield patientModel_1.default.findOne({ username: patientUsername });
         if (!patient) {
+            console.log("zeft");
             return res.status(404).json({ error: 'Patient not found' });
         }
         const prescription = new perscriptionModel_1.default({
