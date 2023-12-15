@@ -4,6 +4,12 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DoctorBar from "../../components/Doctor bar/doctorBar";
+import Background from '../../Background.jpeg';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import ScaleIcon from '@mui/icons-material/Scale';
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
+import OpacityIcon from '@mui/icons-material/Opacity';
 interface HealthRecord{
     patient: string,
     MedicalHistory:{
@@ -100,31 +106,79 @@ function HealthRecord(){
     //THE VIEW 
     //DISPLAYING SECTIONS OF THE HEALTH RECORD IN A PROPER WAY AND DIPLAYING IMAGES AND NOTES 
     return (
-        <>
-          <DoctorBar />
+      <div
+      style={{
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '100vh',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+      }}
+    >    
+       <DoctorBar/>
           <Container>
             {healthRecord && (
-              <Paper
-                style={{
-                  padding: "20px",
-                  marginTop: "20px",
-                  marginLeft:'130px',
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  width:'1000px'
-                 
-                }}
-                elevation={3}
-              >
+              <Container>
+               
                 {/* Icon centered in the Paper */}
-                <AddCircleIcon
-                  style={{ color: "red", fontSize: "6rem", margin: "20px 0" }}
-                />
+                <div
+  style={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+  }}
+>
+  <AddCircleOutlineIcon
+    style={{  color: 'red', fontSize: '6rem', margin: '20px 0' }}
+  />
+</div>
+              
+          
+
+        
       
+          
                 {/* Space between the icon and cards */}
                 <div style={{ width: "100%", height: "2rem" }}></div>
-      
+                <Card
+  style={{
+    width: '97.4%', // Same width as the old Paper
+    height: '100px', // Same height as the old Paper
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: '10px',
+    marginLeft:'18px' // Add margin for space between MedicationList and Vital Signs
+  }}
+>
+  <Paper
+    style={{ backgroundColor: 'white', padding: '10px',width:'1200px'}}
+    elevation={3}
+  >
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <Typography variant="h6" style={{ color: 'black' }}>
+        Vital Signs
+      </Typography>
+    </div>
+  </Paper>
+  <CardContent style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <OpacityIcon style={{ color: 'red', marginRight: '10px' }} /> {/* Add the icon here */}
+      <Typography  style={{ marginRight: '120px' }}>Blood Pressure: {`${healthRecord.VitalSigns.BloodPressure}`}</Typography>
+      <MonitorHeartIcon style={{ color: 'red', marginLeft: '10px' }} />
+      <Typography style={{ marginRight: '190px' }}>Heart Rate: {`${healthRecord.VitalSigns.HeartRate}`}</Typography>
+      {/* Add the icon here */}
+      <AccessibilityNewIcon style={{ marginRight: '8px' ,color: 'red'}} /> {/* Add this line */}
+<Typography style={{ marginRight: '80px' }}>Height: {`${healthRecord.VitalSigns.Height}`}</Typography>
+<ScaleIcon style={{ color: 'red' }} /> {/* Add this line */}
+  <Typography style={{ marginLeft: '20px' }}>Weight: {`${healthRecord.VitalSigns.Weight}`}</Typography>
+    </div>
+  </CardContent>
+</Card>
+
+
                 {/* Cards container for Medical History and Medication List */}
                 <div
                   style={{
@@ -135,6 +189,7 @@ function HealthRecord(){
                     flexWrap: "wrap",
                   }}
                 >
+            
                   {/* Medical History section */}
                   <Card
                     style={{
@@ -145,10 +200,13 @@ function HealthRecord(){
                     }}
                   >
                     <Paper
-                      style={{ backgroundColor: "grey", padding: "10px" }}
+                      style={{ backgroundColor: "white", padding: "10px" }}
                       elevation={3}
                     >
-                      <Typography variant="h6" style={{ color: "white" }}>
+                       {/* Add the patient's name as a title or heading */}
+           
+
+                      <Typography variant="h6" style={{ color: "black" }}>
                         Medical History
                       </Typography>
                     </Paper>
@@ -156,26 +214,32 @@ function HealthRecord(){
                       <Grid container spacing={2}>
                         <Grid item xs={12}>
                           <Typography>Allergies:</Typography>
-                          <ul>
-                            {healthRecord.MedicalHistory.Allergies.map(
+                          {healthRecord.MedicalHistory.Allergies.length > 0 ? (
+    <ul>
+      {healthRecord.MedicalHistory.Allergies.map(
                               (item, index) => (
-                                <li key={index}>{item}</li>
+                                <li key={index}>{item.trim() !== '' ? item : 'No Allergies For This Patient'}</li>
                               )
                             )}
                           </ul>
+                            ) : (
+                              <Typography>No data provided</Typography>
+                            )}
                         </Grid>
                         <Grid item xs={12}>
-                          <Typography>Past Medical Conditions:
-                            
-                          </Typography>
-                          <ul>
-                            {healthRecord.MedicalHistory.PastMedicalConditions.map(
-                              (item, index) => (
-                                <li key={index}>{item}</li>
-                              )
-                            )}
-                          </ul>
-                        </Grid>
+  <Typography>Past Medical Conditions:</Typography>
+  {healthRecord.MedicalHistory.PastMedicalConditions.length > 0 ? (
+    <ul>
+      {healthRecord.MedicalHistory.PastMedicalConditions.map((item, index) => (
+        <li key={index}>{item.trim() !== '' ? item : 'No Past Medical Conditions '}</li>
+      ))}
+    </ul>
+  ) : (
+    <Typography>No Past Medical Conditins</Typography>
+  )}
+</Grid>
+
+
                       </Grid>
                     </CardContent>
                   </Card>
@@ -190,10 +254,10 @@ function HealthRecord(){
                     }}
                   >
                     <Paper
-                      style={{ backgroundColor: "grey", padding: "10px" }}
+                      style={{ backgroundColor: "white", padding: "10px" }}
                       elevation={3}
                     >
-                      <Typography variant="h6" style={{ color: "white" }}>
+                      <Typography variant="h6" style={{ color: "black" }}>
                         Medication List
                       </Typography>
                     </Paper>
@@ -201,30 +265,43 @@ function HealthRecord(){
                       <Grid container spacing={2}>
                         <Grid item xs={12}>
                           <Typography>Current Medications:</Typography>
-                          <ul>
+                      
+                          {healthRecord.MedicationList.CurrentMedications.Names.length > 0 ? (
+                                <ul>
                             {healthRecord.MedicationList.CurrentMedications.Names.map(
                               (item, index) => (
-                                <li key={index}>{item}</li>
-                              )
-                            )}
-                          </ul>
+                              
+                                  <li key={index}>{item.trim() !== '' ? item : 'No Current Medications'}</li>
+                                )
+                              )}
+                            </ul>
+                              ) : (
+                                <Typography>No Current Medications</Typography>
+                              )}
                         </Grid>
                         <Grid item xs={12}>
                           <Typography>Past Medications:</Typography>
-                          <ul>
-                            {healthRecord.MedicationList.PastMedications.Names.map(
+                         
+                          {healthRecord.MedicationList.PastMedications.Names.length > 0 ? (
+                              <ul>
+                           { healthRecord.MedicationList.PastMedications.Names.map(
+
                               (item, index) => (
-                                <li key={index}>{item}</li>
-                              )
-                            )}
-                          </ul>
-                        </Grid>
+                               
+                                <li key={index}>{item.trim() !== '' ? item : 'No Past Medications'}</li>
+                                ))}
+                                </ul>
+                              ) : (
+                                <Typography>No Past Medications</Typography>
+                              )}
+                            </Grid>
+                            
                       </Grid>
                     </CardContent>
                   </Card>
                 </div>
       
-                {/* Container for Vital Signs and Laboratory (side by side) */}
+               
                 <div
                   style={{
                     display: "flex",
@@ -233,7 +310,7 @@ function HealthRecord(){
                     marginTop: "20px",
                   }}
                 >
-                  {/* Vital Signs section */}
+                  {/* Vital Signs section
                   <Card
                     style={{
                       height: '250px',
@@ -269,12 +346,12 @@ function HealthRecord(){
                         </Grid>
                       </Grid>
                     </CardContent>
-                  </Card>
+                  </Card> */}
       
                   {/* Laboratory section */}
                   <Card
                     style={{
-                      marginRight: '8px',
+                      marginLeft: '10px',
                       height: '250px',
                       width: "48.5%",
                       display: "flex",
@@ -282,18 +359,19 @@ function HealthRecord(){
                     }}
                   >
                     <Paper
-                      style={{ backgroundColor: "grey", padding: "10px" }}
+                      style={{ backgroundColor: "white", padding: "10px" }}
                       elevation={3}
                     >
-                      <Typography variant="h6" style={{ color: "white" }}>
+                      <Typography variant="h6" style={{ color: "black" }}>
                         Laboratory
                       </Typography>
                     </Paper>
                     <CardContent style={{ flex: 1 }}>
                       <Grid container spacing={2}>
                         <Grid item xs={12}>
-                          <Typography style={{ marginBottom: '40px' }}>BloodTests:</Typography>
-                          {healthRecord.Laboratory.BloodTests.map((item, index) => (
+                          <Typography style={{ marginBottom: '30px' }}>BloodTests:</Typography>
+                          {healthRecord.Laboratory.BloodTests.length > 0 ? (
+                          healthRecord.Laboratory.BloodTests.map((item, index) => (
                             <div key={index}>
                               <a
                                 href={`/routes/patient/patientDocument/${item}`}
@@ -303,11 +381,15 @@ function HealthRecord(){
                                 {item}
                               </a>
                             </div>
-                          ))}
+                          ))
+                          ) : (
+                            <Typography>No Blood Tests Available</Typography>
+                          )}
                         </Grid>
                         <Grid item xs={12}>
-                          <Typography style={{ marginBottom: '40px' }}>XRays:</Typography>
-                          {healthRecord.Laboratory.XRays.map((item, index) => (
+                          <Typography style={{ marginBottom: '30px' }}>XRays:</Typography>
+                          {healthRecord.Laboratory.XRays.length > 0 ? (
+                          healthRecord.Laboratory.XRays.map((item, index) => (
                             <div key={index}>
                               <a
                                 href={`/routes/patient/patientDocument/${item}`}
@@ -317,59 +399,17 @@ function HealthRecord(){
                                 {item}
                               </a>
                             </div>
-                          ))}
+                          ))
+                          ) : (
+                            <Typography>No XRays Available</Typography>
+                          )}
                         </Grid>
                       </Grid>
                     </CardContent>
                   </Card>
                 </div>
       
-                {/* General Comments section (newly added) */}
-                <Card
-                  style={{
-                    height: '250px',
-                    width: "48.5%",
-                    display: "flex",
-                    flexDirection: "column",
-                    marginTop: "10px",
-                    marginRight: "480px", // Add margin-right to create space beside the Laboratory Card
-                  }}
-                >
-                    
-                    <Paper
-                    style={{ backgroundColor: "grey", padding: "10px" }}
-                    elevation={3}
-                  >
-                    <Typography variant="h6" style={{ color: "white" }}>
-                      General Images
-                    </Typography>
-                  </Paper>
-                  <CardContent style={{ flex: 1 }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <div>
-                          <Typography style={{ fontWeight: "bold" }}>
-                            General Images:
-                          </Typography>
-                          {healthRecord.GeneralImages.map((item, index) => (
-                            <div key={index}>
-                              <a
-                                href={`/routes/patient/patientDocument/${item}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                {item}
-                              </a>
-                            </div>
-                          ))}
-                        </div>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
-      
-      
-                {/* General Images section (newly added) */}
+                {/* General images section (newly added) */}
                 <Card
                   style={{
                     height: '250px',
@@ -377,51 +417,96 @@ function HealthRecord(){
                     display: "flex",
                     flexDirection: "column",
                     marginTop: "-250px",
-                    marginLeft:"480px",
-                   
+                    marginLeft: "605px", // Add margin-right to create space beside the Laboratory Card
                   }}
                 >
-                     <Paper
-                    style={{ backgroundColor: "grey", padding: "10px" }}
-                    elevation={3}
-                  >
-                    <Typography variant="h6" style={{ color: "white" }}>
-                      General Comments
-                    </Typography>
-                  </Paper>
-                  <CardContent style={{ flex: 1 }}>
-                    <Grid container spacing={2}>
-                      <Grid item xs={12}>
-                        <div>
-                          <Typography style={{ fontWeight: "bold" }}>
-                            General Comments:
-                          </Typography>
-                        </div>
-                        <TextField
-                          fullWidth
-                          multiline
-                          value={comment}
-                          onChange={handleInputChange}
-                          onKeyDown={handleCommentEntered("GeneralComments")}
-                          placeholder="Add A General Comment"
-                        />
-                        <ul>
-                          {healthRecord.GeneralComments.map((item, index) => (
-                            <div key={index}>
-                              <li key={index}>{`${item}`}</li>
-                            </div>
-                          ))}
-                        </ul>
-                      </Grid>
-                    </Grid>
-                  </CardContent>
-                </Card>
+                    
+
+  <Paper
+    style={{ backgroundColor: "white", padding: "10px" }}
+    elevation={3}
+  >
+    <Typography variant="h6" style={{ color: "black" }}>
+      General Images
+    </Typography>
+  </Paper>
+  <CardContent style={{ flex: 1 }}>
+    <div>
+      <Typography style={{ fontWeight: "bold" }}>
+        General Images:
+      </Typography>
+      {healthRecord.GeneralImages.length > 0 ? (
+        healthRecord.GeneralImages.map((item, index) => (
+          <div key={index}>
+            <a
+              href={`/routes/patient/patientDocument/${item}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {item}
+            </a>
+          </div>
+        ))
+      ) : (
+        <Typography>No image uploaded</Typography>
+      )}
+    </div>
+  </CardContent>
+</Card>
+
       
+                {/* General Images section (newly added) */}
+              
                 {/* Rest of your code for other sections goes here */}
-              </Paper>
+
+
+                <Card
+  style={{
+    height: '150px',
+    width: "99%",
+    display: "flex",
+    flexDirection: "column",
+    marginTop: "20px",
+    marginLeft:'10px'
+  }}
+>
+  <Paper
+    style={{ backgroundColor: "white", padding: "10px" }}
+    elevation={3}
+  >
+  <Typography variant="h6" style={{ color: "black", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+  General Comments
+</Typography>
+
+  </Paper>
+  <CardContent style={{ flex: 1 }}>
+    <div>
+      <Typography style={{ fontWeight: "bold" }}>
+       
+      </Typography>
+    </div>
+    <TextField
+      fullWidth
+      multiline
+      value={comment}
+      onChange={handleInputChange}
+      onKeyDown={handleCommentEntered("GeneralComments")}
+      placeholder="Add A General Comment"
+    />
+    <ul>
+      {healthRecord.GeneralComments.map((item, index) => (
+        <div key={index}>
+          <li key={index}>{`${item}`}</li>
+        </div>
+      ))}
+    </ul>
+  </CardContent>
+</Card>
+
+              </Container>
             )}
           </Container>
-        </>
+</div>
       );
       
       

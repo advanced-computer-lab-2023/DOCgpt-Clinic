@@ -27,6 +27,7 @@ function MyPatients() {
   const [nameSearchTerm, setNameSearchTerm] = useState("");
   const [upcoming, setUpcoming] = useState(false);
   const [doctorUsername, setDoctor] = useState("");
+  const [isHealthRecordPopupOpen, setHealthRecordPopupOpen] = useState(false);
 
   const fetchPatients = async () => {
     console.log("Fetching patients...");
@@ -229,7 +230,7 @@ function MyPatients() {
       </Container>
       <El7a2niInfo />
       
-    </>
+      </div>
   );
   
 }
