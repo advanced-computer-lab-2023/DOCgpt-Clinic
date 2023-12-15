@@ -1,8 +1,11 @@
-import { Container, Typography } from "@mui/material";
+import { Container, Grid, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import FollowUpRequest from "../../components/FollowUpRequest";
-
+import DoctorBar from "../../components/Doctor bar/doctorBar";
+import El7a2niInfo from "../../components/El7a2ni-info";
+import Background from "../../Background.jpeg";
+import Back from "../../components/backButton";
 
 function ViewFollowUpRequests(){
     // LOGIC
@@ -36,17 +39,39 @@ function ViewFollowUpRequests(){
 
     //VIEW
     return(
+    <div
+        style={{
+            backgroundImage: `url(${Background})`,
+            backgroundSize: "cover",
+            minHeight: "100vh",
+            backgroundPosition: "center",
+            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)", // Increased shadow values
+        }}
+        >
+        <>
+        <DoctorBar />
+        <Back/>
         <Container>
-            <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <Typography variant="h3" style={{ fontWeight: 'bold'}}>Your Requests So Far..</Typography>
+        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+            <Typography marginTop="10px" marginBottom="30px" variant="h1" color="primary" style={{ fontWeight: 'bold'}}>Follow Up Requests</Typography>
         </div>
-            <Container>
+        
+            <Grid container direction="row">
             {requests && requests.map((request, index) => (
+            <Grid item xs={6}>
+
             <FollowUpRequest key={index} request={request} />
+            </Grid>
             ))}
 
-            </Container>
+            </Grid>
+
+            
         </Container>
+        <El7a2niInfo />
+      
+    </>
+    </div>
     );
 }
 

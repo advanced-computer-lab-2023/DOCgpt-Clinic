@@ -22,6 +22,11 @@ exports.notificationSchema = new mongoose_1.default.Schema({
         type: String,
         required: true
     },
+    read: {
+        type: Boolean,
+        required: false,
+        default: false
+    },
 });
 const notificationtModel = mongoose_1.default.model('notification', exports.notificationSchema);
 exports.default = notificationtModel;

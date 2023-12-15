@@ -1,6 +1,15 @@
-import { Button, Card, Container, Grid, Link, TextField, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Button, Card, CardContent, Container, Grid, IconButton, Link, Paper, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import PatientBar from "../../components/patientBar/patientBar";
+import Background from '../../Background.jpeg';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
+import OpacityIcon from '@mui/icons-material/Opacity';
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import ScaleIcon from '@mui/icons-material/Scale';
 
 interface HealthRecord{
     MedicalHistory:{
@@ -53,7 +62,7 @@ function ViewMyHealthRecord(){
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [submittedDocuments, setSubmittedDocuments] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
+  const [isCommentsExpanded, setIsCommentsExpanded] = useState(false);
     useEffect(() => {
         async function fetchHealthRecord() {
             try {
@@ -143,304 +152,451 @@ function ViewMyHealthRecord(){
         }
       };
     
+     
+      return (
+        <div
+          style={{
+            backgroundImage: `url(${Background})`,
+            backgroundSize: 'cover',
+            minHeight: '100vh',
+            backgroundPosition: 'center',
+            boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
+            display: 'flex', // Use flex display to arrange the content horizontally
+            flexDirection: 'column', // Stack content vertically
+            alignItems: 'center', // Center content horizontally
+            justifyContent: 'center', // Center content vertically
+          }}
+        >
+          <PatientBar />
+          
+          {healthRecord && (
+            <Container>
+              {/* Vital Signs Section */}
+              <div
+  style={{
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+
+  }}
+>
+  <AddCircleOutlineIcon
+    style={{  color: 'red', fontSize: '6rem', margin: '20px 0' }}
+  />
+</div>
+
+                  <div style={{ width: "100%", height: "2rem" }}></div>
+              <Card
+  style={{
+    width: '97.4%', // Same width as the old Paper
+    height: '100px', // Same height as the old Paper
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: '10px',
+    marginLeft:'28px' // Add margin for space between MedicationList and Vital Signs
+  }}
+>
+  <Paper
+    style={{ backgroundColor: 'white', padding: '10px',width:'1200px'}}
+    elevation={3}
+  >
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <Typography variant="h6" style={{ color: 'black' }}>
+        Vital Signs
+      </Typography>
+    </div>
+  </Paper>
+  
+  <CardContent style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <OpacityIcon style={{ color: 'red', marginRight: '10px' }} /> {/* Add the icon here */}
+    <Typography style={{ marginRight: '120px' }}>
+      Blood Pressure: {`${healthRecord.VitalSigns.BloodPressure || 'Null'}`}
+    </Typography>
+    <MonitorHeartIcon style={{ color: 'red', marginLeft: '10px' }} />
+    <Typography style={{ marginRight: '190px' }}>
+      Heart Rate: {`${healthRecord.VitalSigns.HeartRate || 'Null'}`}
+    </Typography>
+    {/* Add the icon here */}
+    <AccessibilityNewIcon style={{ marginRight: '8px', color: 'red' }} /> {/* Add this line */}
+    <Typography style={{ marginRight: '80px' }}>
+      Height: {`${healthRecord.VitalSigns.Height || 'Null'}`}
+    </Typography>
+    <ScaleIcon style={{ color: 'red' }} /> {/* Add this line */}
+    <Typography style={{ marginLeft: '20px' }}>
+      Weight: {`${healthRecord.VitalSigns.Weight || 'Null'}`}
+    </Typography>
+  </div>
+</CardContent>
+
+</Card>
+
+              {/* Medical History Section */}
+             
+        <Container>
+          <Card
+            style={{
+              height: '250px',
+              width: "50%",
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Paper
+              style={{ backgroundColor: "white", padding: "10px" }}
+              elevation={3}
+            >
+              <Typography variant="h6" style={{ color: "black" }}>
+                Medical History
+              </Typography>
+            </Paper>
+            <CardContent style={{ flex: 1 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <Typography>Allergies:</Typography>
+                  {healthRecord.MedicalHistory.Allergies.length > 0 ? (
+                  <ul>
+                    {healthRecord.MedicalHistory.Allergies.map((item, index) => (
+                    <li key={index}>{item.trim() !== '' ? item : 'No Allergies For This Patient'}</li>
+                    ))}
+                  </ul>
+                   ) : (
+                    <Typography>No data provided</Typography>
+                  )}
+              </Grid>
+                <Grid item xs={12}>
+                  <Typography>Past Medical Conditions:</Typography>
+                  {healthRecord.MedicalHistory.PastMedicalConditions.length > 0 ? (
+                    <ul>
+                      {healthRecord.MedicalHistory.PastMedicalConditions.map(
+                        (item, index) => (
+                          <li key={index}>{item.trim() !== '' ? item : 'No Past Medical Conditions '}</li>
+                        )
+                      )}
+                    </ul>
+                  ) : (
+                    <Typography>No data provided</Typography>
+                  )}
+                </Grid>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Container>
+
+        {/* Medication List Section */}
+        <Card
+          style={{
+            height: '250px',
+            width: "48%",
+            display: "flex",
+            flexDirection: "column",
+            marginLeft: '20px', // Add margin to create space
+            marginTop: '10px',
+          }}
+        >
+          <Paper
+            style={{ backgroundColor: "white", padding: "10px" }}
+            elevation={3}
+          >
+            <Typography variant="h6" style={{ color: "black" }}>
+              Medication List
+            </Typography>
+          </Paper>
+          <CardContent style={{ flex: 1 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Typography>Current Medications:</Typography>
+                {healthRecord.MedicationList.CurrentMedications.Names.length > 0 ? (
+                                <ul>
+                  {healthRecord.MedicationList.CurrentMedications.Names.map(
+                    (item, index) => (
+                      <li key={index}>{item.trim() !== '' ? item : 'No Current Medications'}</li>
+                                )
+                              )}
+                            </ul>
+                              ) : (
+                                <Typography>No Current Medications</Typography>
+                              )}
+                        </Grid>
+              <Grid item xs={12}>
+                <Typography>Past Medications:</Typography>
+                {healthRecord.MedicationList.PastMedications.Names.length > 0 ? (
+                              <ul>
+                  {healthRecord.MedicationList.PastMedications.Names.map(
+                    (item, index) => (
+                      <li key={index}>{item.trim() !== '' ? item : 'No Past Medications'}</li>
+                      ))}
+                      </ul>
+                    ) : (
+                      <Typography>No Past Medications</Typography>
+                    )}
+                  </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+          {/* Upload Documents Section */}
+          <Card
+  style={{
+    height: '510px',
+    width: "48%",
+    display: "flex",
+    flexDirection: "column",
+    marginLeft: '635px', // Add margin to create space
+    marginTop: '-510px',
+  }}
+>
+  <Paper
+    style={{ backgroundColor: "white", padding: "10px" }}
+    elevation={3}
+  >
+    <Typography variant="h6" style={{ color: "black" }}>
+      Upload Documents
+    </Typography>
+  </Paper>
+  <CardContent style={{ flex: 1 }}>
+    {/* BloodTests Upload Section */}
+    <Grid item xs={6}>
+      <Typography>BloodTests: </Typography>
+      {healthRecord.Laboratory.BloodTests.map((item, index) => (
+        <div key={index}>
+          <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
+            {item}
+          </a>
+          <Button
+            onClick={handleRemove("Laboratory", "BloodTests", item)}
+            style={{
+              backgroundColor: "grey", // Grey background color
+              color: "#fff", // Text color
+              transition: "background-color 0.3s ease", // Smooth transition on hover
+              marginTop: "10px", // Adjust the margin-top here
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#f44336")} // Hover style
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ccc")} // Revert to grey on mouse out
+          >
+            Remove Document
+          </Button>
+        </div>
+      ))}
+    </Grid>
+    <div style={{ marginTop: '30px' }}></div> 
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+      <Button
+        variant="contained"
+        onClick={handleSubmit("Laboratory", "BloodTests")}
+        style={{
+          backgroundColor: "grey", // Grey background color
+          color: "#fff", // Text color
+          transition: "background-color 0.3s ease", // Smooth transition on hover
+          marginTop: "10px", // Adjust the margin-top here
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+      >
+        Submit Document
+      </Button>
+    </Grid>
+
+    {/* XRays Upload Section */}
+    <Grid item xs={6}>
+      <Typography>XRays: </Typography>
+      {healthRecord.Laboratory.XRays.map((item, index) => (
+        <div key={index}>
+          <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
+            {item}
+          </a>
+          <Button
+            onClick={handleRemove("Laboratory", "XRays", item)}
+            style={{
+              backgroundColor: "grey", // Grey background color
+              color: "#fff", // Text color
+              transition: "background-color 0.3s ease", // Smooth transition on hover
+              marginTop: "10px", // Adjust the margin-top here
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#f44336")} // Hover style
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+          >
+            Remove Document
+          </Button>
+        </div>
+      ))}
+    </Grid>
+    <div style={{ marginTop: '30px' }}></div> 
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+      <Button
+        variant="contained"
+        onClick={handleSubmit("Laboratory", "XRays")}
+        style={{
+          backgroundColor: "#grey", // Grey background color
+          color: "#fff", // Text color
+          transition: "background-color 0.3s ease", // Smooth transition on hover
+          marginTop: "10px", // Adjust the margin-top here
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+      >
+        Submit Document
+      </Button>
+    </Grid>
+
+    {/* Medication List Documents Upload Section */}
+    <Grid item xs={6}>
+      <Typography>Current Medications: </Typography>
+     
+      {healthRecord.MedicationList.CurrentMedications.Prescriptions.map((item, index) => (
+        <div key={index}>
+          <Typography>
+            Prescription:{" "}
+            <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
+              {item}
+            </a>
+          </Typography>
+          <Button
+            onClick={handleRemove("MedicationList", "CurrentMedications", item)}
+            style={{
+              backgroundColor: "grey", // Grey background color
+              color: "#fff", // Text color
+              transition: "background-color 0.3s ease", // Smooth transition on hover
+              marginTop: "10px", // Adjust the margin-top here
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#f44336")} // Hover style
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+          >
+            Remove Document
+          </Button>
+        </div>
+      ))}
+    </Grid>
+ <div style={{ marginTop: '30px' }}></div> 
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+     
+      <Button
+        variant="contained"
+        onClick={handleSubmit("MedicationList", "CurrentMedications")}
+        style={{
+          backgroundColor: "grey", // Grey background color
+          color: "#fff", // Text color
+          transition: "background-color 0.3s ease", // Smooth transition on hover
+          marginTop: "10px", // Adjust the margin-top here
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+      >
+        Submit Document
+      </Button>
+    </Grid>
+  
+    <Grid item xs={6}>
+      <Typography>Past Medications: </Typography>
+      
+      <div style={{ marginTop: '30px' }}></div> 
+
+      {healthRecord.MedicationList.PastMedications.Prescriptions.map((item, index) => (
+        <div key={index}>
+          <Typography>
+            Prescription:{" "}
+            <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
+              {item}
+            </a>
+          </Typography>
+          <Button
+            onClick={handleRemove("MedicationList", "PastMedications", item)}
+            style={{
+              backgroundColor: "grey", // Grey background color
+              color: "#fff", // Text color
+              transition: "background-color 0.3s ease", // Smooth transition on hover
+              marginTop: "10px", // Adjust the margin-top here
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#f44336")} // Hover style
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+          >
+            Remove Document
+          </Button>
+        </div>
+      ))}
+    </Grid>
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+      <Button
+        variant="contained"
+        onClick={handleSubmit("MedicationList", "PastMedications")}
+        style={{
+          backgroundColor: "grey", // Grey background color
+          color: "#fff", // Text color
+          transition: "background-color 0.3s ease", // Smooth transition on hover
+          marginTop: "10px", // Adjust the margin-top here
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+      >
+        Submit Document
+      </Button>
+    </Grid>
+  </CardContent>
+</Card>
+   {/* General Comments Section */}
+ 
+
+
+<Accordion style={{ width: '98%', margin: '0 auto', marginTop: "20px", marginBottom: "40px", marginLeft: '20px' }}>
+  <AccordionSummary
+    aria-controls="general-comments-content"
+    id="general-comments-header"
+    expandIcon={<ExpandMoreIcon />}
+  >
+    <Typography variant="h6" style={{ fontWeight: 'bold', margin: 'auto' }}>General Comments</Typography>
+  </AccordionSummary>
+  <AccordionDetails>
+    <Card style={{ width: '98%', height: '120px' }}>
+      <CardContent>
+        <Typography style={{ fontWeight: 'bold' }}></Typography>
+        {healthRecord.GeneralComments.length > 0 ? (
+                              <ul>
+          {healthRecord.GeneralComments.map((item, index) => (
+           <li key={index}>{item.trim() !== '' ? item : 'No Comments Entered'}</li>
+           ))}
+           </ul>
+         ) : (
+           <Typography>No Comments Entered</Typography>
+         )}
+      </CardContent>
+    </Card>
+  </AccordionDetails>
+</Accordion>
+
+
+              </Container>
+          )}
+        </div>
+      );
+      
+      
+      
+      
+
+      
       
     
 
-    return(
-        <Container>
-            {healthRecord && (
-            <Container>
-                <Card style={{padding:'20px', margin:'10px'}}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography style={{ fontWeight: 'bold'}}> Medical History:</Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography>Allergies: </Typography>
-                            <ul>
-                            {healthRecord.MedicalHistory.Allergies.map((item, index) => (
-                                <div>
-                                    <li key={index}>{`${item}`}</li>
-                                </div>
-                            ))}
-                        </ul>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography>Past Medical Conditions: </Typography>
-                            <ul>
-                            {healthRecord.MedicalHistory.PastMedicalConditions.map((item, index) => (
-                                <div>
-                                    <li key={index}>{`${item}`}</li>
-                                </div>
-                            ))}
-                        </ul>
-                        </Grid> 
-                        <Grid item xs={12}>
-                            <div>
-                            <Typography>Comments: </Typography>
-                            </div>
-                            <ul>
-                            {healthRecord.MedicalHistory.Comments.map((item, index) => (
-                                <div>
-                                    <li key={index}>{`${item}`}</li>
-                                </div>
-                            ))}
-                            </ul>
-                            
-                        </Grid>
-                    </Grid>
-                </Card>
-                <Card style={{padding:'20px', margin:'10px'}}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography style={{ fontWeight: 'bold'}}> Medication List:</Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography>CurrentMedications: </Typography>
-                            <ul>
-                            {healthRecord.MedicationList.CurrentMedications.Names.map((item, index) => (
-                                <div>
-                                    <li key={index}> Name: {`${item}`}</li>
-                                </div>
-                            ))}
-                            </ul>
-                           
-                            <input
-                                type="file"
-                                accept=".pdf, .jpg, .jpeg, .png"
-                                onChange={handleFileChange}
-                            />
-                            <Button variant="contained" onClick={handleSubmit("MedicationList", "CurrentMedications")}>
-                                Submit Document
-                            </Button>
-                            {healthRecord.MedicationList.CurrentMedications.Prescriptions.map((item, index) => (
-                                <div>
-                                   <Typography>Prescription: 
-                                   <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
-                                    {item}
-                                    </a>
-                                             </Typography>
-                                             <Button onClick={handleRemove("MedicationList", "CurrentMedications", item)}>
-                                        Remove Document
-                                     </Button>
-                                    
-                                </div>
-                            ))}
-                            
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography>PastMedications: </Typography>
-                            <ul>
-                            {healthRecord.MedicationList.PastMedications.Names.map((item, index) => (
-                                <div>
-                                    <li key={index}> Name: {`${item}`}</li>
-                                </div>
-                            ))}
-                            </ul>
-                                <input
-                                    type="file"
-                                    accept=".pdf, .jpg, .jpeg, .png"
-                                    onChange={handleFileChange}
-                                />
-                                <Button variant="contained" onClick={handleSubmit("MedicationList", "PastMedications")}>
-                                    Submit Document
-                                </Button>
-                                        
-                            {healthRecord.MedicationList.PastMedications.Prescriptions.map((item, index) => (
-                                <div>
-                                   <Typography>Prescription: 
-                                   <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
-                                    {item}
-                                    </a>
-                                             </Typography>
-                                             <Button onClick={handleRemove("MedicationList", "PastMedications", item)}>
-                                        Remove Document
-                                     </Button>
-                                    
-                                </div>
-                            ))}
-                            
-                        </Grid>
-                        <Grid item xs={12}>
-                        <div>
-                            <Typography>Comments: </Typography>
-                            </div>
-                            <ul>
-                            {healthRecord.MedicationList.Comments.map((item, index) => (
-                                <div>
-                                    <li key={index}>{`${item}`}</li>
-                                </div>
-                            ))}
-                            </ul>
-                        </Grid>
-                    </Grid>
-                </Card>
-                <Card style={{padding:'20px', margin:'10px'}}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography style={{ fontWeight: 'bold'}}> Vital Signs:</Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                            <Typography>Blood Pressure: {`${healthRecord.VitalSigns.BloodPressure}`} </Typography>
-                            <Typography>Heart Rate: {`${healthRecord.VitalSigns.HeartRate}`} </Typography>
-                            <Typography>Height: {`${healthRecord.VitalSigns.Height}`}</Typography>
-                            <Typography>Weight: {`${healthRecord.VitalSigns.Weight}`} </Typography>
-                        </Grid>
-                        <Grid item xs={12}>
-                        <div>
-                            <Typography>Comments: </Typography>
-                            </div>
-                            <ul>
-                            {healthRecord.VitalSigns.Comments.map((item, index) => (
-                                <div>
-                                    <li key={index}>{`${item}`}</li>
-                                </div>
-                            ))}
-                            </ul>                        
-                            </Grid>
-                    </Grid>
-                </Card>
-                <Card style={{padding:'20px', margin:'10px'}}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <Typography style={{ fontWeight: 'bold'}}> Laboratory:</Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography>BloodTests: </Typography>
-                            {healthRecord.Laboratory.BloodTests.map((item, index) => (
-                                <div>
-                                 <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
-                                 {item}
-                                 </a>
-                                     <Button onClick={handleRemove("Laboratory", "BloodTests", item)}>
-                                        Remove Document
-                                     </Button>
-                                </div>
-                            ))}
-                        </Grid>
-                        <Grid item xs={6}>
-                        <input
-                                            type="file"
-                                            accept=".pdf, .jpg, .jpeg, .png"
-                                            onChange={handleFileChange}
-                                        />
-                                        <Button variant="contained" onClick={handleSubmit("Laboratory", "BloodTests")}>
-                                            Submit Document
-                                        </Button>                           
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography>XRays: </Typography>
-                            {healthRecord.Laboratory.XRays.map((item, index) => (
-
-                                <div>
-                                 <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
-                                 {item}
-                                 </a>
-                                 <Button onClick={handleRemove("Laboratory", "XRays", item)}>
-                                        Remove Document
-                                     </Button>
-                                </div>
-                            ))}
-                        </Grid>
-                        <Grid item xs={6}>
-                        <input
-                                            type="file"
-                                            accept=".pdf, .jpg, .jpeg, .png"
-                                            onChange={handleFileChange}
-                                        />
-                                        <Button variant="contained" onClick={handleSubmit("Laboratory", "XRays")}>
-                                            Submit Document
-                                        </Button>                            
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Typography>Other: </Typography>
-                            {healthRecord.Laboratory.Other.map((item, index) => (
-
-                                <div>
-
-                                 <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
-                                 {item}
-                                 </a>
-                                 <Button onClick={handleRemove("Laboratory", "Other", item)}>
-                                        Remove Document
-                                     </Button>
-                                </div>
-                            ))}
-                        </Grid>
-                        <Grid item xs={6}>
-                        <input
-                                            type="file"
-                                            accept=".pdf, .jpg, .jpeg, .png"
-                                            onChange={handleFileChange}
-                                        />
-                                        <Button variant="contained" onClick={handleSubmit("Laboratory", "Other")}>
-                                            Submit Document
-                                        </Button>                            
-                        </Grid>
-                        <Grid item xs={12}>
-                        <div>
-                            <Typography>Comments: </Typography>
-                            </div>
-                            <ul>
-                            {healthRecord.Laboratory.Comments.map((item, index) => (
-                                <div>
-                                    <li key={index}>{`${item}`}</li>
-                                </div>
-                            ))}
-                            </ul>                        
-                            </Grid>
-                    </Grid>
-                </Card>
-                <Card style={{padding:'20px', margin:'10px'}}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={12}>
-                            <div>
-                            <Typography style={{ fontWeight: 'bold'}}> General Comments:</Typography>
-                            </div>
-                            <ul>
-                            {healthRecord.GeneralComments.map((item, index) => (
-                                <div>
-                                    {item}
-                                    
-                                </div>
-                            ))}
-                            </ul> 
-                        </Grid>
-                        
-                    </Grid> 
-                </Card>
-                <Card style={{padding:'20px', margin:'10px'}}>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <Typography style={{ fontWeight: 'bold'}}> General Images:</Typography>
-                        </Grid>
-                        <Grid item xs={6}>
-                        <ul>
-                            {healthRecord.GeneralImages.map((item, index) => (
-                                <div>
-                                     <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
-                                    {item}
-                                    </a>
-                                    <Button onClick={handleRemove("GeneralImages", "", item)}>
-                                        Remove Document
-                                     </Button>
-                                </div>
-                            ))}
-                            </ul> 
-                            <input
-                                            type="file"
-                                            accept=".pdf, .jpg, .jpeg, .png"
-                                            onChange={handleFileChange}
-                                        />
-                                        <Button variant="contained" onClick={handleSubmit("GeneralImages", "")}>
-                                            Submit Document
-                                        </Button>                            
-                        </Grid>
-                    </Grid>
-                </Card>
-            </Container>
-            )}
-        </Container>
-    );
 }
 export default ViewMyHealthRecord;

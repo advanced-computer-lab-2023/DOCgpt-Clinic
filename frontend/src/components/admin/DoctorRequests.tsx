@@ -25,6 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import DoneIcon from "@mui/icons-material/Done";
 import ClearIcon from "@mui/icons-material/Clear";
 import MuiAlert from "@mui/material/Alert";
+import El7a2niInfo from "../El7a2ni-info";
 
 interface Doctor {
   _id: string;
@@ -135,24 +136,19 @@ const handleReject = async (doctorUsername: string) => {
     const fetchDoctors = async () => {
       try {
         const token = localStorage.getItem("authToken");
-        const response = await axios.get("/routes/doctors/", {
+        const response = await axios.get("/routes/doctors/hhi", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
-        // Filter doctors with status 'pending'
-        const pendingDoctors = response.data.filter(
-          (doctor: Doctor) => doctor.status === "pending"
-        );
-        setDoctors(pendingDoctors);
+        setDoctors(response.data);
       } catch (error) {
-        console.error("Error fetching doctors:", error);
+        console.error("Error fetching accepted doctors:", error);
       }
     };
-
+  
     fetchDoctors();
   }, []);
- 
   
 
   return (
@@ -254,6 +250,7 @@ const handleReject = async (doctorUsername: string) => {
       </Snackbar>
         </Paper>
       </Container>
+      <El7a2niInfo/>
     </>
   );
 };

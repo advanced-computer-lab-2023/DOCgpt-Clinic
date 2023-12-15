@@ -101,6 +101,7 @@ const ViewMyFam = () => {
                     marginBottom: '1.5rem',
                     maxWidth: 300,
                     textAlign: 'center',
+                    height :'500px',
                   }}
                 
                >
@@ -134,10 +135,10 @@ const ViewMyFam = () => {
                     <Button onClick={() => clickFamMember(member.username)}>Choose</Button>
                   </CardContent>
                 </Card>
-                <Typography>Chosen Fam Member: {famMem}</Typography>
-                <Button onClick={PayForApp}>Pay For Appointment</Button>
               </Grid>
             ))}
+            <Typography>Chosen Fam Member: {famMem}</Typography>
+            <Button onClick={PayForApp}>Pay For Appointment</Button>
           </Grid>
         )}
       </Container>

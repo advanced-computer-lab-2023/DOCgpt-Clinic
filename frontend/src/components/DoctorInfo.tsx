@@ -12,6 +12,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import AdminBar from '../components/admin Bar/adminBar';
+import El7a2niInfo from './El7a2ni-info';
 
 interface Doctor {
   _id: string;
@@ -47,6 +48,13 @@ const DoctorInfoDropdown: React.FC = () => {
       console.error('Error fetching doctors:', error);
     }
   };
+const customTypographyStyles = {
+  fontWeight: 'bold', // makes the font weight bold
+  color: '#333', // dark grey for better contrast
+  fontSize: '1rem', // 1rem font size
+  lineHeight: '1.5', // 1.5 line height for readability
+  marginBottom: '0.5rem', // adds some space below each item
+};
 
   const handleDoctorSelect = async (event: SelectChangeEvent<string>) => {
     const selectedUsername = event.target.value;
@@ -74,8 +82,14 @@ const DoctorInfoDropdown: React.FC = () => {
   return (
     <>
       <AdminBar />
-      <Container maxWidth="md" sx={{ mt: 4 }}>
-        <Paper elevation={3} sx={{ p: 3 }}>
+      <Container maxWidth="md" sx={{ mt: 10 }}> {/* Increased mt value for more space */}
+      <Paper 
+  elevation={2} 
+  sx={{ 
+    p: 2, 
+    backgroundColor: 'rgba(173, 216, 230, 0.29)', // Very light blue
+  }}
+>
           <Typography variant="h4" align="center" gutterBottom>
             Doctor Information
           </Typography>
@@ -100,24 +114,37 @@ const DoctorInfoDropdown: React.FC = () => {
             {doctorInfo && (
               <Grid item xs={12}>
                 <Paper elevation={2} sx={{ p: 2 }}>
-                  <Typography variant="h6" gutterBottom>
-                    Doctor Information
-                  </Typography>
-                  <Typography variant="body1">Username: {doctorInfo.username}</Typography>
-                  <Typography variant="body1">Name: {doctorInfo.name}</Typography>
-                  <Typography variant="body1">Email: {doctorInfo.email}</Typography>
-                  <Typography variant="body1">Date of Birth: {doctorInfo.dateofbirth}</Typography>
-                  <Typography variant="body1">Hourly Rate: {doctorInfo.hourlyrate}</Typography>
-                  <Typography variant="body1">Affiliation: {doctorInfo.affiliation}</Typography>
-                  <Typography variant="body1">Educational Background: {doctorInfo.educationalBackground}</Typography>
-                  <Typography variant="body1">Speciality: {doctorInfo.speciality}</Typography>
-                  {/* Include other doctor fields here */}
+                <Typography variant="body1" style={customTypographyStyles}>
+  Username: {doctorInfo.username}
+</Typography>
+<Typography variant="body1" style={customTypographyStyles}>
+  Name: {doctorInfo.name}
+</Typography>
+<Typography variant="body1" style={customTypographyStyles}>
+  Email: {doctorInfo.email}
+</Typography>
+<Typography variant="body1" style={customTypographyStyles}>
+  Date of Birth: {doctorInfo.dateofbirth}
+</Typography>
+<Typography variant="body1" style={customTypographyStyles}>
+  Hourly Rate: {doctorInfo.hourlyrate ? `$${doctorInfo.hourlyrate.toFixed(2)}` : 'Not available'}
+</Typography>
+<Typography variant="body1" style={customTypographyStyles}>
+  Affiliation: {doctorInfo.affiliation}
+</Typography>
+<Typography variant="body1" style={customTypographyStyles}>
+  Educational Background: {doctorInfo.educationalBackground}
+</Typography>
+<Typography variant="body1" style={customTypographyStyles}>
+  Speciality: {doctorInfo.speciality}
+</Typography>
                 </Paper>
               </Grid>
             )}
           </Grid>
         </Paper>
       </Container>
+      <El7a2niInfo/>
     </>
   );
 };

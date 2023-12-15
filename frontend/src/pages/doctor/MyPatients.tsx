@@ -16,7 +16,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
-
+import Background from '../../Background.jpeg';
 
 function MyPatients() {
   const navigate = useNavigate();
@@ -25,6 +25,7 @@ function MyPatients() {
   const [nameSearchTerm, setNameSearchTerm] = useState("");
   const [upcoming, setUpcoming] = useState(false);
   const [doctorUsername, setDoctor] = useState("");
+  const [isHealthRecordPopupOpen, setHealthRecordPopupOpen] = useState(false);
 
   const fetchPatients = async () => {
     console.log("Fetching patients...");
@@ -130,8 +131,16 @@ function MyPatients() {
   };
 
   return (
-    <>
-      <DoctorBar />
+    <div
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '100vh',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >    
+     <DoctorBar/>
       <Container>
         <div
           style={{
@@ -204,7 +213,7 @@ function MyPatients() {
       </Container>
       <El7a2niInfo />
       
-    </>
+      </div>
   );
   
 }

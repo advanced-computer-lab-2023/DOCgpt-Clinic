@@ -3,7 +3,7 @@ import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStat
   searchPatient, selectPatient, updateDoctorAffiliation, 
   updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord,
    viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, 
-   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,addprescription,acceptFollowUpRequest,rejectFollowUpRequest,addOrUpdateDosage,updateUnfilledPrescription, viewRequests, getDoctorByUsername, viewMyPatientsUsername, viewDocSpeciality, removeDoc, checkcontact, markContractAsSeen} from "../controllers/doctorController";
+   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,addprescription,acceptFollowUpRequest,rejectFollowUpRequest,addOrUpdateDosage,updateUnfilledPrescription, viewRequests, getDoctorByUsername, viewMyPatientsUsername, viewDocSpeciality, removeDoc, checkcontact, markContractAsSeen, getDoctorpend} from "../controllers/doctorController";
  
 import multer from "multer";
 import path from 'path';
@@ -33,6 +33,7 @@ router.get("/todayapp",getTodayAppointments);
 router.get("/HealthRecords", viewHealthRecords);
 router.get("/HealthRecord", viewHealthRecord);
 router.patch("/HealthRecord/comments", commentsHealthRecord);
+router.get("/hhi", getDoctorpend);
 
 
 router.post("/postDoctor", createDoctors);
@@ -148,7 +149,6 @@ router.post('/upload', upload.array('file', 5), async (req, res) => {
 
 
 
-
 //router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
 
 // // Add a route to get the list of uploaded documents
@@ -159,8 +159,10 @@ router.post('/upload', upload.array('file', 5), async (req, res) => {
 //  router.get('/doctorDocuments/:filename', serveDoctorDocument);
 
 /// Endpoint to get a doctor's documents by username
+
 router.post("/getDoctorDocuments", async (req, res) => {
   try {
+    
     const { username } = req.body;
 
     // Fetch documents based on the doctor's username
@@ -179,6 +181,7 @@ router.post("/getDoctorDocuments", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 
 // Endpoint to download a document

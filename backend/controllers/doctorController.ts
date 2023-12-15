@@ -18,10 +18,34 @@ import { createNotificationWithCurrentDate } from "./appointmentController";
 import fs from 'fs';
 
 export const getDoctors = async (req: Request, res: Response) => {
-    const doctors = await DoctorModel.find().exec();
-    res.status(200).json(doctors);
+  try {
+      const acceptedDoctors = await DoctorModel.find({ status: 'accepted' }).exec();
+      res.status(200).json(acceptedDoctors);
+  } catch (error: unknown) { // Notice the type annotation here
+      // We check if error is an instance of Error and has a 'message' property
+      if (error instanceof Error) {
+          res.status(500).json({ message: error.message });
+      } else {
+          // If it's not an Error instance or we're not sure about the type
+          res.status(500).json({ message: 'An unknown error occurred' });
+      }
+  }
 };
 
+export const getDoctorpend = async (req: Request, res: Response) => {
+  try {
+      const acceptedDoctors = await DoctorModel.find({ status: 'pending' }).exec();
+      res.status(200).json(acceptedDoctors);
+  } catch (error: unknown) { // Notice the type annotation here
+      // We check if error is an instance of Error and has a 'message' property
+      if (error instanceof Error) {
+          res.status(500).json({ message: error.message });
+      } else {
+          // If it's not an Error instance or we're not sure about the type
+          res.status(500).json({ message: 'An unknown error occurred' });
+      }
+  }
+};
 export const getDoctor = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -113,9 +137,9 @@ export const createDoctors = async (req: Request, res: Response) => {
       }
       const salt =await bcrypt.genSalt(10)
     const hash=await bcrypt.hash(password,salt)
-    if (!validatePassword(password)) {
-      return res.status(400).json({ message: 'Invalid password' });
-    }
+    // if (!validatePassword(password)) {
+    //   return res.status(400).json({ message: 'Invalid password'});
+    // }
     const doctor = await DoctorModel.create({
         username: username,
         name: name,

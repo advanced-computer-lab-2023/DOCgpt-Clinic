@@ -201,7 +201,7 @@ const Patient = ({ patient, doctor }: PatientProps) => {
           style={buttonStyle}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          onClick={() => addPresc(name)}
+          onClick={() => addPresc(username)}
         >
           Add Prescription
         </Button>
