@@ -21,6 +21,7 @@ import MaleIcon from '@mui/icons-material/Male';
 import left from '../../left1.jpeg'
 import right from '../../right.jpeg'
 import El7a2niInfo from '../../components/El7a2ni-info';
+import AddFamilyMember from './addFam'
 
 
 import maleProfilePic from 'path/to/maleProfilePic.png';
@@ -64,6 +65,8 @@ type FamilyMember = {
 
 const ViewFamilyMembersPage = () => {
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [openDialog, setOpenDialog] = useState(false);
+
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -118,8 +121,7 @@ const ViewFamilyMembersPage = () => {
                   color="primary"
                   startIcon={<PersonAddAlt1Icon />}
                   style={{ marginRight: '10px' }}
-                  onClick={handleAddOneClick}
-                >
+                  onClick={() => setOpenDialog(true)}                >
                   Add One
                 </Button>
                 <Button
@@ -169,6 +171,8 @@ const ViewFamilyMembersPage = () => {
           </Grid>
   
         </Grid>
+        <AddFamilyMember open={openDialog} setOpen={setOpenDialog} />
+
       </div>
       <El7a2niInfo/>
 
