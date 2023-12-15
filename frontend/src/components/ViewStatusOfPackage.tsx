@@ -11,6 +11,8 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
+import Background from '../../HealthPack.jpeg';
+import Back from "./backButton";
 
 interface HealthPackageStatus {
   name: string;
@@ -46,6 +48,7 @@ const ViewStatusOfPackage = () => {
   const familyMemberPackages = healthPackages.filter((pkg) => pkg.familyMemberName);
 
   return (
+    
     <Container maxWidth="lg">
       <Typography variant="h4" gutterBottom>
         Patient Package Status

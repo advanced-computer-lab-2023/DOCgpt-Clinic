@@ -12,7 +12,7 @@ const BackButton = () => {
   };
 
   return (
-    <Button onClick={handleBack} startIcon={<ArrowBackIcon />} style={{marginLeft:"20px", marginTop:"10px"}}>
+    <Button onClick={handleBack} startIcon={<ArrowBackIcon />} style={{marginLeft:"20px", marginTop:"10px", color:"white"}}>
       Back
     </Button>
   );
