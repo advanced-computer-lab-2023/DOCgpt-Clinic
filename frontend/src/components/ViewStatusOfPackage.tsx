@@ -50,9 +50,6 @@ const ViewStatusOfPackage = () => {
   return (
     
     <Container maxWidth="lg">
-      <Typography variant="h4" gutterBottom>
-        Patient Package Status
-      </Typography>
       <TableContainer component={Paper} sx={{ marginBottom: '24px' }}>
         <Table>
           <TableHead>

@@ -230,7 +230,7 @@ function MyPatients() {
       </Container>
       <El7a2niInfo />
       
-      </div>
+    </>
   );
   
 }

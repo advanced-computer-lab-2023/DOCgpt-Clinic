@@ -2,7 +2,7 @@ import { Accordion, AccordionDetails, AccordionSummary, Button, Card, CardConten
 import axios from "axios";
 import { useEffect, useState } from "react";
 import PatientBar from "../../components/patientBar/patientBar";
-import Background from '../../Background.jpeg';
+import Background from '../../HealthRec.jpg';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import OpacityIcon from '@mui/icons-material/Opacity';
@@ -10,6 +10,8 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import ScaleIcon from '@mui/icons-material/Scale';
+import Back from "../../components/backButton";
+
 
 interface HealthRecord{
     MedicalHistory:{
@@ -154,21 +156,47 @@ function ViewMyHealthRecord(){
     
      
       return (
-        <div
-          style={{
-            backgroundImage: `url(${Background})`,
-            backgroundSize: 'cover',
-            minHeight: '100vh',
-            backgroundPosition: 'center',
-            boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
-            display: 'flex', // Use flex display to arrange the content horizontally
-            flexDirection: 'column', // Stack content vertically
-            alignItems: 'center', // Center content horizontally
-            justifyContent: 'center', // Center content vertically
-          }}
-        >
+        <>
           <PatientBar />
-          
+          <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>MY HEALTH RECORD</strong>
+        </h1>
+      </div>
+    </div>
           {healthRecord && (
             <Container>
               {/* Vital Signs Section */}
@@ -587,7 +615,7 @@ function ViewMyHealthRecord(){
 
               </Container>
           )}
-        </div>
+        </>
       );
       
       
