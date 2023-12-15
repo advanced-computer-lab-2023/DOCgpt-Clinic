@@ -159,9 +159,10 @@ function ViewMyAppointments() {
           }}
         >
           <Typography variant="h1" style={{ fontWeight: "bold" }}>
-            Your Appointments So Far..
+            Your Appointments
           </Typography>
         </div>
+
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Stack direction="column" style={{ position: "sticky", top: 100 }}>
@@ -221,6 +222,7 @@ function ViewMyAppointments() {
               <Box sx={{ marginTop: "10px" }} />{" "}
             </Stack>
           </Grid>
+          
           <Grid item xs={12} md={8}>
             <Container>
               {appointments &&

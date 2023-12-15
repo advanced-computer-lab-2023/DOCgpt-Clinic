@@ -78,6 +78,10 @@ import RequestFollowUp from "./pages/patient/RequestFollowUp";
 import PatientReschedule from "./pages/patient/PatientReschedule";
 import ViewFamMemAppointments from "./pages/patient/ViewFamMemAppointments";
 import ViewWalletAmountPatient from "./components/viewWalletPatient";
+
+import FamMemResch from "./pages/patient/FamMemResch";
+import RequestFamMemFollow from "./pages/patient/RequestFamMemFollow";
+
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -190,6 +194,9 @@ function App() {
         />
         <Route path="/patient/followUp" Component={RequestFollowUp} />
         <Route path="/patient/reschedule" Component={PatientReschedule} />
+        <Route path="/patient/fam/reschedule" Component={FamMemResch} />
+        <Route path="/patient/fam/followUp" Component={RequestFamMemFollow} />
+
         <Route
           path="/patient/famMemAppointments"
           Component={ViewFamMemAppointments}

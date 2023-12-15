@@ -37,6 +37,7 @@ function ViewDoctors() {
   //THE LOGIC OF VIEWING A DOCTOR'S PATIENTS
   //THE LINK TO BACK
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState();
   const [doctors, setdoctors] = useState<any[]>([]);
   const [allDoctors, setAllDoctors] = useState<any[]>([]);
   const [nameSearchTerm, setNameSearchTerm] = useState("");
@@ -134,11 +135,10 @@ function ViewDoctors() {
     const newDate = event.target.value;
     setSelectedDate(newDate);
   };
-  const [selectedTime, setSelectedTime] = useState();
+  
 
   const handleTimeChange = (event: any) => {
     console.log("time", event.target.value);
-
     setSelectedTime(event.target.value);
   };
 
@@ -152,6 +152,8 @@ function ViewDoctors() {
       // Check if the timeslots array contains the combined date and time
       return doctor.timeslots.some((timeslot: any) => {
         const timeslotDateTimeString = new Date(timeslot.date).toISOString();
+        console.log(timeslotDateTimeString);
+        
         return timeslotDateTimeString === combinedDateTimeString;
       });
     });

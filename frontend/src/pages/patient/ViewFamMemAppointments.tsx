@@ -20,6 +20,7 @@ import El7a2niInfo from "../../components/El7a2ni-info";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import FamMemAppointment from "../../components/FamMemAppointment";
 function ViewFamMemAppointments() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const navigate = useNavigate();
@@ -150,7 +151,7 @@ function ViewFamMemAppointments() {
           }}
         >
           <Typography variant="h1" style={{ fontWeight: "bold" }}>
-            Your Family's Appointments So Far..
+            Your Family's Appointments
           </Typography>
         </div>
         <Grid container spacing={2}>
@@ -217,14 +218,14 @@ function ViewFamMemAppointments() {
               {appointments &&
                 !filteredAppointments &&
                 appointments.map((appointment) => (
-                  <PatientAppointment
+                  <FamMemAppointment
                     appointment={appointment}
                     onStartChat={() => handleStartChat(appointment.patient)}
                   />
                 ))}
               {filteredAppointments &&
                 filteredAppointments.map((appointment: any, index: number) => (
-                  <PatientAppointment
+                  <FamMemAppointment
                     appointment={appointment}
                     onStartChat={() => handleStartChat(appointment.doctor)}
                   />
