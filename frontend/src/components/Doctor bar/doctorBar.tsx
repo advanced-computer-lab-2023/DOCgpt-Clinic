@@ -111,7 +111,17 @@ export default function DrawerAppBar() {
       console.error("An error occurred:", error);
     }
   };
-
+  const openPharmacy = () => {
+    const newWindow = window.open(
+      "http://localhost:3001/login",
+      "_blank"
+    );
+    if (newWindow) {
+      window.close();
+    } else {
+      console.error("Unable to open a new window.");
+    }
+  };
   const handleOpenMenu = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -274,7 +284,9 @@ export default function DrawerAppBar() {
                 {item.name}
               </Button>
             ))}
-
+      <Button key="Logout" sx={{ color: "black" }} onClick={openPharmacy}>
+              Pharmacy
+            </Button>
             <IconButton style={{ color: "blue" }} onClick={handleChatClick}>
               <ForumIcon />
             </IconButton>

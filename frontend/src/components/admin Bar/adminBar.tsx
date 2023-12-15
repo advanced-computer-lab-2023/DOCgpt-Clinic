@@ -32,7 +32,7 @@ import appRoutes from "./adminRoutes";
 const drawerWidth = 240;
 const navItems = [
   { name: "Home", path: "/admin/home" },
-  { name: "Clinic", path: "/admin/home" },
+ 
 ];
 
 export type RouteType = {
@@ -64,7 +64,17 @@ export default function AdminAppBar() {
   };
 
   const navigate = useNavigate();
-
+  const openPharmacy = () => {
+    const newWindow = window.open(
+      "http://localhost:3001/login",
+      "_blank"
+    );
+    if (newWindow) {
+      window.close();
+    } else {
+      console.error("Unable to open a new window.");
+    }
+  };
 const handleLogout = async () => {
   try {
     const token = localStorage.getItem("authToken");
@@ -228,6 +238,9 @@ const toggleHeaderState = (index: number) => {
               </Button>
             ))}
           </Box>
+          <Button key="Clinic" sx={{ color: "black" }} onClick={openPharmacy}>
+              Pharmacy
+            </Button>
           {/* User Menu */}
           <IconButton
             color="primary"
