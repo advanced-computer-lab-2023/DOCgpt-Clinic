@@ -21,7 +21,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import DocDetails from "../../components/DocDetails";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
-import Background from '../../Background.jpeg';
+import Background from '../../Appointments.jpeg';
+import Back from "../../components/backButton";
 
 
 interface Doctor {
@@ -170,17 +171,35 @@ function ViewDoctors() {
   //2- THE PATIENT ITSELF ON CLICK SHOULD NAVIGATE TO ANOTHER PAGE TO SHOW ITS INFO
 
   return (
-    <div
-    style={{
-      backgroundImage: `url(${Background})`,
-      backgroundSize: 'cover',
-      minHeight: '100vh',
-      backgroundPosition: 'center',
-      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
-    }}
-  >  
+  
     <>
       <PatientAppBar />
+      <div
+      
+      style={{
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom:'100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+      }}
+    >   
+        <Back/>
+     <div
+      style={{
+        position: 'absolute', // Set position to absolute
+        top: '35%', // Adjust top value to center vertically
+        left: '50%', // Adjust left value to center horizontally
+        transform: 'translate(-50%, -50%)', // Center the text
+        textAlign: 'center', // Center text horizontally
+        color: 'white', // Set text color
+      }}
+    >
+      <h1> <strong>RESERVE APPOINTMENT</strong></h1>
+      {/* <p>Additional text content</p> */}
+    </div>
+    </div>
       <Container>
         <Container>
           <div
@@ -191,9 +210,6 @@ function ViewDoctors() {
               padding: "20px",
             }}
           >
-            <Typography variant="h1" style={{ fontWeight: "bold" }}>
-              All Doctors
-            </Typography>
           </div>
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
@@ -303,7 +319,7 @@ function ViewDoctors() {
       </Container>
       <El7a2niInfo/>
     </>
-    </div>
+
   );
 }
 

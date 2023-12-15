@@ -122,7 +122,7 @@ export default function DrawerAppBar() {
 
   const openPharmacy = () => {
     const newWindow = window.open(
-      "http://localhost:3001/patientHome",
+      "http://localhost:3001/login",
       "_blank"
     );
     if (newWindow) {

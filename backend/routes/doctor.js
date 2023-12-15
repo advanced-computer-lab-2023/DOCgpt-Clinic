@@ -39,6 +39,7 @@ router.get("/todayapp", doctorController_1.getTodayAppointments);
 router.get("/HealthRecords", doctorController_1.viewHealthRecords);
 router.get("/HealthRecord", doctorController_1.viewHealthRecord);
 router.patch("/HealthRecord/comments", doctorController_1.commentsHealthRecord);
+router.get("/hhi", doctorController_1.getDoctorpend);
 router.post("/postDoctor", doctorController_1.createDoctors);
 router.post("/addHealthRecord", doctorController_1.addHealthRecord);
 router.patch("/updateEmail", doctorController_1.updateDoctorEmail);

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAppointmentById = exports.cancelAppointmentFam = exports.cancelAppointmentDoc = exports.cancelAppointment = exports.createAppointment22 = exports.payWithCredit = exports.payment2 = exports.paymenttt = exports.createAppointment1 = exports.createAppointment = exports.createNotificationWithCurrentDate = exports.complete = exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = void 0;
+exports.getAppointmentById = exports.cancelAppointmentFam = exports.cancelAppointmentDoc = exports.cancelAppointment = exports.payWithCredit = exports.payment2 = exports.paymenttt = exports.createAppointmentFam = exports.createAppointment = exports.createNotificationWithCurrentDate = exports.complete = exports.localVariables = exports.getPapp = exports.getAllAppointments = exports.getAppointments = void 0;
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel")); // Import your Doctor model
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
@@ -190,7 +190,7 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     }
 });
 exports.createAppointment = createAppointment;
-const createAppointment1 = (req, res, user) => __awaiter(void 0, void 0, void 0, function* () {
+const createAppointmentFam = (req, res, user) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'upcoming';
@@ -263,7 +263,7 @@ const createAppointment1 = (req, res, user) => __awaiter(void 0, void 0, void 0,
         return res.status(500).json({ message: 'An error occurred', error: error.message });
     }
 });
-exports.createAppointment1 = createAppointment1;
+exports.createAppointmentFam = createAppointmentFam;
 const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { doctorUsername, paymentMethod, price, date } = req.body;
@@ -358,7 +358,7 @@ const payment2 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             doctor.walletBalance += numericPrice;
             console.log("Doctor's balance after update:", doctor.walletBalance);
             yield doctor.save();
-            const app = yield (0, exports.createAppointment1)(req, res, user);
+            const app = yield (0, exports.createAppointmentFam)(req, res, user);
             console.log("done");
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });
@@ -377,7 +377,7 @@ const payment2 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             doctor.walletBalance += numericPrice; // This should now work as expected
             yield doctor.save();
             console.log("Doctor's balance after update:", doctor.walletBalance);
-            const app = yield (0, exports.createAppointment1)(req, res, user);
+            const app = yield (0, exports.createAppointmentFam)(req, res, user);
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });
             }
@@ -477,51 +477,6 @@ const payWithCredit = (req, res, sessionPrice) => __awaiter(void 0, void 0, void
     }
 });
 exports.payWithCredit = payWithCredit;
-const createAppointment22 = (req, res, username) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.body.doctorUsername;
-    const date = req.body.date;
-    const status = 'upcoming';
-    const type = 'new appointment';
-    const price = Number(req.body.price);
-    try {
-        const authHeader = req.headers['authorization'];
-        const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
-        if (!tokenDB) {
-            return res.status(404).json({ error: 'Token not found' });
-        }
-        const username2 = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username });
-        if (!patient) {
-            return res.status(404).json({ error: 'Patient not found' });
-        }
-        const famMember = yield patientModel_1.default.findOne({ username });
-        if (!famMember) {
-            return res.status(404).json({ error: 'Patient not found' });
-        }
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
-        if (!doctor) {
-            return res.status(404).json({ message: 'Doctor not found app' });
-        }
-        const newDate = new Date(date);
-        doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
-        yield doctor.save();
-        const appointment = yield appointmentModel_1.default.create({
-            status: status,
-            doctor: doctorUsername,
-            patient: username,
-            date: new Date(date),
-            type: type,
-            price: price,
-            scheduledBy: username2
-        });
-        return appointment;
-    }
-    catch (error) {
-        return res.status(500).json({ message: 'An error occurred', error });
-    }
-});
-exports.createAppointment22 = createAppointment22;
 const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;

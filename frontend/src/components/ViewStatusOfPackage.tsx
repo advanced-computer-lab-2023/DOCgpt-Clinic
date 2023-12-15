@@ -11,22 +11,18 @@ import {
   TableRow,
   Typography,
 } from '@mui/material';
-import { table } from 'console';
+import Background from '../../HealthPack.jpeg';
+import Back from "./backButton";
 
 interface HealthPackageStatus {
   name: string;
-  status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date' | 'Not subscribed';
+  status: string;
+  patientName?: string;
   familyMemberName?: string;
 }
 
-const columns: { field: keyof HealthPackageStatus; headerName: string }[] = [
-  { field: 'name', headerName: 'Health Package Name' },
-  { field: 'status', headerName: 'Status' },
-  { field: 'familyMemberName', headerName: 'Family Member Name' },
-];
-
 const ViewStatusOfPackage = () => {
-  const [healthPackageStatus, setHealthPackageStatus] = useState<HealthPackageStatus[]>([]);
+  const [healthPackages, setHealthPackages] = useState<HealthPackageStatus[]>([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,54 +33,47 @@ const ViewStatusOfPackage = () => {
             Authorization: `Bearer ${token}`,
           },
         });
-
-        setHealthPackageStatus(response.data.healthPackages);
+        setHealthPackages(response.data.healthPackages);
       } catch (error) {
         console.error('Error fetching health package status:', error);
       }
     };
-
     fetchData();
   }, []);
+  const headerCellStyle = {
+    backgroundColor: 'rgba(173, 216, 230, 0.4)', // Very light blue
+  };
+  // Filter out packages for the patient and family members
+  const patientPackages = healthPackages.filter((pkg) => !pkg.familyMemberName);
+  const familyMemberPackages = healthPackages.filter((pkg) => pkg.familyMemberName);
 
   return (
-    <TableContainer
-      component={Paper}
-      sx={{
-        maxWidth: "800px",
-        margin: "auto",
-        marginTop: "16px",
-      }}
-    >
-      <Table>
-        <TableHead>
-          <TableRow>
-            {columns.map((column) => (
-              <TableCell
-                key={column.field as string}
-                sx={{
-                  color: "blue", // Set the text color to white
-                  fontWeight: "bold", // Make the text bold
-                }}
-              >
-                {column.headerName}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {healthPackageStatus.map((row, index) => (
-            <TableRow key={index}>
-              {columns.map((column) => (
-                <TableCell key={column.field as string}>
-                  {row[column.field]}
-                </TableCell>
-              ))}
+    
+    <Container maxWidth="lg">
+      <Typography variant="h4" gutterBottom>
+        Patient Package Status
+      </Typography>
+      <TableContainer component={Paper} sx={{ marginBottom: '24px' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={headerCellStyle}>Health Package Name</TableCell>
+              <TableCell style={headerCellStyle}>Status</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {patientPackages.map((pkg, index) => (
+              <TableRow key={index}>
+                <TableCell>{pkg.name}</TableCell>
+                <TableCell>{pkg.status}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      
+    </Container>
   );
 };
 

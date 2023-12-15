@@ -23,7 +23,13 @@
   font-size: calc(10px + 2vmin);
   color: white;
 }
-
+.filterSection {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: #fff; /* optional, set background color as needed */
+  z-index: 1000; /* adjust z-index as needed */
+}
 .App-link {
   color: #61dafb;
 }

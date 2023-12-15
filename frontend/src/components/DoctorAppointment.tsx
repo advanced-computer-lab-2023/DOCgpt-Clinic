@@ -2,6 +2,9 @@ import { Alert, Button, Card, Container, Dialog, DialogActions, DialogContent, D
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DrawerAppBar from '../components/Doctor bar/doctorBar';
+import El7a2niInfo from '../components/El7a2ni-info';
+
 
 
 interface AppointmentProps {
@@ -79,47 +82,62 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
         setSnackbarOpen(false);
       };
 
-    return(
-        <Card style={{padding: '20px', margin: '10px'}}>
-            <Grid container>
-                <Grid item xs={6}>
-                    <Typography> Patient: {patient}</Typography>
-                    <Typography> Date: {appointmentDate}</Typography>
-                    <Typography> Status: {status}</Typography>
-                    <Typography> Type: {type}</Typography>
-                </Grid>
-                <Grid item xs={6} style={{display:'flex', justifyContent:'end', alignItems:'center'}}>
-                        <Button onClick={handleAppointmentReschedule}>
-                            Reschedule
-                        </Button>
-                        <Button onClick={handleFollowUpClicked}>
-                            Schedule Follow up
-                        </Button>
-                        <Button onClick={handleCancel} disabled={status === "cancelled"}>
-            Cancel
-          </Button>
-
-                </Grid>
+      return (
+        
+        <Card style={{ padding: '20px', margin: '10px' }}>
+          <Grid container spacing={2}>
+            {/* Patient Information */}
+            <Grid item xs={6}>
+              <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+                <strong> Patient: </strong> {patient}
+              </Typography>
+              <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+                <strong>Date: </strong> {appointmentDate}
+              </Typography>
+              <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+                <strong> Status: </strong> {status}
+              </Typography>
+              <Typography variant="h6" color="text.secondary" sx={{ mb: 2 }}>
+                <strong>Type: </strong> {type}
+              </Typography>
             </Grid>
-            <Dialog open={isDialogOpen} onClose={handleCancelCancel}>
-        <DialogTitle>Confirmation</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to cancel this appointment?</Typography>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCancelConfirmation}>Yes</Button>
-          <Button onClick={handleCancelCancel}>No</Button>
-        </DialogActions>
-      </Dialog>
-
-      {/* Snackbar */}
-      <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
-        <Alert severity="success" onClose={handleSnackbarClose}>
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
+      
+            {/* Buttons */}
+            <Grid item xs={6}>
+              <Grid container direction="column" alignItems="flex-end">
+                <Button onClick={handleAppointmentReschedule} style={{ margin: '10px' }}>
+                  Reschedule
+                </Button>
+                <Button onClick={handleFollowUpClicked} style={{ margin: '10px' }}>
+                  Schedule Follow up
+                </Button>
+                <Button onClick={handleCancel} disabled={status === "cancelled"} style={{ margin: '10px' }}>
+                  Cancel
+                </Button>
+              </Grid>
+            </Grid>
+          </Grid>
+      
+          <Dialog open={isDialogOpen} onClose={handleCancelCancel}>
+            <DialogTitle>Confirmation</DialogTitle>
+            <DialogContent>
+              <Typography>Are you sure you want to cancel this appointment?</Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCancelConfirmation}>Yes</Button>
+              <Button onClick={handleCancelCancel}>No</Button>
+            </DialogActions>
+          </Dialog>
+      
+          {/* Snackbar */}
+          <Snackbar open={isSnackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+            <Alert severity="success" onClose={handleSnackbarClose}>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
         </Card>
-    );
+      );
+      
 
 }
 
