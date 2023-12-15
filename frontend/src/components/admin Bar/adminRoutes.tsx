@@ -82,10 +82,7 @@ const appRoutes: RouteType[] = [
         path: "/hp",
         state: "Health Packages",
       },
-      {
-        path: "/patient/PackagesPage",
-        state: "Add Packages",
-      },
+     
       
     ],
       

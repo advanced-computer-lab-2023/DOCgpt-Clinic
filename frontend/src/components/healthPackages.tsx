@@ -6,6 +6,9 @@ import DeletePackageForm from "../components/DeletePackageForm";
 import DrawerAppBar from "./admin Bar/adminBar";
 import El7a2niInfo from './El7a2ni-info';
 import AddPackage from './Package';
+import { useNavigate } from 'react-router-dom';
+
+
 interface HealthPackage {
   name: string;
   feesPerYear: number;
@@ -13,6 +16,7 @@ interface HealthPackage {
   medicineDiscount: number;
   familysubscribtionDiscount: number;
 }
+
 
 const HealthPackages = () => {
   const [healthPackages, setHealthPackages] = useState<HealthPackage[]>([]);
@@ -26,8 +30,11 @@ const HealthPackages = () => {
   const [packageToDelete, setPackageToDelete] = useState<HealthPackage | null>(null);
   const [openAddPackageDialog, setOpenAddPackageDialog] = useState(false);
 
+  const navigate = useNavigate();
 
-
+  const handleAddPackageClick = () => {
+    navigate('/addPackage');
+  };
   const refreshHealthPackages = async () => {
     try {
       const response = await axios.get('/routes/patient/viewHealthPackage');
@@ -100,13 +107,14 @@ const HealthPackages = () => {
       <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center', marginBottom: '30px' }}>
   Available Health Packages
   <Button 
-    variant="contained" 
-    color="primary" 
-    onClick={() => setOpenAddPackageDialog(true)}
-    style={{ marginLeft: '20px' }} // Adjust the style as needed
-  >
-    Add New Package
-  </Button>
+  variant="contained" 
+  color="primary" 
+  onClick={() => navigate('/addPackage')}
+  style={{ marginLeft: '20px' }}
+>
+  Add New Package
+</Button>
+
 </Typography>
 
         <Grid container spacing={2} justifyContent="center">
@@ -161,19 +169,11 @@ const HealthPackages = () => {
   >
     Update
   </Button>
-  <Dialog open={openAddPackageDialog} onClose={() => setOpenAddPackageDialog(false)} maxWidth="md" fullWidth>
-  <DialogContent>
-    <AddPackage />
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={() => setOpenAddPackageDialog(false)} color="primary">
-      Close
-    </Button>
-  </DialogActions>
-</Dialog>
+
+  
   <Button
   variant="contained"
-  color="error"
+  color="primary"
   sx={{ borderRadius: '20px' }}
   onClick={() => handleOpenConfirmDialog(healthPackage)}
 >
@@ -210,11 +210,12 @@ const HealthPackages = () => {
     </DialogContentText>
   </DialogContent>
   <DialogActions>
+  
+    <Button onClick={handleDeletePackage} color="error" autoFocus>
+      Yes
+    </Button>
     <Button onClick={handleCloseConfirmDialog} color="primary">
       No
-    </Button>
-    <Button onClick={handleDeletePackage} color="primary" autoFocus>
-      Yes
     </Button>
   </DialogActions>
 </Dialog>

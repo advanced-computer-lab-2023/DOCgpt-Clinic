@@ -16,11 +16,18 @@ import {
   DialogContentText,
   DialogTitle,
   Box,
+  ListItemSecondaryAction,
+  IconButton,
+  List,
+  ListItemAvatar,
+  TextField,
+  InputAdornment,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import DeleteIcon from "@mui/icons-material/Delete";
 import AdminBar from "./admin Bar/adminBar";
 import El7a2niInfo from "./El7a2ni-info";
+import SearchIcon from "@mui/icons-material/Search";
 
 interface Doctor {
   _id: string;
@@ -34,6 +41,7 @@ const DocList1: React.FC = () => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   const handleOpenDeleteDialog = (doctor: Doctor) => {
     setSelectedDoctor(doctor);
@@ -85,7 +93,12 @@ const DocList1: React.FC = () => {
   
     fetchDoctors();
   }, []);
-  
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+  const filteredPharmacists = doctors.filter((doctor) =>
+    doctor.username.toLowerCase().startsWith(searchTerm.toLowerCase())
+  );
 
   return (
     <>
@@ -95,9 +108,31 @@ const DocList1: React.FC = () => {
           <Typography variant="h4" align="center" style={{ padding: '20px' }} gutterBottom>
             Doctors List
           </Typography>
+          <TextField
+            size="small"
+            variant="outlined"
+            placeholder="Search by username"
+            value={searchTerm}
+            onChange={handleSearchChange}
+            style={{
+              width: '250px',
+              borderRadius: '20px',
+              backgroundColor: '#fff',
+            }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton aria-label="search">
+                    <SearchIcon />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
         </Box>
+        <List>
         <Grid container spacing={2}>
-          {doctors.map((doctor) => (
+          {filteredPharmacists.map((doctor) => (
              <Grid item xs={42} sm={16} md={13} key={doctor._id}>
              <Paper elevation={14} style={{ marginBottom: 18, width: '100%' }}>
                 <ListItem alignItems="flex-start">
@@ -105,7 +140,7 @@ const DocList1: React.FC = () => {
                     <Avatar><PersonIcon /></Avatar>
                   </ListItemIcon>
                   <ListItemText
-                    primary={doctor.name}
+                    primary={doctor.username}
                     secondary={`Email: ${doctor.email}`}
                   />
                   <Button
@@ -127,7 +162,7 @@ const DocList1: React.FC = () => {
             </Grid>
           ))}
         </Grid>
-
+        </List>
         {/* Confirmation Dialog */}
         <Dialog open={openDialog} onClose={handleCloseDialog}>
           <DialogTitle>Delete Doctor</DialogTitle>

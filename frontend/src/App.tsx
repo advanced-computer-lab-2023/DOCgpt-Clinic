@@ -82,6 +82,7 @@ import FamilyMemberPackageStatus from "./components/viewstatusfam";
 import PatientList1 from "./components/allpat";
 import docList1 from "./components/alldoc";
 import DocList1 from "./components/alldoc";
+import AddPackage from "./components/AddPackage";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -183,7 +184,8 @@ function App() {
         <Route path="/Doctor/Remove" element={<RemoveDoc />} />
         <Route path="/admin/info" element={<DoctorInformation />} />
         <Route path="/patient/remove" element={<RemovePatient />} />
-        <Route path="patient/PackagesPage" Component={PackagesPage} />
+        <Route path="/patient/PackagesPage" Component={PackagesPage} />
+        <Route path="/AddPackage" Component={AddPackage} />
         <Route path="/hp" Component={HealthPackage} />
         <Route path="/changepasswordpatient" Component={ChangePassword} />
         <Route path="/changepassworddoctor" Component={ChangePasswordDoctor} />

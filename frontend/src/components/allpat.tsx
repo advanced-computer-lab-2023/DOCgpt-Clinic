@@ -188,25 +188,41 @@ const PatientList1: React.FC = () => {
           />
         </Box>
       <Grid container spacing={2}>
-        {filteredPatients.map((patient) => (
+      {filteredPatients.map((patient) => {
+            // Format the date of birth
+            const formattedDateOfBirth = patient.dateofbirth ?
+              new Date(patient.dateofbirth).toLocaleDateString('en-CA') : 'Unknown';
+  
+            return (
               <Grid item xs={42} sm={16} md={13} key={patient._id}>
-              <Paper elevation={14} style={{ marginBottom: 18, width: '100%' }}>
-              <ListItem alignItems="flex-start">
-                <ListItemIcon>
-                  <Avatar><PersonIcon /></Avatar>
-                </ListItemIcon>
-
-                <ListItemText
-                  primary={patient.name}
-                  secondary={`Email: ${patient.email}`}
-                />
+                <Paper elevation={14} style={{ marginBottom: 18, width: '100%' }}>
+                  <ListItem alignItems="flex-start">
+                    <ListItemIcon>
+                      <Avatar><PersonIcon /></Avatar>
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={patient.username}
+                      secondary={
+                        <>
+                          Email: {patient.email}
+                          <br />
+                          Date of Birth: {formattedDateOfBirth}
+                          <br />
+                          Mobile Number: {patient.mobilenumber}
+                          <br />
+                          Emergency Contact: {patient.emergencyContact ?` ${patient.emergencyContact.fullName} ( ${patient.emergencyContact.relation})` : 'Not available'}
+                          <br />
+                          Emergency Contact Number: {patient.emergencyContact ? patient.emergencyContact.mobileNumber : 'Not available'}
+                        </>
+                      }
+                    />
                 <Button
                   onClick={() => handleRemovePatient(patient)}
                  variant="contained"
                     size="small"
                     style={{
                       marginLeft: "auto",
-                      bottom:-12,
+                      bottom:-50,
                       marginRight: 2,
                       backgroundColor: "#primary",
                       color: "#primary" 
@@ -217,7 +233,8 @@ const PatientList1: React.FC = () => {
               </ListItem>
             </Paper>
           </Grid>
-        ))}
+       );
+    })}
       </Grid>
 
       {/* Confirmation Dialog */}
