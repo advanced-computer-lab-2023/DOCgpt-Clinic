@@ -27,15 +27,15 @@ const appRoutes: RouteType[] = [
     child: [
       {
         path: "/doctor/time",
-        state: "add time slots ",
+        state: "Add Time Slots ",
       },
       {
         path: "/doctor/appointments",
-        state: "View my appointments",
+        state: "View My Appointments",
       },
       {
         path: "/doctor/followUpRequests",
-        state: "View Follow Up requests",
+        state: "View Follow Up Requests",
       },
     ],
   },
@@ -49,10 +49,6 @@ const appRoutes: RouteType[] = [
       {
         path: "/doctor/patients",
         state: "View My Patients",
-      },
-      {
-        path: "/doctor/walletAmount",
-        state: "View My wallet",
       },
     ],
   },

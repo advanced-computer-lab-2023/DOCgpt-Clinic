@@ -13,7 +13,6 @@ import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRou
 import { CSSProperties } from '@mui/material/styles/createMixins';
 import theme from '../../theme';
 import El7a2niInfo from "../../components/El7a2ni-info";
-import Background from '../../Background.jpeg';
 import DrawerAppBar from '../Doctor bar/doctorBar';
 import { isSameDay } from 'date-fns';
 import IconButton from '@mui/material/IconButton';
@@ -21,7 +20,8 @@ import ClearIcon from '@mui/icons-material/Clear';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import TimePicker from '@mui/lab/TimePicker';
-
+import Background from '../../Appointments.jpeg';
+import Back from "../../components/backButton";
 
 
 const DoctorAvailability: React.FC = () => {
@@ -91,17 +91,35 @@ const DoctorAvailability: React.FC = () => {
     setSuccessDialogOpen(false);
   };
   return (
-    <div
-        style={{
-            backgroundImage: `url(${Background})`,
-            backgroundSize: "cover",
-            minHeight: "100vh",
-            backgroundPosition: "center",
-            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)", // Increased shadow values
-        }}
-        >
     <>
     <DrawerAppBar/>
+    <div
+      
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '50vh',
+      marginBottom:'100px',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >   
+      <Back/>
+   <div
+    style={{
+      position: 'absolute', // Set position to absolute
+      top: '35%', // Adjust top value to center vertically
+      left: '50%', // Adjust left value to center horizontally
+      transform: 'translate(-50%, -50%)', // Center the text
+      textAlign: 'center', // Center text horizontally
+      color: 'white', // Set text color
+    }}
+  >
+    <h1> <strong>Add Time Slots</strong></h1>
+    {/* <p>Additional text content</p> */}
+  </div>
+  </div>
+
     <Grid container justifyContent="center" alignItems="center" style={styles.container}>
       <Paper elevation={15} style={styles.paper}>
         <Grid container spacing={2} direction="column" alignItems="center">
@@ -203,7 +221,7 @@ const DoctorAvailability: React.FC = () => {
       </Dialog>
       <El7a2niInfo />
     </>
-    </div>
+
   );
 };
 

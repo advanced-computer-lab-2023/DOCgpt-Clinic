@@ -178,9 +178,6 @@ function ViewMyAppointments() {
             padding: "20px",
           }}
         >
-          <Typography variant="h1" style={{ fontWeight: "bold" }}>
-            Your Appointments
-          </Typography>
         </div>
 
         <Grid container spacing={2}>

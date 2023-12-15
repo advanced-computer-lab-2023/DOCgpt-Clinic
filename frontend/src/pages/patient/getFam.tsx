@@ -22,6 +22,8 @@ import left from '../../left1.jpeg'
 import right from '../../right.jpeg'
 import El7a2niInfo from '../../components/El7a2ni-info';
 import AddFamilyMember from './addFam'
+import Background from '../../FamilyMembers.jpg';
+import Back from "../../components/backButton";
 
 
 import maleProfilePic from 'path/to/maleProfilePic.png';
@@ -104,11 +106,37 @@ const ViewFamilyMembersPage = () => {
   return (
     <>
       <PatientAppBar />
+      <div
+      
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '50vh',
+      marginBottom:'100px',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >   
+      <Back/>
+   <div
+    style={{
+      position: 'absolute', // Set position to absolute
+      top: '35%', // Adjust top value to center vertically
+      left: '50%', // Adjust left value to center horizontally
+      transform: 'translate(-50%, -50%)', // Center the text
+      textAlign: 'center', // Center text horizontally
+      color: 'white', // Set text color
+    }}
+  >
+    <h1> <strong>MY FAMILY MEMBERS</strong></h1>
+    {/* <p>Additional text content</p> */}
+  </div>
+</div>
       <div style={{  maxWidth: '100%', overflowX: 'hidden' }}>
         <Grid container style={{ marginTop: '10px', alignItems: 'stretch' }}>
           {/* First Column */}
           <Grid item xs={12} md={3}  style={{ padding: 0 }}>
-            <div style={{  minHeight:'500px' , width: '100%', height: '100%', backgroundImage: `url(${left})`, backgroundSize: 'cover', backgroundPosition: 'center'  , right:'50px'}} />
+            <div style={{  minHeight:'500px' , width: '100%', height: '100%', backgroundSize: 'cover', backgroundPosition: 'center'  , right:'50px'}} />
           </Grid>
   
           {/* Middle Column */}
@@ -170,7 +198,7 @@ const ViewFamilyMembersPage = () => {
   
           {/* Last Column */}
           <Grid item xs={12} md={3}  style={{ padding: 0 }}>
-            <div style={{minHeight:'500px' ,  width: '100%', height: '100%', backgroundImage: `url(${right})`, backgroundSize: 'cover', backgroundPosition: '0px' }} />
+            <div style={{minHeight:'500px' ,  width: '100%', height: '100%', backgroundSize: 'cover', backgroundPosition: '0px' }} />
           </Grid>
   
         </Grid>

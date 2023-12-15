@@ -28,6 +28,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AdminBar from "./admin Bar/adminBar";
 import El7a2niInfo from "./El7a2ni-info";
 import SearchIcon from "@mui/icons-material/Search";
+import Background from '../doctorss.jpeg';
+import Back from "./backButton";
 
 interface Doctor {
   _id: string;
@@ -103,11 +105,34 @@ const DocList1: React.FC = () => {
   return (
     <>
       <AdminBar />
+      <div
+      
+      style={{
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom:'100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+      }}
+    >   
+        <Back/>
+     <div
+      style={{
+        position: 'absolute', // Set position to absolute
+        top: '35%', // Adjust top value to center vertically
+        left: '50%', // Adjust left value to center horizontally
+        transform: 'translate(-50%, -50%)', // Center the text
+        textAlign: 'center', // Center text horizontally
+        color: 'white', // Set text color
+      }}
+    >
+      <h1> <strong>DOCTORS LIST</strong></h1>
+      {/* <p>Additional text content</p> */}
+    </div>
+    </div>
       <Container maxWidth="sm">
         <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
-          <Typography variant="h4" align="center" style={{ padding: '20px' }} gutterBottom>
-            Doctors List
-          </Typography>
           <TextField
             size="small"
             variant="outlined"

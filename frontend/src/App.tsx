@@ -84,6 +84,9 @@ import RequestFamMemFollow from "./pages/patient/RequestFamMemFollow";
 
 import prescriptionPDF from "./components/prescriptionPDF";
 import AddPackage from "./components/AddPackage";
+import FamilyMemberPackageStatus from "./components/viewstatusfam";
+import DocList1 from "./components/alldoc";
+import PatientList1 from "./components/allpat";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -144,6 +147,14 @@ function App() {
         <Route path="/doctor/healthRecordEmpty" Component={HealthRecordEmpty} />
         <Route path="/doctor/healthRecordForm" Component={HealthRecordForm} />
         <Route path="/patient/viewDoctors" Component={ViewDoctors} />
+        <Route path="/family-packages" Component={FamilyMemberPackageStatus} />
+        <Route path="/allpat" element={< PatientList1/>} />
+        <Route path="/alldoc" element={<DocList1/>} />
+        <Route
+          path="/patient/viewMyhealthrecords"
+          Component={ViewMyHealthRecord}
+        />
+
         <Route
           path="/doctor/todayapp"
           element={<TodayAppointmentsComponent />}

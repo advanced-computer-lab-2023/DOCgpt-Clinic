@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import FollowUpRequest from "../../components/FollowUpRequest";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
-import Background from "../../Background.jpeg";
+import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
 
 function ViewFollowUpRequests(){
@@ -39,21 +39,37 @@ function ViewFollowUpRequests(){
 
     //VIEW
     return(
-    <div
-        style={{
-            backgroundImage: `url(${Background})`,
-            backgroundSize: "cover",
-            minHeight: "100vh",
-            backgroundPosition: "center",
-            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)", // Increased shadow values
-        }}
-        >
+   
         <>
         <DoctorBar />
+        <div
+      
+      style={{
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom:'100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+      }}
+    >   
         <Back/>
+     <div
+      style={{
+        position: 'absolute', // Set position to absolute
+        top: '35%', // Adjust top value to center vertically
+        left: '50%', // Adjust left value to center horizontally
+        transform: 'translate(-50%, -50%)', // Center the text
+        textAlign: 'center', // Center text horizontally
+        color: 'white', // Set text color
+      }}
+    >
+      <h1> <strong>FOLLOW UP REQUESTS</strong></h1>
+      {/* <p>Additional text content</p> */}
+    </div>
+    </div>
         <Container>
         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <Typography marginTop="10px" marginBottom="30px" variant="h1" color="primary" style={{ fontWeight: 'bold'}}>Follow Up Requests</Typography>
         </div>
         
             <Grid container direction="row">
@@ -71,7 +87,7 @@ function ViewFollowUpRequests(){
         <El7a2niInfo />
       
     </>
-    </div>
+
     );
 }
 
