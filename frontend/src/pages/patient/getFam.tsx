@@ -152,6 +152,9 @@ const ViewFamilyMembersPage = () => {
                         <Typography variant="h6" style={{ margin: '10px 0' }}>
                           {member.name}
                         </Typography>
+                        <Typography variant="h6" style={{ margin: '10px 0' }}>
+                          {member.relationToPatient}
+                        </Typography>
                         <Typography variant="body2">ID: {member.nationalId}</Typography>
                         <Typography variant="body2">Age: {member.age}</Typography>
                         <Typography variant="body2" style={{ margin: '10px 0' }}>

@@ -16,6 +16,8 @@ import {
   InputLabel,
   Select,
   SelectChangeEvent,
+  AlertColor,
+  Alert,
 } from '@mui/material';
 import { AddCircleOutline, Male, Female, Close } from '@mui/icons-material';
 import axios from 'axios';
@@ -33,7 +35,9 @@ const AddFamilyMemberForm: React.FC<AddFamilyMemberFormProps> = ({ open, setOpen
     gender: 'Male', // Default to Male
     relationToPatient: '',
   });
-  const [successSnackbarOpen, setSuccessSnackbarOpen] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState<string>('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState<AlertColor | undefined>('error');
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -64,20 +68,25 @@ const AddFamilyMemberForm: React.FC<AddFamilyMemberFormProps> = ({ open, setOpen
           },
         }
       );
-      console.log('Family member added successfully:', response.data);
-      setSuccessSnackbarOpen(true);
-    } catch (error) {
+      console.log(familyMember.name ,'+Family member added successfully:', response.data);
+        setSnackbarSeverity('success');
+        setSnackbarMessage(familyMember.name +' is added successfully');
+        setSnackbarOpen(true);
+      } catch (error) {
+        setSnackbarSeverity('error');
+        setSnackbarMessage('Error adding family member');
+        setSnackbarOpen(true);
       console.error('Error adding family member:', error);
     }
-    console.log(familyMember);
-    setSuccessSnackbarOpen(true);
+  
   };
 
-  const handleCloseSnackbar = () => {
-    setSuccessSnackbarOpen(false);
-    setOpen(false); // Close the dialog after submission
+  const handleSnackbarClose = () => {
+    setSnackbarOpen(false);
+    setOpen(false);
     window.location.reload();
-    };
+
+  };
 
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
@@ -158,11 +167,10 @@ const AddFamilyMemberForm: React.FC<AddFamilyMemberFormProps> = ({ open, setOpen
           </Button>
         </form>
       </DialogContent>
-      <Snackbar
-        open={successSnackbarOpen}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}>
-        <Button onClick={handleCloseSnackbar}>Family member added successfully</Button>
+      <Snackbar open={snackbarOpen} autoHideDuration={6000} onClose={handleSnackbarClose}>
+        <Alert severity={snackbarSeverity} onClose={handleSnackbarClose}>
+          {snackbarMessage}
+        </Alert>
       </Snackbar>
     </Dialog>
   );
