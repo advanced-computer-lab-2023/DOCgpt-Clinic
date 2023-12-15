@@ -1,5 +1,5 @@
 // CustomizedBadges.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Key } from 'react';
 import Badge, { BadgeProps } from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
@@ -13,11 +13,13 @@ import { ConstructionOutlined } from '@mui/icons-material';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import DeleteIcon from '@mui/icons-material/Delete';
 interface Notification {
-    id: string;
+    _id: string;
     subject: string;
     date: Date;
     msg: string;
+    read : boolean
   }
+  
 const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
   '& .MuiBadge-badge': {
     right: -3,
@@ -30,7 +32,10 @@ const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
 const CustomizedBadges = () => {
   const [count, setCount] = useState(0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [notifications, setNotifications] = useState<{ id: string, subject: string, date: Date, msg: string, formattedDate: string }[]>([]);
+  const [notifications, setNotifications] = useState<{
+    _id: Key | null | undefined;
+    read: boolean;  subject: string, date: Date, msg: string, formattedDate: string 
+}[]>([]);
   const [anchorEl, setAnchorEl] = useState(null);
   const [clickedNotificationIds, setClickedNotificationIds] = useState<string[]>([]);
 
@@ -44,14 +49,13 @@ const CustomizedBadges = () => {
       });
   
       const notificationsCount = Number(response.data.notificationsCount);
+      console.log(notificationsCount);
       setCount(notificationsCount);
-  
-      // Save the count value in local storage
-      localStorage.setItem('notificationsCount', notificationsCount.toString());
     } catch (error) {
       console.error('Error fetching notifications count', error);
     }
   };
+  
   useEffect(() => {
    
       fetchNotificationsCount();
@@ -67,14 +71,17 @@ const CustomizedBadges = () => {
             Authorization: `Bearer ${token}`,
           },
         });
+
            //console.log(response.data);
         // Check if response.data.notifications is defined before mapping
         console.log('Notification response:', response.data);
 
-        const formattedNotifications = (response.data as Notification[])?.map((notification) => ({
-            ...notification,
-            formattedDate: formatTimeDifference(new Date(notification.date)),
-          })) || [];
+       const formattedNotifications = response.data.map((notification: { date: string | number | Date; read: any; }) => ({
+  ...notification,
+  formattedDate: formatTimeDifference(new Date(notification.date)),
+  read: notification.read // Assuming 'read' is a field from your backend
+}));
+
     
         console.log('Formatted notifications:', formattedNotifications);
     
@@ -106,17 +113,40 @@ const CustomizedBadges = () => {
 
   const handleCloseMenu = () => {
     setIsMenuOpen(false);
-    setCount((prevCount) => prevCount - 1);
-
   };
+  
+  const handleNotificationClick = async (notificationId : any) => {
+    // Find the clicked notification
+    const clickedNotification = notifications.find(notification => notification._id === notificationId);
+  
+    // Check if the notification was previously unread
+    if (clickedNotification && !clickedNotification.read) {
+      // Mark as read and decrement the count
+      setNotifications(prevNotifications =>
+        prevNotifications.map(notification =>
+          notification._id === notificationId ? { ...notification, read: true } : notification
+        )
+      );
+      setCount(prevCount => prevCount > 0 ? prevCount - 1 : 0);
+  
+      // Call your API to mark the notification as read
+      try {
+        const response = await axios.post('/routes/notifications/mark', {
+          notificationId,
+        });
+        // Additional logic to handle the response
+        // ...
+      } catch (error) {
+        console.error('Error marking notification as read', error);
+      }
+    }
+  }
   function handleDelete(id: string) {
     // Call the delete notification API or perform any necessary actions
     // to delete the notification with the given ID
   
     // Update the notifications state by removing the deleted notification
-    setNotifications((prevNotifications) =>
-      prevNotifications.filter((notification) => notification.id !== id)
-    );
+   
   
     // Decrement the count state by one
   }
@@ -141,47 +171,58 @@ const CustomizedBadges = () => {
       return lines;
     }
 
-  return (
-    <>
-      <IconButton aria-label="notifications" onClick={handleBadgeClick}>
-        <StyledBadge badgeContent={count} color="primary">
-          <NotificationsActiveIcon color="primary" />
-        </StyledBadge>
-      </IconButton>
-
-      {/* Notification Menu */}
-      <Menu
-        anchorEl={anchorEl}
-        open={isMenuOpen}
-        onClose={handleCloseMenu}
-        transformOrigin={{
-          vertical: 0,
-          horizontal: -40,
-        }}
-        style={{  overflowWrap:'break-word'}}
-      >
-        {notifications.slice().reverse().map((notification) => (
-          <MenuItem key={notification.id} onClick={handleCloseMenu}>
-            <Paper elevation={0} style={{ padding: '0px', width: '500px' ,  wordBreak:'break-word'}}>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-                <FiberManualRecordIcon style={{ marginRight: '8px' }} />
-                <Typography variant="subtitle1">{notification.subject}</Typography>
-              </div>             
-              <Typography variant="body2" style={{ width: '50%'}}>
-                {splitTextIntoLines(notification.msg,2).join('\n')}
-              </Typography>
-              <Typography variant="caption">{notification.formattedDate}</Typography>
-              <div style={{ marginTop: '8px' }}>
-      <IconButton onClick={() => handleDelete(notification.id)}>
-        <DeleteIcon />
-      </IconButton>
-    </div>
-            </Paper>
-          </MenuItem>
-        ))}
-      </Menu>
-    </>
-  );
+    return (
+      <>
+        <IconButton aria-label="notifications" onClick={handleBadgeClick} style={{ position: 'relative' }}>
+          <Badge badgeContent={count} color="primary">
+            <NotificationsActiveIcon color="primary" />
+          </Badge>
+        </IconButton>
+    
+        <Menu
+          anchorEl={anchorEl}
+          open={isMenuOpen}
+          onClose={handleCloseMenu}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+          style={{ marginTop: '0px', marginLeft: '70px',overflowWrap: 'break-word' ,  borderRadius: '80px'  }}
+        >
+          {notifications.length === 0 ? (
+            <MenuItem style={{ padding: '10px'  ,  borderRadius: '80px'}}>
+              <Typography>No notifications so far</Typography>
+            </MenuItem>
+          ) : (
+            notifications.slice().reverse().map((notification) => (
+              <MenuItem key={notification._id} onClick={() => handleNotificationClick(notification._id)} style={{ backgroundColor: notification.read ? '#ffffff' : '#D0E0F2'  }}>
+                <Paper elevation={0} style={{ padding: '10px', width: '300px', backgroundColor: notification.read ? '#ffffff' : '#D0E0F2' ,overflowWrap: 'break-word'}}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <FiberManualRecordIcon style={{ marginRight: '8px', color: notification.read ? '#c0c4c8' : '#007bff' }} />
+                    <Typography variant="subtitle1" style={{ fontWeight: notification.read ? 'normal' : 'bold', color: notification.read ? '#4b4f56' : '#2B59C3' }}>
+                      {notification.subject}
+                    </Typography>
+                  </div>
+                  <p  style={{ color: '#4b4f56', overflowWrap: 'break-word' , width : '70px', fontSize:12}}>
+                    {splitTextIntoLines(notification.msg, 2).join('\n')}
+                  </p>
+                  <Typography variant="caption" style={{ color: '#8d949e', marginTop: '4px' }}>
+                    {notification.formattedDate}
+                  </Typography>
+                  <div style={{ marginTop: '8px' }}>
+                    {/* <IconButton>
+                      <DeleteIcon />
+                    </IconButton> */}
+                  </div>
+                </Paper>
+              </MenuItem>
+            ))
+          )}
+        </Menu>
+      </>
+    );
+    
+    
 };
 
 export default CustomizedBadges;

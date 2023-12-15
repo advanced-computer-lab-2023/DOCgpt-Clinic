@@ -1139,7 +1139,7 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
     var notificationSubject = ""; 
     const appointment = await appointmentModel.findById(appointmentId);
     if (appointment) {
-      const updatedAppointment = await AppointmentModel.create({
+      const rescheduledAppointment = await AppointmentModel.create({
         status: "rescheduled",
         doctor: appointment.doctor,
         patient: appointment.patient,
@@ -1167,7 +1167,7 @@ export const rescheduleAppointments = async (req: Request, res: Response) => {
         appointment.status = "cancelled";
 
         const updatedAppointment = await appointment.save();
-        res.status(200).json({ updatedAppointment });
+        res.status(200).json({ rescheduledAppointment });
       }
       //Send Notificationss(system & mail)
 

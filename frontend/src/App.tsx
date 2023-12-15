@@ -78,10 +78,11 @@ import RequestFollowUp from "./pages/patient/RequestFollowUp";
 import PatientReschedule from "./pages/patient/PatientReschedule";
 import ViewFamMemAppointments from "./pages/patient/ViewFamMemAppointments";
 import ViewWalletAmountPatient from "./components/viewWalletPatient";
-import FamilyMemberPackageStatus from "./components/viewstatusfam";
-import PatientList1 from "./components/allpat";
-import docList1 from "./components/alldoc";
-import DocList1 from "./components/alldoc";
+
+import FamMemResch from "./pages/patient/FamMemResch";
+import RequestFamMemFollow from "./pages/patient/RequestFamMemFollow";
+
+import prescriptionPDF from "./components/prescriptionPDF";
 import AddPackage from "./components/AddPackage";
 function App() {
   useEffect(() => {
@@ -116,7 +117,7 @@ function App() {
         <Route path="/doctor/home" element={<DoctorHomePage />} />
         <Route path="/admin/home" element={<AdminHomePage />} />
         <Route path="/doctor/time" element={<DoctorAvailability />} />
-        <Route path="/patient/addMember" element={<AddFamilyMember />} />
+        {/* <Route path="/patient/addMember" element={<AddFamilyMember />} /> */}
         <Route
           path="/patient/ViewFamilyMembers"
           element={<ViewFamilyMembers />}
@@ -147,7 +148,6 @@ function App() {
           path="/doctor/todayapp"
           element={<TodayAppointmentsComponent />}
         />
-            <Route path="/family-packages" Component={FamilyMemberPackageStatus} />
         <Route
           path="/patient/viewMyappointments"
           Component={ViewMyAppointments}
@@ -196,10 +196,10 @@ function App() {
           Component={ViewFollowUpRequests}
         />
         <Route path="/patient/followUp" Component={RequestFollowUp} />
-        <Route path="/allpat" Component={PatientList1} />
-        <Route path="/alldoc" Component={DocList1} />
-
         <Route path="/patient/reschedule" Component={PatientReschedule} />
+        <Route path="/patient/fam/reschedule" Component={FamMemResch} />
+        <Route path="/patient/fam/followUp" Component={RequestFamMemFollow} />
+
         <Route
           path="/patient/famMemAppointments"
           Component={ViewFamMemAppointments}

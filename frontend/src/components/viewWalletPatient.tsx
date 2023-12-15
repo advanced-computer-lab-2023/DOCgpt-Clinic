@@ -45,7 +45,7 @@ const ViewWalletAmountPatient: React.FC = () => {
   }, []); // Trigger a fetch whenever the patientUsername changes
   const handleCloseDialog = () => {
     setOpenDialog(false);
-    navigate("/patient/home");
+    navigate(-1);
   };
   return (
     <Dialog open={openDialog} onClose={handleCloseDialog}>
