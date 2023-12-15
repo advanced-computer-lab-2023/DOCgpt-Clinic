@@ -78,10 +78,6 @@ import RequestFollowUp from "./pages/patient/RequestFollowUp";
 import PatientReschedule from "./pages/patient/PatientReschedule";
 import ViewFamMemAppointments from "./pages/patient/ViewFamMemAppointments";
 import ViewWalletAmountPatient from "./components/viewWalletPatient";
-import FamilyMemberPackageStatus from "./components/viewstatusfam";
-import PatientList1 from "./components/allpat";
-import docList1 from "./components/alldoc";
-import DocList1 from "./components/alldoc";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -146,7 +142,6 @@ function App() {
           path="/doctor/todayapp"
           element={<TodayAppointmentsComponent />}
         />
-            <Route path="/family-packages" Component={FamilyMemberPackageStatus} />
         <Route
           path="/patient/viewMyappointments"
           Component={ViewMyAppointments}
@@ -194,9 +189,6 @@ function App() {
           Component={ViewFollowUpRequests}
         />
         <Route path="/patient/followUp" Component={RequestFollowUp} />
-        <Route path="/allpat" Component={PatientList1} />
-        <Route path="/alldoc" Component={DocList1} />
-
         <Route path="/patient/reschedule" Component={PatientReschedule} />
         <Route
           path="/patient/famMemAppointments"

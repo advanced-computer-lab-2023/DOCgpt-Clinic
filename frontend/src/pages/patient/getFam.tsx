@@ -128,7 +128,7 @@ const ViewFamilyMembersPage = () => {
                   variant="contained"
                   color="primary"
                   startIcon={<LinkIcon />}
-                  onClick={() => { /* Add logic for Link One button */ }}
+                  onClick={() => { navigate('/patient/link')}}
                 >
                   Link One
                 </Button>
