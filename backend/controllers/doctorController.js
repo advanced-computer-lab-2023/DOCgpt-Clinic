@@ -112,9 +112,9 @@ const createDoctors = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
     const salt = yield bcrypt_1.default.genSalt(10);
     const hash = yield bcrypt_1.default.hash(password, salt);
-    if (!validatePassword(password)) {
-        return res.status(400).json({ message: 'Invalid password' });
-    }
+    // if (!validatePassword(password)) {
+    //   return res.status(400).json({ message: 'Invalid password'});
+    // }
     const doctor = yield doctorModel_1.default.create({
         username: username,
         name: name,

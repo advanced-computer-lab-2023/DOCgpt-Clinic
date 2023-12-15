@@ -49,8 +49,9 @@ function SignUpDoctor() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const [submittedDocuments, setSubmittedDocuments] = React.useState<string[]>([]);
   // const [displayDocuments, setDisplayDocuments] = React.useState(false);
-  const [fileInputs, setFileInputs] = React.useState<{ id: number; file: File | null }[]>([{ id: 1, file: null }]);
-
+  const [fileInputs, setFileInputs] = React.useState<{ id: number; file: File | null }[]>([
+    { id: 1, file: null }
+  ]);
 
   function handleDocumentNameChange(value: string): void {
     setDocumentName(value);
@@ -62,13 +63,15 @@ function SignUpDoctor() {
 
   const handleFileChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      const newFileInputs = fileInputs.map((input) =>
-        input.id === id ? { ...input, file: e.target.files![0] } : input
+      setFileInputs((prevInputs) =>
+        prevInputs.map((input) =>
+          input.id === id ? { ...input, file: e.target.files![0] } : input
+        )
       );
-      setFileInputs(newFileInputs);
     }
   };
   
+
 
 // Function to add a new file input
 const addFileInput = () => {
@@ -77,77 +80,80 @@ const addFileInput = () => {
 };
 
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    event.preventDefault();
-    const formData = new FormData(event.currentTarget);
-  
-    if (
-      !formData.get("username") ||
-      !formData.get("name") ||
-      !formData.get("email") ||
-      !formData.get("password") ||
-      !formData.get("dateofbirth") ||
-      !formData.get("hourlyrate") ||
-      !formData.get("affiliation") ||
-      !formData.get("speciality") ||
-      !formData.get("educationalBackground")
-    ) {
-      setFormErrors("Please fill out all fields");
-      return;
-    }
-  
-    try {
-      setFormErrors(null);
-  
-      // Post doctor information to create a new doctor
-      const response = await axios.post("/routes/doctors/postDoctor", {
-        username: String(formData.get("username")),
-        name: formData.get("name"),
-        email: formData.get("email"),
-        password: formData.get("password"),
-        dateOfBirth: formData.get("dateofbirth"),
-        hourlyRate: formData.get("hourlyrate"),
-        affiliation: formData.get("affiliation"),
-        speciality: formData.get("speciality"),
-        educationalBackground: formData.get("educationalBackground"),
+const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
+  event.preventDefault();
+  const formData = new FormData(event.currentTarget);
+
+  if (
+    !formData.get("username") ||
+    !formData.get("name") ||
+    !formData.get("email") ||
+    !formData.get("password") ||
+    !formData.get("dateofbirth") ||
+    !formData.get("hourlyrate") ||
+    !formData.get("affiliation") ||
+    !formData.get("speciality") ||
+    !formData.get("educationalBackground")
+  ) {
+    setFormErrors("Please fill out all fields");
+    return;
+  }
+
+  try {
+    setFormErrors(null);
+
+    // Post doctor information to create a new doctor
+    const response = await axios.post("/routes/doctors/postDoctor", {
+      username: String(formData.get("username")),
+      name: formData.get("name"),
+      email: formData.get("email"),
+      password: formData.get("password"),
+      dateOfBirth: formData.get("dateofbirth"),
+      hourlyRate: formData.get("hourlyrate"),
+      affiliation: formData.get("affiliation"),
+      speciality: formData.get("speciality"),
+      educationalBackground: formData.get("educationalBackground"),
+    });
+
+    // Store the username in local storage
+    localStorage.setItem("doctorUsername", String(formData.get("username")));
+    
+    console.log("doctor registered successfully:", response);
+    navigate("/landing");
+
+    // Handle file uploads
+    const fileInput = document.getElementById("fileInput") as HTMLInputElement;
+   // const files = fileInput?.files;
+   const selectedFiles = fileInputs.map((input) => input.file!).filter(Boolean);
+
+
+    if (selectedFiles.length > 0 && localStorage.getItem("doctorUsername")) {
+      const uploadPromises = selectedFiles.map(async (file) => {
+        const fileFormData = new FormData();
+        fileFormData.append("file", file, file.name); // Add the file name here
+        fileFormData.append("username", localStorage.getItem("doctorUsername") || "");
+
+        // Upload the file and update doctor's documents array
+        await axios.post("http://localhost:9000/routes/doctors/upload", fileFormData);
+
+        return file.name; // Return the name of the uploaded file
       });
-  
-      // Store the username in local storage
-      localStorage.setItem("doctorUsername", String(formData.get("username")));
-  
-      console.log("doctor registered successfully:", response);
-      navigate("/landing");
-  
-      // Handle file uploads
-      const fileInput = document.getElementById("fileInput") as HTMLInputElement;
-      const files = fileInput?.files;
-  
-      if (files && files.length > 0 && localStorage.getItem("doctorUsername")) {
-        const uploadPromises = Array.from(files).map(async (file) => {
-          const fileFormData = new FormData();
-          fileFormData.append("file", file);
-          fileFormData.append("username", localStorage.getItem("doctorUsername") || "");
-  
-          // Upload the file and update doctor's documents array
-          await axios.post("http://localhost:9000/routes/doctors/upload", fileFormData);
-  
-          return file.name; // Return the name of the uploaded file
-        });
-  
-        // Wait for all files to be uploaded
-        const uploadedFiles = await Promise.all(uploadPromises);
-  
-        // Update state with submitted document names
-        setSubmittedDocuments(uploadedFiles);
-      }
-  
-      console.log("after contract");
-    } catch (error: any) {
-      console.error("Request failed:", error);
-      console.log("Error details:", error.response);
-      // Handle errors, e.g., display an error message to the user.
+
+      // Wait for all files to be uploaded
+      const uploadedFiles = await Promise.all(uploadPromises);
+
+      // Update state with submitted document names
+      setSubmittedDocuments(uploadedFiles);
     }
-  };
+
+    console.log("after contract");
+  } catch (error: any) {
+    console.error("Request failed:", error);
+    console.log("Error details:", error.response);
+    // Handle errors, e.g., display an error message to the user.
+  }
+};
+
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -284,8 +290,8 @@ const addFileInput = () => {
                   margin="normal"
                 />
                  {fileInputs.map((input) => (
-  <div key={input.id}>
-    <input
+  <div key={input.file?.name || input.id}>
+  <input
       type="file"
       accept=".pdf, .jpg, .jpeg, .png, .docx"
       onChange={(e) => handleFileChange(input.id, e)}

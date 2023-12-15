@@ -148,7 +148,6 @@ router.post('/upload', upload.array('file', 5), async (req, res) => {
 
 
 
-
 //router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
 
 // // Add a route to get the list of uploaded documents
@@ -159,8 +158,10 @@ router.post('/upload', upload.array('file', 5), async (req, res) => {
 //  router.get('/doctorDocuments/:filename', serveDoctorDocument);
 
 /// Endpoint to get a doctor's documents by username
+
 router.post("/getDoctorDocuments", async (req, res) => {
   try {
+    
     const { username } = req.body;
 
     // Fetch documents based on the doctor's username
@@ -179,6 +180,7 @@ router.post("/getDoctorDocuments", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
 
 
 // Endpoint to download a document
