@@ -18,10 +18,34 @@ import { createNotificationWithCurrentDate } from "./appointmentController";
 import fs from 'fs';
 
 export const getDoctors = async (req: Request, res: Response) => {
-    const doctors = await DoctorModel.find().exec();
-    res.status(200).json(doctors);
+  try {
+      const acceptedDoctors = await DoctorModel.find({ status: 'accepted' }).exec();
+      res.status(200).json(acceptedDoctors);
+  } catch (error: unknown) { // Notice the type annotation here
+      // We check if error is an instance of Error and has a 'message' property
+      if (error instanceof Error) {
+          res.status(500).json({ message: error.message });
+      } else {
+          // If it's not an Error instance or we're not sure about the type
+          res.status(500).json({ message: 'An unknown error occurred' });
+      }
+  }
 };
 
+export const getDoctorpend = async (req: Request, res: Response) => {
+  try {
+      const acceptedDoctors = await DoctorModel.find({ status: 'pending' }).exec();
+      res.status(200).json(acceptedDoctors);
+  } catch (error: unknown) { // Notice the type annotation here
+      // We check if error is an instance of Error and has a 'message' property
+      if (error instanceof Error) {
+          res.status(500).json({ message: error.message });
+      } else {
+          // If it's not an Error instance or we're not sure about the type
+          res.status(500).json({ message: 'An unknown error occurred' });
+      }
+  }
+};
 export const getDoctor = async (req: Request, res: Response) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -190,6 +214,7 @@ export const viewMyPatients = async (req: Request, res: Response) => {
     const usernames: any[] = [];
     for (const appoinment of appointments) {
         const username = appoinment.patient;
+        console.log(username)
         const patient = await PatientModel.findOne({ username: username}).exec();
         if(!usernames.includes(username)){
             patients.push(patient);

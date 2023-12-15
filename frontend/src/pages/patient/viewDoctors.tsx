@@ -1,9 +1,11 @@
 import {
+  Box,
   Button,
   Container,
   FormControl,
   Grid,
   IconButton,
+  InputAdornment,
   InputLabel,
   MenuItem,
   Select,
@@ -17,6 +19,12 @@ import { useEffect, useState } from "react";
 import Patient from "../../components/Patient";
 import SearchIcon from "@mui/icons-material/Search";
 import DocDetails from "../../components/DocDetails";
+import PatientAppBar from "../../components/patientBar/patientBar";
+import El7a2niInfo from "../../components/El7a2ni-info";
+import Background from '../../Appointments.jpeg';
+import Back from "../../components/backButton";
+
+
 interface Doctor {
   name: string;
   email: string;
@@ -30,6 +38,7 @@ function ViewDoctors() {
   //THE LOGIC OF VIEWING A DOCTOR'S PATIENTS
   //THE LINK TO BACK
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState();
   const [doctors, setdoctors] = useState<any[]>([]);
   const [allDoctors, setAllDoctors] = useState<any[]>([]);
   const [nameSearchTerm, setNameSearchTerm] = useState("");
@@ -127,11 +136,10 @@ function ViewDoctors() {
     const newDate = event.target.value;
     setSelectedDate(newDate);
   };
-  const [selectedTime, setSelectedTime] = useState();
+  
 
   const handleTimeChange = (event: any) => {
     console.log("time", event.target.value);
-
     setSelectedTime(event.target.value);
   };
 
@@ -145,6 +153,8 @@ function ViewDoctors() {
       // Check if the timeslots array contains the combined date and time
       return doctor.timeslots.some((timeslot: any) => {
         const timeslotDateTimeString = new Date(timeslot.date).toISOString();
+        console.log(timeslotDateTimeString);
+        
         return timeslotDateTimeString === combinedDateTimeString;
       });
     });
@@ -161,131 +171,157 @@ function ViewDoctors() {
   // A PATIENT COMPONENT ITSELF SHOULD CONTAIN:
   //1- A BUTTON TO THE HEALTH RECORDS PAGE/ EMPTY PAGE
   //2- THE PATIENT ITSELF ON CLICK SHOULD NAVIGATE TO ANOTHER PAGE TO SHOW ITS INFO
+
   return (
-    <Container>
+  
+    <>
+      <PatientAppBar />
+      <div
+      
+      style={{
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom:'100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+      }}
+    >   
+        <Back/>
+     <div
+      style={{
+        position: 'absolute', // Set position to absolute
+        top: '35%', // Adjust top value to center vertically
+        left: '50%', // Adjust left value to center horizontally
+        transform: 'translate(-50%, -50%)', // Center the text
+        textAlign: 'center', // Center text horizontally
+        color: 'white', // Set text color
+      }}
+    >
+      <h1> <strong>RESERVE APPOINTMENT</strong></h1>
+      {/* <p>Additional text content</p> */}
+    </div>
+    </div>
       <Container>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            padding: "20px",
-          }}
-        >
-          <Typography variant="h3" style={{ fontWeight: "bold" }}>
-            All Doctors
-          </Typography>
-        </div>
-        <Grid container>
-          <Grid item xs={3}>
-            <Stack>
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">
-                  Filter By Speciality:
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={speciality}
-                  onChange={choosespeciality}
-                >
-                  <MenuItem value={"cardiologist"}>Cardiologist</MenuItem>
-                  <MenuItem value={"heart"}>Heart</MenuItem>
-                  <MenuItem value={"dermatologist"}>Dermatologist</MenuItem>
-                  <MenuItem value={"allergist"}>Allergist</MenuItem>
-                  <MenuItem value={"neurologist"}>Neurologist</MenuItem>
-                  <MenuItem value={"all"}>All</MenuItem>
-                </Select>
-              </FormControl>
-              {speciality &&
-                speciality.map((element) => (
-                  <Typography key={element}>{element}</Typography>
-                ))}
-              <Button onClick={FilterBySpec}> Filter</Button>
-            </Stack>
-          </Grid>
-          <Grid
-            item
-            xs={3}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <TextField
-              label="Search by Name"
-              variant="outlined"
-              value={nameSearchTerm}
-              onChange={(e) => setNameSearchTerm(e.target.value)}
-            />
-
-            <IconButton onClick={searchDoctorsbyName}>
-              <SearchIcon />
-            </IconButton>
-          </Grid>
-          <Grid
-            item
-            xs={3}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <TextField
-              label="Search by Speciality"
-              variant="outlined"
-              value={specialitySearchTerm}
-              onChange={(e) => setspecialitySearchTerm(e.target.value)}
-            />
-
-            <IconButton onClick={searchDoctorsbySpeciality}>
-              <SearchIcon />
-            </IconButton>
-          </Grid>
-          <Grid
-            item
-            xs={3}
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Stack>
-              <Typography>Pick a Date:</Typography>
-              <div>
-                <input
-                  type="date"
-                  value={selectedDate}
-                  onChange={handleDateChange}
-                />
-                <p>{selectedDate}</p>
-              </div>
-              <Typography>Pick a Time:</Typography>
-              <div>
-                <input
-                  type="time"
-                  value={selectedTime} // Make sure the value is in HH:mm format
-                  onChange={handleTimeChange}
-                />
-                <p>{selectedTime}</p>
-              </div>
-              <Button onClick={filterDateTime}>Filter</Button>
-            </Stack>
-          </Grid>
-          <Grid></Grid>
-        </Grid>
         <Container>
-          {doctors &&
-            doctors.map((doctor) => <DocDetails doctor={doctor}></DocDetails>)}
-          {/* {filteredPatients && filteredPatients.map((patient) => (
-                <Patient patient={patient}/>
-            ))} */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "20px",
+            }}
+          >
+          </div>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={4}>
+              <Stack direction="column" style={{ position: "sticky", top: 100 }}>
+                <TextField
+                  label="Search by Name"
+                  variant="outlined"
+                  value={nameSearchTerm}
+                  onChange={(e) => setNameSearchTerm(e.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={searchDoctorsbyName}>
+                          <SearchIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Box sx={{ marginTop: "10px" }} />{" "}
+                {/* Add space between filters */}
+                <TextField
+                  label="Search by Speciality"
+                  variant="outlined"
+                  value={specialitySearchTerm}
+                  onChange={(e) => setspecialitySearchTerm(e.target.value)}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton onClick={searchDoctorsbySpeciality}>
+                          <SearchIcon />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+                <Box sx={{ marginTop: "10px" }} />{" "}
+                {/* Add space between filters */}
+                <FormControl fullWidth >
+                  <Typography>Pick a Date:</Typography>
+                  <TextField
+                    type="date"
+                    value={selectedDate}
+                    onChange={handleDateChange}
+                    variant="outlined"
+                    
+                  />
+                </FormControl>
+                <Box sx={{ marginTop: "10px" }} />{" "}
+                {/* Add space between filters */}
+                <FormControl fullWidth>
+                  <Typography>Pick a Time:</Typography>
+                  <TextField
+                    type="time"
+                    value={selectedTime}
+                    onChange={handleTimeChange}
+                    variant="outlined"
+                    
+                  />
+                </FormControl>
+                <Button onClick={filterDateTime} style={{ marginTop: "10px" }}>
+                  Filter
+                </Button>
+                <Box sx={{ marginTop: "10px" }} />{" "}
+                {/* Add space between filters */}
+                <FormControl fullWidth>
+                  <InputLabel id="demo-simple-select-label">
+                    Filter By Speciality:
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={speciality}
+                    onChange={choosespeciality}
+                  >
+                    <MenuItem value={"cardiologist"}>Cardiologist</MenuItem>
+                    <MenuItem value={"heart"}>Heart</MenuItem>
+                    <MenuItem value={"dermatologist"}>Dermatologist</MenuItem>
+                    <MenuItem value={"allergist"}>Allergist</MenuItem>
+                    <MenuItem value={"neurologist"}>Neurologist</MenuItem>
+                    <MenuItem value={"all"}>All</MenuItem>
+                  </Select>
+                </FormControl>
+                {speciality &&
+                  speciality.map((element) => (
+                    <Typography key={element} sx={{ marginTop: "10px" }}>
+                      {element}
+                    </Typography>
+                  ))}
+                <Box sx={{ marginTop: "10px" }} />{" "}
+                {/* Add space between filters */}
+                <Button onClick={FilterBySpec}>Filter</Button>
+              </Stack>
+            </Grid>
+            <Grid item xs={12} md={8}>
+              <Container>
+                {doctors &&
+                  doctors.map((doctor) => (
+                    <Grid item xs={12} key={doctor.email}>
+                      <DocDetails doctor={doctor}></DocDetails>
+                    </Grid>
+                  ))}
+              </Container>
+            </Grid>
+          </Grid>
         </Container>
       </Container>
-    </Container>
+      <El7a2niInfo/>
+    </>
+
   );
 }
 

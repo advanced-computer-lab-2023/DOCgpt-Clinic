@@ -4,8 +4,10 @@ import { To, useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ForumIcon from "@mui/icons-material/Forum";
+import logo from "../../logo.jpeg";
+import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PersonIcon from "@mui/icons-material/Person";
-
 
 import {
   AppBar,
@@ -19,19 +21,23 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  ListSubheader,
   Menu,
   MenuItem,
   Toolbar,
   Typography,
+  makeStyles,
+  styled,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
 import WalletIcon from "@mui/icons-material/Wallet";
 import ViewWalletAmount from "../viewWalletAmountDoctor";
-import CustomizedBadges from './notificationIcon'
+import CustomizedBadges from "./notificationIcon";
 import { ReactNode } from "react";
 import appRoutes from "./patientRoutes";
 import ViewWalletBalance from "../viewWalletPatient";
+import theme from "../../theme";
 
 const drawerWidth = 240;
 //const navItems = ["Home", "About", "Pharmacy", "Contact", "Login"];
@@ -56,21 +62,67 @@ export type links = {
   element?: ReactNode;
 };
 
-
-
 export default function DrawerAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isWalletOpen, setIsWalletOpen] = useState(false); // State to manage the wallet sidebar
   const [isNotificationOpen, setIsNotificationOpen] = useState(false); // State for notification dropdown
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null); // Anchor element for notification dropdown
   const navigate = useNavigate();
+  const [openHeaders, setOpenHeaders] = useState<number[]>([]);
+  const [activeHeaderIndex, setActiveHeaderIndex] = useState<number | null>(
+    null
+  );
+
+  const toggleHeaderState = (index: number) => {
+    // If the clicked header is already open, close it
+    if (openHeaders.includes(index)) {
+      setOpenHeaders(openHeaders.filter((item) => item !== index));
+      setActiveHeaderIndex(null); // Reset active header index
+    } else {
+      setOpenHeaders([index]); // Close all other headers and open the clicked one
+      setActiveHeaderIndex(index); // Set the clicked header as active
+    }
+  };
+  const handleClickOutside = (event: MouseEvent) => {
+    // Check if the click is outside the header
+    if (headerRef.current && !headerRef.current.contains(event.target)) {
+      setOpenHeaders([]); // Close all headers
+      setActiveHeaderIndex(null); // Reset active header index
+    }
+  };
+
+  const CustomListSubheader = styled(ListSubheader)(({ theme }) => ({
+    backgroundColor: "transparent !important",
+    // add other styles you want to override
+  }));
+  // This ref will be attached to your ListSubheader
+  const headerRef: any = React.useRef(null);
+
+  React.useEffect(() => {
+    // Add click event listener
+    document.addEventListener("mousedown", handleClickOutside);
+
+    // Clean up
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  const isHeaderActive = (index: number) => {
+    return activeHeaderIndex === index;
+  };
+
+  const isHeaderOpen = (index: number) => {
+    return openHeaders.includes(index);
+  };
 
   const handleDrawerToggle = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
+
   const openPharmacy = () => {
     const newWindow = window.open(
-      "http://localhost:3001/patientHome",
+      "http://localhost:3001/login",
       "_blank"
     );
     if (newWindow) {
@@ -116,37 +168,68 @@ export default function DrawerAppBar() {
       console.error("An error occurred:", error);
     }
   };
+
   const renderMenuItems = (items: RouteType[]) => {
     return (
       <List>
         {items.map((item, index) => (
           <React.Fragment key={item.header + index}>
             <ListItem disablePadding>
-              <ListItemText
-                primary={item.header}
-                sx={{ textAlign: "center" }}
-              />
+              <ListSubheader
+                component="div"
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  cursor: "pointer",
+                  marginLeft: 2,
+                  backgroundColor: "transparent", // Set the background to transparent
+                  color: isHeaderActive(index) ? "#2196F3" : "inherit", // Apply blue color if the header is active
+                  "&:hover, &:hover .MuiTypography-root, &:hover .MuiSvgIcon-root":
+                    {
+                      color: "#2196F3", // Change text and icon color to blue on hover
+                    },
+                }}
+                onClick={() => toggleHeaderState(index)}
+              >
+                {isHeaderOpen(index) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+                <ListItemText
+                  primary={item.header}
+                  sx={{
+                    ".MuiTypography-root": {
+                      color: isHeaderActive(index) ? "#2196F3" : "inherit", // Change text color based on active state
+                    },
+                  }}
+                />
+              </ListSubheader>
             </ListItem>
-            <List key={`${item.header}-child-list`}>
-              {item.child.map((childItem, childIndex) => (
+            {isHeaderOpen(index) &&
+              item.child.map((childItem, childIndex) => (
                 <ListItem key={childItem.state + childIndex} disablePadding>
                   <ListItemButton
-                    sx={{ textAlign: "center" }}
+                    sx={{
+                      textAlign: "left",
+                      marginLeft: 5,
+                      padding: "6px 16px", // Smaller padding
+                      fontSize: "0.875rem", // Smaller font size
+                    }}
                     onClick={() => navigateTo(childItem.path)}
                   >
-                    <ListItemText primary={childItem.state} />
+                    <ListItemText
+                      primary={childItem.state}
+                      primaryTypographyProps={{ variant: "body2" }} // Smaller text variant
+                    />
                   </ListItemButton>
                 </ListItem>
               ))}
-            </List>
           </React.Fragment>
         ))}
       </List>
     );
   };
+
   const handleNotificationClick = (event: React.MouseEvent<HTMLElement>) => {
     // Vibrate when the notification icon is clicked
-    if ('vibrate' in navigator) {
+    if ("vibrate" in navigator) {
       navigator.vibrate(200);
     }
 
@@ -163,9 +246,20 @@ export default function DrawerAppBar() {
 
   const drawer = (
     <Box sx={{ textAlign: "center" }}>
-      <Typography variant="h6" sx={{ my: 2 }} color="black">
-        Clinic
-      </Typography>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "left",
+          maxWidth: "600px",
+          margin: "0 auto",
+        }}
+      >
+        <img
+          src={logo}
+          alt="Clinic Logo"
+          style={{ width: "200px", height: "100px", marginRight: "5px" }}
+        />
+      </div>
       <Divider />
       {renderMenuItems(appRoutes)}
     </Box>
@@ -176,7 +270,7 @@ export default function DrawerAppBar() {
   const handleCloseMenu = () => {
     setAnchorEl(null);
   };
-  
+
   const handleMywallet = () => {
     // Redirect to the My Profile page ("/doctor/home")
     navigate("/patient/walletAmount");
@@ -189,15 +283,15 @@ export default function DrawerAppBar() {
     // Redirect to the My Profile page ("/doctor/home")
     navigate("/");
   };
-<IconButton
-  color="primary"
-  aria-label="User Menu"
-  aria-controls="user-menu"
-  aria-haspopup="true"
-  onClick={handleOpenMenu}
->
-  <PersonIcon />
-</IconButton>
+  <IconButton
+    color="primary"
+    aria-label="User Menu"
+    aria-controls="user-menu"
+    aria-haspopup="true"
+    onClick={handleOpenMenu}
+  >
+    <PersonIcon />
+  </IconButton>;
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -213,14 +307,14 @@ export default function DrawerAppBar() {
           >
             <MenuIcon />
           </IconButton>
-          <HealingIcon sx={{ fontSize: 40, color: "black" }} />
+          {/* <HealingIcon sx={{ fontSize: 40, color: "black" }} /> */}
           <Typography
             variant="h6"
             component="div"
             sx={{
               flexGrow: 1,
               display: { xs: "none", sm: "block" },
-              color: "black",
+              color: "white",
             }}
           >
             CLINIC
@@ -238,8 +332,6 @@ export default function DrawerAppBar() {
             <Button key="Logout" sx={{ color: "black" }} onClick={openPharmacy}>
               Pharmacy
             </Button>
-           
-          
           </Box>
           <Box sx={{ display: "flex" }}>
             {isWalletOpen && (
@@ -255,19 +347,20 @@ export default function DrawerAppBar() {
                   "& .MuiDrawer-paper": {
                     boxSizing: "border-box",
                     width: drawerWidth,
+                    // backgroundColor: "#FFFFFFE6"
                   },
                 }}
               >
                 {/* Render the ViewWalletBalance component in the wallet sidebar */}
               </Drawer>
             )}
-  <IconButton style={{ color: "primary" }} onClick={handleChatClick}>
+            <IconButton color="primary" onClick={handleChatClick}>
               <ForumIcon />
             </IconButton>
           </Box>
-         {/* Notification Badge */}
-         <CustomizedBadges  />
-         <IconButton
+          {/* Notification Badge */}
+          <CustomizedBadges />
+          <IconButton
             color="primary"
             aria-label="User Menu"
             aria-controls="user-menu"
@@ -291,6 +384,7 @@ export default function DrawerAppBar() {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
+              backgroundColor: "#FFFFFFE6",
             },
           }}
         >
@@ -301,17 +395,14 @@ export default function DrawerAppBar() {
         <Toolbar />
       </Box>
       <Menu
-  anchorEl={anchorEl}
-  open={Boolean(anchorEl)}
-  onClose={handleCloseMenu}
->
- 
-  <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>
-  <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
-  <MenuItem onClick={handleLogout}>Logout</MenuItem>
-</Menu>
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleCloseMenu}
+      >
+        <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>
+        <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
+        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+      </Menu>
     </Box>
   );
 }
-
-

@@ -78,6 +78,10 @@ import RequestFollowUp from "./pages/patient/RequestFollowUp";
 import PatientReschedule from "./pages/patient/PatientReschedule";
 import ViewFamMemAppointments from "./pages/patient/ViewFamMemAppointments";
 import ViewWalletAmountPatient from "./components/viewWalletPatient";
+
+import FamMemResch from "./pages/patient/FamMemResch";
+import RequestFamMemFollow from "./pages/patient/RequestFamMemFollow";
+
 import prescriptionPDF from "./components/prescriptionPDF";
 function App() {
   useEffect(() => {
@@ -112,7 +116,7 @@ function App() {
         <Route path="/doctor/home" element={<DoctorHomePage />} />
         <Route path="/admin/home" element={<AdminHomePage />} />
         <Route path="/doctor/time" element={<DoctorAvailability />} />
-        <Route path="/patient/addMember" element={<AddFamilyMember />} />
+        {/* <Route path="/patient/addMember" element={<AddFamilyMember />} /> */}
         <Route
           path="/patient/ViewFamilyMembers"
           element={<ViewFamilyMembers />}
@@ -191,6 +195,9 @@ function App() {
         />
         <Route path="/patient/followUp" Component={RequestFollowUp} />
         <Route path="/patient/reschedule" Component={PatientReschedule} />
+        <Route path="/patient/fam/reschedule" Component={FamMemResch} />
+        <Route path="/patient/fam/followUp" Component={RequestFamMemFollow} />
+
         <Route
           path="/patient/famMemAppointments"
           Component={ViewFamMemAppointments}

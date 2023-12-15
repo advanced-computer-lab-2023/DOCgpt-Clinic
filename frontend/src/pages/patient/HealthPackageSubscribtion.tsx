@@ -5,6 +5,8 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import PatientBar from "../../components/patientBar/patientBar";
 import { Card, CardContent, Grid, Snackbar } from "@mui/material";
+import Background from '../../HealthPack.jpeg';
+import Back from "../../components/backButton";
 
 const PayMedicines: React.FC = () => {
   const navigate = useNavigate();
@@ -71,6 +73,7 @@ const PayMedicines: React.FC = () => {
     </Grid>
   );
   return (
+ 
     <React.Fragment>
       <PatientBar />
       <Typography variant="h4" gutterBottom>
@@ -91,6 +94,7 @@ const PayMedicines: React.FC = () => {
         <></>
       )}
     </React.Fragment>
+
   );
 };
 export default PayMedicines;

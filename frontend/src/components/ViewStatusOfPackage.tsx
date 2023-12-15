@@ -1,62 +1,80 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import {
+  Container,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography,
+} from '@mui/material';
+import Background from '../../HealthPack.jpeg';
+import Back from "./backButton";
 
 interface HealthPackageStatus {
   name: string;
-  status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date' | 'Not subscribed';
-  familyMemberName?: string; // Added familyMemberName property
+  status: string;
+  patientName?: string;
+  familyMemberName?: string;
 }
 
-const columns: GridColDef[] = [
-  { field: 'name', headerName: 'Health Package Name', flex: 1 },
-  { field: 'status', headerName: 'Status', flex: 1 },
-  { field: 'familyMemberName', headerName: 'Family Member Name', flex: 1 }, // New column for family member name
-];
-
 const ViewStatusOfPackage = () => {
-    const [healthPackageStatus, setHealthPackageStatus] = useState<HealthPackageStatus[]>([]);
+  const [healthPackages, setHealthPackages] = useState<HealthPackageStatus[]>([]);
 
-    useEffect(() => {
-      const fetchData = async () => {
-        try {
-          const token = localStorage.getItem('authToken');
-          const response = await axios.get('/routes/viewHealthPackageStatus', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-  
-          // Ensure each row has a unique identifier
-          const uniqueRows = response.data.healthPackages.map((row: HealthPackageStatus, index: number) => ({
-            ...row,
-            id: index.toString(), // You can customize this based on your requirements
-          }));
-  
-          setHealthPackageStatus(uniqueRows);
-        } catch (error) {
-          console.error('Error fetching health package status:', error);
-        }
-      };
-  
-      fetchData();
-    }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        const response = await axios.get('/routes/viewHealthPackageStatus', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setHealthPackages(response.data.healthPackages);
+      } catch (error) {
+        console.error('Error fetching health package status:', error);
+      }
+    };
+    fetchData();
+  }, []);
+  const headerCellStyle = {
+    backgroundColor: 'rgba(173, 216, 230, 0.4)', // Very light blue
+  };
+  // Filter out packages for the patient and family members
+  const patientPackages = healthPackages.filter((pkg) => !pkg.familyMemberName);
+  const familyMemberPackages = healthPackages.filter((pkg) => pkg.familyMemberName);
 
   return (
-    <div style={{ height: 400, width: '100%' }}>
-      {/* <h2>Health Package Status</h2> */}
-      <DataGrid
-       rows={healthPackageStatus}
-       columns={columns}
-       disableRowSelectionOnClick
-       disableColumnSelector
-       disableColumnMenu
-       autoPageSize
-       
-        
-      />
-    </div>
+    
+    <Container maxWidth="lg">
+      <Typography variant="h4" gutterBottom>
+        Patient Package Status
+      </Typography>
+      <TableContainer component={Paper} sx={{ marginBottom: '24px' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={headerCellStyle}>Health Package Name</TableCell>
+              <TableCell style={headerCellStyle}>Status</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {patientPackages.map((pkg, index) => (
+              <TableRow key={index}>
+                <TableCell>{pkg.name}</TableCell>
+                <TableCell>{pkg.status}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      
+    </Container>
   );
 };
 
-export default ViewStatusOfPackage 
+export default ViewStatusOfPackage;

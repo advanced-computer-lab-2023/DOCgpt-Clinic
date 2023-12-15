@@ -19,34 +19,19 @@ export type links = {
 };
 
 const appRoutes: RouteType[] = [
-  {    header: (
-    <Typography variant="h6" fontWeight="bold">
-     Settings
-    </Typography>
-  ),
-  child: [
-    {
-      path: "/changepasswordadmin",
-      state: "Change Password",
-    },
-    
-  ],
-},
+ 
   {
     header: (
       <Typography variant="h6" fontWeight="bold">
-        Admins
+       Admins
       </Typography>
     ),
     child: [
       {
         path: "/AdminPage",
-        state: "add another admin",
+        state: " All Admins",
       },
-      {
-        path: "/AdminPage",
-        state: "Remove admin",
-      },
+   
    
     ],
   },
@@ -59,15 +44,15 @@ const appRoutes: RouteType[] = [
     child: [
       {
         path: "/requests",
-        state: "View Doctor Requests",
+        state: "Doctor Requests",
       },
       {
-        path: "/Doctor/Remove",
-        state: "Remove Doctor",
+        path: "/alldoc",
+        state: "All Doctors",
       },
       {
         path: "/admin/info",
-        state: "ViewDoctorInfo",
+        state: "Doctors Info",
       },
     ],
   },
@@ -79,8 +64,8 @@ const appRoutes: RouteType[] = [
     ),
     child: [
       {
-        path: "/patient/Remove",
-        state: "Remove Patient",
+        path: "/allpat",
+        state: " All Patients",
       },
    
     ],
@@ -101,16 +86,7 @@ const appRoutes: RouteType[] = [
         path: "/patient/PackagesPage",
         state: "Add Packages",
       },
-      {
-        path:"/hp",
-        state:"Update Packages",
-
-      },
-      {
-        path:"/hp",
-        state:"Delete Packages",
-
-      },
+      
     ],
       
    
@@ -119,23 +95,6 @@ const appRoutes: RouteType[] = [
 
 
 
-  // {
-  //   header: (
-  //     <Typography variant="h6" fontWeight="bold">
-  //       Family Members
-  //     </Typography>
-  //   ),
-  //   child: [
-  //     {
-  //       path: "/patient/viewFamilyMembers",
-  //       state: "Family members",
-  //     },
-  //     {
-  //       path: "/patient/home",
-  //       state: "make app",
-  //     },
-  //   ],
-  // },
 ];
 
 export default appRoutes;

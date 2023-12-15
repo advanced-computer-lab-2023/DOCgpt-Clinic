@@ -2,6 +2,10 @@ import { Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeE
 import React, { CSSProperties, useState } from 'react';
 import theme from '../theme';
 import DrawerAppBar from './patientBar/patientBar';
+import El7a2niInfo from "./El7a2ni-info";
+import Background from '../FamilyMembers.jpg';
+import Back from "./backButton";
+
 
 interface LinkFamilyMemberProps {
   // Add any additional props as needed
@@ -53,11 +57,38 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
     }
   };
 
-  return (
+  return (  
     <>
+    
       <DrawerAppBar />
+      <div
+      
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '50vh',
+      marginBottom:'100px',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >   
+      <Back/>
+   <div
+    style={{
+      position: 'absolute', // Set position to absolute
+      top: '35%', // Adjust top value to center vertically
+      left: '50%', // Adjust left value to center horizontally
+      transform: 'translate(-50%, -50%)', // Center the text
+      textAlign: 'center', // Center text horizontally
+      color: 'white', // Set text color
+    }}
+  >
+    <h1> <strong>Link A Family Member</strong></h1>
+    {/* <p>Additional text content</p> */}
+  </div>
+</div>
       <Paper elevation={3} style={{ padding: '20px', width: '600px', height: '500px', margin: 'auto' }}>
-        <Typography variant="h5">Link Family Member</Typography>
+        <Typography variant="h5" color="primary">Family Member:</Typography>
         <div style={styles.space}></div>
         <form>
           <FormControl fullWidth margin="normal">
@@ -107,7 +138,11 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
       </Paper>
+      <El7a2niInfo/>
+
     </>
+
+
   );
 };
 

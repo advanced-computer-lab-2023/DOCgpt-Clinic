@@ -102,8 +102,11 @@ const deleteDoctorByUsername = (req, res) => __awaiter(void 0, void 0, void 0, f
 exports.deleteDoctorByUsername = deleteDoctorByUsername;
 //delete Patient
 const deletePatientByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log("ana ");
     try {
         const { username } = req.body;
+        console.log("ana fe climn");
+        console.log("ana hena");
         // Find and delete the Doctor by username
         const deletedPatient = yield patientModel_1.default.findOneAndDelete({ username });
         if (!deletedPatient) {
@@ -203,8 +206,7 @@ exports.addPackage = addPackage;
 //delete package
 const deletePackageByName = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { name } = req.body;
-        // Find and delete the admin by username
+        const { name } = req.params; // Use req.params instead of req.body
         const deletedPackage = yield packageModel_1.default.findOneAndDelete({ name });
         if (!deletedPackage) {
             return res.status(404).json({ message: 'Package not found' });

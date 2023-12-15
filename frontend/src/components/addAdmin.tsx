@@ -11,6 +11,7 @@ import {
   Snackbar,
   Box,
 } from "@mui/material";
+import PersonAddTwoToneIcon from '@mui/icons-material/PersonAddTwoTone'; // Import the add person icon
 
 const CreateAdminButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -34,27 +35,30 @@ const CreateAdminButton: React.FC = () => {
   };
 
   const handleCreateAdmin = async () => {
-    try {
+   
       const token = localStorage.getItem("authToken");
-      const response = await axios.post(
-        "/routes/admins/addAdmin",
-        {
-          username,
-          password,
-          email,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      console.log(`Token: ${token}`); // Debug log
+    
+      if (!token) {
+        setSnackbarMessage("Authentication token not found.");
+        setSnackbarOpen(true);
+        return;
+      }
+    
+      try {
+        const response = await axios.post(
+          "/routes/admins/addAdmin",
+          { username, password, email },
+          { headers: { Authorization: `Bearer ${token}` } } // Ensure this is the format your server expects
+        );
       setSnackbarMessage(`Admin '${username}' created successfully`);
       setSnackbarOpen(true);
       handleClose();
     } catch (error) {
-      setSnackbarMessage("Error creating admin");
+      console.error('Error creating admin:', error);
+      setSnackbarMessage("Error creating admin. Check the console for more details.");
       setSnackbarOpen(true);
+  
     }
   };
 
@@ -65,9 +69,15 @@ const CreateAdminButton: React.FC = () => {
       alignItems="center"
       height="10vh"
     >
-      <Button variant="contained" color="primary" onClick={handleOpen}>
-        Add Admin
-      </Button>
+      <Button
+          variant="contained"
+          color="primary"
+          startIcon={<PersonAddTwoToneIcon />}
+          onClick={handleOpen} // This adds the icon to the button
+      // You should define this function to handle the click event
+        >
+          Add Admin
+        </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create Admin</DialogTitle>
         <DialogContent>

@@ -4,6 +4,9 @@ import { useEffect, useState } from "react";
 
 import PatientAppBar from "../../components/patientBar/patientBar";
 import HealthPackageComp from "../../components/healthPackageComp";
+import El7a2niInfo from "../../components/El7a2ni-info";
+import Background from '../../HealthPack.jpeg';
+import Back from "../../components/backButton";
 
 interface HealthPackage {
   name: string;
@@ -59,35 +62,56 @@ function HealthPackages() {
   }, []);
 
   return (
-    <>
-      <PatientAppBar />
-      <Container style={{ marginTop: "20px" }}>
-        <Typography
-          variant="h4"
-          gutterBottom
-          color="primary"
-          style={{ textAlign: "center" }}
-        >
-          Available Health Packages
-        </Typography>
-        <Box
-          display="flex"
-          flexDirection="row"
-          flexWrap="wrap"
-          justifyContent="center"
-        >
-          {healthPackages &&
-            healthPackages.map((healthPackage, index) => (
-              <Box key={index} m={2} minWidth={300}>
-                <HealthPackageComp
-                  healthPackage={healthPackage}
-                  healthPackages={subscribed}
-                />
-              </Box>
-            ))}
-        </Box>
-      </Container>
-    </>
+
+      <>
+        <PatientAppBar />
+        <div
+      
+    style={{
+      backgroundImage: `url(${Background})`,
+      backgroundSize: 'cover',
+      minHeight: '50vh',
+      marginBottom:'100px',
+      backgroundPosition: 'center',
+      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+    }}
+  >   
+      <Back/>
+   <div
+    style={{
+      position: 'absolute', // Set position to absolute
+      top: '35%', // Adjust top value to center vertically
+      left: '50%', // Adjust left value to center horizontally
+      transform: 'translate(-50%, -50%)', // Center the text
+      textAlign: 'center', // Center text horizontally
+      color: 'white', // Set text color
+    }}
+  >
+    <h1> <strong>HEALTH PACKAGES</strong></h1>
+    {/* <p>Additional text content</p> */}
+  </div>
+  </div>
+        <Container style={{ marginTop: "120px" }}>
+          <Box
+            display="flex"
+            flexDirection="row"
+            flexWrap="wrap"
+            justifyContent="center"
+          >
+            {healthPackages &&
+              healthPackages.map((healthPackage, index) => (
+                <Box key={index} m={2} minWidth={300}>
+                  <HealthPackageComp
+                    healthPackage={healthPackage}
+                    healthPackages={subscribed}
+                  />
+                </Box>
+              ))}
+          </Box>
+        </Container>
+        <El7a2niInfo />
+      </>
+
   );
 }
 

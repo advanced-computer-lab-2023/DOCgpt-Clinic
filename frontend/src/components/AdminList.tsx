@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import El7a2niInfo from './El7a2ni-info';
 
 interface Admin {
   _id: string;
@@ -29,6 +30,7 @@ const AdminList: React.FC = () => {
   }, []);
 
   return (
+    
     <div>
       <h2>Admin List</h2>
       <button onClick={handleViewAdmins}>View Admins</button>
@@ -42,6 +44,7 @@ const AdminList: React.FC = () => {
         </ul>
       )}
     </div>
+   
   );
 };
 

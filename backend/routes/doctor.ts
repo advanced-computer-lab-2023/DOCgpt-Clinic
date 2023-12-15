@@ -3,7 +3,7 @@ import { addTimeSlots, createDoctors, getAppointmentByDate, getAppointmentByStat
   searchPatient, selectPatient, updateDoctorAffiliation, 
   updateDoctorEmail, updateDoctorHourlyRate, viewHealthRecord,
    viewHealthRecords, viewMyPatients, viewPatientsUpcoming,createfollowUp, 
-   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,addprescription,acceptFollowUpRequest,rejectFollowUpRequest,addOrUpdateDosage,updateUnfilledPrescription, viewRequests, getDoctorByUsername, viewMyPatientsUsername, viewDocSpeciality, removeDoc, checkcontact, markContractAsSeen} from "../controllers/doctorController";
+   uploadAndSubmitReqDocs, viewMyAppointments, viewPastAppointments, viewUpcomingAppointments,logout,changePassword, addHealthRecord, getPendingDoctor, acceptDoctorRequest, rejecttDoctorRequest, removeTimeSlots, calculateSessionPrice, ViewMyTimeSlots, commentsHealthRecord, verifyTokenDoctor, viewWalletAmount, serveDoctorDocument, getDoctorDocuments, rescheduleAppointments, getTodayAppointments,addprescription,acceptFollowUpRequest,rejectFollowUpRequest,addOrUpdateDosage,updateUnfilledPrescription, viewRequests, getDoctorByUsername, viewMyPatientsUsername, viewDocSpeciality, removeDoc, checkcontact, markContractAsSeen, getDoctorpend} from "../controllers/doctorController";
  
 import multer from "multer";
 import path from 'path';
@@ -33,6 +33,7 @@ router.get("/todayapp",getTodayAppointments);
 router.get("/HealthRecords", viewHealthRecords);
 router.get("/HealthRecord", viewHealthRecord);
 router.patch("/HealthRecord/comments", commentsHealthRecord);
+router.get("/hhi", getDoctorpend);
 
 
 router.post("/postDoctor", createDoctors);
