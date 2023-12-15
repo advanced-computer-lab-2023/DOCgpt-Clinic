@@ -11,11 +11,12 @@ interface HealthPackage {
 }
 
 interface UpdatePackageFormProps {
-  selectedPackage: HealthPackage; // Make sure this prop is passed from the parent component
-  onUpdate: () => void; // Callback to refresh the list after update
+  selectedPackage: HealthPackage;
+  onUpdate: () => void; // Function to refresh the package list
+  onClose: () => void; // Function to close the dialog
 }
 
-const UpdatePackageForm = ({ selectedPackage, onUpdate }: UpdatePackageFormProps) => {
+const UpdatePackageForm: React.FC<UpdatePackageFormProps> = ({ selectedPackage, onUpdate, onClose }) => {
   const [formData, setFormData] = useState({
     name: selectedPackage.name,
     feesPerYear: selectedPackage.feesPerYear.toString(),
@@ -51,7 +52,8 @@ const UpdatePackageForm = ({ selectedPackage, onUpdate }: UpdatePackageFormProps
       const response = await axios.patch('/routes/admins/updatePackage', formData);
       console.log('Response from updatePackage:', response.data);
       setOpenSnackbar(true);
-      onUpdate(); // Call the onUpdate callback to refresh the list
+      onUpdate();  // Refresh the package list
+      onClose();  // Call the onUpdate callback to refresh the list
     } catch (error) {
       console.error('Error updating package:', error);
     }

@@ -47,8 +47,8 @@ const appRoutes: RouteType[] = [
         state: "Doctor Requests",
       },
       {
-        path: "/Doctor/Remove",
-        state: "Remove Doctor",
+        path: "/alldoc",
+        state: "All Doctors",
       },
       {
         path: "/admin/info",
@@ -64,8 +64,8 @@ const appRoutes: RouteType[] = [
     ),
     child: [
       {
-        path: "/patient/Remove",
-        state: "Remove Patient",
+        path: "/allpat",
+        state: " All Patients",
       },
    
     ],

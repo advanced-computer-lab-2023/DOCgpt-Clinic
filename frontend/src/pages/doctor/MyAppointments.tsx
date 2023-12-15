@@ -16,8 +16,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DoctorAppointment from "../../components/DoctorAppointment";
+import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
-import DrawerAppBar from "../../components/Doctor bar/doctorBar";
+import Background from "../../Background.jpeg";
+
 
 function MyAppointments() {
 //THE LOGIC OF VIEWING A DOCTOR'S APPOINTMENTS

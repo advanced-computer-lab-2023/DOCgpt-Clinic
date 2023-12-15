@@ -103,9 +103,11 @@ export const createAdmin = async (req: Request, res: Response) => {
       //delete Patient
     
       export const deletePatientByUsername = async (req: Request, res: Response) => {
+        console.log("ana ");
+
         try {
           const { username } = req.body;
-      console.log("ana hena")
+      console.log("ana fe climn");console.log("ana hena")
           // Find and delete the Doctor by username
           const deletedPatient = await patientModel.findOneAndDelete({ username });
       
@@ -223,12 +225,10 @@ export const addPackage = async (req: Request, res: Response) => {
 
 
 //delete package
-
 export const deletePackageByName = async (req: Request, res: Response) => {
   try {
-    const { name } = req.body;
+    const { name } = req.params; // Use req.params instead of req.body
 
-    // Find and delete the admin by username
     const deletedPackage = await packageModel.findOneAndDelete({ name });
 
     if (!deletedPackage) {

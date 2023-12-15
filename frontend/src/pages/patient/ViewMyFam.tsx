@@ -102,6 +102,7 @@ const ViewMyFam = () => {
                     maxWidth: 300,
                     height: 500,
                     textAlign: 'center',
+                    height :'500px',
                   }}
                 
                >

@@ -2,6 +2,9 @@ import { Alert, Button, Card, Container, Dialog, DialogActions, DialogContent, D
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DrawerAppBar from '../components/Doctor bar/doctorBar';
+import El7a2niInfo from '../components/El7a2ni-info';
+
 import RestoreRoundedIcon from '@mui/icons-material/RestoreRounded';
 import NotificationsActiveRoundedIcon from '@mui/icons-material/NotificationsActiveRounded';
 import BlockRoundedIcon from '@mui/icons-material/BlockRounded';
@@ -184,7 +187,8 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
         </Alert>
       </Snackbar>
         </Card>
-    );
+      );
+      
 
 }
 

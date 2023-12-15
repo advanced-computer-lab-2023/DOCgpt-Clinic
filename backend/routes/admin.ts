@@ -35,6 +35,10 @@ router.post('/addPackage',addPackage)
 
 //delete package
 router.delete('/deletePa',deletePackageByName)
+
+// Example of setting up the route with express
+router.delete('/deleteHealthPackage/:name', deletePackageByName);
+
  //update package 
  router.patch('/updatePackage',updatePackage)
 

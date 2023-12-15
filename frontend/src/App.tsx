@@ -115,7 +115,7 @@ function App() {
         <Route path="/doctor/home" element={<DoctorHomePage />} />
         <Route path="/admin/home" element={<AdminHomePage />} />
         <Route path="/doctor/time" element={<DoctorAvailability />} />
-        <Route path="/patient/addMember" element={<AddFamilyMember />} />
+        {/* <Route path="/patient/addMember" element={<AddFamilyMember />} /> */}
         <Route
           path="/patient/ViewFamilyMembers"
           element={<ViewFamilyMembers />}
