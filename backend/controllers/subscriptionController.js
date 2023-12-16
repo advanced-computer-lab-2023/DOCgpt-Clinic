@@ -51,10 +51,13 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
             if (!sessionUrl) {
                 return res.status(500).json({ error: 'Failed to create payment session' });
             }
+            const newDate = new Date();
+            const endDate = new Date(newDate);
+            endDate.setFullYear(newDate.getFullYear() + 1);
             patient.healthPackageSubscription.push({
                 name: packageName,
-                startdate: '',
-                enddate: '',
+                startdate: newDate.toISOString(),
+                enddate: endDate.toISOString(),
                 status: "subscribed with renewal date",
                 payedBy: username,
             });
@@ -67,11 +70,13 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
                 return res.status(400).json({ error: 'Insufficient funds in the wallet' });
             }
             else {
+                const newDate = new Date();
+                const endDate = new Date(newDate);
                 patient.walletBalance -= subscriptionCost;
                 patient.healthPackageSubscription.push({
                     name: packageName,
-                    startdate: '',
-                    enddate: '',
+                    startdate: newDate.toISOString(),
+                    enddate: endDate.toISOString(),
                     status: "subscribed with renewal date",
                     payedBy: username,
                 });
@@ -113,10 +118,12 @@ const subscribeFamAsPatient = (username, packageName) => __awaiter(void 0, void 
             patient.healthPackageSubscription = [];
         }
         // Add the health package to the subscription array
+        const newDate = new Date();
+        const endDate = new Date(newDate);
         patient.healthPackageSubscription.push({
             name: packageName,
-            startdate: '',
-            enddate: '',
+            startdate: newDate.toISOString(),
+            enddate: endDate.toISOString(),
             status: 'subscribed with renewal date',
             payedBy: username,
         });
@@ -169,10 +176,12 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
                 if (!sessionUrl) {
                     return res.status(500).json({ error: 'Failed to create payment session' });
                 }
+                const newDate = new Date();
+                const endDate = new Date(newDate);
                 familyMember.healthPackageSubscription.push({
                     name: packageName,
-                    startdate: '',
-                    enddate: '',
+                    startdate: newDate.toISOString(),
+                    enddate: endDate.toISOString(),
                     status: "subscribed with renewal date",
                     payedBy: username,
                 });
@@ -191,10 +200,12 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
                 else {
                     // Deduct the cost from the wallet balance
                     patient.walletBalance -= subscriptionCost;
+                    const newDate = new Date();
+                    const endDate = new Date(newDate);
                     familyMember.healthPackageSubscription.push({
                         name: packageName,
-                        startdate: '',
-                        enddate: '',
+                        startdate: newDate.toISOString(),
+                        enddate: endDate.toISOString(),
                         status: "subscribed with renewal date",
                         payedBy: username,
                     });

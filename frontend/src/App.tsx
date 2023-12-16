@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Landing from "./pages/Landing";
-import LandingPage from "./pages/landingPage";
 import PatientRegistrationForm from "./pages/patient/signup";
 import DoctorRegistrationForm from "./pages/doctor/doctorSignUp";
 import PatientHome from "./pages/patient/patientHome";
@@ -133,6 +132,9 @@ function App() {
           path="/patient/walletAmount"
           element={<ViewWalletAmountPatient />}
         />
+        <Route path="/allpat" element={< PatientList1/>} />
+        <Route path="/alldoc" element={<DocList1/>} />
+
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
         // <Route path="/doctor/patients" Component={MyPatients} />

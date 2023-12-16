@@ -7,6 +7,9 @@ import logo from "../../logo.jpeg";
 
 import TodayAppointmentsPatient from "./todaysappP";
 import El7a2niInfo from "../../components/El7a2ni-info";
+import { ServerResponse } from "http";
+import ServicesSection from "./servicessection";
+import AskDoctorBanner from "./askDoctorBanner";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -17,7 +20,8 @@ function HomePage() {
       <DrawerAppBar />
       <Carousel />
       <TodayAppointmentsPatient />
-
+      <ServicesSection />
+      <AskDoctorBanner />
       <El7a2niInfo />
     </>
   );

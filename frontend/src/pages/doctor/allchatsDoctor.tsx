@@ -196,7 +196,7 @@ const AllChatsDoctor: React.FC = () => {
               >
                 <ListItemAvatar>
                   <Avatar style={styles.avatar}>
-                    {conversation.firstusername[0].toUpperCase()}
+                    {getOtherUsername(conversation)[0].toUpperCase()}
                   </Avatar>
                 </ListItemAvatar>
                 <ListItemText
@@ -209,28 +209,6 @@ const AllChatsDoctor: React.FC = () => {
         </List>
 
         {/* Snackbar */}
-        <Snackbar
-          open={isSnackbarOpen}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            severity="info"
-            action={
-              <Button
-                color="inherit"
-                size="small"
-                onClick={handleSnackbarConfirm}
-              >
-                Confirm
-              </Button>
-            }
-          >
-            Do you want to initiate a chat with a patient?
-          </MuiAlert>
-        </Snackbar>
 
         {/* Dialog */}
         <Dialog open={isDialogOpen} onClose={handleDialogClose}>

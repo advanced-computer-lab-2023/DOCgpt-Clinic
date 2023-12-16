@@ -7,6 +7,8 @@ import Carousel from "react-material-ui-carousel";
 import MyCarousel from "../../components/Carousel";
 import TodayAppointmentsComponent from "./todaysappDOC";
 import El7a2niInfo from "../../components/El7a2ni-info";
+import HealthcareServices from "./DoctorHealthCarServices";
+import AskPatientBanner from "./askPatientBanner";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -15,9 +17,10 @@ function HomePage() {
   return (
     <>
       <DoctorBar />
-
       <MyCarousel />
       <TodayAppointmentsComponent />
+      <HealthcareServices />
+      <AskPatientBanner />
       <El7a2niInfo />
     </>
   );
