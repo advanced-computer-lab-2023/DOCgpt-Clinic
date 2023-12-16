@@ -236,7 +236,7 @@ const handleReject = async (doctorUsername: string) => {
                   </TableCell>
                   <TableCell align="center" color="#2196f3">
   <Link
-    to="/view-doctor-documents"
+    to="/view-doctor-documents/:username"
     
     className="link-hover-effect"
 

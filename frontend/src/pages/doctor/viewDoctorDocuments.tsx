@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminBar from "../../components/admin Bar/adminBar";
 import { Container, Typography, List, ListItem, Button, CircularProgress, Paper } from "@mui/material";
+import El7a2niInfo from '../../components/El7a2ni-info'; // Add the import for El7a2niInfo
 
 interface Document {
   _id: string;
@@ -96,7 +97,10 @@ const ViewDoctorDocuments: React.FC = () => {
             </>
           )}
         </Paper>
+       
       </Container>
+      <div style={{ flexShrink: 0, marginTop: 20 }}></div>
+<El7a2niInfo />
     </>
   );
 };
