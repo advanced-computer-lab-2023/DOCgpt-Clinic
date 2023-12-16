@@ -23,7 +23,7 @@ interface FamilyMemberPackage {
     name: string;
     startdate?: string ;
     enddate?: string ;
-    status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date';
+    status: 'subscribed' | 'unsubscribed' | 'cancelled with end date';
   };
 }
 
