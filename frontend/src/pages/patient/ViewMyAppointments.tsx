@@ -18,7 +18,8 @@ import { useNavigate } from "react-router-dom";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
 import Box from "@mui/system/Box/Box";
-import Background from '../../Background.jpeg';
+import Background from '../../Appointments.jpeg';
+import Back from "../../components/backButton";
 
 function ViewMyAppointments() {
   const [appointments, setAppointments] = useState<any[]>([]);
@@ -138,17 +139,49 @@ function ViewMyAppointments() {
   }, [past]);
 
   return (
-    <div
-    style={{
-      backgroundImage: `url(${Background})`,
-      backgroundSize: 'cover',
-      minHeight: '100vh',
-      backgroundPosition: 'center',
-      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
-    }}
-  >  
+
     <>
       <PatientAppBar />
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>MY APPOINTMENTS</strong>
+        </h1>
+      </div>
+    </div>
+
       <Container>
         <div
           style={{
@@ -158,10 +191,8 @@ function ViewMyAppointments() {
             padding: "20px",
           }}
         >
-          <Typography variant="h1" style={{ fontWeight: "bold" }}>
-            Your Appointments So Far..
-          </Typography>
         </div>
+
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
             <Stack direction="column" style={{ position: "sticky", top: 100 }}>
@@ -221,6 +252,7 @@ function ViewMyAppointments() {
               <Box sx={{ marginTop: "10px" }} />{" "}
             </Stack>
           </Grid>
+          
           <Grid item xs={12} md={8}>
             <Container>
               {appointments &&
@@ -244,7 +276,7 @@ function ViewMyAppointments() {
       </Container>
       <El7a2niInfo />
     </>
-    </div>
+
   );
 }
 

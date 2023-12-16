@@ -137,9 +137,9 @@ export const createDoctors = async (req: Request, res: Response) => {
       }
       const salt =await bcrypt.genSalt(10)
     const hash=await bcrypt.hash(password,salt)
-    if (!validatePassword(password)) {
-      return res.status(400).json({ message: 'Invalid password' });
-    }
+    // if (!validatePassword(password)) {
+    //   return res.status(400).json({ message: 'Invalid password'});
+    // }
     const doctor = await DoctorModel.create({
         username: username,
         name: name,

@@ -26,6 +26,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminBar from "./admin Bar/adminBar";
 import El7a2niInfo from "./El7a2ni-info";
+import Background from '../patient.jpeg';
+import Back from "./backButton";
+
 interface Patient {
   _id: string;
   username: string;
@@ -160,11 +163,47 @@ const PatientList1: React.FC = () => {
   return (
     <>
       <AdminBar />
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>PATIENT LIST</strong>
+        </h1>
+      </div>
+    </div>
       <Container maxWidth="sm">
         <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
-          <Typography variant="h4" style={{ padding: '16px' }} gutterBottom>
-            Patients List
-          </Typography>
           {/* Search bar on the right */}
           <TextField
             size="small"
@@ -188,25 +227,41 @@ const PatientList1: React.FC = () => {
           />
         </Box>
       <Grid container spacing={2}>
-        {filteredPatients.map((patient) => (
+      {filteredPatients.map((patient) => {
+            // Format the date of birth
+            const formattedDateOfBirth = patient.dateofbirth ?
+              new Date(patient.dateofbirth).toLocaleDateString('en-CA') : 'Unknown';
+  
+            return (
               <Grid item xs={42} sm={16} md={13} key={patient._id}>
-              <Paper elevation={14} style={{ marginBottom: 18, width: '100%' }}>
-              <ListItem alignItems="flex-start">
-                <ListItemIcon>
-                  <Avatar><PersonIcon /></Avatar>
-                </ListItemIcon>
-
-                <ListItemText
-                  primary={patient.name}
-                  secondary={`Email: ${patient.email}`}
-                />
+                <Paper elevation={14} style={{ marginBottom: 18, width: '100%' }}>
+                  <ListItem alignItems="flex-start">
+                    <ListItemIcon>
+                      <Avatar><PersonIcon /></Avatar>
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={patient.username}
+                      secondary={
+                        <>
+                          Email: {patient.email}
+                          <br />
+                          Date of Birth: {formattedDateOfBirth}
+                          <br />
+                          Mobile Number: {patient.mobilenumber}
+                          <br />
+                          Emergency Contact: {patient.emergencyContact ?` ${patient.emergencyContact.fullName} ( ${patient.emergencyContact.relation})` : 'Not available'}
+                          <br />
+                          Emergency Contact Number: {patient.emergencyContact ? patient.emergencyContact.mobileNumber : 'Not available'}
+                        </>
+                      }
+                    />
                 <Button
                   onClick={() => handleRemovePatient(patient)}
                  variant="contained"
                     size="small"
                     style={{
                       marginLeft: "auto",
-                      bottom:-12,
+                      bottom:-50,
                       marginRight: 2,
                       backgroundColor: "#primary",
                       color: "#primary" 
@@ -217,7 +272,8 @@ const PatientList1: React.FC = () => {
               </ListItem>
             </Paper>
           </Grid>
-        ))}
+       );
+    })}
       </Grid>
 
       {/* Confirmation Dialog */}

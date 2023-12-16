@@ -21,6 +21,9 @@ import MaleIcon from '@mui/icons-material/Male';
 import left from '../../left1.jpeg'
 import right from '../../right.jpeg'
 import El7a2niInfo from '../../components/El7a2ni-info';
+import AddFamilyMember from './addFam'
+import Background from '../../FamilyMembers.jpg';
+import Back from "../../components/backButton";
 
 
 import maleProfilePic from 'path/to/maleProfilePic.png';
@@ -64,6 +67,8 @@ type FamilyMember = {
 
 const ViewFamilyMembersPage = () => {
   const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>([]);
+  const [openDialog, setOpenDialog] = useState(false);
+
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -101,11 +106,50 @@ const ViewFamilyMembersPage = () => {
   return (
     <>
       <PatientAppBar />
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>MY FAMILY MEMBERS</strong>
+        </h1>
+      </div>
+    </div>
       <div style={{  maxWidth: '100%', overflowX: 'hidden' }}>
         <Grid container style={{ marginTop: '10px', alignItems: 'stretch' }}>
           {/* First Column */}
           <Grid item xs={12} md={3}  style={{ padding: 0 }}>
-            <div style={{  minHeight:'500px' , width: '100%', height: '100%', backgroundImage: `url(${left})`, backgroundSize: 'cover', backgroundPosition: 'center'  , right:'50px'}} />
+            <div style={{  minHeight:'500px' , width: '100%', height: '100%', backgroundSize: 'cover', backgroundPosition: 'center'  , right:'50px'}} />
           </Grid>
   
           {/* Middle Column */}
@@ -118,15 +162,14 @@ const ViewFamilyMembersPage = () => {
                   color="primary"
                   startIcon={<PersonAddAlt1Icon />}
                   style={{ marginRight: '10px' }}
-                  onClick={handleAddOneClick}
-                >
+                  onClick={() => setOpenDialog(true)}                >
                   Add One
                 </Button>
                 <Button
                   variant="contained"
                   color="primary"
                   startIcon={<LinkIcon />}
-                  onClick={() => { /* Add logic for Link One button */ }}
+                  onClick={() => { navigate('/patient/link')}}
                 >
                   Link One
                 </Button>
@@ -150,6 +193,9 @@ const ViewFamilyMembersPage = () => {
                         <Typography variant="h6" style={{ margin: '10px 0' }}>
                           {member.name}
                         </Typography>
+                        <Typography variant="h6" style={{ margin: '10px 0' }}>
+                          {member.relationToPatient}
+                        </Typography>
                         <Typography variant="body2">ID: {member.nationalId}</Typography>
                         <Typography variant="body2">Age: {member.age}</Typography>
                         <Typography variant="body2" style={{ margin: '10px 0' }}>
@@ -165,10 +211,12 @@ const ViewFamilyMembersPage = () => {
   
           {/* Last Column */}
           <Grid item xs={12} md={3}  style={{ padding: 0 }}>
-            <div style={{minHeight:'500px' ,  width: '100%', height: '100%', backgroundImage: `url(${right})`, backgroundSize: 'cover', backgroundPosition: '0px' }} />
+            <div style={{minHeight:'500px' ,  width: '100%', height: '100%', backgroundSize: 'cover', backgroundPosition: '0px' }} />
           </Grid>
   
         </Grid>
+        <AddFamilyMember open={openDialog} setOpen={setOpenDialog} />
+
       </div>
       <El7a2niInfo/>
 

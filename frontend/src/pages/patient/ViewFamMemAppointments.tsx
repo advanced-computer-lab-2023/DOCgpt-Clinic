@@ -16,10 +16,13 @@ import {
 import PatientAppointment from "../../components/PatientAppointment";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
+import Background from '../../FamilyMembers.jpg';
+import Back from "../../components/backButton";
 
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import FamMemAppointment from "../../components/FamMemAppointment";
 function ViewFamMemAppointments() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const navigate = useNavigate();
@@ -140,6 +143,45 @@ function ViewFamMemAppointments() {
   return (
     <>
       <PatientAppBar />
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>FAMILY MEMBERS APPOINTMENTS</strong>
+        </h1>
+      </div>
+    </div>
       <Container>
         <div
           style={{
@@ -149,9 +191,7 @@ function ViewFamMemAppointments() {
             padding: "20px",
           }}
         >
-          <Typography variant="h1" style={{ fontWeight: "bold" }}>
-            Your Family's Appointments So Far..
-          </Typography>
+          
         </div>
         <Grid container spacing={2}>
           <Grid item xs={12} md={4}>
@@ -217,14 +257,14 @@ function ViewFamMemAppointments() {
               {appointments &&
                 !filteredAppointments &&
                 appointments.map((appointment) => (
-                  <PatientAppointment
+                  <FamMemAppointment
                     appointment={appointment}
                     onStartChat={() => handleStartChat(appointment.patient)}
                   />
                 ))}
               {filteredAppointments &&
                 filteredAppointments.map((appointment: any, index: number) => (
-                  <PatientAppointment
+                  <FamMemAppointment
                     appointment={appointment}
                     onStartChat={() => handleStartChat(appointment.doctor)}
                   />

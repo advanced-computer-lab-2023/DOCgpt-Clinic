@@ -21,7 +21,8 @@ import SearchIcon from "@mui/icons-material/Search";
 import DocDetails from "../../components/DocDetails";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
-import Background from '../../Background.jpeg';
+import Background from '../../Appointments.jpeg';
+import Back from "../../components/backButton";
 
 
 interface Doctor {
@@ -37,6 +38,7 @@ function ViewDoctors() {
   //THE LOGIC OF VIEWING A DOCTOR'S PATIENTS
   //THE LINK TO BACK
   const [selectedDate, setSelectedDate] = useState("");
+  const [selectedTime, setSelectedTime] = useState();
   const [doctors, setdoctors] = useState<any[]>([]);
   const [allDoctors, setAllDoctors] = useState<any[]>([]);
   const [nameSearchTerm, setNameSearchTerm] = useState("");
@@ -134,11 +136,10 @@ function ViewDoctors() {
     const newDate = event.target.value;
     setSelectedDate(newDate);
   };
-  const [selectedTime, setSelectedTime] = useState();
+  
 
   const handleTimeChange = (event: any) => {
     console.log("time", event.target.value);
-
     setSelectedTime(event.target.value);
   };
 
@@ -152,6 +153,8 @@ function ViewDoctors() {
       // Check if the timeslots array contains the combined date and time
       return doctor.timeslots.some((timeslot: any) => {
         const timeslotDateTimeString = new Date(timeslot.date).toISOString();
+        console.log(timeslotDateTimeString);
+        
         return timeslotDateTimeString === combinedDateTimeString;
       });
     });
@@ -170,17 +173,48 @@ function ViewDoctors() {
   //2- THE PATIENT ITSELF ON CLICK SHOULD NAVIGATE TO ANOTHER PAGE TO SHOW ITS INFO
 
   return (
-    <div
-    style={{
-      backgroundImage: `url(${Background})`,
-      backgroundSize: 'cover',
-      minHeight: '100vh',
-      backgroundPosition: 'center',
-      boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
-    }}
-  >  
+  
     <>
       <PatientAppBar />
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>RESERVE APPOINTMENTS</strong>
+        </h1>
+      </div>
+    </div>
       <Container>
         <Container>
           <div
@@ -191,9 +225,6 @@ function ViewDoctors() {
               padding: "20px",
             }}
           >
-            <Typography variant="h1" style={{ fontWeight: "bold" }}>
-              All Doctors
-            </Typography>
           </div>
           <Grid container spacing={2}>
             <Grid item xs={12} md={4}>
@@ -303,7 +334,7 @@ function ViewDoctors() {
       </Container>
       <El7a2niInfo/>
     </>
-    </div>
+
   );
 }
 

@@ -9,7 +9,7 @@ const El7a2niInfo = () => {
         backgroundColor: "#333",
         color: "#fff",
         padding: "50px",
-        marginTop: "300px",
+        marginTop: "150px",
       }}
     >
       <div

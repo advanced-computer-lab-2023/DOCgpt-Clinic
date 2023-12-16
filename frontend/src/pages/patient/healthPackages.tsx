@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import HealthPackageComp from "../../components/healthPackageComp";
 import El7a2niInfo from "../../components/El7a2ni-info";
-import Background from "../../Background.jpeg";
+import Background from '../../HealthPack.jpeg';
+import Back from "../../components/backButton";
 
 interface HealthPackage {
   name: string;
@@ -61,27 +62,49 @@ function HealthPackages() {
   }, []);
 
   return (
-    <div
-      style={{
-        backgroundImage: `url(${Background})`,
-        backgroundSize: "cover",
-        minHeight: "100vh",
-        backgroundPosition: "center",
-        boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)", // Increased shadow values
-      }}
-    >
-      {" "}
+
       <>
         <PatientAppBar />
+        <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>HEALTH PACKAGES</strong>
+        </h1>
+      </div>
+    </div>
         <Container style={{ marginTop: "120px" }}>
-          <Typography
-            variant="h4"
-            gutterBottom
-            color="primary"
-            style={{ textAlign: "center" }}
-          >
-            <strong> Available Health Packages</strong>
-          </Typography>
           <Box
             display="flex"
             flexDirection="row"
@@ -101,7 +124,7 @@ function HealthPackages() {
         </Container>
         <El7a2niInfo />
       </>
-    </div>
+
   );
 }
 

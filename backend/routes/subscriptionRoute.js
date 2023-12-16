@@ -15,4 +15,5 @@ router.get('/getSubscribedPackagesForMember', subscriptionController_1.getSubscr
 router.patch('/cancelSubscription', subscriptionController_1.cancelSubscription);
 router.patch('/cancelSubscriptionfam', subscriptionController_1.cancelSubscriptionfam2);
 router.get('/viewFamMemberPackages', subscriptionController_1.viewFamilyMembersAndPackages);
+router.get("/getdisc/:username", subscriptionController_1.getdiscount);
 exports.default = router;

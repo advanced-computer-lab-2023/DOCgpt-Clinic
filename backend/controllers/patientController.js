@@ -994,7 +994,7 @@ const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
         var notificationSubject = "";
         const appointment = yield appointmentModel_1.default.findById(appointmentId);
         if (appointment) {
-            const updatedAppointment = yield appointmentModel_2.default.create({
+            const rescheduledAppointment = yield appointmentModel_2.default.create({
                 status: "rescheduled",
                 doctor: appointment.doctor,
                 patient: appointment.patient,
@@ -1014,7 +1014,7 @@ const rescheduleAppointments = (req, res) => __awaiter(void 0, void 0, void 0, f
                 yield doctor.save();
                 appointment.status = "cancelled";
                 const updatedAppointment = yield appointment.save();
-                res.status(200).json({ updatedAppointment });
+                res.status(200).json({ rescheduledAppointment });
             }
             //Send Notificationss(system & mail)
             notificationSubject = "Appointment Rescheduled Successfully";
