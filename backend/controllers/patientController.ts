@@ -59,9 +59,7 @@ export const createPatient = async (req: Request, res: Response) => {
         username}
       );
       console.log(idResponse.data)
-
-
-      patient.carts.push(idResponse.data.id);
+     patient.carts.push(idResponse.data.id);
       await patient.save();
            
     console.log('Patient created!', patient)

@@ -8,6 +8,8 @@ import { DatePicker, DesktopTimePicker } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import moment from 'moment';
+import Background from '../../Appointments.jpeg';
+import Back from "./backButton";
 
 
 interface DoctorAvailabilityProps {

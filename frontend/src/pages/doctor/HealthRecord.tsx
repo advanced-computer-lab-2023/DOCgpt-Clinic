@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import DoctorBar from "../../components/Doctor bar/doctorBar";
-import Background from '../../Background.jpeg';
+import Background from '../../HealthRec.jpg';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import ScaleIcon from '@mui/icons-material/Scale';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import OpacityIcon from '@mui/icons-material/Opacity';
+import Back from "../../components/backButton";
+
+
 interface HealthRecord{
     patient: string,
     MedicalHistory:{
@@ -106,16 +109,34 @@ function HealthRecord(){
     //THE VIEW 
     //DISPLAYING SECTIONS OF THE HEALTH RECORD IN A PROPER WAY AND DIPLAYING IMAGES AND NOTES 
     return (
-      <div
+      <>
+       <DoctorBar/>
+       <div
+      
       style={{
         backgroundImage: `url(${Background})`,
         backgroundSize: 'cover',
-        minHeight: '100vh',
+        minHeight: '50vh',
+        marginBottom:'100px',
         backgroundPosition: 'center',
         boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
       }}
-    >    
-       <DoctorBar/>
+    >   
+        <Back/>
+     <div
+      style={{
+        position: 'absolute', // Set position to absolute
+        top: '50%', // Adjust top value to center vertically
+        left: '50%', // Adjust left value to center horizontally
+        transform: 'translate(-50%, -50%)', // Center the text
+        textAlign: 'center', // Center text horizontally
+        color: 'white', // Set text color
+      }}
+    >
+      <h1> <strong>MY PATIENTS</strong></h1>
+      {/* <p>Additional text content</p> */}
+    </div>
+  </div>
           <Container>
             {healthRecord && (
               <Container>
@@ -506,7 +527,7 @@ function HealthRecord(){
               </Container>
             )}
           </Container>
-</div>
+</>
       );
       
       
