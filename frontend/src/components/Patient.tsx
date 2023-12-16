@@ -153,14 +153,6 @@ const Patient = ({ patient, doctor }: PatientProps) => {
      } catch (error) {
        console.error("Error in addPresc:", error);
      }
-   };
-
-      if (!newWindow) {
-        console.error("Unable to open a new window.");
-      }
-    } catch (error) {
-      console.error("Error in addPresc:", error);
-    }
   };
 
   function calculateAge(dateOfBirth: string | number | Date) {
