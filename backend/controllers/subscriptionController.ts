@@ -97,8 +97,9 @@ if (!process.env.STRIPE_SECRET_KEY)
 };
 
 
-export const subscribeFamAsPatient = async (username: string, packageName: string) => {
+export const subscribeFamAsPatient = async (username: string, packageName: string, user: string) => {
   try {
+    
   console.log("ANA HENA FAM AS PATIENT")
     if (!username || !packageName ) {
       throw new Error('Username and package name are required');    }
@@ -142,7 +143,7 @@ export const subscribeFamAsPatient = async (username: string, packageName: strin
       startdate: newDate.toISOString(),
         enddate: endDate.toISOString(),
       status: 'subscribed',
-      payedBy: username,
+      payedBy: user,
     });
 
     await patient.save();
@@ -224,7 +225,7 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
         const familyMemberUsername = familyMember.username;
         if(!familyMemberUsername)
         return res.status(404).json({ error: 'No family members found for this patient' });
-        await subscribeFamAsPatient(familyMemberUsername, packageName);     
+        await subscribeFamAsPatient(familyMemberUsername, packageName, username);     
         await patient.save();
         return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });     
       } 
@@ -251,7 +252,7 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
         if(!familyMemberUsername)
         return res.status(404).json({ error: 'No family members found for this patient' });
 
-        subscribeFamAsPatient(familyMemberUsername, packageName);
+        await subscribeFamAsPatient(familyMemberUsername, packageName, username);     
       }
       }
       await patient.save();
@@ -260,10 +261,10 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
     } else {
       return res.status(404).json({ error: 'No family members found for this patient' });
     }
-  } catch (error) {
-    console.error('Error subscribing to health package for family member:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  }catch (error) {
+  console.error('Error subscribing to health package for family member:', error);
+  return res.status(500).json({ error: 'Internal server error'});
+}
 };
 
 export const viewSubscribedPackages = async (req: Request, res: Response) => {

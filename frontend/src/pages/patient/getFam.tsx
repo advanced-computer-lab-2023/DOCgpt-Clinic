@@ -20,7 +20,7 @@ import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import left from '../../left1.jpeg'
 import right from '../../right.jpeg'
-import El7a2niInfo from '../../components/El7a2ni-info';
+import El7a2niPatientInfo from '../../components/El7a2niPatient-info';
 import AddFamilyMember from './addFam'
 import Background from '../../FamilyMembers.jpg';
 import Back from "../../components/backButton";
@@ -227,7 +227,7 @@ const ViewFamilyMembersPage = () => {
         <AddFamilyMember open={openDialog} setOpen={setOpenDialog} />
 
       </div>
-      <El7a2niInfo/>
+      <El7a2niPatientInfo/>
 
     </>
   );

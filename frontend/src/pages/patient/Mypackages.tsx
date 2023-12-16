@@ -3,7 +3,7 @@ import SubscribedHealthPackages from '../../components/SubscribedHealthPackages'
 import ViewStatusOfPackage from '../../components/ViewStatusOfPackage'; // Update the path accordingly
 import PatientAppBar from '../../components/patientBar/patientBar';
 import { Typography } from '@mui/material';
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import Background from '../../HealthPack.jpeg';
 import Back from "../../components/backButton";
 
@@ -57,7 +57,7 @@ const MyPackagesPage = () => {
       <ViewStatusOfPackage />
       {/* Other content for the My Packages page if needed */}
     </div>
-    <El7a2niInfo/>
+    <El7a2niPatientInfo/>
     </>
   );
 };

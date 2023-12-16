@@ -20,7 +20,7 @@ import Patient from "../../components/Patient";
 import SearchIcon from "@mui/icons-material/Search";
 import DocDetails from "../../components/DocDetails";
 import PatientAppBar from "../../components/patientBar/patientBar";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
 
@@ -341,7 +341,7 @@ function ViewDoctors() {
           </Grid>
         </Container>
       </Container>
-      <El7a2niInfo/>
+      <El7a2niPatientInfo/>
     </>
 
   );

@@ -16,7 +16,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PatientAppBar from "../../components/patientBar/patientBar";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import Box from "@mui/system/Box/Box";
 import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
@@ -283,7 +283,7 @@ function ViewMyAppointments() {
           </Grid>
         </Grid>
       </Container>
-      <El7a2niInfo />
+      <El7a2niPatientInfo />
     </>
 
   );

@@ -87,6 +87,7 @@ import FamilyMemberPackageStatus from "./components/viewstatusfam";
 import DocList1 from "./components/alldoc";
 import PatientList1 from "./components/allpat";
 import Profile from "../src/pages/patient/profile";
+import famPackages from "./pages/patient/famPackages";
 import subscribedPage2 from "./pages/patient/suscribedpackagesfam";
 import AdminProfilePage from "./pages/admin/adminProfilePage";
 function App() {
@@ -224,6 +225,7 @@ function App() {
         <Route path="/DrselectedPres/:id" Component={DrSelectedPrescription} />
         <Route path="/doctor/DrPrescription" Component={DrPrescription} />
         <Route path="/adminProfile" Component={AdminProfilePage} />
+        <Route path="patient/famPackages" Component={famPackages} />
       </Routes>
     </Router>
   );

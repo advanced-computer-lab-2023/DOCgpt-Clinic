@@ -1,20 +1,25 @@
 import React from "react";
-import logo from "../Logoo.png";
+import logo from "../logo.jpeg";
 import { useNavigate } from "react-router-dom";
 
-const El7a2niPatientInfo = () => {
+const El7a2niAdminInfo = () => {
   const navigate = useNavigate();
 
-  const handleDocClick = () => {
-    navigate("/register/doctor");
+  const handleAdminsClick = () => {
+    navigate("/AdminPage");
+  };
+
+  const handleDoctorsClick = () => {
+    navigate("/alldoc");
+  };
+
+  const handlePatientsClick = () => {
+    navigate("/allpat");
   };
 
   const handleHomeClick = () => {
-    navigate("/");
+    navigate("/admin/home");
   };
-  // const handlePharmPlatform = () => {
-  //      navigate("/signupPharmacist"); // Replace with the path of your join platform page
-  //     };
 
   return (
     <div
@@ -37,11 +42,12 @@ const El7a2niPatientInfo = () => {
         />
       </div>
       <div style={{ flex: 1, textAlign: "left" }}>
-        <h2>More Information</h2>
-        <p>Address: 123 Health Street, City</p>
-        <p>Phone: (456) 789-0123</p>
-        <p>Email: medicalcenter@example.com</p>
-        <p>Delivery: 01236654852</p>
+        <h2>Office Information</h2>
+        <p>Address: 123 Main Street, City</p>
+        <p>Phone: (123) 456-7890</p>
+        <p>Email: info@example.com</p>
+        <p>IT Contact: 0123658741</p>
+
       </div>
       <div style={{ flex: 1, textAlign: "left" }}>
         <h2>Quick Links</h2>
@@ -75,7 +81,7 @@ const El7a2niPatientInfo = () => {
               borderBottom: "1px solid transparent",
               transition: "border-bottom 0.3s",
             }}
-            onClick={handleDocClick}
+            onClick={handleAdminsClick}
             onMouseEnter={(e) =>
               ((e.target as HTMLElement).style.borderBottom = "1px solid #fff")
             }
@@ -84,10 +90,11 @@ const El7a2niPatientInfo = () => {
                 "1px solid transparent")
             }
           >
-            Apply As A Doctor
+            {" "}
+            Manage Admins
           </span>
         </p>
-        {/* <p>
+        <p>
           <span
             style={{
               color: "#fff",
@@ -96,7 +103,7 @@ const El7a2niPatientInfo = () => {
               borderBottom: "1px solid transparent",
               transition: "border-bottom 0.3s",
             }}
-            onClick={handlePharmPlatform}
+            onClick={handleDoctorsClick}
             onMouseEnter={(e) =>
               ((e.target as HTMLElement).style.borderBottom = "1px solid #fff")
             }
@@ -105,86 +112,39 @@ const El7a2niPatientInfo = () => {
                 "1px solid transparent")
             }
           >
-            Apply As A Pharmacist
+            {" "}
+            Manage Doctors
           </span>
-          
-        </p> */}
+        </p>
+        <p>
+          <span
+            style={{
+              color: "#fff",
+              cursor: "pointer",
+              textDecoration: "none",
+              borderBottom: "1px solid transparent",
+              transition: "border-bottom 0.3s",
+            }}
+            onClick={handlePatientsClick}
+            onMouseEnter={(e) =>
+              ((e.target as HTMLElement).style.borderBottom = "1px solid #fff")
+            }
+            onMouseLeave={(e) =>
+              ((e.target as HTMLElement).style.borderBottom =
+                "1px solid transparent")
+            }
+          >
+            {" "}
+            Manage Patients
+          </span>
+        </p>
         {/* <p>Your privacy is important to us. Read our <a href="/privacy-policy">Privacy Policy</a>.</p> */}
       </div>
-      <div style={{ flex: 1, textAlign: "left" }}>
-        <h2>Connect with Us</h2>
-        <div>
-          <p>
-            <a
-              href="https://www.instagram.com/_docgpt/"
-              style={{
-                color: "#fff",
-                textDecoration: "none",
-                borderBottom: "1px solid transparent",
-                transition: "border-bottom 0.3s",
-              }}
-              onMouseEnter={(e) =>
-                ((e.target as HTMLElement).style.borderBottom =
-                  "1px solid #fff")
-              }
-              onMouseLeave={(e) =>
-                ((e.target as HTMLElement).style.borderBottom =
-                  "1px solid transparent")
-              }
-            >
-              Instagram
-            </a>{" "}
-          </p>
-          <p>
-            <a
-              href="https://www.facebook.com"
-              style={{
-                color: "#fff",
-                textDecoration: "none",
-                marginRight: "10px",
-                borderBottom: "1px solid transparent",
-                transition: "border-bottom 0.3s",
-              }}
-              onMouseEnter={(e) =>
-                ((e.target as HTMLElement).style.borderBottom =
-                  "1px solid #fff")
-              }
-              onMouseLeave={(e) =>
-                ((e.target as HTMLElement).style.borderBottom =
-                  "1px solid transparent")
-              }
-            >
-              Facebook
-            </a>{" "}
-          </p>
-          <p>
-            <a
-              href="https://www.linkedin.com/"
-              style={{
-                color: "#fff",
-                textDecoration: "none",
-                marginRight: "10px",
-                borderBottom: "1px solid transparent",
-                transition: "border-bottom 0.3s",
-              }}
-              onMouseEnter={(e) =>
-                ((e.target as HTMLElement).style.borderBottom =
-                  "1px solid #fff")
-              }
-              onMouseLeave={(e) =>
-                ((e.target as HTMLElement).style.borderBottom =
-                  "1px solid transparent")
-              }
-            >
-              LinkedIn
-            </a>{" "}
-          </p>
-        </div>
-      </div>
+
       <div
         style={{ textAlign: "center", marginTop: "20px", flexBasis: "100%" }}
       >
-        <h2>&copy;El7a2ni </h2>
+        <h2>&copy; El7a2ni </h2>
         <p>Your privacy is important to us. Read our privacy policy.</p>
 
       </div>
@@ -192,4 +152,4 @@ const El7a2niPatientInfo = () => {
   );
 };
 
-export default El7a2niPatientInfo;
+export default El7a2niAdminInfo;
