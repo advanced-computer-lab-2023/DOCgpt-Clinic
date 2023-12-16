@@ -785,7 +785,7 @@ export const  calculateSessionPrice = async (req: Request, res: Response ) => {
     }
 
     const subscribedPackage = patient.healthPackageSubscription.find(
-      (subscription) => subscription.status === 'subscribed with renewal date'
+      (subscription) => subscription.status === 'subscribed'
     );
 
     if (!subscribedPackage) {
