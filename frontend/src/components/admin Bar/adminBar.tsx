@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { To, useNavigate } from "react-router-dom";
-import logo from "../../logo.jpeg";
+import logo from "../../Logoo.png";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import WalletTwoToneIcon from "@mui/icons-material/WalletTwoTone";
@@ -201,11 +201,11 @@ export default function AdminAppBar() {
           margin: "0 auto",
         }}
       >
-        {/* <img
+        <img
           src={logo}
           alt="Clinic Logo"
           style={{ width: "200px", height: "100px", marginRight: "5px" }}
-        /> */}
+        />
       </div>
       <Divider />
       {renderMenuItems(appRoutes)}
