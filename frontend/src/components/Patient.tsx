@@ -131,23 +131,20 @@ const Patient = ({ patient, doctor }: PatientProps) => {
           },
         }
       );
-
+  
       // Extract prescriptionId from the response
       const prescriptionId = response.data._id;
-
-      // Append prescriptionId to the URL
-      const newWindow = window.open(
-        `http://localhost:3001/doctormed/${prescriptionId}`,
-        "_blank"
-      );
-
-      if (!newWindow) {
-        console.error("Unable to open a new window.");
+  
+      if (prescriptionId) {
+        window.location.href = `http://localhost:3001/doctormed/${prescriptionId}`;
+      } else {
+        console.error("Prescription ID is undefined or null.");
       }
     } catch (error) {
       console.error("Error in addPresc:", error);
     }
   };
+  
   const cardStyle = {
     padding: "20px",
     margin: "10px",
@@ -201,7 +198,7 @@ const Patient = ({ patient, doctor }: PatientProps) => {
           style={buttonStyle}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
-          onClick={() => addPresc(name)}
+          onClick={() => addPresc(username)}
         >
           Add Prescription
         </Button>

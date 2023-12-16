@@ -50,10 +50,6 @@ const appRoutes: RouteType[] = [
         path: "/doctor/patients",
         state: "View My Patients",
       },
-      {
-        path: "/doctor/walletAmount",
-        state: "View My wallet",
-      },
     ],
   },
   {

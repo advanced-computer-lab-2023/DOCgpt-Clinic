@@ -7,6 +7,7 @@ import DrawerAppBar from "./admin Bar/adminBar";
 import El7a2niInfo from './El7a2ni-info';
 import AddPackage from './Package';
 import { useNavigate } from 'react-router-dom';
+import BackButton from './backButton';
 
 
 interface HealthPackage {
@@ -103,6 +104,7 @@ const HealthPackages = () => {
     <>
 
       <DrawerAppBar />
+      <BackButton/>
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>
       <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center', marginBottom: '30px' }}>
   Available Health Packages

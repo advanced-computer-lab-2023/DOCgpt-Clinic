@@ -22,10 +22,12 @@ import {
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Back from "./backButton";
 
 import SearchIcon from "@mui/icons-material/Search";
 import AdminBar from "./admin Bar/adminBar";
 import El7a2niInfo from "./El7a2ni-info";
+import BackButton from "./backButton";
 interface Patient {
   _id: string;
   username: string;
@@ -160,6 +162,7 @@ const PatientList1: React.FC = () => {
   return (
     <>
       <AdminBar />
+      <BackButton/>
       <Container maxWidth="sm">
         <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
           <Typography variant="h4" style={{ padding: '16px' }} gutterBottom>

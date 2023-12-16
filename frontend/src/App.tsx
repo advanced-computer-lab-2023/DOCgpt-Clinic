@@ -84,6 +84,8 @@ import RequestFamMemFollow from "./pages/patient/RequestFamMemFollow";
 
 import prescriptionPDF from "./components/prescriptionPDF";
 import AddPackage from "./components/AddPackage";
+import PatientList1 from "./components/allpat";
+import DocList1 from "./components/alldoc";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -128,6 +130,9 @@ function App() {
           path="/patient/walletAmount"
           element={<ViewWalletAmountPatient />}
         />
+        <Route path="/allpat" element={< PatientList1/>} />
+        <Route path="/alldoc" element={<DocList1/>} />
+
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
         // <Route path="/doctor/patients" Component={MyPatients} />

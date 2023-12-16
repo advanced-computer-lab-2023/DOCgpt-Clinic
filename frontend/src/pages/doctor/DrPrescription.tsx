@@ -48,12 +48,11 @@ const DrPrescriptions = () => {
   return (
     <>
     <DrawerAppBar />
-    <Back/>
     <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}} padding={5}>
       MY PRESCRIPTIONS   
       </Typography>
     <Grid container spacing={2} justifyContent="center" alignItems="center">
-      {prescriptions.map((prescription, index) => (
+      {prescriptions.slice().reverse().map((prescription, index) => (
         <Grid item key={index}>
             <DrPrescription prescription={prescription} />
         </Grid>

@@ -26,6 +26,7 @@ import DoneIcon from "@mui/icons-material/Done";
 import ClearIcon from "@mui/icons-material/Clear";
 import MuiAlert from "@mui/material/Alert";
 import El7a2niInfo from "../El7a2ni-info";
+import BackButton from "../backButton";
 
 interface Doctor {
   _id: string;
@@ -154,6 +155,7 @@ const handleReject = async (doctorUsername: string) => {
   return (
     <>
       <AdminBar />
+      <BackButton/>
       <Container maxWidth="lg">
         <Typography variant="h4" align="center" gutterBottom color="customGrey">
           Pending Doctors
