@@ -123,13 +123,13 @@ const Patient = ({ patient, doctor }: PatientProps) => {
     window.open(`mailto:${email}`);
   };
 
-  const addPresc = async (name: any) => {
+  const addPresc = async () => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
         "/routes/prescriptions",
         {
-          patientUsername: name,
+          patientUsername: username,
         },
         {
           headers: {
@@ -142,7 +142,18 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       const prescriptionId = response.data._id;
 
       // Append prescriptionId to the URL
-      const newWindow = window.open();
+      const newWindow = window.open(
+        ` http://localhost:3001/doctormed/${prescriptionId}`,
+         "_blank"
+       );
+ 
+       if (!newWindow) {
+         console.error("Unable to open a new window.");
+       }
+     } catch (error) {
+       console.error("Error in addPresc:", error);
+     }
+   };
 
       if (!newWindow) {
         console.error("Unable to open a new window.");
