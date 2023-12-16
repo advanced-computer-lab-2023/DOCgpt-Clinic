@@ -50,31 +50,44 @@ const DrPrescriptions = () => {
     <>
     <DrawerAppBar />
     <div
-      
       style={{
+        position: 'relative',
         backgroundImage: `url(${Background})`,
         backgroundSize: 'cover',
         minHeight: '50vh',
-        marginBottom:'100px',
+        marginBottom: '100px',
         backgroundPosition: 'center',
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
-      }}
-    >   
-        <Back/>
-     <div
-      style={{
-        position: 'absolute', // Set position to absolute
-        top: '35%', // Adjust top value to center vertically
-        left: '50%', // Adjust left value to center horizontally
-        transform: 'translate(-50%, -50%)', // Center the text
-        textAlign: 'center', // Center text horizontally
-        color: 'white', // Set text color
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
       }}
     >
-      <h1> <strong>PRESCRIPTIONS</strong></h1>
-      {/* <p>Additional text content</p> */}
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>PRESCRIPTIONS</strong>
+        </h1>
+      </div>
     </div>
-  </div>
     <Back/>
     <Grid container spacing={2} justifyContent="center" alignItems="center">
       {prescriptions.map((prescription, index) => (

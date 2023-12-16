@@ -20,7 +20,7 @@ export type links = {
 const appRoutes: RouteType[] = [
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Appoinments
       </Typography>
     ),
@@ -41,7 +41,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Patients
       </Typography>
     ),
@@ -54,7 +54,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Prescriptions
       </Typography>
     ),
