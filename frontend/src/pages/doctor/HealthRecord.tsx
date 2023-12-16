@@ -1,4 +1,4 @@
-import { Card, CardContent, Container, Grid, Paper, TextField, Typography } from "@mui/material";
+import { Button, Card, CardContent, Container, Grid, Paper, Snackbar, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -11,7 +11,7 @@ import ScaleIcon from '@mui/icons-material/Scale';
 import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import OpacityIcon from '@mui/icons-material/Opacity';
 import Back from "../../components/backButton";
-
+import MuiAlert from '@mui/material/Alert';
 
 interface HealthRecord{
     patient: string,
@@ -68,7 +68,10 @@ function HealthRecord(){
     const patientUsername = queryParams.get('patient');
     const [healthRecord, setHealthRecord] = useState<HealthRecord | null>(null);
     const [comment, setComment] = useState<string>('');
-
+    const [openAlert, setOpenAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+    const [snackbarOpenSuccess, setSnackbarOpenSuccess] = useState(false);
+    const [snackbarOpenError, setSnackbarOpenError] = useState(false);  
 
     const fetchHealthRecord = async () => {
         console.log('Fetching Health Record of this Patient...');
@@ -91,19 +94,35 @@ function HealthRecord(){
         setComment(e.target.value);
     };
     
-    const handleCommentEntered = (section: string) => async (event: React.KeyboardEvent<HTMLDivElement>) => {
-        try {
-            if (event.key === 'Enter') {
-                // Your logic to handle Enter key press
-                const response = await axios.patch(`/routes/doctors/HealthRecord/comments?patientUsername=${patientUsername}`, {
-                section,
-                comment,
-                });
-            }
-            } catch (error) {
-            console.error('Error:', error);
-            }
-        };
+    const handleCommentEntered = async () => {
+      try {
+        if (!comment) {
+          // If the comment is empty, show the error Snackbar and return early
+          setSnackbarOpenError(true);
+          return;
+        }
+    
+        // Your logic to handle adding the comment
+        const response = await axios.patch(`/routes/doctors/HealthRecord/comments?patientUsername=${patientUsername}`, {
+          section: 'GeneralComments',
+          comment,
+        });
+    
+        // Clear the comment input field
+        setComment('');
+    
+        // Show the success Snackbar
+        setSnackbarOpenSuccess(true);
+        
+        // You may also want to fetch the updated comments here if needed
+      } catch (error) {
+        console.error('Error:', error);
+    
+        // Show the error Snackbar
+        setSnackbarOpenError(true);
+      }
+    };
+    
         
     //return
     //THE VIEW 
@@ -199,6 +218,31 @@ function HealthRecord(){
   </CardContent>
 </Card>
 
+
+   {/* Success Snackbar */}
+   <Snackbar
+      open={snackbarOpenSuccess}
+      autoHideDuration={2000}
+      onClose={() => setSnackbarOpenSuccess(false)}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+    >
+      <MuiAlert severity="success" sx={{ width: '100%', fontSize: '1.5rem' }}>
+        Comment Added Successfully
+      </MuiAlert>
+    </Snackbar>
+
+    {/* Error Snackbar */}
+    <Snackbar
+      open={snackbarOpenError}
+      autoHideDuration={2000}
+      onClose={() => setSnackbarOpenError(false)}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+    >
+      <MuiAlert severity="error" sx={{ width: '100%', fontSize: '1.5rem' }}>
+        Failed to Add Comment
+      </MuiAlert>
+    </Snackbar>
+  
 
                 {/* Cards container for Medical History and Medication List */}
                 <div
@@ -483,37 +527,40 @@ function HealthRecord(){
 
                 <Card
   style={{
-    height: '150px',
-    width: "99%",
-    display: "flex",
-    flexDirection: "column",
-    marginTop: "20px",
-    marginLeft:'10px'
+    height: `${100 + healthRecord.GeneralComments.length * 40}px`, // Adjust the height as needed
+    overflowY: 'auto', // Add scrollbar if needed
+    width: '99%',
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '20px',
+    marginLeft: '10px',
   }}
 >
   <Paper
-    style={{ backgroundColor: "white", padding: "10px" }}
+    style={{ backgroundColor: 'white', padding: '10px' }}
     elevation={3}
   >
-  <Typography variant="h6" style={{ color: "black", display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-  General Comments
-</Typography>
-
+    <Typography
+      variant="h6"
+      style={{ color: 'black', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+    >
+      General Comments
+    </Typography>
   </Paper>
   <CardContent style={{ flex: 1 }}>
     <div>
-      <Typography style={{ fontWeight: "bold" }}>
-       
-      </Typography>
+      <Typography style={{ fontWeight: 'bold' }}></Typography>
     </div>
     <TextField
       fullWidth
       multiline
       value={comment}
       onChange={handleInputChange}
-      onKeyDown={handleCommentEntered("GeneralComments")}
       placeholder="Add A General Comment"
     />
+    <Button variant="contained" onClick={handleCommentEntered}>
+      Add Comment
+    </Button> {/* Button to add a comment */}
     <ul>
       {healthRecord.GeneralComments.map((item, index) => (
         <div key={index}>
@@ -523,6 +570,7 @@ function HealthRecord(){
     </ul>
   </CardContent>
 </Card>
+
 
               </Container>
             )}

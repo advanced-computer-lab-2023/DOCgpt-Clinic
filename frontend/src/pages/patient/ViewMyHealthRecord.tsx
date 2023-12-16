@@ -25,10 +25,13 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import AccessibilityNewIcon from "@mui/icons-material/AccessibilityNew";
 import ScaleIcon from "@mui/icons-material/Scale";
 import Back from "../../components/backButton";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import React from "react";
 
 interface HealthRecord {
   MedicalHistory: {
@@ -81,8 +84,10 @@ function ViewMyHealthRecord() {
   const [submittedDocuments, setSubmittedDocuments] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isCommentsExpanded, setIsCommentsExpanded] = useState(false);
-  const [showNoHealthRecordMessage, setShowNoHealthRecordMessage] =
-    useState<boolean>(false);
+  const [showNoHealthRecordMessage, setShowNoHealthRecordMessage] = useState<boolean>(false);
+  const [openAlert, setOpenAlert] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     async function fetchHealthRecord() {
@@ -93,134 +98,124 @@ function ViewMyHealthRecord() {
             Authorization: `Bearer ${token}`,
           },
         });
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          setHealthRecord(data.healthRecord);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+                setHealthRecord(data.healthRecord);
+            } else {
+            console.error('Failed to fetch doctor data');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('An error occurred while fetching doctor data');
+        }
+        }
+        fetchHealthRecord();
+      }, [submittedDocuments]); // An empty dependency array means this effect runs once on component mount.
+
+      useEffect(() => {
+        if (!healthRecord) {
+          setShowNoHealthRecordMessage(true);
         } else {
-          console.error("Failed to fetch doctor data");
+          setShowNoHealthRecordMessage(false);
         }
-      } catch (error) {
-        console.error(error);
-        alert("An error occurred while fetching doctor data");
-      }
-    }
-    fetchHealthRecord();
-  }, []); // An empty dependency array means this effect runs once on component mount.
-
-  useEffect(() => {
-    if (!healthRecord) {
-      setShowNoHealthRecordMessage(true);
-    } else {
-      setShowNoHealthRecordMessage(false);
-    }
-  }, [healthRecord]);
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      setSelectedFiles(files);
-    }
-  };
-
-  const handleSubmit = (section: string, subsection: string) => async () => {
-    try {
-      if (!selectedFiles) {
-        setErrorMessage("Please fill in all the required fields.");
-        return;
-      }
-
-      const formData = new FormData();
-      //   const fileName = `${documentName.replace(/\s+/g, '')}_${selectedFiles[0].name}`;
-      formData.append("documents", selectedFiles[0]);
-      const token = localStorage.getItem("authToken");
-      const response = await axios.patch(
-        `/routes/patient/uploadDocs?section=${section}&subsection=${subsection}`,
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      }, [healthRecord]);
+      const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+          setSelectedFiles(files);
         }
-      );
+      };
+    
+     
+      const handleSubmit = (section: string, subsection: string) => async () => {
+        try {
+          if (!selectedFiles) {
+            setErrorMessage('Please fill in all the required fields.');
 
-      if (response.status === 200) {
-        alert("Submitted Successfully!");
-        console.log(response);
-        setErrorMessage(null);
-      } else {
-        console.error("Error submitting document:", response.statusText);
-        setErrorMessage("Error submitting document. Please try again.");
-      }
-    } catch (error: any) {
-      console.error("Error submitting document:", error.message);
-      setErrorMessage("Error submitting document. Please try again.");
-    }
-  };
-
-  const handleRemove =
-    (section: string, subsection: string, path: String) => async () => {
-      try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.patch(
-          `/routes/patient/deleteDocs?section=${section}&subsection=${subsection}`,
-          {
-            path: path,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+           setSnackbarOpen(true);
+            return; 
           }
-        );
-
-        if (response.status === 200) {
-          alert("Removed Successfully!");
-          console.log(response);
-          setErrorMessage(null);
-        } else {
-          console.error("Error removing document:", response.statusText);
-          setErrorMessage("Error removing document. Please try again.");
+          if(!healthRecord){
+            setSnackbarOpen(true);
+          }
+      
+          const formData = new FormData();
+          formData.append('documents', selectedFiles[0]);
+          const token = localStorage.getItem("authToken");
+          const response = await axios.patch(`/routes/patient/uploadDocs?section=${section}&subsection=${subsection}`, formData, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+      
+          if (response.status === 200) {
+            const newDocument = selectedFiles[0].name;
+            setSubmittedDocuments([...submittedDocuments, newDocument]); // Add the new document to the list
+            setErrorMessage(null);
+            setOpenAlert(true); // Show the Snackbar
+          } else {
+            console.error('Error submitting document:', response.statusText);
+            setErrorMessage('Error submitting document. Please try again.');
+          }
+        } catch (error: any) {
+          console.error('Error submitting document:', error.message);
+          setErrorMessage('Error submitting document. Please try again.');
         }
-      } catch (error: any) {
-        console.error("Error removing document:", error.message);
-        setErrorMessage("Error removing document. Please try again.");
-      }
-    };
-    const token = localStorage.getItem("authToken");
-    if (!token) {
+      };
+      
+
+      const handleRemove = (section: string, subsection: string, path: String) => async () => {
+        try {
+          const token = localStorage.getItem("authToken");
+          const response = await axios.patch(`/routes/patient/deleteDocs?section=${section}&subsection=${subsection}`, {
+            path: path
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+      
+          if (response.status === 200) {
+            setAlertMessage('Document removed successfully');
+            setOpenAlert(true);
+            setErrorMessage(null);
+          } else {
+            console.error('Error removing document:', response.statusText);
+            setErrorMessage('Error removing document. Please try again.');
+          }
+        } catch (error: any) {
+          console.error('Error removing document:', error.message);
+          setErrorMessage('Error removing document. Please try again.');
+        }
+      };
+      
+     
       return (
-        <div>
-          <Typography component="h1" variant="h5">
-            access denied
-          </Typography>
-        </div>
-      );
-    }
-  return (
-    <>
-      <PatientBar />
+        <>
+          <PatientBar />
+          <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
       <div
         style={{
-          position: "relative",
-          backgroundImage: `url(${Background})`,
-          backgroundSize: "cover",
-          minHeight: "50vh",
-          marginBottom: "100px",
-          backgroundPosition: "center",
-          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.5)",
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
         }}
-      >
-        {/* Transparent overlay */}
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            left: 0,
-            width: "100%",
-            height: "100%",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-          }}
-        ></div>
+      ></div>
 
         <Back />
         <div
@@ -254,75 +249,64 @@ function ViewMyHealthRecord() {
             />
           </div>
 
-          <div style={{ width: "100%", height: "2rem" }}></div>
-          <Card
-            style={{
-              width: "97.4%", // Same width as the old Paper
-              height: "100px", // Same height as the old Paper
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              marginBottom: "10px",
-              marginLeft: "28px", // Add margin for space between MedicationList and Vital Signs
-            }}
-          >
-            <Paper
-              style={{
-                backgroundColor: "white",
-                padding: "10px",
-                width: "1200px",
-              }}
-              elevation={3}
-            >
-              <div style={{ display: "flex", justifyContent: "center" }}>
-                <Typography variant="h6" style={{ color: "black" }}>
-                  Vital Signs
-                </Typography>
-              </div>
-            </Paper>
+                  <div style={{ width: "100%", height: "2rem" }}></div>
+              <Card
+  style={{
+    width: '97.4%', // Same width as the old Paper
+    height: '100px', // Same height as the old Paper
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginBottom: '10px',
+    marginLeft:'28px' // Add margin for space between MedicationList and Vital Signs
+  }}
+>
+  <Paper
+    style={{ backgroundColor: 'white', padding: '10px',width:'1200px'}}
+    elevation={3}
+  >
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <Typography variant="h6" style={{ color: 'black' }}>
+        Vital Signs
+      </Typography>
+    </div>
+  </Paper>
+  
+  <CardContent style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <OpacityIcon style={{ color: 'red', marginRight: '10px' }} /> {/* Add the icon here */}
+    <Typography style={{ marginRight: '120px' }}>
+      Blood Pressure: {`${healthRecord.VitalSigns.BloodPressure || 'None'}`}
+    </Typography>
+    <MonitorHeartIcon style={{ color: 'red', marginLeft: '10px' }} />
+    <Typography style={{ marginRight: '190px' }}>
+      Heart Rate: {`${healthRecord.VitalSigns.HeartRate || 'None'}`}
+    </Typography>
+    {/* Add the icon here */}
+    <AccessibilityNewIcon style={{ marginRight: '8px', color: 'red' }} /> {/* Add this line */}
+    <Typography style={{ marginRight: '80px' }}>
+      Height: {`${healthRecord.VitalSigns.Height || 'None'}`}
+    </Typography>
+    <ScaleIcon style={{ color: 'red' }} /> {/* Add this line */}
+    <Typography style={{ marginLeft: '20px' }}>
+      Weight: {`${healthRecord.VitalSigns.Weight || 'None'}`}
+    </Typography>
+  </div>
+</CardContent>
 
-            <CardContent
-              style={{
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <OpacityIcon style={{ color: "red", marginRight: "10px" }} />{" "}
-                {/* Add the icon here */}
-                <Typography style={{ marginRight: "120px" }}>
-                  Blood Pressure:{" "}
-                  {`${healthRecord.VitalSigns.BloodPressure || "None"}`}
-                </Typography>
-                <MonitorHeartIcon
-                  style={{ color: "red", marginLeft: "10px" }}
-                />
-                <Typography style={{ marginRight: "190px" }}>
-                  Heart Rate: {`${healthRecord.VitalSigns.HeartRate || "None"}`}
-                </Typography>
-                {/* Add the icon here */}
-                <AccessibilityNewIcon
-                  style={{ marginRight: "8px", color: "red" }}
-                />{" "}
-                {/* Add this line */}
-                <Typography style={{ marginRight: "80px" }}>
-                  Height: {`${healthRecord.VitalSigns.Height || "None"}`}
-                </Typography>
-                <ScaleIcon style={{ color: "red" }} /> {/* Add this line */}
-                <Typography style={{ marginLeft: "20px" }}>
-                  Weight: {`${healthRecord.VitalSigns.Weight || "None"}`}
-                </Typography>
-              </div>
-            </CardContent>
-          </Card>
+</Card>
+<Snackbar
+  open={snackbarOpen}
+  autoHideDuration={2000}
+  onClose={() => setSnackbarOpen(false)}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+>
+  <MuiAlert severity="error" sx={{ width: '100%', fontSize: '1.5rem' }}>
+    Please choose a file
+  </MuiAlert>
+</Snackbar>
+
+
 
           {/* Medical History Section */}
 
@@ -449,143 +433,132 @@ function ViewMyHealthRecord() {
           </Card>
           {/* Upload Documents Section */}
           <Card
+  style={{
+    height: '510px',
+    width: "48%",
+    display: "flex",
+    flexDirection: "column",
+    marginLeft: '635px', // Add margin to create space
+    marginTop: '-510px',
+  }}
+>
+  <Paper
+    style={{ backgroundColor: "white", padding: "10px" }}
+    elevation={3}
+  >
+    <Typography variant="h6" style={{ color: "black" }}>
+      Upload Documents
+    </Typography>
+  </Paper>
+  <CardContent style={{ flex: 1 }}>
+    {/* BloodTests Upload Section */}
+    <Grid item xs={6}>
+      <Typography>BloodTests: </Typography>
+      {healthRecord.Laboratory.BloodTests.map((item, index) => (
+        <div key={index}>
+          <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
+            {item}
+          </a>
+          <Button
+            onClick={handleRemove("Laboratory", "BloodTests", item)}
             style={{
-              height: "510px",
-              width: "48%",
-              display: "flex",
-              flexDirection: "column",
-              marginLeft: "635px", // Add margin to create space
-              marginTop: "-510px",
+              backgroundColor: "grey", // Grey background color
+              color: "#fff", // Text color
+              transition: "background-color 0.3s ease", // Smooth transition on hover
+              marginTop: "10px", // Adjust the margin-top here
             }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#f44336")} // Hover style
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ccc")} // Revert to grey on mouse out
           >
-            <Paper
-              style={{ backgroundColor: "white", padding: "10px" }}
-              elevation={3}
-            >
-              <Typography variant="h6" style={{ color: "black" }}>
-                Upload Documents
-              </Typography>
-            </Paper>
-            <CardContent style={{ flex: 1 }}>
-              {/* BloodTests Upload Section */}
-              <Grid item xs={6}>
-                <Typography>BloodTests: </Typography>
-                {healthRecord.Laboratory.BloodTests.map((item, index) => (
-                  <div key={index}>
-                    <a
-                      href={`/routes/patient/patientDocument/${item}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {item}
-                    </a>
-                    <Button
-                      onClick={handleRemove("Laboratory", "BloodTests", item)}
-                      style={{
-                        backgroundColor: "grey", // Grey background color
-                        color: "#fff", // Text color
-                        transition: "background-color 0.3s ease", // Smooth transition on hover
-                        marginTop: "10px", // Adjust the margin-top here
-                      }}
-                      onMouseOver={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#f44336")
-                      } // Hover style
-                      onMouseOut={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#ccc")
-                      } // Revert to grey on mouse out
-                    >
-                      Remove Document
-                    </Button>
-                  </div>
-                ))}
-              </Grid>
-              <div style={{ marginTop: "30px" }}></div>
-              <Grid item xs={6}>
-                <input
-                  type="file"
-                  accept=".pdf, .jpg, .jpeg, .png"
-                  onChange={handleFileChange}
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit("Laboratory", "BloodTests")}
-                  style={{
-                    backgroundColor: "grey", // Grey background color
-                    color: "#fff", // Text color
-                    transition: "background-color 0.3s ease", // Smooth transition on hover
-                    marginTop: "10px", // Adjust the margin-top here
-                    marginLeft: "56px",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#4285f4")
-                  } // Hover style
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.backgroundColor = "grey")
-                  } // Revert to grey on mouse out
-                >
-                  Submit Document
-                </Button>
-              </Grid>
+            Remove Document
+          </Button>
+        </div>
+      ))}
+    </Grid>
+    <div style={{ marginTop: '30px' }}></div> 
+   <Grid item xs={6}>
+  <input
+    type="file"
+    accept=".pdf, .jpg, .jpeg, .png"
+    onChange={handleFileChange}
+  />
+  <Button
+    variant="contained"
+    onClick={handleSubmit("Laboratory", "BloodTests")}
+    style={{
+      backgroundColor: "grey", // Grey background color
+      color: "#fff", // Text color
+      transition: "background-color 0.3s ease", // Smooth transition on hover
+      marginTop: "10px", // Adjust the margin-top here
+      marginLeft: "56px"
+    }}
+    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+  >
+    Submit Document
+  </Button>
 
-              {/* XRays Upload Section */}
-              <Grid item xs={6}>
-                <Typography>XRays: </Typography>
-                {healthRecord.Laboratory.XRays.map((item, index) => (
-                  <div key={index}>
-                    <a
-                      href={`/routes/patient/patientDocument/${item}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {item}
-                    </a>
-                    <Button
-                      onClick={handleRemove("Laboratory", "XRays", item)}
-                      style={{
-                        backgroundColor: "grey", // Grey background color
-                        color: "#fff", // Text color
-                        transition: "background-color 0.3s ease", // Smooth transition on hover
-                        marginTop: "10px", // Adjust the margin-top here
-                      }}
-                      onMouseOver={(e) =>
-                        (e.currentTarget.style.backgroundColor = "#f44336")
-                      } // Hover style
-                      onMouseOut={(e) =>
-                        (e.currentTarget.style.backgroundColor = "grey")
-                      } // Revert to grey on mouse out
-                    >
-                      Remove Document
-                    </Button>
-                  </div>
-                ))}
-              </Grid>
-              <div style={{ marginTop: "30px" }}></div>
-              <Grid item xs={6}>
-                <input
-                  type="file"
-                  accept=".pdf, .jpg, .jpeg, .png"
-                  onChange={handleFileChange}
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit("Laboratory", "XRays")}
-                  style={{
-                    backgroundColor: "grey", // Grey background color
-                    color: "#fff", // Text color
-                    transition: "background-color 0.3s ease", // Smooth transition on hover
-                    marginTop: "10px", // Adjust the margin-top here
-                    marginLeft: "56px",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#4285f4")
-                  } // Hover style
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.backgroundColor = "grey")
-                  } // Revert to grey on mouse out
-                >
-                  Submit Document
-                </Button>
-              </Grid>
+  {/* Display submitted documents */}
+  {/* {submittedDocuments.length > 0 && (
+    <div>
+      <p>Submitted Documents:</p>
+      <ul>
+        {submittedDocuments.map((document, index) => (
+          <li key={index}>{document}</li>
+        ))}
+      </ul>
+    </div>
+  )} */}
+</Grid>
+
+
+    {/* XRays Upload Section */}
+    <Grid item xs={6}>
+      <Typography>XRays: </Typography>
+      {healthRecord.Laboratory.XRays.map((item, index) => (
+        <div key={index}>
+          <a href={`/routes/patient/patientDocument/${item}`} target="_blank" rel="noopener noreferrer">
+            {item}
+          </a>
+          <Button
+            onClick={handleRemove("Laboratory", "XRays", item)}
+            style={{
+              backgroundColor: "grey", // Grey background color
+              color: "#fff", // Text color
+              transition: "background-color 0.3s ease", // Smooth transition on hover
+              marginTop: "10px", // Adjust the margin-top here
+            }}
+            onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#f44336")} // Hover style
+            onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+          >
+            Remove Document
+          </Button>
+        </div>
+      ))}
+    </Grid>
+    <div style={{ marginTop: '30px' }}></div> 
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+      <Button
+        variant="contained"
+        onClick={handleSubmit("Laboratory", "XRays")}
+        style={{
+          backgroundColor: "grey", // Grey background color
+          color: "#fff", // Text color
+          transition: "background-color 0.3s ease", // Smooth transition on hover
+          marginTop: "10px", // Adjust the margin-top here
+          marginLeft:"56px"
+        }}
+        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+      >
+        Submit Document
+      </Button>
+    </Grid>
 
               {/* Medication List Documents Upload Section */}
               <Grid item xs={6}>
@@ -922,188 +895,182 @@ function ViewMyHealthRecord() {
           {/* Upload Documents Section with all values set to null */}
           {/* Upload Documents Section */}
           <Card
-            style={{
-              height: "510px",
-              width: "48%",
-              display: "flex",
-              flexDirection: "column",
-              marginLeft: "635px", // Add margin to create space
-              marginTop: "-510px",
-            }}
-          >
-            <Paper
-              style={{ backgroundColor: "white", padding: "10px" }}
-              elevation={3}
-            >
-              <Typography variant="h6" style={{ color: "black" }}>
-                Upload Documents
-              </Typography>
-            </Paper>
-            <CardContent style={{ flex: 1 }}>
-              {/* BloodTests Upload Section */}
-              <Grid item xs={6}>
-                <Typography>BloodTests: </Typography>
-              </Grid>
-              <div style={{ marginTop: "30px" }}></div>
-              <Grid item xs={6}>
-                <input
-                  type="file"
-                  accept=".pdf, .jpg, .jpeg, .png"
-                  onChange={handleFileChange}
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit("Laboratory", "BloodTests")}
-                  style={{
-                    backgroundColor: "grey", // Grey background color
-                    color: "#fff", // Text color
-                    transition: "background-color 0.3s ease", // Smooth transition on hover
-                    marginTop: "10px", // Adjust the margin-top here
-                    marginLeft: "56px",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#4285f4")
-                  } // Hover style
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.backgroundColor = "grey")
-                  } // Revert to grey on mouse out
-                >
-                  Submit Document
-                </Button>
-              </Grid>
+  style={{
+    height: '510px',
+    width: "48%",
+    display: "flex",
+    flexDirection: "column",
+    marginLeft: '635px', // Add margin to create space
+    marginTop: '-510px',
+  }}
+>
+  <Paper
+    style={{ backgroundColor: "white", padding: "10px" }}
+    elevation={3}
+  >
+    <Typography variant="h6" style={{ color: "black" }}>
+      Upload Documents
+    </Typography>
+  </Paper>
+  <CardContent style={{ flex: 1 }}>
+    {/* BloodTests Upload Section */}
+    <Grid item xs={6}>
+      <Typography>BloodTests: </Typography>
+     
+    </Grid>
+    <div style={{ marginTop: '30px' }}></div> 
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+     <Button
+  variant="contained"
+  onClick={handleSubmit('Laboratory', 'BloodTests')}
+  style={{
+    backgroundColor: 'grey',
+    color: '#fff',
+    transition: 'background-color 0.3s ease',
+    marginTop: '10px',
+    marginLeft: '56px',
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4285f4')}
+  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'grey')}
+  disabled={!healthRecord} // Disable the button when healthRecord is false
+>
+  Submit Document
+</Button>
 
-              {/* XRays Upload Section */}
-              <Grid item xs={6}>
-                <Typography>XRays: </Typography>
-              </Grid>
-              <div style={{ marginTop: "30px" }}></div>
-              <Grid item xs={6}>
-                <input
-                  type="file"
-                  accept=".pdf, .jpg, .jpeg, .png"
-                  onChange={handleFileChange}
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit("Laboratory", "XRays")}
-                  style={{
-                    backgroundColor: "grey", // Grey background color
-                    color: "#fff", // Text color
-                    transition: "background-color 0.3s ease", // Smooth transition on hover
-                    marginTop: "10px", // Adjust the margin-top here
-                    marginLeft: "56px",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#4285f4")
-                  } // Hover style
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.backgroundColor = "grey")
-                  } // Revert to grey on mouse out
-                >
-                  Submit Document
-                </Button>
-              </Grid>
+    </Grid>
 
-              {/* Medication List Documents Upload Section */}
-              <Grid item xs={6}>
-                <Typography>Current Medications: </Typography>
-              </Grid>
-              <div style={{ marginTop: "30px" }}></div>
-              <Grid item xs={6}>
-                <input
-                  type="file"
-                  accept=".pdf, .jpg, .jpeg, .png"
-                  onChange={handleFileChange}
-                />
+    {/* XRays Upload Section */}
+    <Grid item xs={6}>
+      <Typography>XRays: </Typography>
+    
+    </Grid>
+    <div style={{ marginTop: '30px' }}></div> 
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+      <Button
+  variant="contained"
+  onClick={handleSubmit('Laboratory', 'XRays')}
+  style={{
+    backgroundColor: 'grey',
+    color: '#fff',
+    transition: 'background-color 0.3s ease',
+    marginTop: '10px',
+    marginLeft: '56px',
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4285f4')}
+  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'grey')}
+  disabled={!healthRecord} // Disable the button when healthRecord is false
+>
+  Submit Document
+</Button>
 
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit("MedicationList", "CurrentMedications")}
-                  style={{
-                    backgroundColor: "grey", // Grey background color
-                    color: "#fff", // Text color
-                    transition: "background-color 0.3s ease", // Smooth transition on hover
-                    marginTop: "10px", // Adjust the margin-top here
-                    marginLeft: "56px",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#4285f4")
-                  } // Hover style
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.backgroundColor = "grey")
-                  } // Revert to grey on mouse out
-                >
-                  Submit Document
-                </Button>
-              </Grid>
+    </Grid>
 
-              <Grid item xs={6}>
-                <Typography>Past Medications: </Typography>
+    {/* Medication List Documents Upload Section */}
+    <Grid item xs={6}>
+      <Typography>Current Medications: </Typography>
+     
+    
+    </Grid>
+ <div style={{ marginTop: '30px' }}></div> 
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+     
+     <Button
+  variant="contained"
+  onClick={handleSubmit('MedicationList', 'CurrentMedications')}
+  style={{
+    backgroundColor: 'grey',
+    color: '#fff',
+    transition: 'background-color 0.3s ease',
+    marginTop: '10px',
+    marginLeft: '56px',
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4285f4')}
+  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'grey')}
+  disabled={!healthRecord} // Disable the button when healthRecord is false
+>
+  Submit Document
+</Button>
 
-                <div style={{ marginTop: "30px" }}></div>
-              </Grid>
-              <Grid item xs={6}>
-                <input
-                  type="file"
-                  accept=".pdf, .jpg, .jpeg, .png"
-                  onChange={handleFileChange}
-                />
-                <Button
-                  variant="contained"
-                  onClick={handleSubmit("MedicationList", "PastMedications")}
-                  style={{
-                    backgroundColor: "grey", // Grey background color
-                    color: "#fff", // Text color
-                    transition: "background-color 0.3s ease", // Smooth transition on hover
-                    marginTop: "10px", // Adjust the margin-top here
-                    marginLeft: "56px",
-                  }}
-                  onMouseOver={(e) =>
-                    (e.currentTarget.style.backgroundColor = "#4285f4")
-                  } // Hover style
-                  onMouseOut={(e) =>
-                    (e.currentTarget.style.backgroundColor = "grey")
-                  } // Revert to grey on mouse out
-                >
-                  Submit Document
-                </Button>
-              </Grid>
-            </CardContent>
-          </Card>
+    </Grid>
+  
+    <Grid item xs={6}>
+      <Typography>Past Medications: </Typography>
+      
+      <div style={{ marginTop: '30px' }}></div> 
 
-          {/* General Comments Section with all values set to null */}
-          <Accordion
-            style={{
-              width: "98%",
-              margin: "0 auto",
-              marginTop: "20px",
-              marginBottom: "40px",
-              marginLeft: "20px",
-            }}
-          >
-            <AccordionSummary
-              aria-controls="general-comments-content"
-              id="general-comments-header"
-              expandIcon={<ExpandMoreIcon />}
-            >
-              <Typography
-                variant="h6"
-                style={{ fontWeight: "bold", margin: "auto" }}
+     
+    </Grid>
+    <Grid item xs={6}>
+      <input
+        type="file"
+        accept=".pdf, .jpg, .jpeg, .png"
+        onChange={handleFileChange}
+      />
+       <Button
+          variant="contained"
+          onClick={handleSubmit('Laboratory', 'BloodTests')}
+          style={{
+            backgroundColor: 'grey',
+            color: '#fff',
+            transition: 'background-color 0.3s ease',
+            marginTop: '10px',
+            marginLeft: '56px',
+          }}
+          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4285f4')}
+          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'grey')}
+          disabled={!healthRecord} // Disable the button when healthRecord is false
+        >
+          Submit Document
+        </Button>
+    </Grid>
+  </CardContent>
+</Card>
+    
+            {/* General Comments Section with all values set to null */}
+            <Accordion style={{ width: '98%', margin: '0 auto', marginTop: '20px', marginBottom: '40px', marginLeft: '20px' }}>
+              <AccordionSummary
+                aria-controls="general-comments-content"
+                id="general-comments-header"
+                expandIcon={<ExpandMoreIcon />}
               >
-                General Comments
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Card style={{ width: "98%", height: "120px" }}>
-                <CardContent>
-                  <Typography>No General Comments Yet</Typography>
-                </CardContent>
-              </Card>
-            </AccordionDetails>
-          </Accordion>
-        </Container>
-      )}
-    </>
-  );
+                <Typography variant="h6" style={{ fontWeight: 'bold', margin: 'auto' }}>General Comments</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Card style={{ width: '98%', height: '120px' }}>
+                  <CardContent>
+                  <Typography >No General Comments Yet</Typography>
+                  </CardContent>
+                </Card>
+              </AccordionDetails>
+            </Accordion>
+          </Container>
+        )}
+
+       </>
+      );
+
+      
+      
+      
+
+      
+      
+    
+
 }
 export default ViewMyHealthRecord;
