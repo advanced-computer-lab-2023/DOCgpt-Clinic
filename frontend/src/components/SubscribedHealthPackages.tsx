@@ -18,8 +18,8 @@ import {
 interface ApiResponse {
   subscribedPackages: {
     name: string;
-    startdate?: string | Date;
-    enddate?: string | Date;
+    startdate: string ;
+    enddate: string ;
     status: 'subscribed' | 'unsubscribed' | 'cancelled with end date';
     payedBy: string;
   }[];
@@ -107,11 +107,17 @@ const SubscribedHealthPackages = () => {
                 },
               }}
             >
-              <Typography variant="h6" gutterBottom>
-  {pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)}
-</Typography>
-              <Typography variant="body1" gutterBottom>
-                Status: {pkg.status}
+              <Typography variant="h2" color="text.secondary" gutterBottom>
+             <strong> {pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)} </strong>
+            </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Status:</strong> {pkg.status}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Start Date:</strong> {pkg.startdate.split('T')[0]}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>End Date:</strong> {pkg.enddate.split('T')[0]}
               </Typography>
               <Button
                 variant="contained"
