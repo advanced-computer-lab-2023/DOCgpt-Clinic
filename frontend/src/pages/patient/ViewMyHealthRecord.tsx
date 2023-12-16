@@ -29,6 +29,7 @@ import Back from "../../components/backButton";
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import El7a2niInfo from "../../components/El7a2ni-info";
 
 interface HealthRecord {
   MedicalHistory: {
@@ -1094,6 +1095,7 @@ function ViewMyHealthRecord() {
           </Accordion>
         </Container>
       )}
+      <El7a2niInfo/>
     </>
   );
 }
