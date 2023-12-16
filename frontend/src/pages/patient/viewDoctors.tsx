@@ -171,7 +171,16 @@ function ViewDoctors() {
   // A PATIENT COMPONENT ITSELF SHOULD CONTAIN:
   //1- A BUTTON TO THE HEALTH RECORDS PAGE/ EMPTY PAGE
   //2- THE PATIENT ITSELF ON CLICK SHOULD NAVIGATE TO ANOTHER PAGE TO SHOW ITS INFO
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
   
     <>

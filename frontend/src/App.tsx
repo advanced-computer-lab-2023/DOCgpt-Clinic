@@ -86,9 +86,10 @@ import AddPackage from "./components/AddPackage";
 import FamilyMemberPackageStatus from "./components/viewstatusfam";
 import DocList1 from "./components/alldoc";
 import PatientList1 from "./components/allpat";
-import Profile from '../src/pages/patient/profile'
+import Profile from "../src/pages/patient/profile";
 import famPackages from "./pages/patient/famPackages";
 import subscribedPage2 from "./pages/patient/suscribedpackagesfam";
+import AdminProfilePage from "./pages/admin/adminProfilePage";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -117,7 +118,6 @@ function App() {
           path="/patient/prescriptions"
           element={<PatientPrescriptions />}
         />
-
         <Route path="/patient/home" element={<HomePage />} />
         <Route path="/patient/link" element={<LinkFamilyMember />} />
         <Route path="/doctor/home" element={<DoctorHomePage />} />
@@ -134,9 +134,8 @@ function App() {
           path="/patient/walletAmount"
           element={<ViewWalletAmountPatient />}
         />
-        <Route path="/allpat" element={< PatientList1/>} />
-        <Route path="/alldoc" element={<DocList1/>} />
-
+        <Route path="/allpat" element={<PatientList1 />} />
+        <Route path="/alldoc" element={<DocList1 />} />
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
         // <Route path="/doctor/patients" Component={MyPatients} />
@@ -147,25 +146,22 @@ function App() {
         <Route path="/patient/packages" Component={Mypackages} />
         <Route path="/patient/profile" Component={Profile} />
         <Route path="/patient/subscribedfam" Component={subscribedPage2} />
-
         <Route path="/patient/subscribedPage" Component={subscribedPage} />
         <Route path="/doctor/appointments" Component={MyAppointments} />
         <Route path="/doctor/patients" Component={MyPatients} />
         <Route path="/doctor/patients/appointment" Component={MyPatientApp} />
-
         <Route path="/doctor/patientInfo" Component={PatientsInfo} />
         <Route path="/doctor/patientHealthRecord" Component={HealthRecord} />
         <Route path="/doctor/healthRecordEmpty" Component={HealthRecordEmpty} />
         <Route path="/doctor/healthRecordForm" Component={HealthRecordForm} />
         <Route path="/patient/viewDoctors" Component={ViewDoctors} />
         <Route path="/family-packages" Component={FamilyMemberPackageStatus} />
-        <Route path="/allpat" element={< PatientList1/>} />
-        <Route path="/alldoc" element={<DocList1/>} />
+        <Route path="/allpat" element={<PatientList1 />} />
+        <Route path="/alldoc" element={<DocList1 />} />
         <Route
           path="/patient/viewMyhealthrecords"
           Component={ViewMyHealthRecord}
         />
-
         <Route
           path="/doctor/todayapp"
           element={<TodayAppointmentsComponent />}
@@ -221,7 +217,6 @@ function App() {
         <Route path="/patient/reschedule" Component={PatientReschedule} />
         <Route path="/patient/fam/reschedule" Component={FamMemResch} />
         <Route path="/patient/fam/followUp" Component={RequestFamMemFollow} />
-
         <Route
           path="/patient/famMemAppointments"
           Component={ViewFamMemAppointments}
@@ -229,6 +224,7 @@ function App() {
         <Route path="/selectedPres/:id" Component={SelectedPrescription} />
         <Route path="/DrselectedPres/:id" Component={DrSelectedPrescription} />
         <Route path="/doctor/DrPrescription" Component={DrPrescription} />
+        <Route path="/adminProfile" Component={AdminProfilePage} />
         <Route path="patient/famPackages" Component={famPackages} />
       </Routes>
     </Router>
