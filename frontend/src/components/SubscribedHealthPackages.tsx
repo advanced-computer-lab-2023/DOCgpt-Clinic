@@ -86,9 +86,7 @@ const SubscribedHealthPackages = () => {
 
   return (
     <Container>
-    <Typography color="primary" style={{ textAlign: 'center' }} variant="h4" gutterBottom>
-      My Subscribed Packages
-    </Typography>
+   
     <Grid container spacing={2}>
       {Array.isArray(subscribedPackages) &&
         subscribedPackages.map((pkg, index) => (
@@ -121,7 +119,7 @@ const SubscribedHealthPackages = () => {
               </Typography>
               <Button
                 variant="contained"
-                color="primary"
+                color="secondary"
                 onClick={() => handleRemoveSubscription(pkg.name)}
                 style={{ marginTop: '15px' }}
               >

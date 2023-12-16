@@ -306,6 +306,7 @@ export const viewSubscribedPackages = async (req: Request, res: Response) => {
   }
 };
 
+
 export const viewHealthPackageStatus = async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers['authorization'];
@@ -386,6 +387,7 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 const findHealthPackageStatusHelper = (packages: any[], packageName: string) => {
   const packageData = packages.find(package1 => package1.name.toLowerCase() === packageName.toLowerCase());
