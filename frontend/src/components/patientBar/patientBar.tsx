@@ -41,11 +41,7 @@ import theme from "../../theme";
 
 const drawerWidth = 240;
 //const navItems = ["Home", "About", "Pharmacy", "Contact", "Login"];
-const navItems = [
-  { name: "Home", path: "/patient/home" },
-  { name: "About", path: "/patient/home" },
-  { name: "Contact", path: "/patient/home" },
-];
+const navItems = [{ name: "Home", path: "/patient/home" }];
 
 export type RouteType = {
   header: string;
@@ -121,15 +117,7 @@ export default function DrawerAppBar() {
   };
 
   const openPharmacy = () => {
-    const newWindow = window.open(
-      "http://localhost:3001/login",
-      "_blank"
-    );
-    if (newWindow) {
-      window.close();
-    } else {
-      console.error("Unable to open a new window.");
-    }
+    window.location.href = "http://localhost:3001/patientHome";
   };
 
   const navigateTo = (route: To) => {
