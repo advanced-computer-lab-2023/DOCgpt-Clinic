@@ -1,10 +1,12 @@
 // SelectedPres.tsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Typography, Divider, Grid, Button, List, ListItem, ListItemText, Container, Card, CardContent, DialogContent, Dialog, DialogActions, DialogTitle } from '@mui/material';
 import DrawerAppBar from '../../components/Doctor bar/doctorBar';
 import FileDownloadSharpIcon from '@mui/icons-material/FileDownloadSharp';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 
 interface Medicine {
@@ -25,8 +27,8 @@ const DrSelectedPrescription = () => {
   const { id } = useParams();
   const [prescription, setPrescription] = useState<Prescription>();
   const [open, setOpen] = useState(true);
-
-  
+  const [pdfRef, setPdfRef] = useState<HTMLDivElement | null>(null);
+  const [isContentAvailable, setIsContentAvailable] = useState(false);
 
   
   useEffect(() => {
@@ -53,9 +55,44 @@ const DrSelectedPrescription = () => {
   const handleUpdate = () => {
     console.log('Update button clicked');
   };
+
+
   const handleDownload = () => {
     console.log('Download button clicked');
+    
+    if (!isContentAvailable || !pdfRef) {
+      console.error('PDF reference is not available');
+      return;
+    }
+
+    // const input = pdfRef.current;
+    // if (!input) {
+    //   console.error('PDF reference is not available');
+    //   return;
+    // }
+
+    html2canvas(pdfRef).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4', true);
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = (pdfHeight - imgHeight * ratio) / 2;
+
+      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+      pdf.save('prescription.pdf');
+    });
   };
+
+  useEffect(() => {
+    if (pdfRef) {
+      setIsContentAvailable(true);
+    }
+  }, [pdfRef]);
+
   const formattedDate = prescription && new Date(prescription.date).toISOString().split('T')[0];
   const navigate=useNavigate();
 
@@ -73,7 +110,7 @@ const DrSelectedPrescription = () => {
           PRESCRIPTION DETAILS
         </Typography>
       </DialogTitle>
-      <DialogContent>
+      <DialogContent ref={(ref: HTMLDivElement | null) => setPdfRef(ref)}>
         {prescription ? (
           <Container>
             <Divider style={{ margin: '16px 0' }} />

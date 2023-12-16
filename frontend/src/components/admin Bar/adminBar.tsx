@@ -1,10 +1,9 @@
 import * as React from "react";
 import { useState } from "react";
 import { To, useNavigate } from "react-router-dom";
-import logo from '../../logo.jpeg';
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-
+//import logo from './'
 import {
   AppBar,
   Box,
@@ -194,7 +193,7 @@ const toggleHeaderState = (index: number) => {
   const drawer = (
     <Box sx={{ textAlign: "center" }}>
       <div style={{ display: 'flex', alignItems: 'left', maxWidth: '600px', margin: '0 auto' }}>
-      <img src={logo}  alt="Clinic Logo" style={{ width: '200px', height:'100px',  marginRight: '5px' }} />
+     {/* <img src={logo}  alt="Clinic Logo" style={{ width: '200px', height:'100px',  marginRight: '5px' }} /> */}
       </div>
       <Divider />
       {renderMenuItems(appRoutes)}

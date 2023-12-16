@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.creditPayment = exports.getSubscribedPackagesForMember = exports.viewFamilyMembersAndPackages = exports.cancelSubscriptionfam2 = exports.cancelSubscription = exports.viewHealthPackageStatus = exports.viewSubscribedPackages = exports.subscribeToHealthPackageForFamily = exports.subscribeFamAsPatient = exports.subscribeToHealthPackage = void 0;
+exports.creditPayment = exports.getdiscount = exports.getdisc = exports.getSubscribedPackagesForMember = exports.viewFamilyMembersAndPackages = exports.cancelSubscriptionfam2 = exports.cancelSubscription = exports.viewHealthPackageStatus = exports.viewSubscribedPackages = exports.subscribeToHealthPackageForFamily = exports.subscribeFamAsPatient = exports.subscribeToHealthPackage = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel")); // Import your patient model
 const packageModel_1 = __importDefault(require("../models/packageModel")); // Import your package model
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
@@ -482,6 +482,46 @@ function calcTotal(feesPerYear, username) {
         }
     });
 }
+function getdisc(username) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const patient = yield patientModel_1.default.findOne({ username });
+            if (!patient) {
+                throw new Error('Patient not found');
+            }
+            if (patient.healthPackageSubscription.length === 0) {
+                console.log('Patient has no health packages subscribed');
+                return 0; // or any default value you want to return when no health packages are subscribed
+            }
+            const firstSubscription = patient.healthPackageSubscription[0];
+            const packageName = firstSubscription.name;
+            const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
+            if (!healthPackage) {
+                throw new Error('Health package not found');
+            }
+            const discount = healthPackage.medicineDiscount;
+            console.log('Discount:', discount);
+            // Perform further calculations or operations with the discount value
+            return discount;
+        }
+        catch (error) {
+            console.error('Error calculating health discount:', error);
+            throw error;
+        }
+    });
+}
+exports.getdisc = getdisc;
+const getdiscount = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username } = req.params;
+    try {
+        const discount = yield getdisc(username);
+        res.json({ discount });
+    }
+    catch (error) {
+        res.status(404).send(error.message);
+    }
+});
+exports.getdiscount = getdiscount;
 const creditPayment = (req, res, sessionPrice) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const session = yield stripe.checkout.sessions.create({

@@ -94,9 +94,6 @@ const AdminList: React.FC = () => {
     <Container maxWidth="sm">
     
       <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
-        <Typography variant="h4" align="center" style={{ padding: '20px' }} gutterBottom>
-          Admins List
-        </Typography>
         <CreateAdminButton /> {/* This will render the "Add Admin" button */}
       </Box>
       <Grid container spacing={2}>

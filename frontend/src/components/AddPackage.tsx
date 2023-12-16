@@ -3,8 +3,10 @@ import { TextField, Button, Container, Grid, Typography,Snackbar } from '@mui/ma
 import SaveIcon from '@mui/icons-material/Save';
 import axios from 'axios';
 import DrawerAppBar from './admin Bar/adminBar';
+import { useNavigate } from 'react-router-dom';
 const AddPackage = () => {
-   
+  const navigate = useNavigate();
+
   const [packageDetails, setPackageDetails] = useState({
     name: '',
     feesPerYear: '',
@@ -23,13 +25,12 @@ const AddPackage = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      // Send the package details to the backend
       const response = await axios.post('/routes/admins/addPackage', packageDetails);
-
       if (response.status === 201) {
-        // Package added successfully
         setSuccessMessage('Package has been added successfully.');
         setOpenSnackbar(true);
+        // Add this line to navigate after setting the success message
+        navigate('/hp');
       } else {
         console.error('Failed to add package:', response.data.error);
       }

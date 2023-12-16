@@ -22,7 +22,7 @@ const appRoutes: RouteType[] = [
  
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
        Admins
       </Typography>
     ),
@@ -37,7 +37,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Doctors
       </Typography>
     ),
@@ -58,7 +58,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
        Patients
       </Typography>
     ),
@@ -73,7 +73,7 @@ const appRoutes: RouteType[] = [
 
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
        Packages
       </Typography>
     ),
@@ -82,10 +82,7 @@ const appRoutes: RouteType[] = [
         path: "/hp",
         state: "Health Packages",
       },
-      {
-        path: "/patient/PackagesPage",
-        state: "Add Packages",
-      },
+     
       
     ],
       

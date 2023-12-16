@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../logo.jpeg";
+import logo from "../Logoo.png";
 import { useNavigate } from "react-router-dom";
 
 const El7a2niPatientInfo = () => {

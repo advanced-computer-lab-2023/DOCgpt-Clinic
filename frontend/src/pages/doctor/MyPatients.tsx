@@ -9,6 +9,8 @@ import {
   TextField,
   Grid,
   Divider,
+  CircularProgress,
+  InputAdornment,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import Patient from "../../components/Patient";
@@ -16,6 +18,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niDocInfo from "../../components/El7a2niDoc-info";
+import Background from '../../patient.jpeg';
+import Back from "../../components/backButton";
 
 
 function MyPatients() {
@@ -25,9 +29,16 @@ function MyPatients() {
   const [nameSearchTerm, setNameSearchTerm] = useState("");
   const [upcoming, setUpcoming] = useState(false);
   const [doctorUsername, setDoctor] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPatientsLoading, setIsPatientsLoading] = useState(true);
+const [isDoctorDataLoading, setIsDoctorDataLoading] = useState(true);
+  
+  const [isHealthRecordPopupOpen, setHealthRecordPopupOpen] = useState(false);
 
   const fetchPatients = async () => {
     console.log("Fetching patients...");
+    setIsPatientsLoading(true);
+
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.get(`/routes/doctors/viewMyPatients`, {
@@ -44,10 +55,14 @@ function MyPatients() {
     } catch (error) {
       console.error("Error:", error);
     }
+    setIsPatientsLoading(false);
+
   };
 
   async function fetchDoctorData() {
     try {
+      setIsDoctorDataLoading(true);
+
       const token = localStorage.getItem("authToken");
       const response = await fetch(`/routes/doctors/getDoctor`, {
         headers: {
@@ -64,6 +79,8 @@ function MyPatients() {
       console.error(error);
       alert("An error occurred while fetching doctor data");
     }
+    setIsDoctorDataLoading(false);
+
   }
 
   useEffect(() => {
@@ -128,7 +145,9 @@ function MyPatients() {
   const handleUpcomingSwitch = () => {
     setUpcoming((prevSwitchState) => !prevSwitchState);
   };
-
+  const handleSearchClick = () => {
+    searchPatients();
+  };
   return (
     <>
       <DoctorBar />
@@ -206,7 +225,6 @@ function MyPatients() {
       
     </>
   );
-  
-}
+};
 
 export default MyPatients;
