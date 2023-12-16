@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, Typography, Button, TextField, Container, Avatar,  Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions, useTheme, Paper, FormControl } from '@mui/material';
+  DialogActions, useTheme, Paper, FormControl, List, ListItem, Alert, Snackbar } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import isBefore from 'date-fns/isBefore';
@@ -22,14 +22,25 @@ import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import TimePicker from '@mui/lab/TimePicker';
 
+import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
+import DoctorTimeSlot from './DoctorTimeSlot';
+
+interface Timeslot {
+  date: Date;
+  // Add other properties as needed
+}
 
 
 const DoctorAvailability: React.FC = () => {
   const [selectedTime, setSelectedTime] = useState();
+  const [timeslots, setTimeslots] = useState<Timeslot[]>([]);
   const theme = useTheme(); // Access the theme
   const [selectedDates, setSelectedDates] = useState<Date[]>([]);
   const [inputDate, setInputDate] = useState<string>('');
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
+  const [disableAdd, setDisableAdd] = useState(true);
+  const [disableSubmit, setDisableSubmit] = useState(true);
+ 
 
   const addTimeSlotsToDatabase = async () => {
     try {
@@ -53,6 +64,27 @@ const DoctorAvailability: React.FC = () => {
     }
   };
 
+  
+  useEffect(() => {
+    // Fetch timeslots from the backend
+    const fetchData = async () => {
+    try {
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get('/routes/doctors/getSlots', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+        setTimeslots(response.data.timeslots);
+    } catch (error) {
+        console.error('Error fetching timeslots:', error);
+    }
+};
+
+fetchData();
+}, []); // Empty dependency array ensures that this effect runs only once on component mount
+
+
   const handleRemoveDate = (index: number) => {
     setSelectedDates((prevDates) => {
       const updatedDates = [...prevDates];
@@ -69,11 +101,17 @@ const DoctorAvailability: React.FC = () => {
     if (date) {
       setInputDate(date.toISOString().split('T')[0]); // Format the date to yyyy-MM-dd
     }
+    if(selectedTime && disableAdd){
+      setDisableAdd(false);
+    }
   };
   
   const handleTimeChange = (event: any) => {
     console.log("time", event.target.value);
     setSelectedTime(event.target.value);
+    if(inputDate){
+      setDisableAdd(false);
+    }
   };
 
   const handleAdd = () =>{
@@ -84,12 +122,16 @@ const DoctorAvailability: React.FC = () => {
     console.log("combined:", combinedDateTimeString);
     console.log("added",date);
     console.log("selected dates: ", selectedDates);
+    setDisableAdd(true);
+    setDisableSubmit(false);
   }
-
 
   const handleCloseSuccessDialog = () => {
     setSuccessDialogOpen(false);
+    window.location.reload();
+
   };
+  
   return (
     <div
         style={{
@@ -102,105 +144,158 @@ const DoctorAvailability: React.FC = () => {
         >
     <>
     <DrawerAppBar/>
-    <Grid container justifyContent="center" alignItems="center" style={styles.container}>
-      <Paper elevation={15} style={styles.paper}>
-        <Grid container spacing={2} direction="column" alignItems="center">
-          <Grid item xs={12}>
-            <Typography variant="h5">When are you free?</Typography>  
-          </Grid>
-          <div style={styles.space}></div> 
 
-          <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <div style={styles.avatarContainer}>
-              <Avatar style={styles.avatar}>
-                <CalendarMonthIcon />
-              </Avatar>
-            </div>
-            <div style={styles.space}></div> 
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <FormControl fullWidth>
-              <DatePicker
-                label="Select Date"
-                value={inputDate ? new Date(inputDate) : null}
-                shouldDisableDate={(date) => isBefore(date, startOfDay(new Date()))}
-                onAccept={handleDateAccept}
-                
-              />
-              </FormControl>
-            </LocalizationProvider>
-          </Grid>
-          <div style={styles.space}></div> 
-          
-          <Grid item xs={6}>
-          <div style={styles.avatarContainer}>
-              <Avatar style={styles.avatar}>
-                <AccessTimeFilledRoundedIcon />
-              </Avatar>
-            </div>
-            <div style={styles.space}></div> 
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <FormControl fullWidth>
-                  <TextField
-                    type="time"
-                    value={selectedTime}
-                    onChange={handleTimeChange}
-                    variant="outlined"
-                  />
-                </FormControl>
-                </LocalizationProvider>
 
-          </Grid>
-          <div style={styles.space}></div> 
-          <Grid item xs={12}>
-            <Button variant="contained" color="primary" onClick={handleAdd}>
-              Add
-            </Button>
-          </Grid>
-          </Grid>
+        <Grid container alignItems="center" >
+          <Grid item xs={6} >
+          <Grid container justifyContent="center" alignItems="center" style={styles.container} >
+              <Paper elevation={5} style={styles.paper}>
+                <Grid container spacing={2} justifyContent="center" alignItems="center">
+                  <Grid item xs={7}>
+                    <Typography variant="h1" style={{marginBottom : '50px'}}>When are you free?</Typography>  
+                  </Grid>          
 
-          <Grid item xs={12}>
-            {/* Display selected dates */}
-            <Typography variant="subtitle1">Selected Dates:</Typography>
-            {selectedDates.map((date, index) => (
-              <div key={index}>
-                {date.toISOString().split('T')[1].substring(0, 5)}
-                {"  "}
-                {`${date.toLocaleString([], {
-                        weekday: "short",
+                  <Grid container spacing={2} justifyContent="center" >
+                  <Grid item xs={7}>
+                    <div style={styles.avatarContainer}>
+                      <Avatar style={styles.avatar}>
+                        <CalendarMonthIcon />
+                      </Avatar>
+                    </div>
+                    <div style={styles.space}></div> 
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <FormControl fullWidth>
+                      <DatePicker
+                        label="Select Date"
+                        value={inputDate ? new Date(inputDate) : null}
+                        shouldDisableDate={(date) => isBefore(date, startOfDay(new Date()))}
+                        onAccept={handleDateAccept}
+                        
+                      />
+                      </FormControl>
+                    </LocalizationProvider>
+                  </Grid>
+                  <div style={styles.space}></div> 
+                  
+                  <Grid item xs={7}>
+                  <div style={styles.avatarContainer}>
+                      <Avatar style={styles.avatar}>
+                        <AccessTimeFilledRoundedIcon />
+                      </Avatar>
+                    </div>
+                    <div style={styles.space}></div> 
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                    <FormControl fullWidth>
+                    <TextField
+                      type="time"
+                      value={selectedTime}
+                      onChange={handleTimeChange}
+                      variant="outlined"
+                    />
+                  </FormControl>
+
+                  </LocalizationProvider>
+
+                  </Grid>
+                  <div style={styles.space}></div> 
+                  <Grid item xs={7}>
+                    <Button variant="contained" color="primary" disabled={disableAdd} onClick={handleAdd}>
+                      Add
+                    </Button>
+                  </Grid>
+                  <Grid item xs={7}>
+                    {/* Display selected dates */}
+                    <Typography variant="subtitle1">Selected Dates:</Typography>
+                    {selectedDates.map((date, index) => (
+                      <div key={index}>
+                          <span style={{marginRight: "10px"}}>
+                    {` ${new Date(date).toLocaleString("en-US", {
+                        weekday: "long",
                         month: "short",
                         day: "numeric",
                         year: "numeric",
-                    })}`}
+                        })}`}
+            {" "}
 
-                <IconButton color="secondary" onClick={() => handleRemoveDate(index)}>
-                  <ClearIcon />
-                </IconButton>
-              </div>
-            ))}
+                    </span>
+                    <span style={{fontWeight:'bold'}}>
+            {(new Date(date).getHours() > 12)? new Date(date).getHours() - 14
+            : (new Date(date).getHours() === 2 )? new Date(date).getHours() + 10
+            : new Date(date).getHours() - 2
+            } 
+          {":"}
+          {(new Date(date).getMinutes()<10)? new Date(date).getMinutes().toString().padStart(2, '0') : new Date(date).getMinutes()}
+          {" "}
+          {new Date(date).getHours() >= 12 ? "PM" : "AM"}
+
+                    </span>
+
+                        <IconButton style={{color:"red"}} onClick={() => handleRemoveDate(index)}>
+                          <ClearIcon />
+                        </IconButton>
+                      </div>
+                    ))}
+                  </Grid>
+                  <div style={styles.space}></div> 
+                  <Grid item xs={7}>
+                    <Button variant="contained" color="primary" onClick={handleSubmit} disabled={disableSubmit}>
+                      Submit
+                    </Button>
+                  </Grid>
+                  </Grid>
+
+                </Grid>
+              </Paper>
           </Grid>
-          <div style={styles.space}></div> 
-          <Grid item xs={12}>
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
-              Submit
-            </Button>
+
+          </Grid>
+          <Grid item>
+          <Grid container justifyContent="center" alignItems="center" style={styles.container2}>
+            <Paper elevation={5} style={styles.paper2}>
+            <Typography variant="h1" style={{marginBottom : '30px'}}>Your available time slots</Typography>  
+
+
+            {timeslots.length === 0 ? (
+              <div>
+                  <Typography variant="h3">You do not have any available timeslots yet</Typography>
+                  <Typography variant="h3" style={{display:'flex', alignItems: 'center', justifyContent:'center'}}>
+                  <ReplyRoundedIcon style={{ marginRight: "8px"}} />{" "}
+                    Add some!
+                  </Typography>
+              </div>
+        ) : (
+            <List>
+            {timeslots.map((timeslot, index) => (
+                <ListItem
+                key={index}
+                >
+            <DoctorTimeSlot timeslot={timeslot}></DoctorTimeSlot>
+                </ListItem>
+            ))}
+            </List>
+        )}
+            </Paper>
           </Grid>
         </Grid>
-      </Paper>
-    </Grid>
+        </Grid>
+
+
+      
+
     <Dialog open={successDialogOpen} onClose={handleCloseSuccessDialog}>
         <DialogTitle>Success</DialogTitle>
         <DialogContent>
           <Typography variant="body1">
-            The selected date is added successfully.
+            The selected dates are added successfully.
           </Typography>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseSuccessDialog} color="primary">
-            Close
+            Ok
           </Button>
         </DialogActions>
       </Dialog>
+      {/* Snackbar */}
       <El7a2niInfo />
     </>
     </div>
@@ -210,13 +305,27 @@ const DoctorAvailability: React.FC = () => {
 const styles: { [key: string]: CSSProperties } = {
   container: {
     minHeight: '100vh',
+    height: 'auto',
+
+  },
+  container2: {
+    minHeight: '100vh',
+    height: 'auto',
+   
   },
   paper: {
-    padding: '30px 20px',
-    width: 800,
-    height: 500,
-    margin: '20px auto',
+    padding: '30px 0px',
+    width: 600,
     textAlign: 'center', // Center the text
+    borderRadius: '25px',
+    minHeight: 600
+  },
+  paper2: {
+    padding: '30px 30px',
+    width: 600,
+    textAlign: 'center', // Center the text
+    borderRadius: '25px',
+    minHeight: 600
   },
   avatarContainer: {
     display: 'flex',

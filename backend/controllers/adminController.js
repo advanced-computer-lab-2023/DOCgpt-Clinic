@@ -112,6 +112,9 @@ const deletePatientByUsername = (req, res) => __awaiter(void 0, void 0, void 0, 
         if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
+        // Update all other patients to remove the deleted patient from their familyMembers array
+        const updateResult = yield patientModel_1.default.updateMany({ 'familyMembers.username': username }, { $pull: { familyMembers: { username } } });
+        // Also delete related appointments, health records, and prescriptions
         const appoinment = yield appointmentModel_1.default.findOneAndDelete({ patient: username });
         const healthRecord = yield healthRecordModel_1.default.findOneAndDelete({ patient: username });
         const prescription = yield perscriptionModel_1.default.findOneAndDelete({ patientUsername: username });

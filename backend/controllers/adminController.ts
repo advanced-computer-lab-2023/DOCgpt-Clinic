@@ -104,19 +104,29 @@ export const createAdmin = async (req: Request, res: Response) => {
     
       export const deletePatientByUsername = async (req: Request, res: Response) => {
         console.log("ana ");
-
+      
         try {
           const { username } = req.body;
-      console.log("ana fe climn");console.log("ana hena")
+          console.log("ana fe climn");
+          console.log("ana hena");
+      
           // Find and delete the Doctor by username
           const deletedPatient = await patientModel.findOneAndDelete({ username });
       
           if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
           }
-          const appoinment = await appointmentModel.findOneAndDelete({patient: username});
-          const healthRecord = await healthRecordModel.findOneAndDelete({patient: username});
-          const prescription = await Prescription.findOneAndDelete({patientUsername: username});
+      
+          // Update all other patients to remove the deleted patient from their familyMembers array
+          const updateResult = await patientModel.updateMany(
+            { 'familyMembers.username': username },
+            { $pull: { familyMembers: { username } } }
+          );
+            
+          // Also delete related appointments, health records, and prescriptions
+          const appoinment = await appointmentModel.findOneAndDelete({ patient: username });
+          const healthRecord = await healthRecordModel.findOneAndDelete({ patient: username });
+          const prescription = await Prescription.findOneAndDelete({ patientUsername: username });
       
           res.status(200).json({ message: 'Patient deleted successfully' });
         } catch (error) {
@@ -124,6 +134,7 @@ export const createAdmin = async (req: Request, res: Response) => {
           res.status(500).json({ message: 'Internal server error' });
         }
       };
+      
     
     
     // view doctor Info
