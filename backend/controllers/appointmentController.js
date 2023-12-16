@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -55,56 +46,56 @@ if (!process.env.STRIPE_SECRET_KEY)
 //         return res.status(500).json({ message: 'An error occurred', error });
 //     }
 // };
-const getAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAppointments = async (req, res) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    const tokenDB = await tokenModel_1.default.findOne({ token });
     console.log(token);
     const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
-    const appoinments = yield appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
+    const appoinments = await appointmentModel_1.default.find({ doctor: doctorUsername }).exec();
     res.status(200).json(appoinments);
-});
+};
 exports.getAppointments = getAppointments;
-const getAllAppointments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const appoinments = yield appointmentModel_1.default.find().exec();
+const getAllAppointments = async (req, res) => {
+    const appoinments = await appointmentModel_1.default.find().exec();
     res.json(appoinments);
-});
+};
 exports.getAllAppointments = getAllAppointments;
-const getPapp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPapp = async (req, res) => {
     const username = req.query.username;
-    const appoinments = yield appointmentModel_1.default.find({ patient: username }).exec();
+    const appoinments = await appointmentModel_1.default.find({ patient: username }).exec();
     res.status(200).json(appoinments);
-});
+};
 exports.getPapp = getPapp;
-const localVariables = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const localVariables = async (req, res, next) => {
     req.app.locals = {
         OTP: null,
         resetSession: false
     };
     next();
-});
+};
 exports.localVariables = localVariables;
-const complete = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const complete = async (req, res) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    const tokenDB = await tokenModel_1.default.findOne({ token });
     console.log(token);
     const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     const status = req.body.status;
     const date = req.body.date;
     const patient = req.body.patient;
-    const result = yield appointmentModel_1.default.updateOne({
+    const result = await appointmentModel_1.default.updateOne({
         patient: patient,
         status: status,
         date: date,
         doctor: doctorUsername,
     }, { $set: { status: 'completed' } });
-});
+};
 exports.complete = complete;
-const createNotificationWithCurrentDate = (patientUsername, subject, msg) => __awaiter(void 0, void 0, void 0, function* () {
+const createNotificationWithCurrentDate = async (patientUsername, subject, msg) => {
     try {
         const currentDate = new Date();
-        const notification = yield notificationModel_1.default.create({
+        const notification = await notificationModel_1.default.create({
             patientUsername,
             date: currentDate,
             subject,
@@ -118,9 +109,25 @@ const createNotificationWithCurrentDate = (patientUsername, subject, msg) => __a
         console.error('Error creating notification:', error);
         throw error; // Re-throw the error to handle it in the calling function
     }
-});
+};
 exports.createNotificationWithCurrentDate = createNotificationWithCurrentDate;
+<<<<<<< HEAD
+const createAppointment = async (req, res) => {
+=======
+function formatDateWithoutDay(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+}
+function extractTime(dateString) {
+    const date = new Date(dateString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    return time;
+}
 const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+>>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'upcoming';
@@ -129,16 +136,16 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'Token not found' });
         }
         const username = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        const doctor = await doctorModel_1.default.findOne({ username: doctorUsername });
         if (!doctor) {
             return res.status(404).json({ message: 'Doctor not found app' });
         }
@@ -146,8 +153,8 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const newDate = new Date(date);
         doctor.timeslots = doctor.timeslots.filter((timeslot) => !(timeslot.date &&
             timeslot.date.getTime() === newDate.getTime()));
-        yield doctor.save();
-        const appointment = yield appointmentModel_1.default.create({
+        await doctor.save();
+        const appointment = await appointmentModel_1.default.create({
             status: status,
             doctor: doctorUsername,
             patient: username,
@@ -156,41 +163,45 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
             price: price,
             scheduledBy: username
         });
+        const time = extractTime(date);
+        const formattedDateWithoutDay = formatDateWithoutDay(date);
         const patientEmail = patient.email; // Adjust this based on your patient model structure
         const emailSubject = 'Appointment Confirmation';
+        const msgSubject = ` ${type} Appointment Confirmation`;
         const emailText = `Your appointment has been scheduled for ${new Date(date)}. 
                       Doctor: ${doctor.username}
                       Type: ${type}
                       Price: ${price}`;
-        const msg = `Your appointment has been scheduled for ${new Date(date)}. 
-                      Doctor: ${doctor.username}
-                      Type: ${type}
-                      Price: ${price}`;
+        const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+                      Doctor: ${doctor.username} `;
         const doctorEmail = doctor.email; // Adjust this based on your patient model structure
         const emailText1 = `An  appointment has been scheduled for ${new Date(date)}. 
                                         patient: ${username}
                                         Type: ${type}
                                         Price: ${price}`;
-        const msg1 = `An  appointment has been scheduled for ${new Date(date)}. 
-                                        patient: ${username}
-                                        Type: ${type}
-                                        Price: ${price}`;
+        const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+                                        patient: ${username}`;
         // Assuming sendOTPByEmail returns a Promise, use await here if needed
-        const not = yield (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
-        const not2 = yield (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
+        const not = await (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
+        const not2 = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
-        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
+<<<<<<< HEAD
+        const nn = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
+        const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
+=======
+        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msgSubject);
+        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msgSubject);
+>>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
         return appointment;
     }
     catch (error) {
         console.error("An error occurred:", error); // Log the full error object for debugging
         return res.status(500).json({ message: 'An error occurred', error: error.message });
     }
-});
+};
 exports.createAppointment = createAppointment;
-const createAppointmentFam = (req, res, user) => __awaiter(void 0, void 0, void 0, function* () {
+const createAppointmentFam = async (req, res, user) => {
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'upcoming';
@@ -199,20 +210,20 @@ const createAppointmentFam = (req, res, user) => __awaiter(void 0, void 0, void 
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'Token not found' });
         }
         const username = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const fam = yield patientModel_1.default.findOne({ username: user });
+        const fam = await patientModel_1.default.findOne({ username: user });
         if (!fam) {
             return res.status(404).json({ error: 'family member not found' });
         }
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        const doctor = await doctorModel_1.default.findOne({ username: doctorUsername });
         if (!doctor) {
             return res.status(404).json({ message: 'Doctor not found app' });
         }
@@ -220,8 +231,8 @@ const createAppointmentFam = (req, res, user) => __awaiter(void 0, void 0, void 
         const newDate = new Date(date);
         doctor.timeslots = doctor.timeslots.filter((timeslot) => !(timeslot.date &&
             timeslot.date.getTime() === newDate.getTime()));
-        yield doctor.save();
-        const appointment = yield appointmentModel_1.default.create({
+        await doctor.save();
+        const appointment = await appointmentModel_1.default.create({
             status: status,
             doctor: doctorUsername,
             patient: user,
@@ -230,55 +241,58 @@ const createAppointmentFam = (req, res, user) => __awaiter(void 0, void 0, void 
             price: price,
             scheduledBy: username
         });
+        const time = extractTime(date);
+        const formattedDateWithoutDay = formatDateWithoutDay(date);
         const patientEmail = fam.email; // Adjust this based on your patient model structure
-        const emailSubject = 'Appointment Confirmation';
+        const emailSubject = `  Appointment Confirmation`;
+        const msgSubject = ` ${type} Appointment Confirmation`;
         const emailText = `Your appointment has been scheduled for ${new Date(date)}. 
                       Doctor: ${doctor.username}
-                      Type: ${type}
-                      Price: ${price}`;
-        const msg = `Your appointment has been scheduled for ${new Date(date)}. 
-                      Doctor: ${doctor.username}
-                      Type: ${type}
-                      Price: ${price}`;
+                      Type: ${type} `;
+        const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+                      Doctor: ${doctor.username} `;
         const doctorEmail = doctor.email; // Adjust this based on your patient model structure
         const emailText1 = `An  appointment has been scheduled for ${new Date(date)}. 
                                         patient: ${username}
                                         Type: ${type}
                                         Price: ${price}`;
-        const msg1 = `An  appointment has been scheduled for ${new Date(date)}. 
-                                        patient: ${username}
-                                        Type: ${type}
-                                        Price: ${price}`;
+        const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+                                        patient: ${username}`;
         // Assuming sendOTPByEmail returns a Promise, use await here if needed
-        const not = yield (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
-        const not2 = yield (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
+        const not = await (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
+        const not2 = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
-        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
+<<<<<<< HEAD
+        const nn = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
+        const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
+=======
+        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, msgSubject, msg);
+        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, msgSubject, msg1);
+>>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
         return appointment;
     }
     catch (error) {
         console.error("An error occurred:", error); // Log the full error object for debugging
         return res.status(500).json({ message: 'An error occurred', error: error.message });
     }
-});
+};
 exports.createAppointmentFam = createAppointmentFam;
-const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const paymenttt = async (req, res) => {
     try {
         const { doctorUsername, paymentMethod, price, date } = req.body;
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'Token not found' });
         }
         const patientUsername = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username: patientUsername });
+        const patient = await patientModel_1.default.findOne({ username: patientUsername });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        const doctor = await doctorModel_1.default.findOne({ username: doctorUsername });
         if (!doctor) {
             res.status(404).json({ error: 'Doctor not found pay' });
             return;
@@ -286,15 +300,15 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const pricee = price;
         if (paymentMethod === 'card') {
             const numericPrice = typeof price === 'number' ? price : parseInt(price, 10);
-            const sessionUrl = yield (0, exports.payWithCredit)(req, res, numericPrice);
+            const sessionUrl = await (0, exports.payWithCredit)(req, res, numericPrice);
             if (!sessionUrl) {
                 return res.status(500).json({ error: 'Failed to create payment session' });
             }
             console.log("Doctor's balance before update:", doctor.walletBalance);
             doctor.walletBalance += numericPrice;
             console.log("Doctor's balance after update:", doctor.walletBalance);
-            yield doctor.save();
-            const app = yield (0, exports.createAppointment)(req, res);
+            await doctor.save();
+            const app = await (0, exports.createAppointment)(req, res);
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });
             }
@@ -306,13 +320,13 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 return res.status(400).json({ error: "Insufficient balance in the patient's wallet" });
             }
             patient.walletBalance -= numericPrice;
-            yield patient.save();
+            await patient.save();
             console.log("Price:", numericPrice);
             console.log("Doctor's balance before update:", doctor.walletBalance);
             doctor.walletBalance += numericPrice; // This should now work as expected
-            yield doctor.save();
+            await doctor.save();
             console.log("Doctor's balance after update:", doctor.walletBalance);
-            const app = yield (0, exports.createAppointment)(req, res);
+            const app = await (0, exports.createAppointment)(req, res);
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });
             }
@@ -326,23 +340,23 @@ const paymenttt = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.error(error);
         res.status(500).json({ error: 'Server error' });
     }
-});
+};
 exports.paymenttt = paymenttt;
-const payment2 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const payment2 = async (req, res) => {
     try {
         const { doctorUsername, paymentMethod, price, date, user } = req.body;
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'Token not found' });
         }
         const patientUsername = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username: patientUsername });
+        const patient = await patientModel_1.default.findOne({ username: patientUsername });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        const doctor = await doctorModel_1.default.findOne({ username: doctorUsername });
         if (!doctor) {
             res.status(404).json({ error: 'Doctor not found pay' });
             return;
@@ -350,15 +364,15 @@ const payment2 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const pricee = price;
         if (paymentMethod === 'card') {
             const numericPrice = typeof price === 'number' ? price : parseInt(price, 10);
-            const sessionUrl = yield (0, exports.payWithCredit)(req, res, numericPrice);
+            const sessionUrl = await (0, exports.payWithCredit)(req, res, numericPrice);
             if (!sessionUrl) {
                 return res.status(500).json({ error: 'Failed to create payment session' });
             }
             console.log("Doctor's balance before update:", doctor.walletBalance);
             doctor.walletBalance += numericPrice;
             console.log("Doctor's balance after update:", doctor.walletBalance);
-            yield doctor.save();
-            const app = yield (0, exports.createAppointmentFam)(req, res, user);
+            await doctor.save();
+            const app = await (0, exports.createAppointmentFam)(req, res, user);
             console.log("done");
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });
@@ -371,13 +385,13 @@ const payment2 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 return res.status(400).json({ error: "Insufficient balance in the patient's wallet" });
             }
             patient.walletBalance -= numericPrice;
-            yield patient.save();
+            await patient.save();
             console.log("Price:", numericPrice);
             console.log("Doctor's balance before update:", doctor.walletBalance);
             doctor.walletBalance += numericPrice; // This should now work as expected
-            yield doctor.save();
+            await doctor.save();
             console.log("Doctor's balance after update:", doctor.walletBalance);
-            const app = yield (0, exports.createAppointmentFam)(req, res, user);
+            const app = await (0, exports.createAppointmentFam)(req, res, user);
             if (!app) {
                 return res.status(500).json({ error: 'Failed to create appointment' });
             }
@@ -391,7 +405,7 @@ const payment2 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.error(error);
         res.status(500).json({ error: 'Server error' });
     }
-});
+};
 exports.payment2 = payment2;
 // export const payment2 = async (req: Request, res: Response) => {
 //   try {
@@ -450,9 +464,9 @@ exports.payment2 = payment2;
 //     res.status(500).json({ error: 'Server error' });
 //   }
 // };
-const payWithCredit = (req, res, sessionPrice) => __awaiter(void 0, void 0, void 0, function* () {
+const payWithCredit = async (req, res, sessionPrice) => {
     try {
-        const session = yield stripe.checkout.sessions.create({
+        const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             mode: 'payment',
             line_items: [
@@ -470,17 +484,17 @@ const payWithCredit = (req, res, sessionPrice) => __awaiter(void 0, void 0, void
             shipping_address_collection: {
                 allowed_countries: ['US', 'CA', 'EG'], // List of allowed countries
             },
-            success_url: 'http://localhost:3000/success',
-            cancel_url: 'http://localhost:3000/cancel', // Update with your cancel URL
+            success_url: 'http://localhost:3002/patient/viewMyappointments',
+            cancel_url: 'http://localhost:3002/patient/viewMyappointments', // Update with your cancel URL
         });
         return session.url;
     }
     catch (e) {
         res.status(500).json({ error: e.message });
     }
-});
+};
 exports.payWithCredit = payWithCredit;
-const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const cancelAppointment = async (req, res) => {
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'cancelled';
@@ -489,16 +503,16 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'Token not found' });
         }
         const username = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        const doctor = await doctorModel_1.default.findOne({ username: doctorUsername });
         if (!doctor) {
             return res.status(404).json({ message: 'Doctor not found app' });
         }
@@ -518,12 +532,12 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
             console.log("Doctor's balance before update:", doctor.walletBalance);
             doctor.walletBalance = doctor.walletBalance - price;
             patient.walletBalance = patient.walletBalance + price;
-            yield patient.save();
+            await patient.save();
             console.log(patient);
         }
-        yield doctor.save();
+        await doctor.save();
         console.log("Doctor's balance after update:", doctor.walletBalance);
-        const existingAppointment = yield appointmentModel_1.default.findOneAndUpdate({
+        const existingAppointment = await appointmentModel_1.default.findOneAndUpdate({
             doctor: doctorUsername,
             patient: username,
             date: new Date(date),
@@ -543,20 +557,20 @@ const cancelAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
                                         patient: ${patient.username}
                                         Type: ${type}
                                         Price: ${price}`;
-        const patientMail = yield (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
-        const docMail = yield (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
+        const patientMail = await (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
+        const docMail = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const patientNotification = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText);
-        const doctorNotification = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, emailText1);
+        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText);
+        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, emailText1);
         return res.status(201).json({ message: 'Appointment Cancelled' });
     }
     catch (error) {
         return res.status(500).json({ message: 'An error occurred', error });
     }
-});
+};
 exports.cancelAppointment = cancelAppointment;
-const cancelAppointmentDoc = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const cancelAppointmentDoc = async (req, res) => {
     const patientUsername = req.body.patientUsername;
     const date = req.body.date;
     const status = 'cancelled';
@@ -565,16 +579,16 @@ const cancelAppointmentDoc = (req, res) => __awaiter(void 0, void 0, void 0, fun
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'Token not found' });
         }
         const username = tokenDB.username;
-        const doctor = yield doctorModel_1.default.findOne({ username });
+        const doctor = await doctorModel_1.default.findOne({ username });
         if (!doctor) {
             return res.status(404).json({ error: 'doctor  not found' });
         }
-        const patient = yield patientModel_1.default.findOne({ username: patientUsername });
+        const patient = await patientModel_1.default.findOne({ username: patientUsername });
         if (!patient) {
             return res.status(404).json({ message: 'patient not found app' });
         }
@@ -593,11 +607,11 @@ const cancelAppointmentDoc = (req, res) => __awaiter(void 0, void 0, void 0, fun
         if (!isLessthan24Hours) {
             doctor.walletBalance = doctor.walletBalance - price;
             patient.walletBalance = patient.walletBalance + price;
-            yield patient.save();
+            await patient.save();
             console.log(patient);
         }
-        yield doctor.save();
-        const existingAppointment = yield appointmentModel_1.default.findOneAndUpdate({
+        await doctor.save();
+        const existingAppointment = await appointmentModel_1.default.findOneAndUpdate({
             doctor: username,
             patient: patientUsername,
             date: new Date(date),
@@ -617,20 +631,20 @@ const cancelAppointmentDoc = (req, res) => __awaiter(void 0, void 0, void 0, fun
                                         patient: ${patient.username}
                                         Type: ${type}
                                         Price: ${price}`;
-        const patientMail = yield (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
-        const docMail = yield (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
+        const patientMail = await (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
+        const docMail = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const patientNotification = yield (0, exports.createNotificationWithCurrentDate)(patientUsername, emailSubject, emailText);
-        const doctorNotification = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText1);
+        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(patientUsername, emailSubject, emailText);
+        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText1);
         return res.status(201).json({ message: 'Appointment Cancelled' });
     }
     catch (error) {
         return res.status(500).json({ message: 'An error occurred', error });
     }
-});
+};
 exports.cancelAppointmentDoc = cancelAppointmentDoc;
-const cancelAppointmentFam = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const cancelAppointmentFam = async (req, res) => {
     const doctorUsername = req.body.doctorUsername;
     const famMember = req.body.famMember;
     const date = req.body.date;
@@ -640,20 +654,20 @@ const cancelAppointmentFam = (req, res) => __awaiter(void 0, void 0, void 0, fun
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'Token not found' });
         }
         const username = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const fam = yield patientModel_1.default.findOne({ username: famMember });
+        const fam = await patientModel_1.default.findOne({ username: famMember });
         if (!fam) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        const doctor = await doctorModel_1.default.findOne({ username: doctorUsername });
         if (!doctor) {
             return res.status(404).json({ message: 'Doctor not found app' });
         }
@@ -672,11 +686,11 @@ const cancelAppointmentFam = (req, res) => __awaiter(void 0, void 0, void 0, fun
         if (!isLessthan24Hours) {
             doctor.walletBalance = doctor.walletBalance - price;
             patient.walletBalance = patient.walletBalance + price;
-            yield patient.save();
+            await patient.save();
             console.log(patient);
         }
-        yield doctor.save();
-        const existingAppointment = yield appointmentModel_1.default.findOneAndUpdate({
+        await doctor.save();
+        const existingAppointment = await appointmentModel_1.default.findOneAndUpdate({
             doctor: doctorUsername,
             patient: famMember,
             date: new Date(date),
@@ -696,22 +710,22 @@ const cancelAppointmentFam = (req, res) => __awaiter(void 0, void 0, void 0, fun
                                         patient: ${patient.username}
                                         Type: ${type}
                                         Price: ${price}`;
-        const patientMail = yield (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
-        const docMail = yield (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
+        const patientMail = await (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
+        const docMail = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const patientNotification = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText);
-        const doctorNotification = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, emailText1);
+        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText);
+        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, emailText1);
         return res.status(201).json({ message: 'Appointment Cancelled' });
     }
     catch (error) {
         return res.status(500).json({ message: 'An error occurred', error });
     }
-});
+};
 exports.cancelAppointmentFam = cancelAppointmentFam;
-const getAppointmentById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAppointmentById = async (req, res) => {
     const { appointmentId } = req.query;
-    const appointment = yield appointmentModel_1.default.findById(appointmentId);
+    const appointment = await appointmentModel_1.default.findById(appointmentId);
     return res.status(200).json({ appointment });
-});
+};
 exports.getAppointmentById = getAppointmentById;

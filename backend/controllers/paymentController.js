@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -16,7 +7,7 @@ exports.payWithCredit = exports.payment = void 0;
 const doctorModel_1 = __importDefault(require("../models/doctorModel")); // Import the Doctor model
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const stripe_1 = __importDefault(require("stripe"));
-const payment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const payment = async (req, res) => {
     try {
         const { doctorUsername, paymentMethod } = req.body; // Extract doctor username and payment method from the request body
         // // Get the patient username from the token (assuming it's already implemented)
@@ -32,12 +23,12 @@ const payment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // }
         // Find the patient by ID
         const username = "mohamed";
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
         // Find the doctor and patient based on their usernames
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername });
+        const doctor = await doctorModel_1.default.findOne({ username: doctorUsername });
         if (!doctor) {
             res.status(404).json({ error: "Doctor not found" });
             return;
@@ -55,10 +46,10 @@ const payment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             }
             // Deduct the session price from the patient's wallet balance
             patient.walletBalance -= sessionPrice;
-            yield patient.save();
+            await patient.save();
             // Add the session price to the doctor's wallet balance
             doctor.walletBalance += sessionPrice;
-            yield doctor.save();
+            await doctor.save();
             res.json({ message: "Payment successful" });
         }
         else if (paymentMethod === "card") {
@@ -72,15 +63,15 @@ const payment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         console.error(error);
         res.status(500).json({ error: "Server error" });
     }
-});
+};
 exports.payment = payment;
 function calculateSessionPrice(hourlyRate) {
     return hourlyRate;
 }
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
-const payWithCredit = (req, res, sessionPrice) => __awaiter(void 0, void 0, void 0, function* () {
+const payWithCredit = async (req, res, sessionPrice) => {
     try {
-        const session = yield stripe.checkout.sessions.create({
+        const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
             line_items: [
@@ -104,5 +95,5 @@ const payWithCredit = (req, res, sessionPrice) => __awaiter(void 0, void 0, void
         console.log(process.env.STRIPE_SECRET_KEY);
         res.status(500).json({ error: e.message });
     }
-});
+};
 exports.payWithCredit = payWithCredit;
