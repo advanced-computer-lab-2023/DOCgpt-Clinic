@@ -23,8 +23,8 @@ interface HealthPackageStatus {
     status: string;
     patientName?: string;
     familyMemberName?: string;
-    startdate?: string;  // Reflecting the optional nature and naming convention from your schema
-    enddate?: string; 
+    startDate: string;
+    endDate: string;
   }
 
 const FamilyMemberPackageStatus = () => {
@@ -104,7 +104,7 @@ const FamilyMemberPackageStatus = () => {
               <TableCell style={headerCellStyle}>Family Member Name</TableCell>
               <TableCell style={headerCellStyle}>Health Package Name</TableCell>
               <TableCell style={headerCellStyle}>Status</TableCell>
-              <TableCell style={headerCellStyle}>Start Date</TableCell> {/* New column for start date */}
+              <TableCell style={headerCellStyle}>Start Date</TableCell>
               <TableCell style={headerCellStyle}>End Date</TableCell>
             </TableRow>
           </TableHead>
@@ -114,8 +114,8 @@ const FamilyMemberPackageStatus = () => {
                 <TableCell>{pkg.familyMemberName}</TableCell>
                 <TableCell>{pkg.name}</TableCell>
                 <TableCell>{pkg.status}</TableCell>
-                <TableCell>{pkg.startdate}</TableCell> {/* Now using startdate */}
-                <TableCell>{pkg.enddate}</TableCell> 
+                <TableCell>{pkg.startDate}</TableCell>
+                <TableCell>{pkg.endDate}</TableCell>
               </TableRow>
             ))}
           </TableBody>

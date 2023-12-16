@@ -13,6 +13,7 @@ import {
 } from '@mui/material';
 import Background from '../../HealthPack.jpeg';
 import Back from "./backButton";
+import HealthPackages from './healthPackages';
 
 interface HealthPackageStatus {
   name: string;
@@ -20,6 +21,8 @@ interface HealthPackageStatus {
   startdate?: string;  // Reflecting the optional nature and naming convention from your schema
   enddate?: string; 
   patientName?: string;
+  startDate: string;
+  endDate: string;
   familyMemberName?: string;
 }
 const ViewStatusOfPackage = () => {
@@ -57,17 +60,19 @@ const ViewStatusOfPackage = () => {
             <TableRow>
               <TableCell style={headerCellStyle}>Health Package Name</TableCell>
               <TableCell style={headerCellStyle}>Status</TableCell>
-              <TableCell style={headerCellStyle}>Start Date</TableCell> {/* New column for start date */}
-              <TableCell style={headerCellStyle}>End Date</TableCell> {/* New column for end date */}
+              <TableCell style={headerCellStyle}>Start Date</TableCell>
+              <TableCell style={headerCellStyle}>End Date</TableCell>
+
             </TableRow>
           </TableHead>
           <TableBody>
             {patientPackages.map((pkg, index) => (
               <TableRow key={index}>
                 <TableCell>{pkg.name}</TableCell>
-      <TableCell>{pkg.status}</TableCell>
-      <TableCell>{pkg.startdate}</TableCell> {/* Now using startdate */}
-      <TableCell>{pkg.enddate}</TableCell>  
+                <TableCell>{pkg.status}</TableCell>
+                <TableCell>{pkg.startDate}</TableCell>
+                <TableCell>{pkg.endDate}</TableCell>
+
               </TableRow>
             ))}
           </TableBody>
