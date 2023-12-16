@@ -482,7 +482,45 @@ async function calcTotal(feesPerYear, username) {
         throw error;
     }
 }
-const creditPayment = (req, res, sessionPrice) => __awaiter(void 0, void 0, void 0, function* () {
+async function getdisc(username) {
+    try {
+        const patient = await patientModel_1.default.findOne({ username });
+        if (!patient) {
+            throw new Error('Patient not found');
+        }
+        if (patient.healthPackageSubscription.length === 0) {
+            console.log('Patient has no health packages subscribed');
+            return 0; // or any default value you want to return when no health packages are subscribed
+        }
+        const firstSubscription = patient.healthPackageSubscription[0];
+        const packageName = firstSubscription.name;
+        const healthPackage = await packageModel_1.default.findOne({ name: packageName });
+        if (!healthPackage) {
+            throw new Error('Health package not found');
+        }
+        const discount = healthPackage.medicineDiscount;
+        console.log('Discount:', discount);
+        // Perform further calculations or operations with the discount value
+        return discount;
+    }
+    catch (error) {
+        console.error('Error calculating health discount:', error);
+        throw error;
+    }
+}
+exports.getdisc = getdisc;
+const getdiscount = async (req, res) => {
+    const { username } = req.params;
+    try {
+        const discount = await getdisc(username);
+        res.json({ discount });
+    }
+    catch (error) {
+        res.status(404).send(error.message);
+    }
+};
+exports.getdiscount = getdiscount;
+const creditPayment = async (req, res, sessionPrice) => {
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],

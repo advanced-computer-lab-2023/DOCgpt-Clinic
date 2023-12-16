@@ -301,16 +301,15 @@ const addTimeSlots = async (req, res) => {
     }
 };
 exports.addTimeSlots = addTimeSlots;
-const removeTimeSlots = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const doctorUsername = req.query.doctorUsername;
+const removeTimeSlots = async (req, res) => {
     const { dates } = req.body;
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-    const tokenDB = yield tokenModel_1.default.findOne({ token });
+    const tokenDB = await tokenModel_1.default.findOne({ token });
     const doctorUsername = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
     try {
         // Find the doctor by username
-        const doctor = yield doctorModel_1.default.findOne({ username: doctorUsername }).exec();
+        const doctor = await doctorModel_1.default.findOne({ username: doctorUsername });
         if (doctor) {
             // Remove time slots from the existing array
             doctor.timeslots = doctor.timeslots.filter((timeslot) => !dates.includes(timeslot.date.toISOString()));

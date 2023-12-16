@@ -14,6 +14,7 @@ const tokenModel_1 = __importDefault(require("../models/tokenModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
+const requestModel_1 = __importDefault(require("../models/requestModel"));
 const createAdmin = async (req, res) => {
     const { username, password, email } = req.body;
     const emailExists = await patientModel_1.default.findOne({ email });
@@ -96,16 +97,18 @@ const deletePatientByUsername = async (req, res) => {
     console.log("ana ");
     try {
         const { username } = req.body;
-        console.log("ana fe climn");
         console.log("ana hena");
         // Find and delete the Doctor by username
         const deletedPatient = await patientModel_1.default.findOneAndDelete({ username });
         if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
-        const appoinment = yield appointmentModel_1.default.findOneAndDelete({ patient: username });
-        const healthRecord = yield healthRecordModel_1.default.findOneAndDelete({ patient: username });
-        const prescription = yield perscriptionModel_1.default.findOneAndDelete({ patientUsername: username });
+        const updateResult = await patientModel_1.default.updateMany({ 'familyMembers.username': username }, { $pull: { familyMembers: { username } } });
+        const appoinment = await appointmentModel_1.default.deleteMany({ patient: username });
+        const healthRecord = await healthRecordModel_1.default.deleteMany({ patient: username });
+        const prescription = await perscriptionModel_1.default.deleteMany({ patientUsername: username });
+        const requests = await requestModel_1.default.deleteMany({ patient: username });
+        console.log("ana deletde");
         res.status(200).json({ message: 'Patient deleted successfully' });
     }
     catch (error) {
