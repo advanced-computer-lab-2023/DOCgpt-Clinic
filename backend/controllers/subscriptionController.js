@@ -243,7 +243,7 @@ const viewSubscribedPackages = async (req, res) => {
                 healthPackage.status = 'cancelled with end date';
             }
         });
-        const updated = yield patient.save();
+        const updated = await patient.save();
         let subscribedPackages = [];
         if (patient.healthPackageSubscription && Array.isArray(patient.healthPackageSubscription)) {
             subscribedPackages = patient.healthPackageSubscription.filter((pkg) => pkg.status === 'subscribed');
@@ -280,7 +280,7 @@ const viewHealthPackageStatus = async (req, res) => {
                 healthPackage.status = 'cancelled with end date';
             }
         });
-        const updated = yield patient.save();
+        const updated = await patient.save();
         // Include the patient's health package subscriptions
         if (patient.healthPackageSubscription && patient.healthPackageSubscription.length > 0) {
             healthPackages.push(...patient.healthPackageSubscription.map(package1 => ({
@@ -302,7 +302,7 @@ const viewHealthPackageStatus = async (req, res) => {
                         }
                     });
                 });
-                const updated = yield patient.save();
+                const updated = await patient.save();
                 if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0 && familyMember.healthPackageSubscription[0].payedBy === patient.username) {
                     healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => ({
                         patientName: patient.name,
@@ -443,7 +443,7 @@ const viewFamilyMembersAndPackages = async (req, res) => {
                 }
             });
         });
-        const updated = yield patient.save();
+        const updated = await patient.save();
         // Collect family members' subscriptions
         const familyMemberPackages = [];
         for (const familyMember of patient.familyMembers) {

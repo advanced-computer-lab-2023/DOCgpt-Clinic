@@ -74,10 +74,10 @@ const getPatients = async (req, res) => {
     res.status(200).json(Patients);
 };
 exports.getPatients = getPatients;
-const getPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPatient = async (req, res) => {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
-    const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+    const tokenDB = await tokenModel_1.default.findOne({ token: token });
     var username;
     if (tokenDB) {
         username = tokenDB.username;
@@ -86,9 +86,9 @@ const getPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(404).json({ error: "username not found" });
     }
     // Find the patient by ID
-    const patient = yield patientModel_2.default.findOne({ username });
+    const patient = await patientModel_2.default.findOne({ username });
     res.status(200).json(patient);
-});
+};
 exports.getPatient = getPatient;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));

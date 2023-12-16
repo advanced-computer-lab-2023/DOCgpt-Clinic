@@ -20,7 +20,7 @@ interface ApiResponse {
     name: string;
     startdate?: string | Date;
     enddate?: string | Date;
-    status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date';
+    status: 'subscribed' | 'unsubscribed' | 'cancelled with end date';
     payedBy: string;
   }[];
 }
