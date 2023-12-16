@@ -18,8 +18,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
-import Background from '../../Appointments.jpeg';
-
+import Background from '../../patient.jpeg';
+import Back from "../../components/backButton";
 
 
 function MyPatients() {
@@ -33,6 +33,7 @@ function MyPatients() {
   const [isPatientsLoading, setIsPatientsLoading] = useState(true);
 const [isDoctorDataLoading, setIsDoctorDataLoading] = useState(true);
   
+  const [isHealthRecordPopupOpen, setHealthRecordPopupOpen] = useState(false);
 
   const fetchPatients = async () => {
     console.log("Fetching patients...");
@@ -150,27 +151,45 @@ const [isDoctorDataLoading, setIsDoctorDataLoading] = useState(true);
   return (
     <>
       <DoctorBar />
-      <div style={{
+      <div
+      style={{
+        position: 'relative',
         backgroundImage: `url(${Background})`,
         backgroundSize: 'cover',
         minHeight: '50vh',
         marginBottom: '100px',
         backgroundPosition: 'center',
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)',
-      }}>
-        <div style={{
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
           position: 'absolute',
-          top: '35%',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
           left: '50%',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
           color: 'white',
-        }}>
-          <h1><strong>MY PATIENTS</strong></h1>
-        </div>
+        }}
+      >
+        <h1>
+          <strong>MY PATIENTS</strong>
+        </h1>
       </div>
-
-     
+    </div>
         <Grid container spacing={2} justifyContent="center" style={{ marginTop: '-50px', marginBottom: '20px' }}>
           <Grid item xs={12} md={3} style={{ padding: '80px' }}>
           <Stack direction="column" style={{ position: "sticky", top: 100 }}>
