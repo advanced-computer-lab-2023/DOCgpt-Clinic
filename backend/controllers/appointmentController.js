@@ -111,9 +111,6 @@ const createNotificationWithCurrentDate = async (patientUsername, subject, msg) 
     }
 };
 exports.createNotificationWithCurrentDate = createNotificationWithCurrentDate;
-<<<<<<< HEAD
-const createAppointment = async (req, res) => {
-=======
 function formatDateWithoutDay(dateString) {
     const date = new Date(dateString);
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -126,8 +123,7 @@ function extractTime(dateString) {
     const time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     return time;
 }
-const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
->>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
+const createAppointment = async (req, res) => {
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'upcoming';
@@ -186,13 +182,8 @@ const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, functi
         const not2 = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-<<<<<<< HEAD
-        const nn = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
-        const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
-=======
-        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msgSubject);
-        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msgSubject);
->>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
+        const nn = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msgSubject);
+        const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msgSubject);
         return appointment;
     }
     catch (error) {
@@ -263,13 +254,8 @@ const createAppointmentFam = async (req, res, user) => {
         const not2 = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-<<<<<<< HEAD
-        const nn = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
-        const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
-=======
-        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, msgSubject, msg);
-        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, msgSubject, msg1);
->>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
+        const nn = await (0, exports.createNotificationWithCurrentDate)(username, msgSubject, msg);
+        const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, msgSubject, msg1);
         return appointment;
     }
     catch (error) {
