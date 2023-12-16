@@ -12,6 +12,9 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import PatientBar from "./patientBar/patientBar";
 import AdminBar from "./admin Bar/adminBar";
+import Background from '../changePassword.jpg';
+import Back from "./backButton";
+import El7a2niInfo from "./El7a2ni-info";
 
 const theme = createTheme();
 
@@ -59,7 +62,45 @@ const ChangePasswordAdmin: React.FC = () => {
   return (
     <>
       <AdminBar />
-    
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>CHANGE PASSWORD</strong>
+        </h1>
+      </div>
+    </div>
       <ThemeProvider theme={theme}>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
@@ -110,6 +151,8 @@ const ChangePasswordAdmin: React.FC = () => {
           </div>
         </Container>
       </ThemeProvider>
+      <El7a2niInfo/>
+
     </>
   );
 };
