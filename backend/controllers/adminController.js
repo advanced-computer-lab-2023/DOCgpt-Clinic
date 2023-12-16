@@ -103,9 +103,9 @@ const deletePatientByUsername = async (req, res) => {
         if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
-        const appoinment = await appointmentModel_1.default.findOneAndDelete({ patient: username });
-        const healthRecord = await healthRecordModel_1.default.findOneAndDelete({ patient: username });
-        const prescription = await perscriptionModel_1.default.findOneAndDelete({ patientUsername: username });
+        const appoinment = yield appointmentModel_1.default.findOneAndDelete({ patient: username });
+        const healthRecord = yield healthRecordModel_1.default.findOneAndDelete({ patient: username });
+        const prescription = yield perscriptionModel_1.default.findOneAndDelete({ patientUsername: username });
         res.status(200).json({ message: 'Patient deleted successfully' });
     }
     catch (error) {

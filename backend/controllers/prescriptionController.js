@@ -27,6 +27,7 @@ const createPrescription = async (req, res) => {
         // Check if the patient exists
         const patient = await patientModel_1.default.findOne({ username: patientUsername });
         if (!patient) {
+            console.log("zeft");
             return res.status(404).json({ error: 'Patient not found' });
         }
         const prescription = new perscriptionModel_1.default({

@@ -5,6 +5,7 @@ import DrPrescription from '../../components/DrPrescription';
 import DrawerAppBar from '../../components/Doctor bar/doctorBar';
 import { Grid, Typography } from '@mui/material';
 import El7a2niInfo from '../../components/El7a2ni-info';
+import Background from '../../Prescriptions.jpeg';
 import Back from "../../components/backButton";
 
 
@@ -48,12 +49,48 @@ const DrPrescriptions = () => {
   return (
     <>
     <DrawerAppBar />
+    <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>PRESCRIPTIONS</strong>
+        </h1>
+      </div>
+    </div>
     <Back/>
-    <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}} padding={5}>
-      MY PRESCRIPTIONS   
-      </Typography>
     <Grid container spacing={2} justifyContent="center" alignItems="center">
-      {prescriptions.map((prescription, index) => (
+      {prescriptions.slice().reverse().map((prescription, index) => (
         <Grid item key={index}>
             <DrPrescription prescription={prescription} />
         </Grid>

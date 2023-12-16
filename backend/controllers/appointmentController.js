@@ -458,6 +458,9 @@ const payWithCredit = async (req, res, sessionPrice) => {
                     quantity: 1,
                 },
             ],
+            shipping_address_collection: {
+                allowed_countries: ['US', 'CA', 'EG'], // List of allowed countries
+            },
             success_url: 'http://localhost:3000/success',
             cancel_url: 'http://localhost:3000/cancel', // Update with your cancel URL
         });

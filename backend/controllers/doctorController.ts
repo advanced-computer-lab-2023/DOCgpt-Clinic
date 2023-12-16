@@ -309,27 +309,30 @@ export const addTimeSlots = async (req: Request, res: Response) => {
 };
 
 export const removeTimeSlots = async (req: Request, res: Response) => {
-    const doctorUsername = req.query.doctorUsername;
-    const { dates } = req.body;
+  const { dates } = req.body;
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]
+  const tokenDB = await tokenModel.findOne({ token }); 
+  const doctorUsername = tokenDB?.username;
 
-    try {
-        // Find the doctor by username
-        const doctor = await DoctorModel.findOne({ username: doctorUsername }).exec();
+  try {
+      // Find the doctor by username
+      const doctor = await DoctorModel.findOne({ username: doctorUsername });
 
-        if (doctor) {
-            // Remove time slots from the existing array
-            doctor.timeslots = doctor.timeslots.filter((timeslot: { date: any; }) => !dates.includes(timeslot.date));
+      if (doctor) {
+          // Remove time slots from the existing array
+          doctor.timeslots = doctor.timeslots.filter((timeslot: { date: Date }) => !dates.includes(timeslot.date.toISOString()));
 
-            // Save the updated doctor
-            const updatedDoctor = await doctor.save();
+          // Save the updated doctor
+          const updatedDoctor = await doctor.save();
 
-            res.status(200).json(updatedDoctor);
-        } else {
-            res.status(404).json({ message: 'Doctor not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ message: 'An error occurred', error });
-    }
+          res.status(200).json(updatedDoctor);
+      } else {
+          res.status(404).json({ message: 'Doctor not found' });
+      }
+  } catch (error) {
+      res.status(500).json({ message: 'An error occurred', error });
+  }
 };
 
 

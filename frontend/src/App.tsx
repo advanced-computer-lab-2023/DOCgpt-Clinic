@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 import Landing from "./pages/Landing";
-import LandingPage from "./pages/landingPage";
 import PatientRegistrationForm from "./pages/patient/signup";
 import DoctorRegistrationForm from "./pages/doctor/doctorSignUp";
 import PatientHome from "./pages/patient/patientHome";
@@ -83,6 +82,10 @@ import FamMemResch from "./pages/patient/FamMemResch";
 import RequestFamMemFollow from "./pages/patient/RequestFamMemFollow";
 
 import prescriptionPDF from "./components/prescriptionPDF";
+import AddPackage from "./components/AddPackage";
+import FamilyMemberPackageStatus from "./components/viewstatusfam";
+import DocList1 from "./components/alldoc";
+import PatientList1 from "./components/allpat";
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -127,6 +130,9 @@ function App() {
           path="/patient/walletAmount"
           element={<ViewWalletAmountPatient />}
         />
+        <Route path="/allpat" element={< PatientList1/>} />
+        <Route path="/alldoc" element={<DocList1/>} />
+
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
         // <Route path="/doctor/patients" Component={MyPatients} />
@@ -143,6 +149,14 @@ function App() {
         <Route path="/doctor/healthRecordEmpty" Component={HealthRecordEmpty} />
         <Route path="/doctor/healthRecordForm" Component={HealthRecordForm} />
         <Route path="/patient/viewDoctors" Component={ViewDoctors} />
+        <Route path="/family-packages" Component={FamilyMemberPackageStatus} />
+        <Route path="/allpat" element={< PatientList1/>} />
+        <Route path="/alldoc" element={<DocList1/>} />
+        <Route
+          path="/patient/viewMyhealthrecords"
+          Component={ViewMyHealthRecord}
+        />
+
         <Route
           path="/doctor/todayapp"
           element={<TodayAppointmentsComponent />}
@@ -183,7 +197,8 @@ function App() {
         <Route path="/Doctor/Remove" element={<RemoveDoc />} />
         <Route path="/admin/info" element={<DoctorInformation />} />
         <Route path="/patient/remove" element={<RemovePatient />} />
-        <Route path="patient/PackagesPage" Component={PackagesPage} />
+        <Route path="/patient/PackagesPage" Component={PackagesPage} />
+        <Route path="/AddPackage" Component={AddPackage} />
         <Route path="/hp" Component={HealthPackage} />
         <Route path="/changepasswordpatient" Component={ChangePassword} />
         <Route path="/changepassworddoctor" Component={ChangePasswordDoctor} />

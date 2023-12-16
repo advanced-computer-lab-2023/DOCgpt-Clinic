@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.creditPayment = exports.getSubscribedPackagesForMember = exports.viewFamilyMembersAndPackages = exports.cancelSubscriptionfam2 = exports.cancelSubscription = exports.viewHealthPackageStatus = exports.viewSubscribedPackages = exports.subscribeToHealthPackageForFamily = exports.subscribeFamAsPatient = exports.subscribeToHealthPackage = void 0;
+exports.creditPayment = exports.getdiscount = exports.getdisc = exports.getSubscribedPackagesForMember = exports.viewFamilyMembersAndPackages = exports.cancelSubscriptionfam2 = exports.cancelSubscription = exports.viewHealthPackageStatus = exports.viewSubscribedPackages = exports.subscribeToHealthPackageForFamily = exports.subscribeFamAsPatient = exports.subscribeToHealthPackage = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel")); // Import your patient model
 const packageModel_1 = __importDefault(require("../models/packageModel")); // Import your package model
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
@@ -42,10 +42,13 @@ const subscribeToHealthPackage = async (req, res) => {
             if (!sessionUrl) {
                 return res.status(500).json({ error: 'Failed to create payment session' });
             }
+            const newDate = new Date();
+            const endDate = new Date(newDate);
+            endDate.setFullYear(newDate.getFullYear() + 1);
             patient.healthPackageSubscription.push({
                 name: packageName,
-                startdate: '',
-                enddate: '',
+                startdate: newDate.toISOString(),
+                enddate: endDate.toISOString(),
                 status: "subscribed with renewal date",
                 payedBy: username,
             });
@@ -58,11 +61,13 @@ const subscribeToHealthPackage = async (req, res) => {
                 return res.status(400).json({ error: 'Insufficient funds in the wallet' });
             }
             else {
+                const newDate = new Date();
+                const endDate = new Date(newDate);
                 patient.walletBalance -= subscriptionCost;
                 patient.healthPackageSubscription.push({
                     name: packageName,
-                    startdate: '',
-                    enddate: '',
+                    startdate: newDate.toISOString(),
+                    enddate: endDate.toISOString(),
                     status: "subscribed with renewal date",
                     payedBy: username,
                 });
@@ -104,10 +109,12 @@ const subscribeFamAsPatient = async (username, packageName) => {
             patient.healthPackageSubscription = [];
         }
         // Add the health package to the subscription array
+        const newDate = new Date();
+        const endDate = new Date(newDate);
         patient.healthPackageSubscription.push({
             name: packageName,
-            startdate: '',
-            enddate: '',
+            startdate: newDate.toISOString(),
+            enddate: endDate.toISOString(),
             status: 'subscribed with renewal date',
             payedBy: username,
         });
@@ -160,10 +167,12 @@ const subscribeToHealthPackageForFamily = async (req, res) => {
                 if (!sessionUrl) {
                     return res.status(500).json({ error: 'Failed to create payment session' });
                 }
+                const newDate = new Date();
+                const endDate = new Date(newDate);
                 familyMember.healthPackageSubscription.push({
                     name: packageName,
-                    startdate: '',
-                    enddate: '',
+                    startdate: newDate.toISOString(),
+                    enddate: endDate.toISOString(),
                     status: "subscribed with renewal date",
                     payedBy: username,
                 });
@@ -182,10 +191,12 @@ const subscribeToHealthPackageForFamily = async (req, res) => {
                 else {
                     // Deduct the cost from the wallet balance
                     patient.walletBalance -= subscriptionCost;
+                    const newDate = new Date();
+                    const endDate = new Date(newDate);
                     familyMember.healthPackageSubscription.push({
                         name: packageName,
-                        startdate: '',
-                        enddate: '',
+                        startdate: newDate.toISOString(),
+                        enddate: endDate.toISOString(),
                         status: "subscribed with renewal date",
                         payedBy: username,
                     });
@@ -471,7 +482,7 @@ async function calcTotal(feesPerYear, username) {
         throw error;
     }
 }
-const creditPayment = async (req, res, sessionPrice) => {
+const creditPayment = (req, res, sessionPrice) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],

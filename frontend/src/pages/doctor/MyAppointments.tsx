@@ -18,9 +18,9 @@ import { useLocation } from "react-router-dom";
 import DoctorAppointment from "../../components/DoctorAppointment";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niInfo from "../../components/El7a2ni-info";
-import Background from "../../Background.jpeg";
 import DrawerAppBar from "../../components/Doctor bar/doctorBar";
-
+import Background from '../../Appointments.jpeg';
+import Back from "../../components/backButton";
 
 
 function MyAppointments() {
@@ -52,25 +52,41 @@ const handlePastSwitch = () => {
 };
 useEffect(() => {
     const fetchAppointments = async () => {
-    console.log("Fetching appointments...");
-    try {
-        const token = localStorage.getItem("authToken");
-        const response = await axios.get(`/routes/appointments`, {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-        });
-        if (response) {
-        console.log("Response:", response);
-        const data = await response.data;
-        setAppointments(data);
-        } else {
-        console.error("Failed to fetch doctor data");
+        console.log("Fetching appointments...");
+        try {
+          const token = localStorage.getItem("authToken");
+          const response = await axios.get<any[]>("/routes/appointments", {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+      
+          if (response) {
+            console.log("Response:", response);
+            const data = await response.data;
+      
+            // Sort the appointments based on date and time
+            const sortedAppointments = data.sort((a, b) => {
+              const dateA = new Date(a.date.toLocaleString("en-US",  "Africa/Cairo" ));
+              const dateB = new Date(b.date.toLocaleString("en-US",  "Africa/Cairo" ));
+      
+              if (dateA > dateB) return -1;
+              if (dateA < dateB) return 1;
+              // If dates are equal, compare times
+              const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+              const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+              return timeB - timeA;
+            });
+      
+            setAppointments(sortedAppointments);
+          } else {
+            console.error("Failed to fetch doctor data");
+          }
+        } catch (error) {
+          console.error("Error:", error);
         }
-    } catch (error) {
-        console.error("Error:", error);
-    }
-    };
+      };
+      
     fetchAppointments();
 }, []);
 
@@ -135,6 +151,45 @@ useEffect(() => {
 return (
     <>
     <DrawerAppBar />
+    <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>MY APPOINTMENTS</strong>
+        </h1>
+      </div>
+    </div>
     <Container>
         <div
         style={{
@@ -144,9 +199,6 @@ return (
             padding: "20px",
         }}
         >
-        <Typography variant="h1" style={{ fontWeight: "bold" }}>
-            Your Appointments
-        </Typography>
         </div>
 
         <Grid container spacing={2}>

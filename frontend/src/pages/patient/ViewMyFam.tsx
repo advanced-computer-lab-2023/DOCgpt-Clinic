@@ -100,7 +100,6 @@ const ViewMyFam = () => {
                     margin: 'auto',
                     marginBottom: '1.5rem',
                     maxWidth: 300,
-                    height: 500,
                     textAlign: 'center',
 
                   }}
