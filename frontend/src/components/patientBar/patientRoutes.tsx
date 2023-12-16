@@ -33,7 +33,7 @@ const appRoutes: RouteType[] = [
       },
       {
         path: "/patient/viewMyappointments",
-        state: "View My Appointments",
+        state: "My Appointments",
       },
     ],
   },
@@ -46,7 +46,7 @@ const appRoutes: RouteType[] = [
     child: [
       {
         path: "/patient/prescriptions",
-        state: "View prescriptions",
+        state: "My Prescriptions",
       },
     ],
   },
@@ -62,13 +62,14 @@ const appRoutes: RouteType[] = [
         state: "Health Packages",
       },
       {
-        path: "/patient/packages",
-        state: "My Packages",
+        path: "/patient/subscribedPage",
+        state: "My Subscribed Packages",
       },
       {
-        path: "/patient/subscribedPage",
-        state: "Subscribed Packages",
+        path: "/patient/packages",
+        state: "My Packages History",
       },
+      
     ],
   },
   {
@@ -80,7 +81,7 @@ const appRoutes: RouteType[] = [
     child: [
       {
         path: "/patient/viewMyhealthrecords",
-        state: "View My Health Record",
+        state: "My Health Record",
       },
     
     ],
@@ -94,12 +95,12 @@ const appRoutes: RouteType[] = [
     child: [
       {
         path: "/patient/viewFamilyMembers",
-        state: "Family members",
+        state: "Family Members",
       },
 
       {
         path: "/patient/link",
-        state: "link family member",
+        state: "Link Family Member",
       },
       {
         path: "/patient/famMemAppointments",

@@ -37,6 +37,7 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
 
     const handleFollowUpClicked = () =>{
         localStorage.setItem("selectedPatient", patient);
+        localStorage.setItem("selectedAppointmentId", _id);
         navigate("/doctor/followUp");
     }
     const handleCancel = () => {
@@ -86,14 +87,13 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
     
       const handleSnackbarClose = () => {
         setSnackbarOpen(false);
+        window.location.reload();
       };
       const formattedDate = new Intl.DateTimeFormat("en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
         day: "numeric",
-        hour: "numeric",
-        minute: "numeric",
       }).format(new Date(appointment.date));
     
     return(
@@ -113,6 +113,15 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
               )}
             <Typography variant="h3" style={{ fontWeight: "bold" }} gutterBottom>
             {formattedDate}
+            {" "}
+            {(new Date(appointment.date).getHours() > 12)? new Date(appointment.date).getHours() - 14
+            : (new Date(appointment.date).getHours() === 2 )? new Date(appointment.date).getHours() + 10
+            : new Date(appointment.date).getHours() - 2
+            } 
+          {":"}
+          {(new Date(appointment.date).getMinutes()<10)? new Date(appointment.date).getMinutes().toString().padStart(2, '0') : new Date(appointment.date).getMinutes()}
+          {" "}
+          {new Date(appointment.date).getHours() >= 12 ? "PM" : "AM"}
                 </Typography>
             </div>
 

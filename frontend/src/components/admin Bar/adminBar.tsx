@@ -1,6 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 import { To, useNavigate } from "react-router-dom";
+import logo from "../../logo.jpeg";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 //import logo from './'
@@ -29,10 +30,7 @@ import { ReactNode } from "react";
 import appRoutes from "./adminRoutes";
 
 const drawerWidth = 240;
-const navItems = [
-  { name: "Home", path: "/admin/home" },
- 
-];
+const navItems = [{ name: "Home", path: "/admin/home" }];
 
 export type RouteType = {
   header: string;
@@ -52,9 +50,9 @@ export type links = {
 export default function AdminAppBar() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [openHeaders, setOpenHeaders] = useState<number[]>([]);
-  const [activeHeaderIndex, setActiveHeaderIndex] = useState<number | null>(null);
-
-
+  const [activeHeaderIndex, setActiveHeaderIndex] = useState<number | null>(
+    null
+  );
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null); // State for the anchor element of the menu
 
@@ -64,52 +62,44 @@ export default function AdminAppBar() {
 
   const navigate = useNavigate();
   const openPharmacy = () => {
-    const newWindow = window.open(
-      "http://localhost:3001/login",
-      "_blank"
-    );
-    if (newWindow) {
-      window.close();
-    } else {
-      console.error("Unable to open a new window.");
+    window.location.href = "http://localhost:3001/adminHome";
+  };
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      const response = await fetch("/routes/admins/logoutAdmin", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // Include the user's token
+        },
+      });
+
+      if (response.ok) {
+        // Handle successful logout (e.g., clear local storage, redirect user)
+        console.log("User logged out successfully");
+        localStorage.removeItem("authToken");
+
+        // Redirect to your login page
+        navigate("/");
+      } else {
+        // Handle errors during logout
+        console.error("Logout failed");
+      }
+    } catch (error) {
+      console.error("An error occurred:", error);
     }
   };
-const handleLogout = async () => {
-  try {
-    const token = localStorage.getItem("authToken");
-    const response = await fetch("/routes/admins/logoutAdmin", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`, // Include the user's token
-      },
-    });
-
-    if (response.ok) {
-      // Handle successful logout (e.g., clear local storage, redirect user)
-      console.log("User logged out successfully");
-      localStorage.removeItem("authToken");
-
-     // Redirect to your login page
-     navigate("/");
+  const toggleHeaderState = (index: number) => {
+    // If the clicked header is already open, close it
+    if (openHeaders.includes(index)) {
+      setOpenHeaders(openHeaders.filter((item) => item !== index));
+      setActiveHeaderIndex(null); // Reset active header index
     } else {
-      // Handle errors during logout
-      console.error("Logout failed");
+      setOpenHeaders([index]); // Close all other headers and open the clicked one
+      setActiveHeaderIndex(index); // Set the clicked header as active
     }
-  } catch (error) {
-    console.error("An error occurred:", error);
-  }
-};
-const toggleHeaderState = (index: number) => {
-  // If the clicked header is already open, close it
-  if (openHeaders.includes(index)) {
-    setOpenHeaders(openHeaders.filter((item) => item !== index));
-    setActiveHeaderIndex(null); // Reset active header index
-  } else {
-    setOpenHeaders([index]); // Close all other headers and open the clicked one
-    setActiveHeaderIndex(index); // Set the clicked header as active
-  }
-};
+  };
   const navigateTo = (route: To) => {
     navigate(route);
     setIsDrawerOpen(false);
@@ -131,7 +121,6 @@ const toggleHeaderState = (index: number) => {
     return openHeaders.includes(index);
   };
 
-
   const renderMenuItems = (items: RouteType[]) => {
     return (
       <List>
@@ -145,45 +134,45 @@ const toggleHeaderState = (index: number) => {
                   alignItems: "center",
                   cursor: "pointer",
                   marginLeft: 2,
-                  backgroundColor: 'transparent', // Set the background to transparent
-                  color: isHeaderActive(index) ? '#2196F3' : 'inherit', // Apply blue color if the header is active
-                  '&:hover, &:hover .MuiTypography-root, &:hover .MuiSvgIcon-root': {
-                    color: '#2196F3' // Change text and icon color to blue on hover
-                  },
+                  backgroundColor: "transparent", // Set the background to transparent
+                  color: isHeaderActive(index) ? "#2196F3" : "inherit", // Apply blue color if the header is active
+                  "&:hover, &:hover .MuiTypography-root, &:hover .MuiSvgIcon-root":
+                    {
+                      color: "#2196F3", // Change text and icon color to blue on hover
+                    },
                 }}
                 onClick={() => toggleHeaderState(index)}
               >
                 {isHeaderOpen(index) ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-              <ListItemText 
-                primary={item.header} 
-                sx={{ 
-                  '.MuiTypography-root': {
-                    color: isHeaderActive(index) ? '#2196F3' : 'inherit', // Change text color based on active state
-                  }
-                }}
-              />
-            </ListSubheader>
+                <ListItemText
+                  primary={item.header}
+                  sx={{
+                    ".MuiTypography-root": {
+                      color: isHeaderActive(index) ? "#2196F3" : "inherit", // Change text color based on active state
+                    },
+                  }}
+                />
+              </ListSubheader>
             </ListItem>
-            {isHeaderOpen(index) && (
+            {isHeaderOpen(index) &&
               item.child.map((childItem, childIndex) => (
                 <ListItem key={childItem.state + childIndex} disablePadding>
                   <ListItemButton
-                  sx={{ 
-                    textAlign: "left", 
-                    marginLeft: 5, 
-                    padding: '6px 16px', // Smaller padding
-                    fontSize: '0.875rem', // Smaller font size
-                  }}
-                  onClick={() => navigateTo(childItem.path)}
-                >
-                  <ListItemText 
-                    primary={childItem.state} 
-                    primaryTypographyProps={{ variant: 'body2' }} // Smaller text variant
-                  />
-                </ListItemButton>
+                    sx={{
+                      textAlign: "left",
+                      marginLeft: 5,
+                      padding: "6px 16px", // Smaller padding
+                      fontSize: "0.875rem", // Smaller font size
+                    }}
+                    onClick={() => navigateTo(childItem.path)}
+                  >
+                    <ListItemText
+                      primary={childItem.state}
+                      primaryTypographyProps={{ variant: "body2" }} // Smaller text variant
+                    />
+                  </ListItemButton>
                 </ListItem>
-              ))
-            )}
+              ))}
           </React.Fragment>
         ))}
       </List>
@@ -192,8 +181,19 @@ const toggleHeaderState = (index: number) => {
 
   const drawer = (
     <Box sx={{ textAlign: "center" }}>
-      <div style={{ display: 'flex', alignItems: 'left', maxWidth: '600px', margin: '0 auto' }}>
-     {/* <img src={logo}  alt="Clinic Logo" style={{ width: '200px', height:'100px',  marginRight: '5px' }} /> */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "left",
+          maxWidth: "600px",
+          margin: "0 auto",
+        }}
+      >
+        {/* <img
+          src={logo}
+          alt="Clinic Logo"
+          style={{ width: "200px", height: "100px", marginRight: "5px" }}
+        /> */}
       </div>
       <Divider />
       {renderMenuItems(appRoutes)}
@@ -238,8 +238,8 @@ const toggleHeaderState = (index: number) => {
             ))}
           </Box>
           <Button key="Clinic" sx={{ color: "black" }} onClick={openPharmacy}>
-              Pharmacy
-            </Button>
+            Pharmacy
+          </Button>
           {/* User Menu */}
           <IconButton
             color="primary"
@@ -281,7 +281,7 @@ const toggleHeaderState = (index: number) => {
             "& .MuiDrawer-paper": {
               boxSizing: "border-box",
               width: drawerWidth,
-              backgroundColor: "#FFFFFFE6"
+              backgroundColor: "#FFFFFFE6",
             },
           }}
         >

@@ -205,28 +205,6 @@ const AllChatsPage: React.FC = () => {
         </List>
 
         {/* Snackbar */}
-        <Snackbar
-          open={isSnackbarOpen}
-          onClose={handleSnackbarClose}
-          anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        >
-          <MuiAlert
-            elevation={6}
-            variant="filled"
-            severity="info"
-            action={
-              <Button
-                color="inherit"
-                size="small"
-                onClick={handleSnackbarConfirm}
-              >
-                Confirm
-              </Button>
-            }
-          >
-            Do you want to initiate a chat with a doctor?
-          </MuiAlert>
-        </Snackbar>
 
         {/* Dialog */}
         <Dialog open={isDialogOpen} onClose={handleDialogClose}>

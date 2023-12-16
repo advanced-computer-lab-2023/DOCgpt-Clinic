@@ -90,7 +90,7 @@ const DrPrescriptions = () => {
     </div>
     <Back/>
     <Grid container spacing={2} justifyContent="center" alignItems="center">
-      {prescriptions.map((prescription, index) => (
+      {prescriptions.slice().reverse().map((prescription, index) => (
         <Grid item key={index}>
             <DrPrescription prescription={prescription} />
         </Grid>

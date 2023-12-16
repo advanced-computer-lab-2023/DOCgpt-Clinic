@@ -10,6 +10,7 @@ import tokenModel from '../models/tokenModel';
 import appointmentModel from '../models/appointmentModel';
 import healthRecordModel from '../models/healthRecordModel';
 import Prescription from '../models/perscriptionModel';
+import requestModel from '../models/requestModel';
 
 export const createAdmin = async (req: Request, res: Response) => {
   const { username, password,email } = req.body;
@@ -107,24 +108,32 @@ export const createAdmin = async (req: Request, res: Response) => {
 
         try {
           const { username } = req.body;
-      console.log("ana fe climn");console.log("ana hena")
+          
+          console.log("ana hena");
+      
           // Find and delete the Doctor by username
           const deletedPatient = await patientModel.findOneAndDelete({ username });
       
           if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
           }
-          const appoinment = await appointmentModel.findOneAndDelete({patient: username});
-          const healthRecord = await healthRecordModel.findOneAndDelete({patient: username});
-          const prescription = await Prescription.findOneAndDelete({patientUsername: username});
-      
+          const updateResult = await patientModel.updateMany(
+            { 'familyMembers.username': username },
+            { $pull: { familyMembers: { username } } }
+          );
+          const appoinment = await appointmentModel.deleteMany({patient: username});
+          const healthRecord = await healthRecordModel.deleteMany({patient: username});
+          const prescription = await Prescription.deleteMany({patientUsername: username});
+          const requests=await requestModel.deleteMany({patient: username});
+
+      console.log("ana deletde");
           res.status(200).json({ message: 'Patient deleted successfully' });
         } catch (error) {
           console.error(error);
           res.status(500).json({ message: 'Internal server error' });
         }
       };
-    
+      
     
     // view doctor Info
     export const deletePatientByrota = async (req: Request, res: Response) => {

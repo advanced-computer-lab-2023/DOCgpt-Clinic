@@ -69,8 +69,8 @@ const Patient = ({ patient, doctor }: PatientProps) => {
   const fetchHealthRecord = async () => {
     console.log("Fetching Health Record of this Patient...");
     try {
-      const response = await axios.get(
-        `/routes/doctors/HealthRecord?patientUsername=${username}`
+      const response = await axios.get(`
+        /routes/doctors/HealthRecord?patientUsername=${username}`
       );
       console.log("Response:", response);
       setHealthRecord(response.data);
@@ -216,6 +216,11 @@ const Patient = ({ patient, doctor }: PatientProps) => {
     padding: '5px 5px',
   };
 
+  function handleAppoinments(): void {
+   localStorage.setItem("myPatient", username);
+    navigate('/doctor/patients/appointment');
+  }
+
   return (
     <Paper sx={paperStyle}>
       <Box sx={imageContainerStyle} />
@@ -254,6 +259,13 @@ const Patient = ({ patient, doctor }: PatientProps) => {
            sx={buttonStyle} onClick={addPresc}
 >
             Add Prescription
+          </Button>
+          <Button variant="outlined" color="primary"
+          onMouseEnter={handleMouseEnter}
+
+           sx={buttonStyle} onClick={handleAppoinments}
+>
+           Appointments
           </Button>
         </Box>
       </Box>

@@ -81,6 +81,25 @@ export const getPatients = async (req: Request, res: Response) => {
   res.status(200).json(Patients);
 };
 
+export const getPatient = async (req: Request, res: Response) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  const tokenDB = await tokenModel.findOne({ token: token });
+
+  var username;
+  if (tokenDB) {
+    username = tokenDB.username;
+  } else {
+    return res.status(404).json({ error: "username not found" });
+  }
+
+  // Find the patient by ID
+  const patient = await patientModel.findOne({ username });
+    res.status(200).json(patient);
+};
+
+
 import Prescription from "../models/perscriptionModel";
 import Patient from "../models/patientModel";
 import patientModel from "../models/patientModel";
