@@ -130,6 +130,9 @@ function App() {
           path="/patient/walletAmount"
           element={<ViewWalletAmountPatient />}
         />
+        <Route path="/allpat" element={< PatientList1/>} />
+        <Route path="/alldoc" element={<DocList1/>} />
+
         <Route path="/doctor/signup" element={<SignupDoctor />} />
         <Route path="/requests" element={<DoctorRequests />} />
         // <Route path="/doctor/patients" Component={MyPatients} />
