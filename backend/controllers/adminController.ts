@@ -73,7 +73,24 @@ export const createAdmin = async (req: Request, res: Response) => {
         }
       };
 
-          
+      export const getAdmin= async (req: Request, res: Response) => {
+        const authHeader = req.headers["authorization"];
+        const token = authHeader && authHeader.split(" ")[1];
+      
+        const tokenDB = await tokenModel.findOne({ token: token });
+      
+        var username;
+        if (tokenDB) {
+          username = tokenDB.username;
+        } else {
+          return res.status(404).json({ error: "username not found" });
+        }
+      
+        // Find the patient by ID
+        const admin = await adminModel.findOne({ username });
+          res.status(200).json(admin);
+      };
+      
 
 
            

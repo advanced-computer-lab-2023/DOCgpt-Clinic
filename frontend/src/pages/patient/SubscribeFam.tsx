@@ -2,11 +2,9 @@ import { Button, Card, Container, Grid, Typography,  Menu, MenuItem, CardContent
 import React, { useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import axios from "axios";
-import Background from '../../FamilyMembers.jpg';
-import Back from "../../components/backButton";
+
 import PatientAppBar from '../../components/patientBar/patientBar';
 import SubscribeFamComp from "../../components/SubscribeFamComp";
-import El7a2niInfo from "../../components/El7a2ni-info";
 
 interface FamilyMember {
   name: string;
@@ -86,46 +84,6 @@ const fetchFamMembersSubscribed = async () =>{
 return (
     <>
       <PatientAppBar />
-      <div
-      style={{
-        position: 'relative',
-        backgroundImage: `url(${Background})`,
-        backgroundSize: 'cover',
-        minHeight: '50vh',
-        marginBottom: '100px',
-        backgroundPosition: 'center',
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
-      }}
-    >
-      {/* Transparent overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        }}
-      ></div>
-
-      <Back />
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          textAlign: 'center',
-          color: 'white',
-        }}
-      >
-        <h1>
-          <strong>SUBSCRIBE FOR FAMILY MEMBER</strong>
-        </h1>
-      </div>
-    </div>
-    <div></div>
       <Container>
         <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
           Family Members
@@ -146,7 +104,6 @@ return (
           </Grid>
         )}
       </Container>
-      <El7a2niInfo/>
     </>
   );
 }    

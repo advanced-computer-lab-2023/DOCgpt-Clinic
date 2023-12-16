@@ -102,7 +102,16 @@ const ViewFamilyMembersPage = () => {
   const handleViewDetails = (memberId: string) => {
     navigate(`/patient/memberDetails/${memberId}`);
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <>
       <PatientAppBar />
