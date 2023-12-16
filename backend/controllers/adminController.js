@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyTokenAdmin = exports.changePassword = exports.logout = exports.createToken = exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientBySmsomaa = exports.deletePatientByrota = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.deleteAdminByUsername = exports.createAdmin = void 0;
+exports.verifyTokenAdmin = exports.changePassword = exports.logout = exports.createToken = exports.getPackageNAME = exports.getPackage = exports.getdoctorsR = exports.getPatients = exports.getAdmins = exports.updatePackage = exports.deletePackageByName = exports.addPackage = exports.viewDoctorInfo = exports.deletePatientBySmsomaa = exports.deletePatientByrota = exports.deletePatientByUsername = exports.deleteDoctorByUsername = exports.getAdmin = exports.deleteAdminByUsername = exports.createAdmin = void 0;
 const adminModel_1 = __importDefault(require("../models/adminModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const patientModel_1 = __importDefault(require("../models/patientModel"));
@@ -73,6 +73,22 @@ const deleteAdminByUsername = async (req, res) => {
     }
 };
 exports.deleteAdminByUsername = deleteAdminByUsername;
+const getAdmin = async (req, res) => {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = await tokenModel_1.default.findOne({ token: token });
+    var username;
+    if (tokenDB) {
+        username = tokenDB.username;
+    }
+    else {
+        return res.status(404).json({ error: "username not found" });
+    }
+    // Find the patient by ID
+    const admin = await adminModel_1.default.findOne({ username });
+    res.status(200).json(admin);
+};
+exports.getAdmin = getAdmin;
 //delete Doctor
 const deleteDoctorByUsername = async (req, res) => {
     try {

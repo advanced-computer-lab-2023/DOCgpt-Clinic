@@ -3,6 +3,10 @@ import { useState } from "react";
 import { To, useNavigate } from "react-router-dom";
 import logo from "../../logo.jpeg";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import WalletTwoToneIcon from "@mui/icons-material/WalletTwoTone";
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 //import logo from './'
 import {
@@ -21,7 +25,8 @@ import {
   Typography,
   Menu,
   MenuItem,
-  ListSubheader, // Import Menu and MenuItem
+  ListSubheader,
+  Icon, // Import Menu and MenuItem
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import HealingIcon from "@mui/icons-material/Healing";
@@ -120,7 +125,14 @@ export default function AdminAppBar() {
   const isHeaderOpen = (index: number) => {
     return openHeaders.includes(index);
   };
-
+  const handlechangepassword = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/changepasswordadmin");
+  };
+  const handleMyProfileClick = () => {
+    // Redirect to the My Profile page ("/doctor/home")
+    navigate("/adminProfile");
+  };
   const renderMenuItems = (items: RouteType[]) => {
     return (
       <List>
@@ -257,13 +269,31 @@ export default function AdminAppBar() {
             open={Boolean(anchorEl)}
             onClose={handleCloseMenu}
           >
-            <MenuItem onClick={() => navigate("/admin/profile")}>
+            <MenuItem onClick={handleMyProfileClick}>
+              <span style={{ color: "black", marginRight: "5px" }}>
+                <Icon>
+                  <AccountCircleRoundedIcon />
+                </Icon>
+              </span>
               My Profile
             </MenuItem>
-            <MenuItem onClick={() => navigate("/changepasswordadmin")}>
-              Change my Password
+            {/* Add onClick here */}
+            <MenuItem onClick={handlechangepassword}>
+              <span style={{ color: "black", marginRight: "5px" }}>
+                <Icon>
+                  <SettingsRoundedIcon />
+                </Icon>
+              </span>
+              Change password
             </MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout}>
+              <span style={{ color: "black", marginRight: "5px" }}>
+                <Icon>
+                  <LogoutRoundedIcon />
+                </Icon>
+              </span>
+              Logout
+            </MenuItem>
           </Menu>
           {/* Dropdown Menu */}
         </Toolbar>
