@@ -55,37 +55,46 @@ const FamilyMemberPackageStatus = () => {
 <>    
 <PatientBar/>
 <div
-      
       style={{
+        position: 'relative',
         backgroundImage: `url(${Background})`,
         backgroundSize: 'cover',
         minHeight: '50vh',
-        marginBottom:'100px',
+        marginBottom: '100px',
         backgroundPosition: 'center',
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
-      }}
-    >   
-        <Back/>
-     <div
-      style={{
-        position: 'absolute', // Set position to absolute
-        top: '35%', // Adjust top value to center vertically
-        left: '50%', // Adjust left value to center horizontally
-        transform: 'translate(-50%, -50%)', // Center the text
-        textAlign: 'center', // Center text horizontally
-        color: 'white', // Set text color
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
       }}
     >
-      <h1> <strong>FAMILY MEMBERS PACKAGES HISTORY</strong></h1>
-      {/* <p>Additional text content</p> */}
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>FAMILY MEMBERS PACKAGE HISTORY</strong>
+        </h1>
+      </div>
     </div>
-  </div>
 
     <Container maxWidth="lg">
-
-    <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}} marginTop="20px" marginBottom="100px">
-        Family Member Package Status
-      </Typography>
       <TableContainer component={Paper} sx={{ marginBottom: '24px' }}>
         <Table>
           <TableHead>

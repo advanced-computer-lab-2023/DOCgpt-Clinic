@@ -13,7 +13,6 @@ import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRou
 import { CSSProperties } from '@mui/material/styles/createMixins';
 import theme from '../../theme';
 import El7a2niInfo from "../../components/El7a2ni-info";
-import Background from '../../Background.jpeg';
 import DrawerAppBar from '../Doctor bar/doctorBar';
 import { isSameDay } from 'date-fns';
 import IconButton from '@mui/material/IconButton';
@@ -24,6 +23,8 @@ import TimePicker from '@mui/lab/TimePicker';
 
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import DoctorTimeSlot from './DoctorTimeSlot';
+import Background from '../../Appointments.jpeg';
+import Back from "../../components/backButton";
 
 interface Timeslot {
   date: Date;
@@ -133,17 +134,50 @@ fetchData();
   };
   
   return (
-    <div
-        style={{
-            backgroundImage: `url(${Background})`,
-            backgroundSize: "cover",
-            minHeight: "100vh",
-            backgroundPosition: "center",
-            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.2)", // Increased shadow values
-        }}
-        >
     <>
     <DrawerAppBar/>
+   <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>ADD TIME SLOTS</strong>
+        </h1>
+      </div>
+    </div>
+
+       
+          
 
 
         <Grid container alignItems="center" >
@@ -242,6 +276,7 @@ fetchData();
                       Submit
                     </Button>
                   </Grid>
+                  
                   </Grid>
 
                 </Grid>
@@ -276,8 +311,10 @@ fetchData();
         )}
             </Paper>
           </Grid>
+          </Grid>
+
         </Grid>
-        </Grid>
+
 
 
       
@@ -297,8 +334,9 @@ fetchData();
       </Dialog>
       {/* Snackbar */}
       <El7a2niInfo />
+
     </>
-    </div>
+
   );
 };
 
@@ -339,4 +377,4 @@ const styles: { [key: string]: CSSProperties } = {
   },
 };
 
-export default DoctorAvailability
+export default DoctorAvailability;

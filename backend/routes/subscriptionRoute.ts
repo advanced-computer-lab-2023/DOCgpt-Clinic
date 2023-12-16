@@ -8,7 +8,8 @@ import {
     cancelSubscription,
     getSubscribedPackagesForMember,
     subscribeFamAsPatient,
-    cancelSubscriptionfam2
+    cancelSubscriptionfam2,
+    getdiscount
 } from '../controllers/subscriptionController';
 
 const router: Router = express.Router();
@@ -23,5 +24,6 @@ router.get('/getSubscribedPackagesForMember', getSubscribedPackagesForMember);
 router.patch('/cancelSubscription', cancelSubscription);
 router.patch('/cancelSubscriptionfam', cancelSubscriptionfam2);
 router.get('/viewFamMemberPackages', viewFamilyMembersAndPackages);
+router.get("/getdisc/:username",getdiscount);
 
 export default router;
