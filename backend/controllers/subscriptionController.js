@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -21,23 +12,23 @@ require('dotenv').config();
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
 if (!process.env.STRIPE_SECRET_KEY)
     throw new Error('process.env.STRIPE_SECRET_KEY not found');
-const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const subscribeToHealthPackage = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         const username = tokenDB && tokenDB.username;
         const { packageName, paymentMethod } = req.body;
         if (!username || !packageName || !paymentMethod) {
             return res.status(400).json({ error: 'Username, package name, and payment method are required' });
         }
         // Find the patient by username
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
         // Find the health package by name
-        const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
+        const healthPackage = await packageModel_1.default.findOne({ name: packageName });
         if (!healthPackage) {
             return res.status(404).json({ error: 'Health package not found' });
         }
@@ -47,7 +38,7 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
         }
         const subscriptionCost = healthPackage.feesPerYear;
         if (paymentMethod === 'creditCard') {
-            const sessionUrl = yield (0, exports.creditPayment)(req, res, subscriptionCost);
+            const sessionUrl = await (0, exports.creditPayment)(req, res, subscriptionCost);
             if (!sessionUrl) {
                 return res.status(500).json({ error: 'Failed to create payment session' });
             }
@@ -58,7 +49,7 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
                 status: "subscribed with renewal date",
                 payedBy: username,
             });
-            yield patient.save();
+            await patient.save();
             return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });
         }
         else { // <-- Corrected placement of else
@@ -75,7 +66,7 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
                     status: "subscribed with renewal date",
                     payedBy: username,
                 });
-                yield patient.save();
+                await patient.save();
             }
         }
         return res.status(201).json({ message: 'Health package subscribed successfully', patient });
@@ -84,21 +75,21 @@ const subscribeToHealthPackage = (req, res) => __awaiter(void 0, void 0, void 0,
         console.error('Error subscribing to health package:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.subscribeToHealthPackage = subscribeToHealthPackage;
-const subscribeFamAsPatient = (username, packageName) => __awaiter(void 0, void 0, void 0, function* () {
+const subscribeFamAsPatient = async (username, packageName) => {
     try {
         console.log("ANA HENA FAM AS PATIENT");
         if (!username || !packageName) {
             throw new Error('Username and package name are required');
         }
         // Find the patient by username
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             throw new Error('Patient not found');
         }
         // Find the health package by name
-        const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
+        const healthPackage = await packageModel_1.default.findOne({ name: packageName });
         if (!healthPackage) {
             throw new Error('Health package not found');
         }
@@ -120,27 +111,27 @@ const subscribeFamAsPatient = (username, packageName) => __awaiter(void 0, void 
             status: 'subscribed with renewal date',
             payedBy: username,
         });
-        yield patient.save();
+        await patient.save();
         return { message: 'Health package subscribed successfully', patient };
     }
     catch (error) {
         console.error('Error subscribing to health package:', error);
         throw new Error('Internal server error');
     }
-});
+};
 exports.subscribeFamAsPatient = subscribeFamAsPatient;
-const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const subscribeToHealthPackageForFamily = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         const username = tokenDB && tokenDB.username;
         const { packageName, familyMemberName, paymentMethod } = req.body;
         if (!username || !packageName || !familyMemberName || !paymentMethod) {
             return res.status(400).json({ error: 'Username, package name, and family member username are required' });
         }
         // Find the patient by username
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
@@ -151,7 +142,7 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
                 return res.status(404).json({ error: 'Family member not found' });
             }
             // Find the health package by name
-            const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
+            const healthPackage = await packageModel_1.default.findOne({ name: packageName });
             if (!healthPackage) {
                 return res.status(404).json({ error: 'Health package not found' });
             }
@@ -162,10 +153,10 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
             if (isSubscribed) {
                 return res.status(400).json({ error: 'Patient is already subscribed to this package' });
             }
-            const price = yield calcTotal(healthPackage.feesPerYear, username);
+            const price = await calcTotal(healthPackage.feesPerYear, username);
             const subscriptionCost = price;
             if (paymentMethod === 'creditCard') {
-                const sessionUrl = yield (0, exports.creditPayment)(req, res, subscriptionCost);
+                const sessionUrl = await (0, exports.creditPayment)(req, res, subscriptionCost);
                 if (!sessionUrl) {
                     return res.status(500).json({ error: 'Failed to create payment session' });
                 }
@@ -179,8 +170,8 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
                 const familyMemberUsername = familyMember.username;
                 if (!familyMemberUsername)
                     return res.status(404).json({ error: 'No family members found for this patient' });
-                yield (0, exports.subscribeFamAsPatient)(familyMemberUsername, packageName);
-                yield patient.save();
+                await (0, exports.subscribeFamAsPatient)(familyMemberUsername, packageName);
+                await patient.save();
                 return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });
             }
             else {
@@ -204,7 +195,7 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
                     (0, exports.subscribeFamAsPatient)(familyMemberUsername, packageName);
                 }
             }
-            yield patient.save();
+            await patient.save();
             return res.status(201).json({ message: 'Health package subscribed successfully for family member', patient });
         }
         else {
@@ -215,18 +206,18 @@ const subscribeToHealthPackageForFamily = (req, res) => __awaiter(void 0, void 0
         console.error('Error subscribing to health package for family member:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.subscribeToHealthPackageForFamily = subscribeToHealthPackageForFamily;
-const viewSubscribedPackages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const viewSubscribedPackages = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         const username = tokenDB === null || tokenDB === void 0 ? void 0 : tokenDB.username;
         if (!username) {
             return res.status(400).json({ error: 'Username is required' });
         }
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
@@ -240,19 +231,19 @@ const viewSubscribedPackages = (req, res) => __awaiter(void 0, void 0, void 0, f
         console.error('Error retrieving subscribed packages:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.viewSubscribedPackages = viewSubscribedPackages;
-const viewHealthPackageStatus = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const viewHealthPackageStatus = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         const username = tokenDB && tokenDB.username;
         if (!username) {
             return res.status(400).json({ error: 'Username is required' });
         }
         // Find the patient by username
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
@@ -288,7 +279,7 @@ const viewHealthPackageStatus = (req, res) => __awaiter(void 0, void 0, void 0, 
         console.error('Error viewing health package status:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.viewHealthPackageStatus = viewHealthPackageStatus;
 const findHealthPackageStatusHelper = (packages, packageName) => {
     const packageData = packages.find(package1 => package1.name.toLowerCase() === packageName.toLowerCase());
@@ -299,21 +290,21 @@ const findMemberNameHelper = (packages, packageName) => {
     const packageData = packages.find(package1 => package1.name.toLowerCase() === packageName.toLowerCase());
     return packageData ? packageData.memberName : '';
 };
-const cancelSubscription = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const cancelSubscription = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         const username = (tokenDB && tokenDB.username);
         const { packageName } = req.body;
         if (!username || !packageName) {
             return res.status(400).json({ error: 'Patient ID and package name are required' });
         }
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
+        const healthPackage = await packageModel_1.default.findOne({ name: packageName });
         if (!healthPackage) {
             return res.status(404).json({ error: 'Health package not found' });
         }
@@ -333,20 +324,20 @@ const cancelSubscription = (req, res) => __awaiter(void 0, void 0, void 0, funct
                 }
             }
         }
-        yield patient.save();
+        await patient.save();
         return res.status(200).json({ message: 'Health package subscription canceled successfully', patient });
     }
     catch (error) {
         console.error('Error canceling health package subscription:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.cancelSubscription = cancelSubscription;
-const cancelSubscriptionfam2 = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const cancelSubscriptionfam2 = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         const username = (tokenDB && tokenDB.username);
         const { packageName, familyname } = req.body;
         if (!packageName) {
@@ -356,11 +347,11 @@ const cancelSubscriptionfam2 = (req, res) => __awaiter(void 0, void 0, void 0, f
         if (!familyname) {
             return res.status(400).json({ error: ' family name' });
         }
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
+        const healthPackage = await packageModel_1.default.findOne({ name: packageName });
         if (!healthPackage) {
             return res.status(404).json({ error: 'Health package not found' });
         }
@@ -380,25 +371,25 @@ const cancelSubscriptionfam2 = (req, res) => __awaiter(void 0, void 0, void 0, f
                 }
             }
         }
-        yield patient.save();
+        await patient.save();
         return res.status(200).json({ message: 'Health package subscription canceled successfully', patient });
     }
     catch (error) {
         console.error('Error canceling health package subscription:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.cancelSubscriptionfam2 = cancelSubscriptionfam2;
-const viewFamilyMembersAndPackages = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const viewFamilyMembersAndPackages = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         const username = tokenDB && tokenDB.username;
         if (!username) {
             return res.status(400).json({ error: 'Username is required' });
         }
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
@@ -426,16 +417,16 @@ const viewFamilyMembersAndPackages = (req, res) => __awaiter(void 0, void 0, voi
         console.error('Error retrieving family members and packages:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.viewFamilyMembersAndPackages = viewFamilyMembersAndPackages;
-const getSubscribedPackagesForMember = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getSubscribedPackagesForMember = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         const username = (tokenDB && tokenDB.username);
         const { familyMemberName } = req.query;
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'Family member not found 1' });
         }
@@ -452,39 +443,37 @@ const getSubscribedPackagesForMember = (req, res) => __awaiter(void 0, void 0, v
         console.error('Error fetching subscribed packages:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.getSubscribedPackagesForMember = getSubscribedPackagesForMember;
-function calcTotal(feesPerYear, username) {
-    return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const patient = yield patientModel_1.default.findOne({ username });
-            if (!patient) {
-                throw new Error('Patient not found');
-            }
-            if (patient.healthPackageSubscription.length === 0) {
-                console.log('Patient has no health packages subscribed');
-                return feesPerYear; // or any default value you want to return when no health packages are subscribed
-            }
-            const firstSubscription = patient.healthPackageSubscription[0];
-            const packageName = firstSubscription.name;
-            const healthPackage = yield packageModel_1.default.findOne({ name: packageName });
-            if (!healthPackage) {
-                throw new Error('Health package not found');
-            }
-            const discount = feesPerYear - healthPackage.familysubscribtionDiscount * 0.01 * feesPerYear;
-            console.log('Discount:', discount);
-            // Perform further calculations or operations with the discount value
-            return discount;
-        }
-        catch (error) {
-            console.error('Error calculating health discount:', error);
-            throw error;
-        }
-    });
-}
-const creditPayment = (req, res, sessionPrice) => __awaiter(void 0, void 0, void 0, function* () {
+async function calcTotal(feesPerYear, username) {
     try {
-        const session = yield stripe.checkout.sessions.create({
+        const patient = await patientModel_1.default.findOne({ username });
+        if (!patient) {
+            throw new Error('Patient not found');
+        }
+        if (patient.healthPackageSubscription.length === 0) {
+            console.log('Patient has no health packages subscribed');
+            return feesPerYear; // or any default value you want to return when no health packages are subscribed
+        }
+        const firstSubscription = patient.healthPackageSubscription[0];
+        const packageName = firstSubscription.name;
+        const healthPackage = await packageModel_1.default.findOne({ name: packageName });
+        if (!healthPackage) {
+            throw new Error('Health package not found');
+        }
+        const discount = feesPerYear - healthPackage.familysubscribtionDiscount * 0.01 * feesPerYear;
+        console.log('Discount:', discount);
+        // Perform further calculations or operations with the discount value
+        return discount;
+    }
+    catch (error) {
+        console.error('Error calculating health discount:', error);
+        throw error;
+    }
+}
+const creditPayment = async (req, res, sessionPrice) => {
+    try {
+        const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
             line_items: [
@@ -507,5 +496,5 @@ const creditPayment = (req, res, sessionPrice) => __awaiter(void 0, void 0, void
     catch (e) {
         res.status(500).json({ error: e.message });
     }
-});
+};
 exports.creditPayment = creditPayment;
