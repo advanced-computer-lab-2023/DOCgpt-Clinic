@@ -17,10 +17,11 @@ import Back from "./backButton";
 interface HealthPackageStatus {
   name: string;
   status: string;
+  startdate?: string;  // Reflecting the optional nature and naming convention from your schema
+  enddate?: string; 
   patientName?: string;
   familyMemberName?: string;
 }
-
 const ViewStatusOfPackage = () => {
   const [healthPackages, setHealthPackages] = useState<HealthPackageStatus[]>([]);
 
@@ -56,13 +57,17 @@ const ViewStatusOfPackage = () => {
             <TableRow>
               <TableCell style={headerCellStyle}>Health Package Name</TableCell>
               <TableCell style={headerCellStyle}>Status</TableCell>
+              <TableCell style={headerCellStyle}>Start Date</TableCell> {/* New column for start date */}
+              <TableCell style={headerCellStyle}>End Date</TableCell> {/* New column for end date */}
             </TableRow>
           </TableHead>
           <TableBody>
             {patientPackages.map((pkg, index) => (
               <TableRow key={index}>
                 <TableCell>{pkg.name}</TableCell>
-                <TableCell>{pkg.status}</TableCell>
+      <TableCell>{pkg.status}</TableCell>
+      <TableCell>{pkg.startdate}</TableCell> {/* Now using startdate */}
+      <TableCell>{pkg.enddate}</TableCell>  
               </TableRow>
             ))}
           </TableBody>

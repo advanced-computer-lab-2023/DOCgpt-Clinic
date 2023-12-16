@@ -302,52 +302,45 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
 
     // Find the patient by username
     const patient = await patientModel.findOne({ username });
- 
+
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
-    } 
-    const familyMembersNames = patient.familyMembers.map((familyMember) => familyMember.name);
-    
-    
+    }
+
     // Create an array to store health package details for the patient and family members
-    const healthPackages: { name: string; status: string; patientName?: string; familyMemberName?: string }[] = [];
+    const healthPackages = [];
 
     // Include the patient's health package subscriptions
     if (patient.healthPackageSubscription && patient.healthPackageSubscription.length > 0) {
-      healthPackages.push(...patient.healthPackageSubscription.map(package1 => ({
-       
-        name: package1.name,
-        status: package1.status,
+      healthPackages.push(...patient.healthPackageSubscription.map(subscription => ({
+        name: subscription.name,
+        status: subscription.status,
+        startdate: subscription.startdate, // Include the start date
+        enddate: subscription.enddate,     // Include the end date
       })));
     }
-   
-    if(familyMembersNames.length ===0 ){
-      res.status(200).json({ healthPackages });
-    }
-    else{
-          for (const familyMember of patient.familyMembers) {
-            if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0 && familyMember.healthPackageSubscription[0].payedBy === patient.username) {
-              healthPackages.push(
-                ...familyMember.healthPackageSubscription.map((package1) => ({
-                  patientName: patient.name,
-                  name: package1.name,
-                  familyMemberName: familyMember.name,
-                  status: package1.status,
-                }))
-  );
-}
 
-        }
-      
-      console.log(healthPackages);
-      res.status(200).json({ healthPackages });
+    // Include health package subscriptions for family members
+    for (const familyMember of patient.familyMembers) {
+      if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0) {
+        healthPackages.push(...familyMember.healthPackageSubscription.map(subscription => ({
+          name: subscription.name,
+          status: subscription.status,
+          startdate: subscription.startdate, // Include the start date
+          enddate: subscription.enddate,     // Include the end date
+          familyMemberName: familyMember.name,
+        })));
+      }
     }
+
+    res.status(200).json({ healthPackages });
 
   } catch (error) {
     console.error('Error viewing health package status:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 const findHealthPackageStatusHelper = (packages: any[], packageName: string) => {
   const packageData = packages.find(package1 => package1.name.toLowerCase() === packageName.toLowerCase());

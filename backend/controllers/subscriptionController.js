@@ -267,37 +267,34 @@ const viewHealthPackageStatus = (req, res) => __awaiter(void 0, void 0, void 0, 
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
-        const familyMembersNames = patient.familyMembers.map((familyMember) => familyMember.name);
         // Create an array to store health package details for the patient and family members
         const healthPackages = [];
         // Include the patient's health package subscriptions
         if (patient.healthPackageSubscription && patient.healthPackageSubscription.length > 0) {
-            healthPackages.push(...patient.healthPackageSubscription.map(package1 => ({
-                name: package1.name,
-                status: package1.status,
+            healthPackages.push(...patient.healthPackageSubscription.map(subscription => ({
+                name: subscription.name,
+                status: subscription.status,
+                startdate: subscription.startdate,
+                enddate: subscription.enddate, // Include the end date
             })));
         }
-        if (familyMembersNames.length === 0) {
-            res.status(200).json({ healthPackages });
-        }
-        else {
-            for (const familyMember of patient.familyMembers) {
-                if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0 && familyMember.healthPackageSubscription[0].payedBy === patient.username) {
-                    healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => ({
-                        patientName: patient.name,
-                        name: package1.name,
-                        familyMemberName: familyMember.name,
-                        status: package1.status,
-                    })));
-                }
+        // Include health package subscriptions for family members
+        for (const familyMember of patient.familyMembers) {
+            if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0) {
+                healthPackages.push(...familyMember.healthPackageSubscription.map(subscription => ({
+                    name: subscription.name,
+                    status: subscription.status,
+                    startdate: subscription.startdate,
+                    enddate: subscription.enddate,
+                    familyMemberName: familyMember.name,
+                })));
             }
-            console.log(healthPackages);
-            res.status(200).json({ healthPackages });
         }
+        res.status(200).json({ healthPackages });
     }
     catch (error) {
         console.error('Error viewing health package status:', error);
-        return res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 exports.viewHealthPackageStatus = viewHealthPackageStatus;
