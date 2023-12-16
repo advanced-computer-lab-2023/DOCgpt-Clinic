@@ -10,7 +10,7 @@ import AddFamilyMember from "./pages/patient/addFam";
 import ViewFamilyMembers from "./pages/patient/getFam";
 import Admin from "./pages/admin/admin";
 //import timeslottt from './pages/doctor/timeslot';
-import PatientPage from "./pages/patient/Patient";
+
 import DoctorMain from "./pages/doctor/doctorMain";
 import DoctorLogin from "./pages/doctor/doctorLogin";
 import MyAppointments from "./pages/doctor/MyAppointments";
@@ -107,7 +107,7 @@ function App() {
         <Route path="/login" Component={Log} />
         <Route path="/register/patient" Component={SignUpPatient} />
         <Route path="/register/doctor" Component={DoctorRegistrationForm} />
-        // <Route path="/patient/main" Component={PatientPage} />
+    
         // <Route path="/doctor/main" Component={DoctorMain} />
         // <Route path="/doctor/login" Component={DoctorLogin} />
         //{" "}
