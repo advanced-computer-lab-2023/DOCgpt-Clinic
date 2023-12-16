@@ -6,7 +6,7 @@ import Carousel from "../../components/Carousel";
 import logo from "../../logo.jpeg";
 
 import TodayAppointmentsPatient from "./todaysappP";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import { ServerResponse } from "http";
 import ServicesSection from "./servicessection";
 import AskDoctorBanner from "./askDoctorBanner";
@@ -31,7 +31,7 @@ function HomePage() {
       <TodayAppointmentsPatient />
       <ServicesSection />
       <AskDoctorBanner />
-      <El7a2niInfo />
+      <El7a2niPatientInfo />
     </>
   );
 }

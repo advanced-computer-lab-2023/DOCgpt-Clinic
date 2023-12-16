@@ -12,7 +12,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import AdminBar from '../components/admin Bar/adminBar';
-import El7a2niInfo from './El7a2ni-info';
+import El7a2niAdminInfo from "./El7a2niAdmin-info";
 import Background from '../doctorss.jpeg';
 import Back from "./backButton";
 
@@ -185,7 +185,7 @@ const customTypographyStyles = {
           </Grid>
         </Paper>
       </Container>
-      <El7a2niInfo/>
+      <El7a2niAdminInfo/>
     </>
   );
 };

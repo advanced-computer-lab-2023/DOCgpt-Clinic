@@ -83,7 +83,7 @@ const subscribeToHealthPackage = async (req, res) => {
     }
 };
 exports.subscribeToHealthPackage = subscribeToHealthPackage;
-const subscribeFamAsPatient = async (username, packageName) => {
+const subscribeFamAsPatient = async (username, packageName, user) => {
     try {
         console.log("ANA HENA FAM AS PATIENT");
         if (!username || !packageName) {
@@ -118,7 +118,7 @@ const subscribeFamAsPatient = async (username, packageName) => {
             startdate: newDate.toISOString(),
             enddate: endDate.toISOString(),
             status: 'subscribed',
-            payedBy: username,
+            payedBy: user,
         });
         await patient.save();
         return { message: 'Health package subscribed successfully', patient };
@@ -182,7 +182,7 @@ const subscribeToHealthPackageForFamily = async (req, res) => {
                 const familyMemberUsername = familyMember.username;
                 if (!familyMemberUsername)
                     return res.status(404).json({ error: 'No family members found for this patient' });
-                await (0, exports.subscribeFamAsPatient)(familyMemberUsername, packageName);
+                await (0, exports.subscribeFamAsPatient)(familyMemberUsername, packageName, username);
                 await patient.save();
                 return res.status(201).json({ message: 'Health package subscribed successfully', patient, sessionUrl });
             }
@@ -207,7 +207,7 @@ const subscribeToHealthPackageForFamily = async (req, res) => {
                     const familyMemberUsername = familyMember.username;
                     if (!familyMemberUsername)
                         return res.status(404).json({ error: 'No family members found for this patient' });
-                    (0, exports.subscribeFamAsPatient)(familyMemberUsername, packageName);
+                    await (0, exports.subscribeFamAsPatient)(familyMemberUsername, packageName, username);
                 }
             }
             await patient.save();

@@ -10,7 +10,7 @@ import AddFamilyMember from "./pages/patient/addFam";
 import ViewFamilyMembers from "./pages/patient/getFam";
 import Admin from "./pages/admin/admin";
 //import timeslottt from './pages/doctor/timeslot';
-import PatientPage from "./pages/patient/Patient";
+
 import DoctorMain from "./pages/doctor/doctorMain";
 import DoctorLogin from "./pages/doctor/doctorLogin";
 import MyAppointments from "./pages/doctor/MyAppointments";
@@ -87,6 +87,7 @@ import FamilyMemberPackageStatus from "./components/viewstatusfam";
 import DocList1 from "./components/alldoc";
 import PatientList1 from "./components/allpat";
 import Profile from "../src/pages/patient/profile";
+import famPackages from "./pages/patient/famPackages";
 import subscribedPage2 from "./pages/patient/suscribedpackagesfam";
 import AdminProfilePage from "./pages/admin/adminProfilePage";
 function App() {
@@ -109,7 +110,7 @@ function App() {
         <Route path="/login" Component={Log} />
         <Route path="/register/patient" Component={SignUpPatient} />
         <Route path="/register/doctor" Component={DoctorRegistrationForm} />
-        // <Route path="/patient/main" Component={PatientPage} />
+    
         // <Route path="/doctor/main" Component={DoctorMain} />
         // <Route path="/doctor/login" Component={DoctorLogin} />
         //{" "}
@@ -224,6 +225,7 @@ function App() {
         <Route path="/DrselectedPres/:id" Component={DrSelectedPrescription} />
         <Route path="/doctor/DrPrescription" Component={DrPrescription} />
         <Route path="/adminProfile" Component={AdminProfilePage} />
+        <Route path="patient/famPackages" Component={famPackages} />
       </Routes>
     </Router>
   );

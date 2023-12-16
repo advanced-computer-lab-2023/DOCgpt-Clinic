@@ -4,7 +4,7 @@ import axios from 'axios';
 import DrPrescription from '../../components/DrPrescription'; 
 import DrawerAppBar from '../../components/Doctor bar/doctorBar';
 import { Grid, Typography } from '@mui/material';
-import El7a2niInfo from '../../components/El7a2ni-info';
+import El7a2niDocInfo from '../../components/El7a2niDoc-info';
 import Background from '../../Prescriptions.jpeg';
 import Back from "../../components/backButton";
 
@@ -96,7 +96,7 @@ const DrPrescriptions = () => {
         </Grid>
       ))}
     </Grid>
-    <El7a2niInfo/>
+    <El7a2niDocInfo/>
     </>
 
   );
