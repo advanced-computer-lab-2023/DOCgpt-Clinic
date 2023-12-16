@@ -783,6 +783,7 @@ function ViewMyHealthRecord(){
           color: "#fff", // Text color
           transition: "background-color 0.3s ease", // Smooth transition on hover
           marginTop: "10px", // Adjust the margin-top here
+          marginLeft:"56px"
         }}
         onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
         onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
@@ -811,6 +812,7 @@ function ViewMyHealthRecord(){
           color: "#fff", // Text color
           transition: "background-color 0.3s ease", // Smooth transition on hover
           marginTop: "10px", // Adjust the margin-top here
+          marginLeft:"56px"
         }}
         onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
         onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
@@ -841,6 +843,7 @@ function ViewMyHealthRecord(){
           color: "#fff", // Text color
           transition: "background-color 0.3s ease", // Smooth transition on hover
           marginTop: "10px", // Adjust the margin-top here
+          marginLeft:"56px"
         
         }}
         onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
@@ -871,6 +874,7 @@ function ViewMyHealthRecord(){
           color: "#fff", // Text color
           transition: "background-color 0.3s ease", // Smooth transition on hover
           marginTop: "10px", // Adjust the margin-top here
+          marginLeft:"56px"
         }}
         onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
         onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
