@@ -41,7 +41,7 @@ const PayMedicines: React.FC = () => {
       if (paymentMethod === "creditCard" && data.sessionUrl) {
         window.location.href = data.sessionUrl;
       } else if (paymentMethod === "Wallet") {
-        setMessage("Order placed succesfully");
+        setMessage("Package subscribed succesfully");
         setSnackbarOpen(true);
       }
     } catch (error) {
