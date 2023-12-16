@@ -1,8 +1,13 @@
-import { Button, Card, Container, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, Container, Grid, IconButton, Paper, Typography } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import EmailIcon from '@mui/icons-material/Email';
+import LocalPhoneIcon from '@mui/icons-material/LocalPhone';
+import logo from '../man.jpg'
+import { style } from "@mui/system";
+
 interface HealthRecord {
   patient: string;
   MedicalHistory: {
@@ -80,7 +85,7 @@ const Patient = ({ patient, doctor }: PatientProps) => {
   if (!patient) {
     return null;
   }
-  const { name, username } = patient;
+  const { name, username , mobilenumber, email , gender , dateofbirth} = patient;
 
   const handleClick = () => {
     // Add your click event handling logic here
@@ -97,13 +102,13 @@ const Patient = ({ patient, doctor }: PatientProps) => {
   const handleMouseLeave = () => {
     setHoveredButton(false);
   };
-  const buttonStyle = {
-    margin: "8px",
-    width: "250px",
-    height: "50px",
-    borderColor: "grey", // Blue border color
-    color: "black", // Set text color to black
-  };
+  // const buttonStyle = {
+  //   margin: "8px",
+  //   width: "250px",
+  //   height: "50px",
+  //   borderColor: "grey", // Blue border color
+  //   color: "black", // Set text color to black
+  // };
 
   const healthRecordClick = () => {
     if (username && !healthRecord) {
@@ -115,6 +120,9 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       params.append("patient", username);
       navigate(`/doctor/patientHealthRecord?${params.toString()}`);
     }
+  };
+  const openGmail = (email : any) => {
+    window.open(`mailto:${email}`);
   };
 
   const addPresc = async (name: any) => {
@@ -144,58 +152,98 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       console.error("Error in addPresc:", error);
     }
   };
-  
-  const cardStyle = {
-    padding: "20px",
-    margin: "10px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-     // Light blue border color
-  };
-  const iconStyle = {
-    fontSize: "95px", // Adjust the icon size as needed
-    color: "#777777", // Grey icon color
-    marginLeft:'22px',
-    marginBottom: '5px',
+
+  function calculateAge(dateOfBirth: string | number | Date) {
+    const dob = new Date(dateOfBirth);
+    const today = new Date();
     
+    let age = today.getFullYear() - dob.getFullYear();
+    
+    // Check if the birthday has already occurred this year
+    const hasBirthdayOccurred = today.getMonth() > dob.getMonth() ||
+      (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate());
+    
+    // Subtract 1 from the age if the birthday hasn't occurred yet
+    if (!hasBirthdayOccurred) {
+      age--;
+    }
+    
+    return age;
+  }
+
+  const age = calculateAge(dateofbirth);
+  const paperStyle = {
+    display: 'flex',
+    margin: '10px auto',
+    width: '700px',
+    height: 'auto',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+    ':hover': {
+      boxShadow: '0 5px 15px rgba(0,0,0,0.2)',
+    },
+    borderRadius: '10px',
+    overflow: 'hidden',
+    transition: 'box-shadow 0.3s ease-in-out',
   };
 
-  const nameStyle = {
-    fontSize: "16px",
-    fontWeight: "bold", // Make the name bold
-    textAlign: "center", // Center the text
+  const imageContainerStyle = {
+    width: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundImage: `url(${logo})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
   };
-  const buttonContainerStyle: React.CSSProperties = {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
+
+  const infoContainerStyle = {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-around',
+    alignItems: 'flex-start',
+    padding: '16px',
+    width: '50%',
   };
+
+  const buttonStyle = {
+    marginTop: '8px',
+    fontSize: '0.75rem',
+    padding: '5px 5px',
+  };
+
   return (
-    <Card style={cardStyle}>
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <AccountCircleIcon style={iconStyle} />
-        <Typography variant="subtitle1" sx={nameStyle}>
-  {name}
-</Typography>
-      </div>
-  
-      <div style={buttonContainerStyle}>
-        {/* Health Record Button */}
-        <Button
-          variant="outlined"
-          style={buttonStyle}
+    <Paper sx={paperStyle}>
+      <Box sx={imageContainerStyle} />
+      <Box sx={infoContainerStyle}>
+        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>{name}</Typography>
+        <Typography variant="body1" color="textSecondary">@{username}</Typography>
+        <Typography variant="body1">Age: {age}</Typography>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <EmailIcon color="primary" sx={{ mr: 1 }} onClick={() => openGmail(email)} />
+          <Typography
+      variant="body1"
+      sx={{
+        color: "initial",
+        "&:hover": {
+          color: "primary.main",
+          cursor: "pointer",
+        },
+      }}
+      onClick={() => openGmail(email)}
+    >
+      {email}
+    </Typography>        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <LocalPhoneIcon color="primary" sx={{ mr: 1 }} />
+          <Typography variant="body1">{mobilenumber}</Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 2, mt: 2 }}>
+          <Button variant="outlined" color="primary" sx={buttonStyle}  
           onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
-          onClick={healthRecordClick}
-        >
-          Health Record
-        </Button>
-  
-        {/* Add Prescription Button */}
-        <Button
-          variant="outlined"
-          style={buttonStyle}
+           onClick={healthRecordClick}>
+            Health Record
+          </Button>
+          <Button variant="outlined" color="primary"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={() => addPresc(username)}
@@ -205,7 +253,7 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       </div>
     </Card>
   );
-  
 };
+
 
 export default Patient;

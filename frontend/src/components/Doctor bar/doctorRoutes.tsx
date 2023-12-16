@@ -20,28 +20,28 @@ export type links = {
 const appRoutes: RouteType[] = [
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Appoinments
       </Typography>
     ),
     child: [
       {
         path: "/doctor/time",
-        state: "add time slots ",
+        state: "Add Time Slots ",
       },
       {
         path: "/doctor/appointments",
-        state: "View my appointments",
+        state: "View My Appointments",
       },
       {
         path: "/doctor/followUpRequests",
-        state: "View Follow Up requests",
+        state: "View Follow Up Requests",
       },
     ],
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Patients
       </Typography>
     ),
@@ -54,7 +54,7 @@ const appRoutes: RouteType[] = [
   },
   {
     header: (
-      <Typography variant="h6" fontWeight="bold">
+      <Typography variant="h6" >
         Prescriptions
       </Typography>
     ),

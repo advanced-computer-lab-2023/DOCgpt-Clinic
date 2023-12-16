@@ -7,8 +7,8 @@ import DrawerAppBar from "./admin Bar/adminBar";
 import El7a2niInfo from './El7a2ni-info';
 import AddPackage from './Package';
 import { useNavigate } from 'react-router-dom';
-import BackButton from './backButton';
-
+import Background from '../HealthPack.jpeg';
+import Back from "./backButton";
 
 interface HealthPackage {
   name: string;
@@ -104,10 +104,47 @@ const HealthPackages = () => {
     <>
 
       <DrawerAppBar />
-      <BackButton/>
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>AVAILABLE HEALTH PACKAGES</strong>
+        </h1>
+      </div>
+    </div>
       <Container maxWidth="lg" style={{ marginTop: '20px' }}>
       <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center', marginBottom: '30px' }}>
-  Available Health Packages
   <Button 
   variant="contained" 
   color="primary" 

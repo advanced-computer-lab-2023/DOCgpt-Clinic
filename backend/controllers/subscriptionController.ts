@@ -52,11 +52,13 @@ if (!process.env.STRIPE_SECRET_KEY)
       if (!sessionUrl) {
         return res.status(500).json({ error: 'Failed to create payment session' });
       }
-
-      patient.healthPackageSubscription.push({
+      const newDate = new Date();
+      const endDate = new Date(newDate);
+      endDate.setFullYear(newDate.getFullYear() + 1);
+        patient.healthPackageSubscription.push({
         name: packageName,
-        startdate: '',
-        enddate: '',
+        startdate: newDate.toISOString(),
+        enddate: endDate.toISOString(),
         status: "subscribed with renewal date",
         payedBy: username,
         
@@ -71,11 +73,13 @@ if (!process.env.STRIPE_SECRET_KEY)
       if (patient.walletBalance < subscriptionCost) {
         return res.status(400).json({ error: 'Insufficient funds in the wallet' });
       } else {
+      const newDate = new Date();
+      const endDate = new Date(newDate);
         patient.walletBalance -= subscriptionCost;
         patient.healthPackageSubscription.push({
           name: packageName,
-          startdate: '',
-          enddate: '',
+         startdate: newDate.toISOString(),
+         enddate: endDate.toISOString(),
           status: "subscribed with renewal date",
           payedBy: username,
         });
@@ -127,10 +131,12 @@ export const subscribeFamAsPatient = async (username: string, packageName: strin
       patient.healthPackageSubscription = [];
     }
     // Add the health package to the subscription array
+    const newDate = new Date();
+      const endDate = new Date(newDate);
     patient.healthPackageSubscription.push({
       name: packageName,
-      startdate: '',
-      enddate: '',
+      startdate: newDate.toISOString(),
+        enddate: endDate.toISOString(),
       status: 'subscribed with renewal date',
       payedBy: username,
     });
@@ -200,10 +206,12 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
         if (!sessionUrl) {
           return res.status(500).json({ error: 'Failed to create payment session' });
         }
+        const newDate = new Date();
+      const endDate = new Date(newDate);
         familyMember.healthPackageSubscription.push({
           name: packageName,
-          startdate: '',
-          enddate: '',
+          startdate: newDate.toISOString(),
+        enddate: endDate.toISOString(),
           status: "subscribed with renewal date" ,
           payedBy: username, 
         });
@@ -222,10 +230,12 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
         else {
           // Deduct the cost from the wallet balance
         patient.walletBalance -= subscriptionCost;
+        const newDate = new Date();
+      const endDate = new Date(newDate);
         familyMember.healthPackageSubscription.push({
           name: packageName,
-          startdate: '',
-          enddate: '',
+          startdate: newDate.toISOString(),
+        enddate: endDate.toISOString(),
           status: "subscribed with renewal date",
           payedBy: username,   
         });
@@ -580,8 +590,46 @@ async function calcTotal(feesPerYear: number, username: string) {
     throw error;
   }
 }
+export async function getdisc( username: string) {
+  try {
+    const patient = await patientModel.findOne({ username });
+    if (!patient) {
+      throw new Error('Patient not found');
+    }
 
+    if (patient.healthPackageSubscription.length === 0) {
+      console.log('Patient has no health packages subscribed');
+      return 0;// or any default value you want to return when no health packages are subscribed
+    }
 
+    const firstSubscription = patient.healthPackageSubscription[0];
+    const packageName = firstSubscription.name;
+
+    const healthPackage = await packageModel.findOne({ name: packageName });
+    if (!healthPackage) {
+      throw new Error('Health package not found');
+    }
+
+    const discount =  healthPackage.medicineDiscount;
+
+    console.log('Discount:', discount);
+    // Perform further calculations or operations with the discount value
+
+    return discount;
+  } catch (error) {
+    console.error('Error calculating health discount:', error);
+    throw error;
+  }
+}
+export const getdiscount =async (req: Request, res: Response ) => {
+  const { username } = req.params;
+  try {
+    const discount = await getdisc(username);
+    res.json({ discount });
+  } catch (error:any) {
+    res.status(404).send(error.message);
+  }
+};
 export const creditPayment = async (req: Request, res: Response , sessionPrice : any) => {
   try {
   
