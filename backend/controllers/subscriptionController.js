@@ -270,6 +270,7 @@ const viewHealthPackageStatus = async (req, res) => {
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
+        const familyMembersNames = patient.familyMembers.map((familyMember) => familyMember.name);
         // Create an array to store health package details for the patient and family members
         const healthPackages = [];
         const currentDate = new Date();
@@ -282,33 +283,52 @@ const viewHealthPackageStatus = async (req, res) => {
         const updated = await patient.save();
         // Include the patient's health package subscriptions
         if (patient.healthPackageSubscription && patient.healthPackageSubscription.length > 0) {
-            healthPackages.push(...patient.healthPackageSubscription.map(subscription => ({
-                name: subscription.name,
-                status: subscription.status,
-                startdate: subscription.startdate,
-                enddate: subscription.enddate, // Include the end date
-            })));
+            healthPackages.push(...patient.healthPackageSubscription.map(package1 => {
+                var _a, _b;
+                return ({
+                    name: package1.name,
+                    status: package1.status,
+                    startDate: (_a = package1.startdate) === null || _a === void 0 ? void 0 : _a.split("T")[0],
+                    endDate: (_b = package1.enddate) === null || _b === void 0 ? void 0 : _b.split("T")[0],
+                });
+            }));
         }
         if (familyMembersNames.length === 0) {
             res.status(200).json({ healthPackages });
         }
         else {
             for (const familyMember of patient.familyMembers) {
+                const currentDate = new Date();
+                patient.familyMembers.map((familymember) => {
+                    familymember.healthPackageSubscription.map((healthPackage) => {
+                        var _a;
+                        if (((_a = healthPackage.enddate) === null || _a === void 0 ? void 0 : _a.split('T')[0]) === currentDate.toISOString().split('T')[0]) {
+                            healthPackage.status = 'cancelled with end date';
+                        }
+                    });
+                });
+                const updated = await patient.save();
                 if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0 && familyMember.healthPackageSubscription[0].payedBy === patient.username) {
-                    healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => ({
-                        patientName: patient.name,
-                        name: package1.name,
-                        familyMemberName: familyMember.name,
-                        status: package1.status,
-                    })));
+                    healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => {
+                        var _a, _b;
+                        return ({
+                            patientName: patient.name,
+                            name: package1.name,
+                            familyMemberName: familyMember.name,
+                            status: package1.status,
+                            startDate: (_a = package1.startdate) === null || _a === void 0 ? void 0 : _a.split("T")[0],
+                            endDate: (_b = package1.enddate) === null || _b === void 0 ? void 0 : _b.split("T")[0],
+                        });
+                    }));
                 }
             }
+            console.log(healthPackages);
+            res.status(200).json({ healthPackages });
         }
-        res.status(200).json({ healthPackages });
     }
     catch (error) {
         console.error('Error viewing health package status:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({ error: 'Internal server error' });
     }
 };
 exports.viewHealthPackageStatus = viewHealthPackageStatus;

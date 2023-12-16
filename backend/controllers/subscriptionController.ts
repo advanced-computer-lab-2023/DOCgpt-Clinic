@@ -306,6 +306,7 @@ export const viewSubscribedPackages = async (req: Request, res: Response) => {
   }
 };
 
+
 export const viewHealthPackageStatus = async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers['authorization'];
@@ -319,11 +320,13 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
 
     // Find the patient by username
     const patient = await patientModel.findOne({ username });
-
+ 
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found' });
-    }
-
+    } 
+    const familyMembersNames = patient.familyMembers.map((familyMember) => familyMember.name);
+    
+    
     // Create an array to store health package details for the patient and family members
     const healthPackages: { name: string; status: string; patientName?: string; familyMemberName?: string }[] = [];
     
@@ -337,11 +340,12 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
  
     // Include the patient's health package subscriptions
     if (patient.healthPackageSubscription && patient.healthPackageSubscription.length > 0) {
-      healthPackages.push(...patient.healthPackageSubscription.map(subscription => ({
-        name: subscription.name,
-        status: subscription.status,
-        startdate: subscription.startdate, // Include the start date
-        enddate: subscription.enddate,     // Include the end date
+      healthPackages.push(...patient.healthPackageSubscription.map(package1 => ({
+       
+        name: package1.name,
+        status: package1.status,
+        startDate: package1.startdate?.split("T")[0],
+        endDate: package1.enddate?.split("T")[0],
       })));
     }
    
@@ -351,7 +355,7 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
     else{
           for (const familyMember of patient.familyMembers) {
           const currentDate = new Date();  
-          patient.familyMembers.map((familymember)=>{
+        patient.familyMembers.map((familymember)=>{
           familymember.healthPackageSubscription.map((healthPackage)=>{
             if(healthPackage.enddate?.split('T')[0] === currentDate.toISOString().split('T')[0]){
               healthPackage.status = 'cancelled with end date';
@@ -366,6 +370,8 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
                   name: package1.name,
                   familyMemberName: familyMember.name,
                   status: package1.status,
+                  startDate: package1.startdate?.split("T")[0],
+                  endDate: package1.enddate?.split("T")[0],
                 }))
   );
 }
@@ -378,7 +384,7 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
 
   } catch (error) {
     console.error('Error viewing health package status:', error);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
 

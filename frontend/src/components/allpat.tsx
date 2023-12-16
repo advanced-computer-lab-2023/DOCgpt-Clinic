@@ -26,6 +26,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import AdminBar from "./admin Bar/adminBar";
 import El7a2niInfo from "./El7a2ni-info";
 import Background from '../patient.jpeg';
+import Back from './backButton';
 
 interface Patient {
   _id: string;
@@ -188,7 +189,7 @@ const PatientList1: React.FC = () => {
         }}
       ></div>
 
-      <Back />
+      <Back/>
       <div
         style={{
           position: 'absolute',
