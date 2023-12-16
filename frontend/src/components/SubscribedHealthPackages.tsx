@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import { red } from '@mui/material/colors';
 import {
   Typography,
   List,
@@ -13,7 +14,8 @@ import {
   DialogActions,
   Container,
   Grid,
-} from '@mui/material';
+  makeStyles,
+} from "@mui/material";
 
 interface ApiResponse {
   subscribedPackages: {
@@ -26,21 +28,24 @@ interface ApiResponse {
 }
 
 const SubscribedHealthPackages = () => {
-  const [subscribedPackages, setSubscribedPackages] = useState<ApiResponse['subscribedPackages']>([]);
+  const [subscribedPackages, setSubscribedPackages] = useState<
+    ApiResponse["subscribedPackages"]
+  >([]);
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
-  const [isConfirmationDialogOpen, setConfirmationDialogOpen] = useState<boolean>(false);
+  const [isConfirmationDialogOpen, setConfirmationDialogOpen] =
+    useState<boolean>(false);
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem('authToken');
-      const response = await axios.get('/routes/viewSubscribedPackages', {
+      const token = localStorage.getItem("authToken");
+      const response = await axios.get("/routes/viewSubscribedPackages", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       setSubscribedPackages(response.data.subscribedPackages);
     } catch (error) {
-      console.error('Error fetching subscribed packages:', error);
+      console.error("Error fetching subscribed packages:", error);
     }
   };
 
@@ -60,11 +65,11 @@ const SubscribedHealthPackages = () => {
 
   const handleConfirmRemoveSubscription = async () => {
     try {
-      const token = localStorage.getItem('authToken');
-      console.log('Removing subscription for package:', selectedPackage);
+      const token = localStorage.getItem("authToken");
+      console.log("Removing subscription for package:", selectedPackage);
 
       const apiResponse = await axios.patch(
-        '/routes/cancelSubscription',
+        "/routes/cancelSubscription",
         { packageName: selectedPackage },
         {
           headers: {
@@ -73,12 +78,12 @@ const SubscribedHealthPackages = () => {
         }
       );
 
-      console.log('Response from cancelSubscription:', apiResponse.data);
+      console.log("Response from cancelSubscription:", apiResponse.data);
 
       // Refetch subscribed packages after removal
       fetchData();
     } catch (error) {
-      console.error('Error removing subscription:', error);
+      console.error("Error removing subscription:", error);
     } finally {
       handleCloseConfirmationDialog();
     }
@@ -130,25 +135,36 @@ const SubscribedHealthPackages = () => {
         ))}
     </Grid>
 
-    {/* Confirmation Dialog */}
-    <Dialog open={isConfirmationDialogOpen} onClose={handleCloseConfirmationDialog}>
-      <DialogTitle>Confirmation</DialogTitle>
-      <DialogContent>
-        <Typography>
-          Are you sure you want to cancel your subscription for "{selectedPackage}"?
-        </Typography>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleConfirmRemoveSubscription} color="primary" autoFocus>
-          Yes
-        </Button>
+      {/* Confirmation Dialog */}
+      <Dialog
+        open={isConfirmationDialogOpen}
+        onClose={handleCloseConfirmationDialog}
+      >
+        <DialogTitle>Confirmation</DialogTitle>
+        <DialogContent>
+          <Typography>
+            Are you sure you want to cancel your subscription for "
+            {selectedPackage}"?
+          </Typography>
+        </DialogContent>
+        <DialogActions>
         <Button onClick={handleCloseConfirmationDialog} color="primary">
-          No
-        </Button>
-      </DialogActions>
-    </Dialog>
-  </Container>
-);
+            Cancel
+          </Button>
+          <Button
+            onClick={handleConfirmRemoveSubscription}
+            color="primary"
+            style={{ color: red[500] }} // Use MUI's red color for "No" button text
+
+            autoFocus
+          >
+            Unsubscribe
+          </Button>
+       
+        </DialogActions>
+      </Dialog>
+    </Container>
+  );
 };
 
 export default SubscribedHealthPackages;

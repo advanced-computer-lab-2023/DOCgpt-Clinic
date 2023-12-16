@@ -24,7 +24,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
 import AdminBar from "./admin Bar/adminBar";
-import El7a2niInfo from "./El7a2ni-info";
+import El7a2niAdminInfo from "./El7a2niAdmin-info";
 import Background from '../patient.jpeg';
 import Back from './backButton';
 
@@ -298,7 +298,7 @@ const PatientList1: React.FC = () => {
       </Dialog>
       
     </Container>
-    <El7a2niInfo/>
+    <El7a2niAdminInfo/>
     </>
   );
 };
