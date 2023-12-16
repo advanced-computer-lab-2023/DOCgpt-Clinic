@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -24,14 +15,14 @@ const appointmentModel_1 = __importDefault(require("../models/appointmentModel")
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const requestModel_1 = __importDefault(require("../models/requestModel"));
-const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const createAdmin = async (req, res) => {
     const { username, password, email } = req.body;
-    const emailExists = yield patientModel_1.default.findOne({ email });
-    const emailExists2 = yield doctorModel_1.default.findOne({ email });
-    const emailExists3 = yield adminModel_1.default.findOne({ email });
-    const usernameExists = yield patientModel_1.default.findOne({ username });
-    const usernameExists2 = yield doctorModel_1.default.findOne({ username });
-    const usernameExists3 = yield adminModel_1.default.findOne({ username });
+    const emailExists = await patientModel_1.default.findOne({ email });
+    const emailExists2 = await doctorModel_1.default.findOne({ email });
+    const emailExists3 = await adminModel_1.default.findOne({ email });
+    const usernameExists = await patientModel_1.default.findOne({ username });
+    const usernameExists2 = await doctorModel_1.default.findOne({ username });
+    const usernameExists3 = await adminModel_1.default.findOne({ username });
     if (emailExists) {
         return res.status(401).json({ message: 'email exists' });
     }
@@ -50,27 +41,27 @@ const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* ()
     if (usernameExists3) {
         return res.status(401).json({ message: 'username exists' });
     }
-    const salt = yield bcrypt_1.default.genSalt(10);
-    const hash = yield bcrypt_1.default.hash(password, salt);
+    const salt = await bcrypt_1.default.genSalt(10);
+    const hash = await bcrypt_1.default.hash(password, salt);
     if (!validatePassword(password)) {
         return res.status(400).json({ message: 'Invalid password' });
     }
     try {
-        const admin = yield adminModel_1.default.create({ username, password: hash, email });
+        const admin = await adminModel_1.default.create({ username, password: hash, email });
         res.status(200).json(admin);
     }
     catch (error) {
         const err = error; // Type assertion to specify the type as 'Error'
         res.status(400).json({ error: err.message });
     }
-});
+};
 exports.createAdmin = createAdmin;
 //delete admin
-const deleteAdminByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteAdminByUsername = async (req, res) => {
     try {
         const { username } = req.body;
         // Find and delete the admin by username
-        const deletedAdmin = yield adminModel_1.default.findOneAndDelete({ username });
+        const deletedAdmin = await adminModel_1.default.findOneAndDelete({ username });
         if (!deletedAdmin) {
             return res.status(404).json({ message: 'Admin not found' });
         }
@@ -80,16 +71,16 @@ const deleteAdminByUsername = (req, res) => __awaiter(void 0, void 0, void 0, fu
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
-});
+};
 exports.deleteAdminByUsername = deleteAdminByUsername;
 //delete Doctor
-const deleteDoctorByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deleteDoctorByUsername = async (req, res) => {
     try {
         const { username } = req.body;
         // Find and delete the Doctor by username
-        const deletedDoctor = yield doctorModel_1.default.findOneAndDelete({ username });
-        const appoinment = yield appointmentModel_1.default.findOneAndDelete({ doctor: username });
-        const prescription = yield perscriptionModel_1.default.findOneAndDelete({ doctorUsername: username });
+        const deletedDoctor = await doctorModel_1.default.findOneAndDelete({ username });
+        const appoinment = await appointmentModel_1.default.findOneAndDelete({ doctor: username });
+        const prescription = await perscriptionModel_1.default.findOneAndDelete({ doctorUsername: username });
         if (!deletedDoctor) {
             return res.status(404).json({ message: 'Doctor not found' });
         }
@@ -99,23 +90,24 @@ const deleteDoctorByUsername = (req, res) => __awaiter(void 0, void 0, void 0, f
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
-});
+};
 exports.deleteDoctorByUsername = deleteDoctorByUsername;
 //delete Patient
-const deletePatientByUsername = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deletePatientByUsername = async (req, res) => {
+    console.log("ana ");
     try {
         const { username } = req.body;
         console.log("ana hena");
         // Find and delete the Doctor by username
-        const deletedPatient = yield patientModel_1.default.findOneAndDelete({ username });
+        const deletedPatient = await patientModel_1.default.findOneAndDelete({ username });
         if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
-        const updateResult = yield patientModel_1.default.updateMany({ 'familyMembers.username': username }, { $pull: { familyMembers: { username } } });
-        const appoinment = yield appointmentModel_1.default.deleteMany({ patient: username });
-        const healthRecord = yield healthRecordModel_1.default.deleteMany({ patient: username });
-        const prescription = yield perscriptionModel_1.default.deleteMany({ patientUsername: username });
-        const requests = yield requestModel_1.default.deleteMany({ patient: username });
+        const updateResult = await patientModel_1.default.updateMany({ 'familyMembers.username': username }, { $pull: { familyMembers: { username } } });
+        const appoinment = await appointmentModel_1.default.deleteMany({ patient: username });
+        const healthRecord = await healthRecordModel_1.default.deleteMany({ patient: username });
+        const prescription = await perscriptionModel_1.default.deleteMany({ patientUsername: username });
+        const requests = await requestModel_1.default.deleteMany({ patient: username });
         console.log("ana deletde");
         res.status(200).json({ message: 'Patient deleted successfully' });
     }
@@ -123,14 +115,14 @@ const deletePatientByUsername = (req, res) => __awaiter(void 0, void 0, void 0, 
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
-});
+};
 exports.deletePatientByUsername = deletePatientByUsername;
 // view doctor Info
-const deletePatientByrota = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deletePatientByrota = async (req, res) => {
     try {
         const { username } = req.body;
         // Find and delete the Doctor by username
-        const deletedPatient = yield patientModel_1.default.findOneAndDelete({ username });
+        const deletedPatient = await patientModel_1.default.findOneAndDelete({ username });
         if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
@@ -140,13 +132,13 @@ const deletePatientByrota = (req, res) => __awaiter(void 0, void 0, void 0, func
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
-});
+};
 exports.deletePatientByrota = deletePatientByrota;
-const deletePatientBySmsomaa = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deletePatientBySmsomaa = async (req, res) => {
     try {
         const { username } = req.body;
         // Find and delete the Doctor by username
-        const deletedPatient = yield patientModel_1.default.findOneAndDelete({ username });
+        const deletedPatient = await patientModel_1.default.findOneAndDelete({ username });
         if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
@@ -156,9 +148,9 @@ const deletePatientBySmsomaa = (req, res) => __awaiter(void 0, void 0, void 0, f
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
-});
+};
 exports.deletePatientBySmsomaa = deletePatientBySmsomaa;
-const viewDoctorInfo = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const viewDoctorInfo = async (req, res) => {
     try {
         const { username } = req.query;
         if (!username) {
@@ -166,7 +158,7 @@ const viewDoctorInfo = (req, res) => __awaiter(void 0, void 0, void 0, function*
             return;
         }
         // Find the doctor by username
-        const doctor = yield doctorModel_1.default.findOne({ username });
+        const doctor = await doctorModel_1.default.findOne({ username });
         if (!doctor) {
             res.status(404).json({ message: 'Doctor not found' });
         }
@@ -179,37 +171,37 @@ const viewDoctorInfo = (req, res) => __awaiter(void 0, void 0, void 0, function*
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 exports.viewDoctorInfo = viewDoctorInfo;
 // add a package
-const addPackage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const addPackage = async (req, res) => {
     try {
         const { name, feesPerYear, doctorDiscount, medicineDiscount, familysubscribtionDiscount } = req.body;
         // Ensure all required fields are provided and validated here
         if (!name || !feesPerYear || !doctorDiscount || !medicineDiscount || !familysubscribtionDiscount) {
             return res.status(400).json({ error: 'All fields are required.' });
         }
-        const newPackage = yield packageModel_1.default.create({
+        const newPackage = await packageModel_1.default.create({
             name,
             feesPerYear,
             doctorDiscount,
             medicineDiscount,
             familysubscribtionDiscount,
         });
-        yield newPackage.save();
+        await newPackage.save();
         return res.status(201).json({ message: 'Package added successfully', package: newPackage });
     }
     catch (error) {
         console.error('Error adding package:', error);
         return res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.addPackage = addPackage;
 //delete package
-const deletePackageByName = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const deletePackageByName = async (req, res) => {
     try {
         const { name } = req.params; // Use req.params instead of req.body
-        const deletedPackage = yield packageModel_1.default.findOneAndDelete({ name });
+        const deletedPackage = await packageModel_1.default.findOneAndDelete({ name });
         if (!deletedPackage) {
             return res.status(404).json({ message: 'Package not found' });
         }
@@ -219,14 +211,14 @@ const deletePackageByName = (req, res) => __awaiter(void 0, void 0, void 0, func
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
-});
+};
 exports.deletePackageByName = deletePackageByName;
 // update Package
-const updatePackage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const updatePackage = async (req, res) => {
     const { name, newname, feesPerYear, doctorDiscount, PackageDiscount, familysubscribtionDiscount } = req.body;
     try {
         // Find the Package by its name and update it
-        const updatedPackage = yield packageModel_1.default.findOneAndUpdate({ name: name }, req.body, { new: true });
+        const updatedPackage = await packageModel_1.default.findOneAndUpdate({ name: name }, req.body, { new: true });
         // Check if the Package exists
         if (!updatedPackage) {
             return res.status(404).json({ error: 'Package not found' });
@@ -238,62 +230,62 @@ const updatePackage = (req, res) => __awaiter(void 0, void 0, void 0, function* 
         console.error('Error updating Package:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.updatePackage = updatePackage;
-const getAdmins = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getAdmins = async (req, res) => {
     try {
         // Retrieve all users from the database
-        const admins = yield adminModel_1.default.find();
+        const admins = await adminModel_1.default.find();
         res.json({ admins });
     }
     catch (error) {
         // Handle any errors here
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 exports.getAdmins = getAdmins;
 //get patients
-const getPatients = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPatients = async (req, res) => {
     try {
         // Retrieve all users from the database
-        const patients = yield patientModel_1.default.find();
+        const patients = await patientModel_1.default.find();
         res.json({ patients });
     }
     catch (error) {
         // Handle any errors here
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 exports.getPatients = getPatients;
 //getdoctors
-const getdoctorsR = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getdoctorsR = async (req, res) => {
     try {
         // Retrieve all users from the database
-        const doctors = yield doctorModel_1.default.find();
+        const doctors = await doctorModel_1.default.find();
         res.json({ doctors });
     }
     catch (error) {
         // Handle any errors here
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 exports.getdoctorsR = getdoctorsR;
-const getPackage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPackage = async (req, res) => {
     try {
         // Retrieve all users from the database
-        const packages = yield packageModel_1.default.find();
+        const packages = await packageModel_1.default.find();
         res.json({ packages });
     }
     catch (error) {
         // Handle any errors here
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 exports.getPackage = getPackage;
-const getPackageNAME = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getPackageNAME = async (req, res) => {
     try {
         // Retrieve all packages from the database
-        const packages = yield packageModel_1.default.find({}, 'name'); // Retrieve only the 'name' field
+        const packages = await packageModel_1.default.find({}, 'name'); // Retrieve only the 'name' field
         const packageNames = packages.map((pkg) => pkg.name);
         res.json({ packageNames });
     }
@@ -301,7 +293,7 @@ const getPackageNAME = (req, res) => __awaiter(void 0, void 0, void 0, function*
         // Handle any errors here
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 exports.getPackageNAME = getPackageNAME;
 function validatePassword(password) {
     // Minimum password length of 8 characters
@@ -328,7 +320,7 @@ const createToken = (_id) => {
 };
 exports.createToken = createToken;
 //login admin
-const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const logout = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
@@ -338,22 +330,22 @@ const logout = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (!process.env.ACCESS_TOKEN_SECRET) {
             throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
         }
-        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
             if (err) {
                 return res.status(403).json({ message: 'Token is not valid' });
             }
-            const tokenDB = yield tokenModel_1.default.findOneAndDelete({ token: token });
+            const tokenDB = await tokenModel_1.default.findOneAndDelete({ token: token });
             res.json(tokenDB);
-        }));
+        });
     }
     catch (error) {
         const err = error;
         res.status(400).json({ error: err.message });
     }
-});
+};
 exports.logout = logout;
 //change password
-const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body;
         const authHeader = req.headers['authorization'];
@@ -364,19 +356,19 @@ const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
         if (!process.env.ACCESS_TOKEN_SECRET) {
             throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
         }
-        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+        jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
             if (err) {
                 return res.status(403).json({ message: 'Token is not valid' });
             }
-            const tokenDB = yield tokenModel_1.default.findOne({ token });
+            const tokenDB = await tokenModel_1.default.findOne({ token });
             if (!tokenDB) {
                 return res.status(404).json({ message: 'Token not found' });
             }
-            const admin = yield adminModel_1.default.findOne({ username: tokenDB.username });
+            const admin = await adminModel_1.default.findOne({ username: tokenDB.username });
             if (!admin) {
                 return res.status(404).json({ message: 'admin not found' });
             }
-            const isPasswordValid = yield bcrypt_1.default.compare(currentPassword, admin.password);
+            const isPasswordValid = await bcrypt_1.default.compare(currentPassword, admin.password);
             if (!isPasswordValid) {
                 return res.status(400).json({ message: 'Current password is incorrect' });
             }
@@ -385,16 +377,16 @@ const changePassword = (req, res) => __awaiter(void 0, void 0, void 0, function*
                 return res.status(400).json({ message: 'Invalid new password' });
             }
             // Hash and update the new password
-            const hashedNewPassword = yield bcrypt_1.default.hash(newPassword, 10);
+            const hashedNewPassword = await bcrypt_1.default.hash(newPassword, 10);
             admin.password = hashedNewPassword;
-            yield admin.save();
+            await admin.save();
             return res.status(200).json({ message: 'Password changed successfully' });
-        }));
+        });
     }
     catch (error) {
         return res.status(500).json({ message: 'Internal server error' });
     }
-});
+};
 exports.changePassword = changePassword;
 const verifyTokenAdmin = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -405,11 +397,11 @@ const verifyTokenAdmin = (req, res, next) => {
     if (!process.env.ACCESS_TOKEN_SECRET) {
         throw new Error('SECRET_ACCESS_TOKEN is not defined in the environment.');
     }
-    jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, user) => __awaiter(void 0, void 0, void 0, function* () {
+    jsonwebtoken_1.default.verify(token, process.env.ACCESS_TOKEN_SECRET, async (err, user) => {
         if (err) {
             return res.status(403).json({ message: 'Token is not valid' });
         }
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (tokenDB) {
             if (tokenDB.role === 'admin') {
                 next();
@@ -422,6 +414,6 @@ const verifyTokenAdmin = (req, res, next) => {
             return res.status(403).json({ message: 'Token is not valid 2' });
         }
         // req.user = user;
-    }));
+    });
 };
 exports.verifyTokenAdmin = verifyTokenAdmin;

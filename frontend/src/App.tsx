@@ -16,7 +16,7 @@ import DoctorLogin from "./pages/doctor/doctorLogin";
 import MyAppointments from "./pages/doctor/MyAppointments";
 import MyPatients from "./pages/doctor/MyPatients";
 import SignupDoctor from "./pages/doctor/signupDoctor";
-
+import MyPatientApp from "./pages/doctor/myPatientApp";
 import HealthPackages from "./pages/patient/healthPackages";
 import contract from "./pages/doctor/contract";
 import DrawerAppBar from "./components/patientBar/patientBar";
@@ -86,6 +86,7 @@ import AddPackage from "./components/AddPackage";
 import FamilyMemberPackageStatus from "./components/viewstatusfam";
 import DocList1 from "./components/alldoc";
 import PatientList1 from "./components/allpat";
+import Profile from '../src/pages/patient/profile'
 function App() {
   useEffect(() => {
     // Create a link element for the font stylesheet
@@ -114,6 +115,7 @@ function App() {
           path="/patient/prescriptions"
           element={<PatientPrescriptions />}
         />
+
         <Route path="/patient/home" element={<HomePage />} />
         <Route path="/patient/link" element={<LinkFamilyMember />} />
         <Route path="/doctor/home" element={<DoctorHomePage />} />
@@ -141,9 +143,13 @@ function App() {
         <Route path="/patient/healthPackages" Component={HealthPackages} />
         <Route path="/patient/SubscribeFam" Component={SubscribeFam} />
         <Route path="/patient/packages" Component={Mypackages} />
+        <Route path="/patient/profile" Component={Profile} />
+
         <Route path="/patient/subscribedPage" Component={subscribedPage} />
         <Route path="/doctor/appointments" Component={MyAppointments} />
         <Route path="/doctor/patients" Component={MyPatients} />
+        <Route path="/doctor/patients/appointment" Component={MyPatientApp} />
+
         <Route path="/doctor/patientInfo" Component={PatientsInfo} />
         <Route path="/doctor/patientHealthRecord" Component={HealthRecord} />
         <Route path="/doctor/healthRecordEmpty" Component={HealthRecordEmpty} />

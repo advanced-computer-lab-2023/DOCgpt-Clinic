@@ -31,6 +31,7 @@ import {
   sendRequestFollowUp,
   getPatientDocNames,
   calcPatientAge,
+  getPatient,
   //viewHealthPackageDetails
 } from '../controllers/patientController';
 import fs from 'fs';
@@ -54,7 +55,7 @@ router.put('/addfammember',verifyTokenPatient , addFamilyMember);
 
 
 router.post('/postP', createPatient);
-
+router.get('/getPatient' , getPatient);
 router.get('/viewFam',verifyTokenPatient, viewFamilyMembers);
 
 router.get('/getPatientprescriptions',getPrescriptionsByUser);

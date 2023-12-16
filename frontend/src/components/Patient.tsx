@@ -69,7 +69,8 @@ const Patient = ({ patient, doctor }: PatientProps) => {
   const fetchHealthRecord = async () => {
     console.log("Fetching Health Record of this Patient...");
     try {
-      const response = await axios.get(`/routes/doctors/HealthRecord?patientUsername=${username}`
+      const response = await axios.get(`
+        /routes/doctors/HealthRecord?patientUsername=${username}`
       );
       console.log("Response:", response);
       setHealthRecord(response.data);

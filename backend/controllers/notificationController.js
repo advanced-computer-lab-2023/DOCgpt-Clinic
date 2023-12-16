@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -18,95 +9,95 @@ const patientModel_1 = __importDefault(require("../models/patientModel"));
 const tokenModel_1 = __importDefault(require("../models/tokenModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
 const notificationModel_2 = __importDefault(require("../models/notificationModel"));
-const getNotificationsP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getNotificationsP = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'User not found' });
         }
         const username = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const notifications = yield notificationModel_1.default.find({ patientUsername: username });
+        const notifications = await notificationModel_1.default.find({ patientUsername: username });
         res.json(notifications);
     }
     catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.getNotificationsP = getNotificationsP;
-const getNotificationsD = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getNotificationsD = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'User not found' });
         }
         const username = tokenDB.username;
-        const doctor = yield doctorModel_1.default.findOne({ username });
+        const doctor = await doctorModel_1.default.findOne({ username });
         if (!doctor) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const notifications = yield notificationModel_1.default.find({ patientUsername: username });
+        const notifications = await notificationModel_1.default.find({ patientUsername: username });
         res.json(notifications);
     }
     catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.getNotificationsD = getNotificationsD;
-const getCountP = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getCountP = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'User not found' });
         }
         const username = tokenDB.username;
-        const patient = yield patientModel_1.default.findOne({ username });
+        const patient = await patientModel_1.default.findOne({ username });
         if (!patient) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const notificationsCount = yield notificationModel_1.default.countDocuments({ patientUsername: username, read: false });
+        const notificationsCount = await notificationModel_1.default.countDocuments({ patientUsername: username, read: false });
         res.json({ notificationsCount });
     }
     catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.getCountP = getCountP;
-const getCountD = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getCountD = async (req, res) => {
     try {
         const authHeader = req.headers['authorization'];
         const token = authHeader && authHeader.split(' ')[1];
-        const tokenDB = yield tokenModel_1.default.findOne({ token });
+        const tokenDB = await tokenModel_1.default.findOne({ token });
         if (!tokenDB) {
             return res.status(404).json({ error: 'User not found' });
         }
         const username = tokenDB.username;
-        const doctor = yield doctorModel_1.default.findOne({ username });
+        const doctor = await doctorModel_1.default.findOne({ username });
         if (!doctor) {
             return res.status(404).json({ error: 'User not found' });
         }
-        const notificationsCount = yield notificationModel_1.default.countDocuments({ patientUsername: username, read: false });
+        const notificationsCount = await notificationModel_1.default.countDocuments({ patientUsername: username, read: false });
         res.json({ notificationsCount });
     }
     catch (error) {
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-});
+};
 exports.getCountD = getCountD;
-const markAsRead = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const markAsRead = async (req, res) => {
     try {
         const { notificationId } = req.body;
         // Check if the prescription ID is provided
@@ -114,7 +105,7 @@ const markAsRead = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             return res.status(400).json({ error: 'notification ID is required.' });
         }
         // Find the prescription by ID
-        const notification = yield notificationModel_2.default.findById(notificationId);
+        const notification = await notificationModel_2.default.findById(notificationId);
         // Check if the prescription exists
         if (!notification) {
             return res.status(404).json({ error: 'notification not found.' });
@@ -124,7 +115,7 @@ const markAsRead = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             notification.read = true;
         }
         // Save the updated prescription
-        yield notification.save();
+        await notification.save();
         // Respond with the updated prescription
         res.json({ message: 'notification status updated successfully.', notification });
     }
@@ -132,5 +123,5 @@ const markAsRead = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.error(error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
-});
+};
 exports.markAsRead = markAsRead;

@@ -104,9 +104,13 @@ export const createAdmin = async (req: Request, res: Response) => {
       //delete Patient
     
       export const deletePatientByUsername = async (req: Request, res: Response) => {
+        console.log("ana ");
+
         try {
           const { username } = req.body;
-      console.log("ana hena")
+          
+          console.log("ana hena");
+      
           // Find and delete the Doctor by username
           const deletedPatient = await patientModel.findOneAndDelete({ username });
       
@@ -129,6 +133,7 @@ export const createAdmin = async (req: Request, res: Response) => {
           res.status(500).json({ message: 'Internal server error' });
         }
       };
+      
     
     // view doctor Info
     export const deletePatientByrota = async (req: Request, res: Response) => {
