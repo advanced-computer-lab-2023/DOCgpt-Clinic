@@ -17,6 +17,7 @@ router.get("verifyToken", patientController_1.verifyTokenPatient);
 // GET a single patient
 // router.get('/:id', getPatient);
 router.post('/postP', patientController_1.createPatient);
+router.get('/getPatient', patientController_1.getPatient);
 router.get('/viewFam', patientController_1.verifyTokenPatient, patientController_1.viewFamilyMembers);
 router.get('/getPatientprescriptions', patientController_1.getPrescriptionsByUser);
 router.get('/doctors', patientController_1.getDoctor);

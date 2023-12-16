@@ -281,7 +281,7 @@ export default function DrawerAppBar() {
   };
   const handleMyProfileClick = () => {
     // Redirect to the My Profile page ("/doctor/home")
-    navigate("/");
+    navigate("/patient/profile");
   };
   <IconButton
     color="primary"
@@ -400,6 +400,8 @@ export default function DrawerAppBar() {
         onClose={handleCloseMenu}
       >
         <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>
+        <MenuItem onClick={handleMyProfileClick}>My profile</MenuItem>
+
         <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
         <MenuItem onClick={handleLogout}>Logout</MenuItem>
       </Menu>
