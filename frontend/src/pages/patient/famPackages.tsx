@@ -2,7 +2,7 @@ import React from 'react';
 import UnsubscribePackageForMember from "../../components/subscribe";
 import PatientAppBar from '../../components/patientBar/patientBar';
 import Back from "../../components/backButton";
-import El7a2niInfo from '../../components/El7a2ni-info';
+import El7a2niPatientInfo from '../../components/El7a2niPatient-info';
 const FamPackages: React.FC = () => {
   return (
     <>
@@ -17,7 +17,7 @@ const FamPackages: React.FC = () => {
       <UnsubscribePackageForMember />
     </div>
 
-    <El7a2niInfo/>
+    <El7a2niPatientInfo/>
     </>
   );
 };

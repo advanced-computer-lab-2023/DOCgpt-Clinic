@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import PatientAppointment from "../../components/PatientAppointment";
 import PatientAppBar from "../../components/patientBar/patientBar";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import Background from '../../FamilyMembers.jpg';
 import Back from "../../components/backButton";
 
@@ -273,7 +273,7 @@ function ViewFamMemAppointments() {
           </Grid>
         </Grid>
       </Container>
-      <El7a2niInfo />
+      <El7a2niPatientInfo />
     </>
   );
 }

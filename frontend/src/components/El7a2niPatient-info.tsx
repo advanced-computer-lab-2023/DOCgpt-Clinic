@@ -5,16 +5,16 @@ import { useNavigate } from "react-router-dom";
 const El7a2niPatientInfo = () => {
   const navigate = useNavigate();
 
-  const handleDocClick = () => {
-    navigate("/register/doctor");
+  const handleViewAppointmentsClick = () => {
+    navigate("/patient/viewMyappointments");
   };
 
   const handleHomeClick = () => {
-    navigate("/");
+    navigate("/patient/home");
   };
-  const handlePharmPlatform = () => {
-       navigate("/signupPharmacist"); // Replace with the path of your join platform page
-      };
+  const handlePackagesClick = () => {
+    navigate("/patient/healthPackages");
+  };
 
   return (
     <div
@@ -75,7 +75,7 @@ const El7a2niPatientInfo = () => {
               borderBottom: "1px solid transparent",
               transition: "border-bottom 0.3s",
             }}
-            onClick={handleDocClick}
+            onClick={handleViewAppointmentsClick}
             onMouseEnter={(e) =>
               ((e.target as HTMLElement).style.borderBottom = "1px solid #fff")
             }
@@ -84,7 +84,7 @@ const El7a2niPatientInfo = () => {
                 "1px solid transparent")
             }
           >
-            Apply As A Doctor
+            Schedule Appointment
           </span>
         </p>
         <p>
@@ -96,7 +96,7 @@ const El7a2niPatientInfo = () => {
               borderBottom: "1px solid transparent",
               transition: "border-bottom 0.3s",
             }}
-            onClick={handlePharmPlatform}
+            onClick={handlePackagesClick}
             onMouseEnter={(e) =>
               ((e.target as HTMLElement).style.borderBottom = "1px solid #fff")
             }
@@ -105,7 +105,7 @@ const El7a2niPatientInfo = () => {
                 "1px solid transparent")
             }
           >
-            Apply As A Pharmacist
+            Exclusive Packages
           </span>
         </p>
         {/* <p>Your privacy is important to us. Read our <a href="/privacy-policy">Privacy Policy</a>.</p> */}

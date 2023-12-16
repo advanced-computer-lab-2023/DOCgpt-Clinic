@@ -6,7 +6,7 @@ import Carousel from "../../components/Carousel";
 import logo from "../../logo.jpeg";
 
 import TodayAppointmentsPatient from "./todaysappP";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 
 function HomePage() {
   const navigate = useNavigate();
@@ -18,7 +18,7 @@ function HomePage() {
       <Carousel />
       <TodayAppointmentsPatient />
 
-      <El7a2niInfo />
+      <El7a2niPatientInfo />
     </>
   );
 }

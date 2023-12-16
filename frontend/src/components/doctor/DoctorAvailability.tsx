@@ -12,7 +12,7 @@ import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded';
 import { CSSProperties } from '@mui/material/styles/createMixins';
 import theme from '../../theme';
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niDocInfo from '../El7a2niDoc-info';
 import DrawerAppBar from '../Doctor bar/doctorBar';
 import { isSameDay } from 'date-fns';
 import IconButton from '@mui/material/IconButton';
@@ -232,7 +232,7 @@ const DoctorAvailability: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
-      <El7a2niInfo />
+      <El7a2niDocInfo />
     </>
 
   );

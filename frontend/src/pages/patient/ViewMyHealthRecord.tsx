@@ -932,7 +932,7 @@ function ViewMyHealthRecord(){
             </Accordion>
           </Container>
         )}
-        </div>
+        </>
       );
       
       
