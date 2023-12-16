@@ -12,9 +12,9 @@ const El7a2niPatientInfo = () => {
   const handleHomeClick = () => {
     navigate("/");
   };
-  const handlePharmPlatform = () => {
-       navigate("/signupPharmacist"); // Replace with the path of your join platform page
-      };
+  // const handlePharmPlatform = () => {
+  //      navigate("/signupPharmacist"); // Replace with the path of your join platform page
+  //     };
 
   return (
     <div
@@ -87,7 +87,7 @@ const El7a2niPatientInfo = () => {
             Apply As A Doctor
           </span>
         </p>
-        <p>
+        {/* <p>
           <span
             style={{
               color: "#fff",
@@ -107,7 +107,8 @@ const El7a2niPatientInfo = () => {
           >
             Apply As A Pharmacist
           </span>
-        </p>
+          
+        </p> */}
         {/* <p>Your privacy is important to us. Read our <a href="/privacy-policy">Privacy Policy</a>.</p> */}
       </div>
       <div style={{ flex: 1, textAlign: "left" }}>
