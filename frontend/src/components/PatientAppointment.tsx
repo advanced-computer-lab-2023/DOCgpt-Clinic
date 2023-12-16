@@ -134,6 +134,8 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
               <div style={{display: 'flex', alignItems: 'center'}}>
               {scheduledBy === doctor ? (
                 <Typography> Scheduled by Dr. {scheduledBy}</Typography>
+              ): scheduledBy === patient ? (
+                <Typography>Scheduled by {' '} You</Typography>
               ): <Typography>Scheduled by {' '} {scheduledBy}</Typography>}
               {scheduledBy === doctor ? (
                 <DoctorIcon color="primary" />
@@ -179,11 +181,12 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   >
     {status === "cancelled" ? "Cancelled" : "Cancel"}
   </Button>
-</Container>
+          </Container>
 
 
         </Stack> 
       </Container>
+
       {/* Confirmation Dialog */}
       <Dialog open={isDialogOpen} onClose={handleCancelCancel}>
         <DialogTitle>Confirmation</DialogTitle>

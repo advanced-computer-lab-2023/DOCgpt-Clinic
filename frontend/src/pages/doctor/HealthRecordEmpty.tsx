@@ -1,7 +1,9 @@
-import { IconButton, Stack, Typography } from "@mui/material";
+import { IconButton, Paper, Stack, Typography } from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useLocation, useNavigate } from "react-router-dom";
-
+import DroctorBar from "../../components/Doctor bar/doctorBar";
+import Background from '../../Background.jpeg';
+import DoctorBar from "../../components/Doctor bar/doctorBar";
 function HealthRecordEmpty(){
     //Take the Patient username
     const location = useLocation();
@@ -22,26 +24,51 @@ function HealthRecordEmpty(){
     //return
     //THE VIEW 
     //A SIMPLE MESSEGE IN THE MIDDLE OF THE SCREEN AND A PLUS BUTTON THAT REDIRECT TO THE (HEALTH RECORD FORM) PAGE
-    return(
-        <Stack style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
-            <div>
-                <Typography variant="h4">
-                    This Patient Does not have any Health Record yet!
-                </Typography>
-            </div>
-            <div>
-                <IconButton onClick={goToAdd}>
-                    <AddCircleIcon sx={{ color: 'green', fontSize: 30 }} />
-                </IconButton>
-            </div>
-            <div>
-                <Typography>
-                    Add A Health Record
-                </Typography>
-            </div>
-        </Stack>
-
-    );
+    return (
+        <div
+          style={{
+            backgroundImage: `url(${Background})`,
+            backgroundSize: 'cover',
+            minHeight: '100vh',
+            backgroundPosition: 'center',
+            boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+          }}
+        >    
+          <DoctorBar />
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              minHeight: 'calc(100vh - 100px)', // Decrease the height by 100px
+            }}
+          >
+            <Paper
+              elevation={3}
+              style={{
+                padding: '60px',
+                textAlign: 'center',
+                maxWidth: '2000px',
+                width:'600px', // Decrease the maximum width
+                height:'400px'
+              }}
+            >
+              <Typography variant="h4" style={{fontSize: 30,padding:'30px'}}>
+                This patient Does Not Have Any Health Record yet!
+              </Typography>
+              <IconButton onClick={goToAdd}>
+                <AddCircleIcon sx={{ color: 'red', fontSize: 30 }} />
+              </IconButton>
+              <Typography>
+                Add A Health Record
+              </Typography>
+            </Paper>
+          </div>
+        </div>
+      );
+      
+      
+      
 }
 
 export default HealthRecordEmpty;

@@ -1,8 +1,13 @@
-import { Button, Container, Grid, Paper, TextField, Typography } from "@mui/material";
+import { Alert, Button, Container, Grid, Paper, Snackbar, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import AddCircleIcon from '@mui/icons-material/AddCircle'; 
+import Background from '../../Background.jpeg';
+import DoctorBar from "../../components/Doctor bar/doctorBar";
+import React from "react";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 interface FormValues {
     MedicalHistory: {
         Allergies: string[];
@@ -42,7 +47,11 @@ function HealthRecordForm(){
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const username = queryParams.get('patient');
-
+    const [openSnackbar, setOpenSnackbar] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const handleCloseSnackbar = () => {
+        setOpenSnackbar(false);
+      };
     //1- TAKE THE VALUES FROM THE FORM
     const [formValues, setFormValues] = useState<FormValues>({
         MedicalHistory: {
@@ -114,15 +123,31 @@ function HealthRecordForm(){
     };
 
     //2- MAKE A POST REQUEST WITH THESE VALUES AS THE BODY USING AXIOS AND THE ROUTE AND ADDING THE PATIENT USERNAME TO THE BODY
-    const handleSubmit = (event : React.FormEvent) => {
-        event.preventDefault();
+    const handleSubmit = async (event : React.FormEvent) => {
         formValues.MedicalHistory.Allergies.push(allergy);
         formValues.MedicalHistory.PastMedicalConditions.push(medicalCondition);
         formValues.MedicationList.CurrentMedications.Names.push(currentMed);
         formValues.MedicationList.PastMedications.Names.push(pastMed);
 
+        event.preventDefault();
+
+        console.log("Form submitted"); 
+        if (
+            !allergy &&
+            !medicalCondition &&
+            !currentMed &&
+            !pastMed &&
+            !bloodPressure &&
+            !heartRate &&
+            !height &&
+            !weight
+          ) {
+            alert("Please fill at least one form field.");
+            return; // Do not submit the form if none of the fields are filled
+          }
+    
         // Handle form submission, e.g., send formValues to the server
-        createHealthRequest();
+        await createHealthRequest();
         navigate(`/doctor/patients`);
 
     };
@@ -163,25 +188,54 @@ function HealthRecordForm(){
     //return
     //THE DISPLAY OF THE FORM
     //SIMPLE FORM, MAKE SURE IT INCLUDES ALL  THE QUESTIONS NEEDED TO GATHER THE INFO FOR CREATE HEALTH RECORD, GIVE SPACE FOR (NO ANSWER), INCLUDE BUTTONS TO UPLOAD IMAGES WHEN NEEDED, INCLUDE A GENERAL COMMENTS(NOTES) SECTION 
+   
+    return( 
+        
 
-    return(
+         <div
+        style={{
+          backgroundImage: `url(${Background})`,
+          backgroundSize: 'cover',
+          minHeight: '100vh',
+          backgroundPosition: 'center',
+          boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
+        }}
+      >    
+         <DoctorBar/>
+     
     <Container component="main" maxWidth="md">
-        <Paper elevation={3} style={{ padding: 20, marginTop: 20 }}>
-            <Typography component="h1" variant="h5" align="center">
-            Medical History Form
-            </Typography>
+       <Paper elevation={3} style={{ padding: 20, marginTop: 60 }}>
+    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '20px' }}>
+        <AddCircleIcon style={{ color: 'red', fontSize: 48 }} />
+    </div>
+    <Typography component="h1" variant="h5" align="center">
+        Medical History Form
+    </Typography>
+    <Snackbar
+          open={openSnackbar}
+          autoHideDuration={3000} // Adjust the duration as needed
+          onClose={handleCloseSnackbar}
+        >
+          <Alert
+            onClose={handleCloseSnackbar}
+            severity="success"
+            sx={{ width: '100%' }}
+          >
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
             <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
                 {/* Medical History Section */}
                 <Grid item xs={12}>
-                <Typography variant="h6">Medical History</Typography>
+                <Typography variant="h6" style={{fontSize: "16px" }}>Medical History</Typography>
                 <TextField
                     label="Allergies"
                     fullWidth
                     value={allergy}
                     onChange={inputAllergy}
                 />
-                <div>{allergy}</div>
+                {/* <div>{allergy}</div> */}
                 <TextField
                     label="Past Medical Conditions"
                     fullWidth
@@ -191,56 +245,80 @@ function HealthRecordForm(){
                 </Grid>
                 {/* Medication List Section */}
                 <Grid item xs={12}>
-                <Typography variant="h6">Medication List</Typography>
+                <Typography variant="h6" style={{fontSize: "16px" }}>Medication List</Typography>
                 <TextField
                     label="Current Medications"
                     fullWidth
                     value={currentMed}
                     onChange={inputCurrMed}
+                    
                 />
                 <TextField
                     label="Past Medications"
                     fullWidth
                     value={pastMed}
                     onChange={inputPastMed}
+                   
                 />
                 </Grid>
                 {/* Vital Signs Section */}
                 <Grid item xs={12}>
-                <Typography variant="h6">Vital Signs</Typography>
+                <Typography variant="h6" style={{fontSize: "16px" }}>Vital Signs</Typography>
                 <TextField
                     label="Blood Pressure"
                     fullWidth
                     value={bloodPressure}
                     onChange={inputBloodPress}
+                    style={{ width: '50%' }}
                 />
                 <TextField
                     label="Heart Rate"
                     fullWidth
                     value={heartRate}
                     onChange={inputHeartRate}
+                    style={{ width: '50%' }}
                 />
                 <TextField
                     label="Height"
                     fullWidth
                     value={height}
                     onChange={inputHeight}
+                    style={{ width: '50%' }}
                 />
                 <TextField
                     label="Weight"
                     fullWidth
                     value={weight}
                     onChange={inputWeight}
+                    style={{ width: '50%' }}
                 />
+                
                 </Grid>
             </Grid>
 
-            <Button type="submit" variant="contained" color="primary" style={{ marginTop: 20 }}>
-                Submit
-            </Button>
+      
+            <Button
+  type="submit"
+  variant="contained"
+  style={{
+    backgroundColor: "#ccc", // Grey background color
+    color: "#fff", // Text color
+    transition: "background-color 0.3s ease", // Smooth transition on hover
+    marginTop: "20px", // Adjust the margin-top here
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "#ccc")} // Revert to grey on mouse out
+>
+  Submit
+</Button>
+
             </form>
         </Paper>
     </Container>    
+    
+  
+    </div>
+  
     );
 }
 

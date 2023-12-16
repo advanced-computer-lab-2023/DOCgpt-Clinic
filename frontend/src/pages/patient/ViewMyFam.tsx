@@ -135,10 +135,10 @@ const ViewMyFam = () => {
                     <Button onClick={() => clickFamMember(member.username)}>Choose</Button>
                   </CardContent>
                 </Card>
-                <Typography>Chosen Fam Member: {famMem}</Typography>
-                <Button onClick={PayForApp}>Pay For Appointment</Button>
               </Grid>
             ))}
+            <Typography>Chosen Fam Member: {famMem}</Typography>
+            <Button onClick={PayForApp}>Pay For Appointment</Button>
           </Grid>
         )}
       </Container>

@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminBar from "../../components/admin Bar/adminBar";
-import { Container, Typography, List, ListItem, Button } from "@mui/material";
+import { Container, Typography, List, ListItem, Button, CircularProgress, Paper } from "@mui/material";
 
 interface Document {
-  username: string;
+  _id: string;
+  doctorUsername: string;
   document: string;
   filePath: string;
 }
 
 const ViewDoctorDocuments: React.FC = () => {
   const [documents, setDocuments] = useState<Document[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const doctorUsername = localStorage.getItem("doctorUsername");
-  console.log( "doc username:", doctorUsername);
 
   useEffect(() => {
     const fetchDocuments = async () => {
@@ -25,11 +27,13 @@ const ViewDoctorDocuments: React.FC = () => {
           if (Array.isArray(response.data)) {
             setDocuments(response.data);
           } else {
-            console.error('Invalid API response:', response.data);
+            setError('Invalid API response');
           }
         }
       } catch (error) {
-        console.error('Error fetching doctor documents:', error);
+        setError('Error fetching doctor documents');
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -62,25 +66,41 @@ const ViewDoctorDocuments: React.FC = () => {
   return (
     <>
       <AdminBar />
-      <Container maxWidth="sm">
+      <Container maxWidth="md" style={{ marginTop: 20 }}>
         <Typography variant="h4" align="center" gutterBottom>
           Your Uploaded Documents
         </Typography>
-        <List>
-          {documents.map((document, index) => (
-            <ListItem key={index}>
-              <Button
-                onClick={() => handleDownload(document.document)}
-              >
-                Download {document.document}
-              </Button>
-            </ListItem>
-          ))}
-        </List>
+        <Paper style={{ padding: 20 }}>
+          {loading && <CircularProgress />}
+          {error && <Typography color="error">{error}</Typography>}
+          {!loading && !error && (
+            <>
+              {documents.length === 0 && (
+                <Typography align="center">No documents available.</Typography>
+              )}
+              {documents.length > 0 && (
+                <List>
+                  {documents.map((document, index) => (
+                    <ListItem key={index} style={{ marginBottom: 10 }}>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleDownload(document.document)}
+                      >
+                        Download {document.document}
+                      </Button>
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </>
+          )}
+        </Paper>
       </Container>
     </>
   );
 };
+
 
 export default ViewDoctorDocuments;
 
