@@ -296,21 +296,6 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
 <Button variant="contained" onClick={addFileInput}>
   Add Another File
 </Button>
-                {/* <Button variant="contained" onClick={handleDisplayDocuments}>
-                  Display Documents
-                </Button> */}
-
-                {/* {errorMessage && <Typography color="error">{errorMessage}</Typography>}
-                {displayDocuments && (
-                  <div>
-                    <Typography variant="h6">Submitted Documents</Typography>
-                    <ul>
-                      {submittedDocuments.map((doc, index) => (
-                        <li key={index}>{doc}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )} */}
 
               </Grid>
             </Grid>

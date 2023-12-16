@@ -167,14 +167,16 @@ const getAllPrescriptionsPatient = async (req, res) => {
         // Find all prescriptions for the patient
         const prescriptions = await perscriptionModel_1.default.find({ patientUsername: username })
             .populate('doctorUsername', 'name') // Populate doctor's name if 'doctorUsername' is a reference
-            .select(' id doctorUsername date status Medicines');
+            .select('id doctorUsername date status Medicines');
+        // Filter out prescriptions with empty medicine arrays
+        const validPrescriptions = prescriptions.filter((prescription) => prescription.Medicines.length > 0);
         // Construct response with full prescription details
-        const prescriptionDetails = prescriptions.map(prescription => ({
+        const prescriptionDetails = validPrescriptions.map((prescription) => ({
             doctorName: prescription.doctorUsername,
             date: prescription.date,
             status: prescription.status,
             medicines: prescription.Medicines,
-            _id: prescription._id
+            _id: prescription._id,
         }));
         // Respond with the detailed prescriptions
         res.json(prescriptionDetails);

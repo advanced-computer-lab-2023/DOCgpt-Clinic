@@ -151,7 +151,10 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       const prescriptionId = response.data._id;
 
       // Append prescriptionId to the URL
-      const newWindow = window.open("_blank");
+      const newWindow = window.open(
+        ` http://localhost:3001/doctormed/${prescriptionId}`,
+        "_blank"
+      );
 
       if (!newWindow) {
         console.error("Unable to open a new window.");
