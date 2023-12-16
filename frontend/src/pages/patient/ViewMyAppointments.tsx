@@ -16,7 +16,7 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import PatientAppBar from "../../components/patientBar/patientBar";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import Box from "@mui/system/Box/Box";
 import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
@@ -80,8 +80,20 @@ function ViewMyAppointments() {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
-          setAppointments(data);
+            // Sort the appointments based on date and time
+            const sortedAppointments = data.sort((a : any, b : any) => {
+              const dateA = new Date(a.date.toLocaleString("en-US",  "Africa/Cairo" ));
+              const dateB = new Date(b.date.toLocaleString("en-US",  "Africa/Cairo" ));
+      
+              if (dateA > dateB) return -1;
+              if (dateA < dateB) return 1;
+              // If dates are equal, compare times
+              const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+              const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+              return timeB - timeA;
+            });
+      
+            setAppointments(sortedAppointments);
         } else {
           console.error("Failed to fetch doctor data");
         }
@@ -137,7 +149,16 @@ function ViewMyAppointments() {
       setFilteredAppointments(appointments);
     }
   }, [past]);
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
 
     <>
@@ -274,7 +295,7 @@ function ViewMyAppointments() {
           </Grid>
         </Grid>
       </Container>
-      <El7a2niInfo />
+      <El7a2niPatientInfo />
     </>
 
   );

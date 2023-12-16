@@ -182,8 +182,8 @@ const createAppointment = async (req, res) => {
         const not2 = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const nn = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msgSubject);
-        const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msgSubject);
+        const nn = await (0, exports.createNotificationWithCurrentDate)(username, msgSubject, msg);
+        const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, msgSubject, msg1);
         return appointment;
     }
     catch (error) {

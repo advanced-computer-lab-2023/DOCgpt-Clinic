@@ -5,7 +5,7 @@ import PrescriptionCard from "../../components/prescription"; // Adjust the impo
 import PatientAppBar from "../../components/patientBar/patientBar";
 import { Grid, Typography } from "@mui/material";
 import logo from "../../logo.jpeg";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import Background from '../../Prescriptions.jpeg';
 import Back from "../../components/backButton";
 
@@ -44,7 +44,16 @@ const PatientPrescriptions = () => {
 
     fetchPrescriptions();
   }, []); // Empty dependency array to run the effect once on component mount
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <>
       <PatientAppBar />
@@ -103,7 +112,7 @@ const PatientPrescriptions = () => {
           </Typography>
         )}
       </Grid>
-      <El7a2niInfo />
+      <El7a2niPatientInfo />
     </>
   );
 };

@@ -1,7 +1,7 @@
 import express,{Router} from 'express';
 
 
-import {deleteAdminByUsername, getAdmins, getPackageNAME} from '../controllers/adminController';
+import {deleteAdminByUsername, getAdmin, getAdmins, getPackageNAME} from '../controllers/adminController';
 import {createAdmin,deletePatientByUsername,deleteDoctorByUsername,viewDoctorInfo,addPackage,deletePackageByName,updatePackage,getPackage,getdoctorsR,getPatients,logout,changePassword} from '../controllers/adminController';
 
 
@@ -47,7 +47,7 @@ router.delete('/deleteHealthPackage/:name', deletePackageByName);
  router.get('/getpackname',getPackageNAME);
  router.get('/getdoc',getdoctorsR);
 
-
+router.get('/getadmin',getAdmin)
 
  //get patients
  router.get('/getpati',getPatients);

@@ -27,9 +27,13 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   if (!appointment) {
     return null; // Or render an empty state or error message
   }
+
+
   const { status, doctor, date, _id, scheduledBy, type, paid, patient } = appointment;
   const appointmentDate = new Date(date).toISOString().split("T")[0];
   const isPaid = paid ? "Paid" : "Not Paid";
+  const appointmentt = new Date(date);
+  const isPastAppointment = appointmentt < new Date();
   
   const handleAppointmentReschedule = () => {
     localStorage.setItem("selectedAppointmentId", _id);
@@ -155,7 +159,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   <Button
     onClick={handleAppointmentReschedule}
     variant="contained"
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     color="primary"
     style={{ marginRight: "10px", borderRadius: "25px" }}
   >
@@ -164,7 +168,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   <Button
     onClick={handleFollowUpClicked}
     variant="outlined"
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     color="primary"
     style={{ marginRight: "10px", borderRadius: "25px" }}
   >
@@ -179,7 +183,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
       borderRadius: "25px",
     }}
   >
-    {status === "cancelled" ? "Cancelled" : "Cancel"}
+    {status === "cancelled" || isPastAppointment ? "Cancelled" : "Cancel"}
   </Button>
           </Container>
 
