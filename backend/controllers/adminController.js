@@ -105,6 +105,8 @@ const deletePatientByUsername = (req, res) => __awaiter(void 0, void 0, void 0, 
     console.log("ana ");
     try {
         const { username } = req.body;
+        console.log("ana fe climn");
+        console.log("ana hena");
         // Find and delete the Doctor by username
         const deletedPatient = yield patientModel_1.default.findOneAndDelete({ username });
         if (!deletedPatient) {
