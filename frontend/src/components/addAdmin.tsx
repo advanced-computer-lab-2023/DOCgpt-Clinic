@@ -12,6 +12,7 @@ import {
   Box,
 } from "@mui/material";
 import PersonAddTwoToneIcon from '@mui/icons-material/PersonAddTwoTone'; // Import the add person icon
+import Alert from '@mui/material/Alert'; // Import Alert for displaying errors
 
 const CreateAdminButton: React.FC = () => {
   const [open, setOpen] = useState(false);
@@ -21,6 +22,9 @@ const CreateAdminButton: React.FC = () => {
 
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
+    "success"
+  );
 
   const handleOpen = () => {
     setOpen(true);
@@ -35,32 +39,42 @@ const CreateAdminButton: React.FC = () => {
   };
 
   const handleCreateAdmin = async () => {
-   
-      const token = localStorage.getItem("authToken");
-      console.log(`Token: ${token}`); // Debug log
-    
-      if (!token) {
-        setSnackbarMessage("Authentication token not found.");
-        setSnackbarOpen(true);
-        return;
-      }
-    
-      try {
-        const response = await axios.post(
-          "/routes/admins/addAdmin",
-          { username, password, email },
-          { headers: { Authorization: `Bearer ${token}` } } // Ensure this is the format your server expects
-        );
+    const token = localStorage.getItem("authToken");
+    console.log(`Token: ${token}`); // Debug log
+  
+    if (!token) {
+      setSnackbarMessage("Authentication token not found.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+      return;
+    }
+  
+    try {
+      const response = await axios.post(
+        "/routes/admins/addAdmin",
+        { username, password, email },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       setSnackbarMessage(`Admin '${username}' created successfully`);
+      setSnackbarSeverity("success");
       setSnackbarOpen(true);
       handleClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating admin:', error);
-      setSnackbarMessage("Error creating admin. Check the console for more details.");
+      if (error.response) {
+        if (error.response.status === 409) {
+          setSnackbarMessage("Username or email already in use.");
+        } else {
+          setSnackbarMessage("Username already taken.");
+        }
+      } else {
+        setSnackbarMessage("Network error. Check your connection.");
+      }
+      setSnackbarSeverity("error");
       setSnackbarOpen(true);
-  
     }
   };
+  
 
   return (
     <Box
@@ -70,14 +84,13 @@ const CreateAdminButton: React.FC = () => {
       height="10vh"
     >
       <Button
-          variant="contained"
-          color="primary"
-          startIcon={<PersonAddTwoToneIcon />}
-          onClick={handleOpen} // This adds the icon to the button
-      // You should define this function to handle the click event
-        >
-          Add Admin
-        </Button>
+        variant="contained"
+        color="primary"
+        startIcon={<PersonAddTwoToneIcon />}
+        onClick={handleOpen} // This adds the icon to the button
+      >
+        Add Admin
+      </Button>
       <Dialog open={open} onClose={handleClose}>
         <DialogTitle>Create Admin</DialogTitle>
         <DialogContent>
@@ -122,8 +135,15 @@ const CreateAdminButton: React.FC = () => {
         open={snackbarOpen}
         autoHideDuration={6000}
         onClose={handleSnackbarClose}
-        message={snackbarMessage}
-      />
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      >
+        <Alert
+          severity={snackbarSeverity}
+          sx={{ width: '100%', fontSize: '1.5rem' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

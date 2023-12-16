@@ -18,12 +18,13 @@ import HealthPackages from './healthPackages';
 interface HealthPackageStatus {
   name: string;
   status: string;
+  startdate?: string;  // Reflecting the optional nature and naming convention from your schema
+  enddate?: string; 
   patientName?: string;
   startDate: string;
   endDate: string;
   familyMemberName?: string;
 }
-
 const ViewStatusOfPackage = () => {
   const [healthPackages, setHealthPackages] = useState<HealthPackageStatus[]>([]);
 

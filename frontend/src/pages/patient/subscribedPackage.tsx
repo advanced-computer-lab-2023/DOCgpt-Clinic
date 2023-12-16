@@ -65,7 +65,7 @@ const subscribedPage = () => {
       
       <SubscribedHealthPackages />
       <div style={{ margin: '30px' }}>
-        <ViewFamilyMembersAndPackages />
+       
       </div>
 
       {/* Other content for the My Packages page if needed */}

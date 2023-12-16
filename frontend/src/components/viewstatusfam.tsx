@@ -15,6 +15,7 @@ import {
 import PatientBar from './patientBar/patientBar';
 import Background from '../FamilyMembers.jpg';
 import Back from "./backButton";
+import El7a2niInfo from './El7a2ni-info';
 const headerCellStyle = {
     backgroundColor: 'rgba(173, 216, 230, 0.4)', // Very light blue
   };
@@ -122,6 +123,7 @@ const FamilyMemberPackageStatus = () => {
         </Table>
       </TableContainer>
     </Container>
+    <El7a2niInfo/>
     </>
   );
 };
