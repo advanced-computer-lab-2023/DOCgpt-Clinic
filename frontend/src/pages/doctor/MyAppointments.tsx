@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DoctorAppointment from "../../components/DoctorAppointment";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niDocInfo from "../../components/El7a2niDoc-info";
 import DrawerAppBar from "../../components/Doctor bar/doctorBar";
 import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
@@ -277,7 +277,8 @@ return (
         </Grid>
 
     </Container>
-    <El7a2niInfo />
+    <El7a2niDocInfo />
+      
     </>
 );
 }

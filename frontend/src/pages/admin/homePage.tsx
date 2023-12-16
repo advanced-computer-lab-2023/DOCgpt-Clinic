@@ -4,7 +4,7 @@ import { Typography, Button, Box, Container, Paper } from "@mui/material";
 import AdminBar from "../../components/admin Bar/adminBar";
 import Carousel from "react-material-ui-carousel";
 import MyCarousel from "../../components/Carousel";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niAdminInfo from "../../components/El7a2niAdmin-info";
 
 function AdminHomePage() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ function AdminHomePage() {
       <AdminBar />
       <MyCarousel />
 
-      <El7a2niInfo />
+      <El7a2niAdminInfo />
     </>
   );
 }

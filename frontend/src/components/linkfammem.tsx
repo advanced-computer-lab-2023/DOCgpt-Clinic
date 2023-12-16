@@ -2,7 +2,7 @@ import { Button, FormControl, InputLabel, MenuItem, Paper, Select, SelectChangeE
 import React, { CSSProperties, useState } from 'react';
 import theme from '../theme';
 import DrawerAppBar from './patientBar/patientBar';
-import El7a2niInfo from "./El7a2ni-info";
+import El7a2niPatientInfo from "./El7a2niPatient-info";
 import Background from '../FamilyMembers.jpg';
 import Back from "./backButton";
 
@@ -151,7 +151,7 @@ const LinkFamilyMember: React.FC<LinkFamilyMemberProps> = () => {
         {error && <p style={{ color: 'red' }}>{error}</p>}
         {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
       </Paper>
-      <El7a2niInfo/>
+      <El7a2niPatientInfo/>
 
     </>
 

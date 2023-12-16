@@ -10,17 +10,14 @@ import {
   Button,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
-import PhoneIcon from "@mui/icons-material/Phone";
-import HomeIcon from "@mui/icons-material/Home";
-import CakeIcon from "@mui/icons-material/Cake";
+
 import LockResetIcon from "@mui/icons-material/LockReset";
 import man from "../../man.jpg";
-import ContactEmergencyIcon from "@mui/icons-material/ContactEmergency";
 import PatientAppBar from "../../components/patientBar/patientBar";
+import AdminAppBar from "../../components/admin Bar/adminBar";
+import { margin } from "@mui/system";
 
-const API_BASE_URL = "http://localhost:3000"; // Replace with your actual base URL
-
-const PatientProfilePage = () => {
+const AdminProfilePage = () => {
   const [patient, setPatient] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,10 +30,11 @@ const PatientProfilePage = () => {
           throw new Error("Authorization token is missing");
         }
 
-        const response = await axios.get("/routes/patient/getPatient", {
+        const response = await axios.get("/routes/admins/getadmin", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(response.data);
+        console.log("response.data", response.data);
+
         setPatient(response.data);
       } catch (err: any) {
         setError(
@@ -49,7 +47,9 @@ const PatientProfilePage = () => {
 
     fetchPatient();
   }, []);
-
+  useEffect(() => {
+    console.log("patient has been updated", patient);
+  }, [patient]);
   if (isLoading) {
     return <div>Loading patient data...</div>;
   }
@@ -62,20 +62,9 @@ const PatientProfilePage = () => {
     return <div>No patient data available.</div>;
   }
 
-  const {
-    name,
-    username,
-    email,
-    mobilenumber,
-    gender,
-    dateofbirth,
-    address,
-    emergencyContact,
-  } = patient;
-  const { fullName, mobileNumber, relation } = emergencyContact; // Destructure the emergencyContact object
+  const { username, email } = patient;
 
-  const profileImage =
-    gender === "Male" ? "/male-image.jpg" : "/female-image.jpg"; // Replace with your image paths
+  const profileImage = "/male-image.jpg";
 
   const profileStyle = {
     display: "flex",
@@ -101,7 +90,9 @@ const PatientProfilePage = () => {
     p: 4,
     mb: 2,
     bgcolor: "background.paper",
-    borderRadius: "15px", // Rounded borders like in the screenshot
+    borderRadius: "15px",
+    padding: "30px",
+    // Rounded borders like in the screenshot
   };
 
   // New icon style for a uniform look
@@ -113,19 +104,20 @@ const PatientProfilePage = () => {
       mr: 1,
     },
   };
+
   return (
     <>
-      <PatientAppBar />
+      <AdminAppBar />
       <Container maxWidth="lg">
         <Grid container spacing={2} justifyContent="center">
           <Grid item xs={12}>
             <Typography variant="h4" gutterBottom align="center" sx={{ mt: 4 }}>
-              Welcome, {name}
+              Welcome, {username}
             </Typography>
             <Paper sx={paperStyle}>
               <Avatar
                 src={man}
-                alt={name}
+                alt={username}
                 sx={{ width: 128, height: 128, mb: 2 }}
               />
               <Box sx={{ width: "100%" }}>
@@ -133,37 +125,7 @@ const PatientProfilePage = () => {
                   <EmailIcon />
                   <Typography>{email}</Typography>
                 </Box>
-                <Box sx={iconListStyle}>
-                  <PhoneIcon />
-                  <Typography>{mobilenumber}</Typography>
-                </Box>
-                <Box sx={iconListStyle}>
-                  <CakeIcon />
-                  <Typography>
-                    Date of Birth: {new Date(dateofbirth).toLocaleDateString()}
-                  </Typography>
-                </Box>
-                <Box sx={iconListStyle}>
-                  <ContactEmergencyIcon />
-                  <Typography variant="h5" sx={{ width: "100%" }}>
-                    Emergency Contact
-                  </Typography>
-                </Box>
-                <Box sx={iconListStyle}>
-                  <Typography variant="body1" sx={{ width: "100%" }}>
-                    Name: {fullName}
-                  </Typography>
-                </Box>
-                <Box sx={iconListStyle}>
-                  <Typography variant="body1" sx={{ width: "100%" }}>
-                    Mobile Number: {mobileNumber}
-                  </Typography>
-                </Box>
-                <Box sx={iconListStyle}>
-                  <Typography variant="body1" sx={{ width: "100%" }}>
-                    Relation: {relation}
-                  </Typography>
-                </Box>
+
                 {/* Add more details as needed */}
               </Box>
               <Button
@@ -182,4 +144,4 @@ const PatientProfilePage = () => {
   );
 };
 
-export default PatientProfilePage;
+export default AdminProfilePage;

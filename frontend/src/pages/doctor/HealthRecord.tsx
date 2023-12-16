@@ -526,8 +526,8 @@ function HealthRecord(){
 
 
                 <Card
-  style={{
-    height: `${100 + healthRecord.GeneralComments.length * 40}px`, // Adjust the height as needed
+   style={{
+    height: '200px', // Set a fixed height
     overflowY: 'auto', // Add scrollbar if needed
     width: '99%',
     display: 'flex',
