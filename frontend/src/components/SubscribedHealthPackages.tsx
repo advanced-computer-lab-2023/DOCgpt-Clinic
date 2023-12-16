@@ -18,9 +18,9 @@ import {
 interface ApiResponse {
   subscribedPackages: {
     name: string;
-    startdate?: string | Date;
-    enddate?: string | Date;
-    status: 'subscribed with renewal date' | 'unsubscribed' | 'cancelled with end date';
+    startdate: string ;
+    enddate: string ;
+    status: 'subscribed' | 'unsubscribed' | 'cancelled with end date';
     payedBy: string;
   }[];
 }
@@ -86,9 +86,7 @@ const SubscribedHealthPackages = () => {
 
   return (
     <Container>
-    <Typography color="primary" style={{ textAlign: 'center' }} variant="h4" gutterBottom>
-      My Subscribed Packages
-    </Typography>
+   
     <Grid container spacing={2}>
       {Array.isArray(subscribedPackages) &&
         subscribedPackages.map((pkg, index) => (
@@ -107,15 +105,21 @@ const SubscribedHealthPackages = () => {
                 },
               }}
             >
-              <Typography variant="h6" gutterBottom>
-  {pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)}
-</Typography>
-              <Typography variant="body1" gutterBottom>
-                Status: {pkg.status}
+              <Typography variant="h2" color="text.secondary" gutterBottom>
+             <strong> {pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)} </strong>
+            </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Status:</strong> {pkg.status}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Start Date:</strong> {pkg.startdate.split('T')[0]}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>End Date:</strong> {pkg.enddate.split('T')[0]}
               </Typography>
               <Button
                 variant="contained"
-                color="primary"
+                color="secondary"
                 onClick={() => handleRemoveSubscription(pkg.name)}
                 style={{ marginTop: '15px' }}
               >

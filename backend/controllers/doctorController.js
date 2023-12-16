@@ -712,7 +712,7 @@ const calculateSessionPrice = async (req, res) => {
             console.log('Patient has no health packages subscribed');
             return res.status(200).json(price);
         }
-        const subscribedPackage = patient.healthPackageSubscription.find((subscription) => subscription.status === 'subscribed with renewal date');
+        const subscribedPackage = patient.healthPackageSubscription.find((subscription) => subscription.status === 'subscribed');
         if (!subscribedPackage) {
             console.log('No subscribed health package found');
             console.log(price);

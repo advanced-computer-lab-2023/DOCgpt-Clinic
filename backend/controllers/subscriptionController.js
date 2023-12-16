@@ -32,7 +32,7 @@ const subscribeToHealthPackage = async (req, res) => {
         if (!healthPackage) {
             return res.status(404).json({ error: 'Health package not found' });
         }
-        const isSubscribed = patient.healthPackageSubscription.some(subscription => subscription.name === packageName && subscription.status === 'subscribed with renewal date');
+        const isSubscribed = patient.healthPackageSubscription.some(subscription => subscription.name === packageName && subscription.status === 'subscribed');
         if (isSubscribed) {
             return res.status(400).json({ error: 'Patient is already subscribed to this package' });
         }
@@ -49,7 +49,7 @@ const subscribeToHealthPackage = async (req, res) => {
                 name: packageName,
                 startdate: newDate.toISOString(),
                 enddate: endDate.toISOString(),
-                status: "subscribed with renewal date",
+                status: "subscribed",
                 payedBy: username,
             });
             await patient.save();
@@ -63,12 +63,13 @@ const subscribeToHealthPackage = async (req, res) => {
             else {
                 const newDate = new Date();
                 const endDate = new Date(newDate);
+                endDate.setFullYear(newDate.getFullYear() + 1);
                 patient.walletBalance -= subscriptionCost;
                 patient.healthPackageSubscription.push({
                     name: packageName,
                     startdate: newDate.toISOString(),
                     enddate: endDate.toISOString(),
-                    status: "subscribed with renewal date",
+                    status: "subscribed",
                     payedBy: username,
                 });
                 await patient.save();
@@ -98,7 +99,7 @@ const subscribeFamAsPatient = async (username, packageName) => {
         if (!healthPackage) {
             throw new Error('Health package not found');
         }
-        const isSubscribed = patient.healthPackageSubscription.some(subscription => subscription.name === packageName && subscription.status === 'subscribed with renewal date');
+        const isSubscribed = patient.healthPackageSubscription.some(subscription => subscription.name === packageName && subscription.status === 'subscribed');
         if (isSubscribed) {
             throw new Error('Patient is already subscribed to this package');
         }
@@ -111,11 +112,12 @@ const subscribeFamAsPatient = async (username, packageName) => {
         // Add the health package to the subscription array
         const newDate = new Date();
         const endDate = new Date(newDate);
+        endDate.setFullYear(newDate.getFullYear() + 1);
         patient.healthPackageSubscription.push({
             name: packageName,
             startdate: newDate.toISOString(),
             enddate: endDate.toISOString(),
-            status: 'subscribed with renewal date',
+            status: 'subscribed',
             payedBy: username,
         });
         await patient.save();
@@ -156,7 +158,7 @@ const subscribeToHealthPackageForFamily = async (req, res) => {
             if (!familyMember.healthPackageSubscription) {
                 familyMember.healthPackageSubscription = [];
             }
-            const isSubscribed = familyMember.healthPackageSubscription.some(subscription => subscription.name === packageName && subscription.status === 'subscribed with renewal date');
+            const isSubscribed = familyMember.healthPackageSubscription.some(subscription => subscription.name === packageName && subscription.status === 'subscribed');
             if (isSubscribed) {
                 return res.status(400).json({ error: 'Patient is already subscribed to this package' });
             }
@@ -169,11 +171,12 @@ const subscribeToHealthPackageForFamily = async (req, res) => {
                 }
                 const newDate = new Date();
                 const endDate = new Date(newDate);
+                endDate.setFullYear(newDate.getFullYear() + 1);
                 familyMember.healthPackageSubscription.push({
                     name: packageName,
                     startdate: newDate.toISOString(),
                     enddate: endDate.toISOString(),
-                    status: "subscribed with renewal date",
+                    status: "subscribed",
                     payedBy: username,
                 });
                 const familyMemberUsername = familyMember.username;
@@ -193,11 +196,12 @@ const subscribeToHealthPackageForFamily = async (req, res) => {
                     patient.walletBalance -= subscriptionCost;
                     const newDate = new Date();
                     const endDate = new Date(newDate);
+                    endDate.setFullYear(newDate.getFullYear() + 1);
                     familyMember.healthPackageSubscription.push({
                         name: packageName,
                         startdate: newDate.toISOString(),
                         enddate: endDate.toISOString(),
-                        status: "subscribed with renewal date",
+                        status: "subscribed",
                         payedBy: username,
                     });
                     const familyMemberUsername = familyMember.username;
@@ -232,9 +236,17 @@ const viewSubscribedPackages = async (req, res) => {
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
+        const currentDate = new Date();
+        patient.healthPackageSubscription.map((healthPackage) => {
+            var _a;
+            if (((_a = healthPackage.enddate) === null || _a === void 0 ? void 0 : _a.split('T')[0]) === currentDate.toISOString().split('T')[0]) {
+                healthPackage.status = 'cancelled with end date';
+            }
+        });
+        const updated = await patient.save();
         let subscribedPackages = [];
         if (patient.healthPackageSubscription && Array.isArray(patient.healthPackageSubscription)) {
-            subscribedPackages = patient.healthPackageSubscription.filter((pkg) => pkg.status === 'subscribed with renewal date');
+            subscribedPackages = patient.healthPackageSubscription.filter((pkg) => pkg.status === 'subscribed');
         }
         return res.status(200).json({ subscribedPackages });
     }
@@ -261,25 +273,53 @@ const viewHealthPackageStatus = async (req, res) => {
         const familyMembersNames = patient.familyMembers.map((familyMember) => familyMember.name);
         // Create an array to store health package details for the patient and family members
         const healthPackages = [];
+        const currentDate = new Date();
+        patient.healthPackageSubscription.map((healthPackage) => {
+            var _a;
+            if (((_a = healthPackage.enddate) === null || _a === void 0 ? void 0 : _a.split('T')[0]) === currentDate.toISOString().split('T')[0]) {
+                healthPackage.status = 'cancelled with end date';
+            }
+        });
+        const updated = await patient.save();
         // Include the patient's health package subscriptions
         if (patient.healthPackageSubscription && patient.healthPackageSubscription.length > 0) {
-            healthPackages.push(...patient.healthPackageSubscription.map(package1 => ({
-                name: package1.name,
-                status: package1.status,
-            })));
+            healthPackages.push(...patient.healthPackageSubscription.map(package1 => {
+                var _a, _b;
+                return ({
+                    name: package1.name,
+                    status: package1.status,
+                    startDate: (_a = package1.startdate) === null || _a === void 0 ? void 0 : _a.split("T")[0],
+                    endDate: (_b = package1.enddate) === null || _b === void 0 ? void 0 : _b.split("T")[0],
+                });
+            }));
         }
         if (familyMembersNames.length === 0) {
             res.status(200).json({ healthPackages });
         }
         else {
             for (const familyMember of patient.familyMembers) {
+                const currentDate = new Date();
+                patient.familyMembers.map((familymember) => {
+                    familymember.healthPackageSubscription.map((healthPackage) => {
+                        var _a;
+                        if (((_a = healthPackage.enddate) === null || _a === void 0 ? void 0 : _a.split('T')[0]) === currentDate.toISOString().split('T')[0]) {
+                            healthPackage.status = 'cancelled with end date';
+                        }
+                    });
+                });
+                const updated = await patient.save();
                 if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0 && familyMember.healthPackageSubscription[0].payedBy === patient.username) {
-                    healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => ({
-                        patientName: patient.name,
-                        name: package1.name,
-                        familyMemberName: familyMember.name,
-                        status: package1.status,
-                    })));
+                    healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => {
+                        var _a, _b;
+                        return ({
+                            patientName: patient.name,
+                            name: package1.name,
+                            familyMemberName: familyMember.name,
+                            status: package1.status,
+                            startDate: (_a = package1.startdate) === null || _a === void 0 ? void 0 : _a.split("T")[0],
+                            endDate: (_b = package1.enddate) === null || _b === void 0 ? void 0 : _b.split("T")[0],
+                        });
+                    }));
                 }
             }
             console.log(healthPackages);
@@ -368,7 +408,7 @@ const cancelSubscriptionfam2 = async (req, res) => {
         }
         // Update the status to 'unsubscribed'
         const updateSubscriptionStatus = (subscription) => {
-            if (subscription.name === packageName && (subscription.status === 'subscribed with renewal date')) {
+            if (subscription.name === packageName && (subscription.status === 'subscribed')) {
                 subscription.status = 'unsubscribed';
             }
         };
@@ -404,6 +444,16 @@ const viewFamilyMembersAndPackages = async (req, res) => {
         if (!patient) {
             return res.status(404).json({ error: 'Patient not found' });
         }
+        const currentDate = new Date();
+        patient.familyMembers.map((familymember) => {
+            familymember.healthPackageSubscription.map((healthPackage) => {
+                var _a;
+                if (((_a = healthPackage.enddate) === null || _a === void 0 ? void 0 : _a.split('T')[0]) === currentDate.toISOString().split('T')[0]) {
+                    healthPackage.status = 'cancelled with end date';
+                }
+            });
+        });
+        const updated = await patient.save();
         // Collect family members' subscriptions
         const familyMemberPackages = [];
         for (const familyMember of patient.familyMembers) {
@@ -411,7 +461,7 @@ const viewFamilyMembersAndPackages = async (req, res) => {
             if (familyMember.healthPackageSubscription && Array.isArray(familyMember.healthPackageSubscription)) {
                 console.log('Subscriptions before filter:', familyMember.healthPackageSubscription);
                 const subscribedPackages = familyMember.healthPackageSubscription
-                    .filter(pkg => pkg.status === 'subscribed with renewal date')
+                    .filter(pkg => pkg.status === 'subscribed')
                     .map(pkg => ({
                     familyMemberName: familyMember.name,
                     package: pkg,
@@ -447,7 +497,7 @@ const getSubscribedPackagesForMember = async (req, res) => {
         if (!targetFamilyMember) {
             return res.status(404).json({ error: 'Family member not found 2' });
         }
-        const subscribedPackages = targetFamilyMember.healthPackageSubscription.filter((pck) => pck.status === 'subscribed with renewal date');
+        const subscribedPackages = targetFamilyMember.healthPackageSubscription.filter((pck) => pck.status === 'subscribed');
         return res.status(200).json({ subscribedPackages });
     }
     catch (error) {

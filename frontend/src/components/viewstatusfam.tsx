@@ -15,6 +15,7 @@ import {
 import PatientBar from './patientBar/patientBar';
 import Background from '../FamilyMembers.jpg';
 import Back from "./backButton";
+import El7a2niInfo from './El7a2ni-info';
 const headerCellStyle = {
     backgroundColor: 'rgba(173, 216, 230, 0.4)', // Very light blue
   };
@@ -23,6 +24,8 @@ interface HealthPackageStatus {
     status: string;
     patientName?: string;
     familyMemberName?: string;
+    startDate: string;
+    endDate: string;
   }
 
 const FamilyMemberPackageStatus = () => {
@@ -102,6 +105,8 @@ const FamilyMemberPackageStatus = () => {
               <TableCell style={headerCellStyle}>Family Member Name</TableCell>
               <TableCell style={headerCellStyle}>Health Package Name</TableCell>
               <TableCell style={headerCellStyle}>Status</TableCell>
+              <TableCell style={headerCellStyle}>Start Date</TableCell>
+              <TableCell style={headerCellStyle}>End Date</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -110,12 +115,15 @@ const FamilyMemberPackageStatus = () => {
                 <TableCell>{pkg.familyMemberName}</TableCell>
                 <TableCell>{pkg.name}</TableCell>
                 <TableCell>{pkg.status}</TableCell>
+                <TableCell>{pkg.startDate}</TableCell>
+                <TableCell>{pkg.endDate}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </TableContainer>
     </Container>
+    <El7a2niInfo/>
     </>
   );
 };

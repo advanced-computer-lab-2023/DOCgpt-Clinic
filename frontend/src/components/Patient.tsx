@@ -59,8 +59,6 @@ interface PatientProps {
   doctor: any;
 }
 
-
-
 const Patient = ({ patient, doctor }: PatientProps) => {
   const navigate = useNavigate();
   const [hoveredButton, setHoveredButton] = useState(false); // State to track button hover
@@ -125,13 +123,13 @@ const Patient = ({ patient, doctor }: PatientProps) => {
     window.open(`mailto:${email}`);
   };
 
-  const addPresc = async (name: any) => {
+  const addPresc = async () => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
         "/routes/prescriptions",
         {
-          patientUsername: name,
+          patientUsername: username,
         },
         {
           headers: {
@@ -145,17 +143,16 @@ const Patient = ({ patient, doctor }: PatientProps) => {
 
       // Append prescriptionId to the URL
       const newWindow = window.open(
-
-
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  "_blank"
-      );
-
-      if (!newWindow) {
-        console.error("Unable to open a new window.");
-      }
-    } catch (error) {
-      console.error("Error in addPresc:", error);
-    }
+        ` http://localhost:3001/doctormed/${prescriptionId}`,
+         "_blank"
+       );
+ 
+       if (!newWindow) {
+         console.error("Unable to open a new window.");
+       }
+     } catch (error) {
+       console.error("Error in addPresc:", error);
+     }
   };
 
   function calculateAge(dateOfBirth: string | number | Date) {

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { To, useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import CustomizedBadges from "./notificationIcon";
-import logo from "../../logo.jpeg";
+import logo from "../../Logoo.png";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";

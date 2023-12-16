@@ -94,14 +94,7 @@ const UnsubscribePackageForMember: React.FC = () => {
 
   return (
     <Container>
-      <Typography
-        color="primary"
-        style={{ textAlign: "center" }}
-        variant="h4"
-        gutterBottom
-      >
-        My Family Members Subscribed Packages
-      </Typography>
+   
       <Grid container spacing={2}>
         {Array.isArray(familyMembersAndPackages) &&
           familyMembersAndPackages.map(
@@ -115,9 +108,17 @@ const UnsubscribePackageForMember: React.FC = () => {
                     },
                   }}
                 >  
-                  <Typography variant="h6">{item.package.name.charAt(0).toUpperCase() + item.package.name.slice(1)}</Typography>
-                  <Typography>{item.familyMemberName.charAt(0).toUpperCase() + item.familyMemberName.slice(1)}</Typography>
-                  <Typography>Status: {item.package.status}</Typography>
+                  <Typography variant="h2" color="text.secondary"> <strong>{item.package.name.charAt(0).toUpperCase() + item.package.name.slice(1)} </strong></Typography>
+                  <Typography color="text.secondary"> <strong>{item.familyMemberName.charAt(0).toUpperCase() + item.familyMemberName.slice(1)}</strong></Typography>
+                  <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Status:</strong> {item.package.status}
+              </Typography>
+                  <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Start Date:</strong> {item.package.startdate.split('T')[0]}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>End Date:</strong> {item.package.enddate.split('T')[0]}
+              </Typography>
                   <Button
                     variant="contained"
                     color="secondary"

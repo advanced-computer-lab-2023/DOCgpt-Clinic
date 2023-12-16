@@ -9,6 +9,7 @@ import LockResetIcon from '@mui/icons-material/LockReset';
 import man from '../../man.jpg'
 import ContactEmergencyIcon from '@mui/icons-material/ContactEmergency';
 import PatientAppBar from '../../components/patientBar/patientBar'
+import El7a2niInfo from '../../components/El7a2ni-info';
 
 const API_BASE_URL = 'http://localhost:3000'; // Replace with your actual base URL
 
@@ -151,6 +152,7 @@ Emergency Contact:</Typography>
         </Grid>
       </Grid>
     </Container>
+    <El7a2niInfo/>
     </>
   );
 };
