@@ -15,7 +15,11 @@ const appointmentModel_1 = __importDefault(require("../models/appointmentModel")
 const healthRecordModel_1 = __importDefault(require("../models/healthRecordModel"));
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const requestModel_1 = __importDefault(require("../models/requestModel"));
+<<<<<<< HEAD
 const createAdmin = async (req, res) => {
+=======
+const createAdmin = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+>>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
     const { username, password, email } = req.body;
     const emailExists = await patientModel_1.default.findOne({ email });
     const emailExists2 = await doctorModel_1.default.findOne({ email });
@@ -103,11 +107,19 @@ const deletePatientByUsername = async (req, res) => {
         if (!deletedPatient) {
             return res.status(404).json({ message: 'Patient not found' });
         }
+<<<<<<< HEAD
         const updateResult = await patientModel_1.default.updateMany({ 'familyMembers.username': username }, { $pull: { familyMembers: { username } } });
         const appoinment = await appointmentModel_1.default.deleteMany({ patient: username });
         const healthRecord = await healthRecordModel_1.default.deleteMany({ patient: username });
         const prescription = await perscriptionModel_1.default.deleteMany({ patientUsername: username });
         const requests = await requestModel_1.default.deleteMany({ patient: username });
+=======
+        const updateResult = yield patientModel_1.default.updateMany({ 'familyMembers.username': username }, { $pull: { familyMembers: { username } } });
+        const appoinment = yield appointmentModel_1.default.deleteMany({ patient: username });
+        const healthRecord = yield healthRecordModel_1.default.deleteMany({ patient: username });
+        const prescription = yield perscriptionModel_1.default.deleteMany({ patientUsername: username });
+        const requests = yield requestModel_1.default.deleteMany({ patient: username });
+>>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
         console.log("ana deletde");
         res.status(200).json({ message: 'Patient deleted successfully' });
     }

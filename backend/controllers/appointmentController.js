@@ -111,7 +111,23 @@ const createNotificationWithCurrentDate = async (patientUsername, subject, msg) 
     }
 };
 exports.createNotificationWithCurrentDate = createNotificationWithCurrentDate;
+<<<<<<< HEAD
 const createAppointment = async (req, res) => {
+=======
+function formatDateWithoutDay(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+}
+function extractTime(dateString) {
+    const date = new Date(dateString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    return time;
+}
+const createAppointment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+>>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
     const doctorUsername = req.body.doctorUsername;
     const date = req.body.date;
     const status = 'upcoming';
@@ -147,32 +163,36 @@ const createAppointment = async (req, res) => {
             price: price,
             scheduledBy: username
         });
+        const time = extractTime(date);
+        const formattedDateWithoutDay = formatDateWithoutDay(date);
         const patientEmail = patient.email; // Adjust this based on your patient model structure
         const emailSubject = 'Appointment Confirmation';
+        const msgSubject = ` ${type} Appointment Confirmation`;
         const emailText = `Your appointment has been scheduled for ${new Date(date)}. 
                       Doctor: ${doctor.username}
                       Type: ${type}
                       Price: ${price}`;
-        const msg = `Your appointment has been scheduled for ${new Date(date)}. 
-                      Doctor: ${doctor.username}
-                      Type: ${type}
-                      Price: ${price}`;
+        const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+                      Doctor: ${doctor.username} `;
         const doctorEmail = doctor.email; // Adjust this based on your patient model structure
         const emailText1 = `An  appointment has been scheduled for ${new Date(date)}. 
                                         patient: ${username}
                                         Type: ${type}
                                         Price: ${price}`;
-        const msg1 = `An  appointment has been scheduled for ${new Date(date)}. 
-                                        patient: ${username}
-                                        Type: ${type}
-                                        Price: ${price}`;
+        const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+                                        patient: ${username}`;
         // Assuming sendOTPByEmail returns a Promise, use await here if needed
         const not = await (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
         const not2 = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
+<<<<<<< HEAD
         const nn = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
         const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
+=======
+        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msgSubject);
+        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msgSubject);
+>>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
         return appointment;
     }
     catch (error) {
@@ -221,32 +241,35 @@ const createAppointmentFam = async (req, res, user) => {
             price: price,
             scheduledBy: username
         });
+        const time = extractTime(date);
+        const formattedDateWithoutDay = formatDateWithoutDay(date);
         const patientEmail = fam.email; // Adjust this based on your patient model structure
-        const emailSubject = 'Appointment Confirmation';
+        const emailSubject = `  Appointment Confirmation`;
+        const msgSubject = ` ${type} Appointment Confirmation`;
         const emailText = `Your appointment has been scheduled for ${new Date(date)}. 
                       Doctor: ${doctor.username}
-                      Type: ${type}
-                      Price: ${price}`;
-        const msg = `Your appointment has been scheduled for ${new Date(date)}. 
-                      Doctor: ${doctor.username}
-                      Type: ${type}
-                      Price: ${price}`;
+                      Type: ${type} `;
+        const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+                      Doctor: ${doctor.username} `;
         const doctorEmail = doctor.email; // Adjust this based on your patient model structure
         const emailText1 = `An  appointment has been scheduled for ${new Date(date)}. 
                                         patient: ${username}
                                         Type: ${type}
                                         Price: ${price}`;
-        const msg1 = `An  appointment has been scheduled for ${new Date(date)}. 
-                                        patient: ${username}
-                                        Type: ${type}
-                                        Price: ${price}`;
+        const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+                                        patient: ${username}`;
         // Assuming sendOTPByEmail returns a Promise, use await here if needed
         const not = await (0, nodemailer_1.sendAnEmail)(patientEmail, emailSubject, emailText);
         const not2 = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
+<<<<<<< HEAD
         const nn = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, msg);
         const nnn = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, msg1);
+=======
+        const nn = yield (0, exports.createNotificationWithCurrentDate)(username, msgSubject, msg);
+        const nnn = yield (0, exports.createNotificationWithCurrentDate)(doctorUsername, msgSubject, msg1);
+>>>>>>> 7c8f44e571805a5ea019dea7340772c2f43673e0
         return appointment;
     }
     catch (error) {
@@ -461,8 +484,8 @@ const payWithCredit = async (req, res, sessionPrice) => {
             shipping_address_collection: {
                 allowed_countries: ['US', 'CA', 'EG'], // List of allowed countries
             },
-            success_url: 'http://localhost:3000/success',
-            cancel_url: 'http://localhost:3000/cancel', // Update with your cancel URL
+            success_url: 'http://localhost:3002/patient/viewMyappointments',
+            cancel_url: 'http://localhost:3002/patient/viewMyappointments', // Update with your cancel URL
         });
         return session.url;
     }

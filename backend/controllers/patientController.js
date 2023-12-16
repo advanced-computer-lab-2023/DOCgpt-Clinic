@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.calcPatientAge = exports.sendRequestFollowUp = exports.getTodayAppointments = exports.viewFamAppointments = exports.rescheduleAppointments = exports.deletePatientDocs = exports.openPatientDocument = exports.uploadPatintDocs = exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientDocNames = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.getSessionPrice = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatients = exports.createPatient = void 0;
+exports.calcPatientAge = exports.sendRequestFollowUp = exports.getTodayAppointments = exports.viewFamAppointments = exports.rescheduleAppointments = exports.deletePatientDocs = exports.openPatientDocument = exports.uploadPatintDocs = exports.viewWalletAmount = exports.linkFamilyMember = exports.verifyTokenPatient = exports.changePassword = exports.logout = exports.createToken = exports.viewMyHealthRecord = exports.getAppointmentByStatus = exports.getAppointmentByDate = exports.viewUpcomingAppointments = exports.viewPastAppointments = exports.getPatientDocNames = exports.getPatientAppointments = exports.viewDoctorAppointments = exports.viewHealthPackageDetails = exports.viewHealthPackages = exports.selectDoctors = exports.searchDoctors = exports.getDoctorDetails = exports.filterDoctors = exports.getDoctor = exports.getSessionPrice = exports.viewFamilyMembers = exports.addFamilyMember = exports.getPrescriptionsByUser = exports.getPatient = exports.getPatients = exports.createPatient = void 0;
 const patientModel_1 = __importDefault(require("../models/patientModel"));
 const packageModel_1 = __importDefault(require("../models/packageModel"));
 const appointmentModel_1 = __importDefault(require("../models/appointmentModel"));
@@ -74,6 +74,22 @@ const getPatients = async (req, res) => {
     res.status(200).json(Patients);
 };
 exports.getPatients = getPatients;
+const getPatient = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const authHeader = req.headers["authorization"];
+    const token = authHeader && authHeader.split(" ")[1];
+    const tokenDB = yield tokenModel_1.default.findOne({ token: token });
+    var username;
+    if (tokenDB) {
+        username = tokenDB.username;
+    }
+    else {
+        return res.status(404).json({ error: "username not found" });
+    }
+    // Find the patient by ID
+    const patient = yield patientModel_2.default.findOne({ username });
+    res.status(200).json(patient);
+});
+exports.getPatient = getPatient;
 const perscriptionModel_1 = __importDefault(require("../models/perscriptionModel"));
 const patientModel_2 = __importDefault(require("../models/patientModel"));
 const doctorModel_1 = __importDefault(require("../models/doctorModel"));
