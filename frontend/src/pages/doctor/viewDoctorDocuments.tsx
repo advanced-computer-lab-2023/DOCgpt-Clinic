@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import AdminBar from "../../components/admin Bar/adminBar";
 import { Container, Typography, List, ListItem, Button, CircularProgress, Paper } from "@mui/material";
+import Background from '../../UploadDocuments.jpg';
+import Back from "../../components/backButton";
+import El7a2niInfo from '../../components/El7a2ni-info'; // Add the import for El7a2niInfo
 
 interface Document {
   _id: string;
@@ -66,10 +69,46 @@ const ViewDoctorDocuments: React.FC = () => {
   return (
     <>
       <AdminBar />
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>YOUR UPLOADED DOCUMENTS</strong>
+        </h1>
+      </div>
+    </div>
       <Container maxWidth="md" style={{ marginTop: 20 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          Your Uploaded Documents
-        </Typography>
         <Paper style={{ padding: 20 }}>
           {loading && <CircularProgress />}
           {error && <Typography color="error">{error}</Typography>}
@@ -96,7 +135,10 @@ const ViewDoctorDocuments: React.FC = () => {
             </>
           )}
         </Paper>
+       
       </Container>
+      <div style={{ flexShrink: 0, marginTop: 20 }}></div>
+<El7a2niInfo />
     </>
   );
 };

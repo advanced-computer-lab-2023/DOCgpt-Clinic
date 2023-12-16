@@ -94,14 +94,7 @@ const UnsubscribePackageForMember: React.FC = () => {
 
   return (
     <Container>
-      <Typography
-        color="primary"
-        style={{ textAlign: "center" }}
-        variant="h4"
-        gutterBottom
-      >
-        My Family Members Subscribed Packages
-      </Typography>
+   
       <Grid container spacing={2}>
         {Array.isArray(familyMembersAndPackages) &&
           familyMembersAndPackages.map(
