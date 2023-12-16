@@ -44,7 +44,16 @@ const PatientPrescriptions = () => {
 
     fetchPrescriptions();
   }, []); // Empty dependency array to run the effect once on component mount
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <>
       <PatientAppBar />
