@@ -76,7 +76,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
             status: {
                 type: String,
                 enum: [
-                    "subscribed with renewal date",
+                    "subscribed",
                     "unsubscribed",
                     "cancelled with end date",
                 ],
@@ -132,7 +132,7 @@ exports.patientSchema = new mongoose_1.default.Schema({
                     status: {
                         type: String,
                         enum: [
-                            "subscribed with renewal date",
+                            "subscribed",
                             "unsubscribed",
                             "cancelled with end date",
                         ],
