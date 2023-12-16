@@ -20,8 +20,8 @@ import {
 interface ApiResponse {
   subscribedPackages: {
     name: string;
-    startdate?: string | Date;
-    enddate?: string | Date;
+    startdate: string ;
+    enddate: string ;
     status: 'subscribed' | 'unsubscribed' | 'cancelled with end date';
     payedBy: string;
   }[];
@@ -91,52 +91,49 @@ const SubscribedHealthPackages = () => {
 
   return (
     <Container>
-      {/* <Typography
-        color="primary"
-        style={{ textAlign: "center" }}
-        variant="h4"
-        gutterBottom
-      >
-        My Subscribed Packages
-      </Typography> */}
-     <Grid container spacing={2} justifyContent="center" alignItems="center">
-  {Array.isArray(subscribedPackages) &&
-    subscribedPackages.map((pkg, index) => (
-      <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-        <Paper
-          style={{
-            padding: "20px",
-            height: "250px",
-            transition: "box-shadow 0.3s",
-            width: "100%", // Set the width to 100%
-            overflow: "hidden",
-          }}
-          sx={{
-            "&:hover": {
-              boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
-            },
-          }}
-        >
-          <Typography variant="h5" gutterBottom    component="div"
-          sx={{ fontWeight: "bold" }}>
-            {pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)}
-          </Typography>
-          <Typography variant="body1" gutterBottom>
-            Status: {pkg.status}
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => handleRemoveSubscription(pkg.name)}
-            style={{ marginTop: "15px" }}
-          >
-            Unsubscribe
-          </Button>
-        </Paper>
-      </Grid>
-    ))}
-</Grid>
-
+   
+    <Grid container spacing={2}>
+      {Array.isArray(subscribedPackages) &&
+        subscribedPackages.map((pkg, index) => (
+          <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+            <Paper
+              style={{
+                padding: '20px',
+                height: '250px',
+                transition: 'box-shadow 0.3s',
+                width: '100%', // Set the width to 100%
+                overflow: 'hidden',
+              }}
+              sx={{
+                '&:hover': {
+                  boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
+                },
+              }}
+            >
+              <Typography variant="h2" color="text.secondary" gutterBottom>
+             <strong> {pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)} </strong>
+            </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Status:</strong> {pkg.status}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Start Date:</strong> {pkg.startdate.split('T')[0]}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>End Date:</strong> {pkg.enddate.split('T')[0]}
+              </Typography>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() => handleRemoveSubscription(pkg.name)}
+                style={{ marginTop: '15px' }}
+              >
+                Unsubscribe
+              </Button>
+            </Paper>
+          </Grid>
+        ))}
+    </Grid>
 
       {/* Confirmation Dialog */}
       <Dialog

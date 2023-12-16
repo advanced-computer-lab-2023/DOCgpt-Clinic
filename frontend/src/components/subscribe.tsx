@@ -94,50 +94,46 @@ const UnsubscribePackageForMember: React.FC = () => {
 
   return (
     <Container>
-      <Typography
-        color="primary"
-        style={{ textAlign: "center" }}
-        variant="h4"
-        gutterBottom
-      >
-        My Family Members Subscribed Packages
-      </Typography>
-      <Grid container spacing={2} justifyContent="center" alignItems="center">
-  {Array.isArray(familyMembersAndPackages) &&
-    familyMembersAndPackages.map((item: FamilyMemberPackage, index: number) => (
-      <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-        <Paper
-          style={{ padding: "20px", transition: "box-shadow 0.3s" }}
-          sx={{
-            "&:hover": {
-              boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)", // Add an outline on hover
-            },
-          }}
-        >
-          <Typography variant="h5"   
-           component="div"
-          sx={{ fontWeight: "bold" }}>
-            {item.package.name.charAt(0).toUpperCase() + item.package.name.slice(1)}
-          </Typography>
-          <Typography>
-            {item.familyMemberName.charAt(0).toUpperCase() + item.familyMemberName.slice(1)}
-          </Typography>
-          <Typography>Status: {item.package.status}</Typography>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() => {
-              setSelectedPackage(item);
-              setConfirmationDialogOpen(true);
-            }}
-          >
-            Unsubscribe
-          </Button>
-        </Paper>
+   
+      <Grid container spacing={2}>
+        {Array.isArray(familyMembersAndPackages) &&
+          familyMembersAndPackages.map(
+            (item: FamilyMemberPackage, index: number) => (
+              <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
+                <Paper
+                  style={{ padding: "20px", transition: "box-shadow 0.3s" }}
+                  sx={{
+                    "&:hover": {
+                      boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)", // Add an outline on hover
+                    },
+                  }}
+                >  
+                  <Typography variant="h2" color="text.secondary"> <strong>{item.package.name.charAt(0).toUpperCase() + item.package.name.slice(1)} </strong></Typography>
+                  <Typography color="text.secondary"> <strong>{item.familyMemberName.charAt(0).toUpperCase() + item.familyMemberName.slice(1)}</strong></Typography>
+                  <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Status:</strong> {item.package.status}
+              </Typography>
+                  <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>Start Date:</strong> {item.package.startdate.split('T')[0]}
+              </Typography>
+              <Typography variant="body1" color="text.secondary" gutterBottom>
+                <strong>End Date:</strong> {item.package.enddate.split('T')[0]}
+              </Typography>
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      setSelectedPackage(item);
+                      setConfirmationDialogOpen(true);
+                    }}
+                  >
+                    Unsubscribe
+                  </Button>
+                </Paper>
+              </Grid>
+            )
+          )}
       </Grid>
-    ))}
-</Grid>
-
 
       {/* Confirmation Dialog */}
       <Dialog

@@ -236,7 +236,7 @@ const handleReject = async (doctorUsername: string) => {
                   </TableCell>
                   <TableCell align="center" color="#2196f3">
   <Link
-    to="/view-doctor-documents"
+    to="/view-doctor-documents/:username"
     
     className="link-hover-effect"
 
@@ -244,6 +244,7 @@ const handleReject = async (doctorUsername: string) => {
   >
     View Uploaded Documents
   </Link>
+  
 </TableCell>
 
                 </TableRow>
@@ -280,7 +281,7 @@ const handleReject = async (doctorUsername: string) => {
         open={openAlert}
         autoHideDuration={2000}
         onClose={() => setOpenAlert(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         <MuiAlert severity={snackbarSeverity} sx={{ width: '100%', height: '50%', fontSize: '1.5rem' }}>
           {snackbarMessage}

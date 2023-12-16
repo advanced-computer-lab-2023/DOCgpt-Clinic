@@ -2,11 +2,11 @@ import React from 'react';
 import SubscribedHealthPackages from '../../components/SubscribedHealthPackages';
 import PatientAppBar from '../../components/patientBar/patientBar';
 import ViewFamilyMembersAndPackages from '../../components/subscribe';
-import El7a2niPatientInfo from '../../components/El7a2niPatient-info';
+import El7a2niInfo from '../../components/El7a2ni-info';
 import Background from '../../HealthPack.jpeg';
 import Back from "../../components/backButton";
 
-const subscribedPage = () => {
+const subscribedPage2 = () => {
   return (
     <>
     <PatientAppBar/>
@@ -51,16 +51,15 @@ const subscribedPage = () => {
     </div>
     <div>
       
-      <SubscribedHealthPackages />
+     
       <div style={{ margin: '30px' }}>
-       
+        <ViewFamilyMembersAndPackages />
       </div>
-
       {/* Other content for the My Packages page if needed */}
-      <El7a2niPatientInfo/>
+      <El7a2niInfo/>
     </div>
     </>
   );
 };
 
-export default subscribedPage
+export default subscribedPage2

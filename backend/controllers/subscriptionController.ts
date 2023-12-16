@@ -307,6 +307,7 @@ export const viewSubscribedPackages = async (req: Request, res: Response) => {
   }
 };
 
+
 export const viewHealthPackageStatus = async (req: Request, res: Response) => {
   try {
     const authHeader = req.headers['authorization'];
@@ -344,6 +345,8 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
        
         name: package1.name,
         status: package1.status,
+        startDate: package1.startdate?.split("T")[0],
+        endDate: package1.enddate?.split("T")[0],
       })));
     }
    
@@ -353,7 +356,7 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
     else{
           for (const familyMember of patient.familyMembers) {
           const currentDate = new Date();  
-          patient.familyMembers.map((familymember)=>{
+        patient.familyMembers.map((familymember)=>{
           familymember.healthPackageSubscription.map((healthPackage)=>{
             if(healthPackage.enddate?.split('T')[0] === currentDate.toISOString().split('T')[0]){
               healthPackage.status = 'cancelled with end date';
@@ -368,6 +371,8 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
                   name: package1.name,
                   familyMemberName: familyMember.name,
                   status: package1.status,
+                  startDate: package1.startdate?.split("T")[0],
+                  endDate: package1.enddate?.split("T")[0],
                 }))
   );
 }
@@ -383,6 +388,7 @@ export const viewHealthPackageStatus = async (req: Request, res: Response) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 const findHealthPackageStatusHelper = (packages: any[], packageName: string) => {
   const packageData = packages.find(package1 => package1.name.toLowerCase() === packageName.toLowerCase());

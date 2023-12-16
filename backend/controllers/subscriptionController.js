@@ -283,10 +283,15 @@ const viewHealthPackageStatus = async (req, res) => {
         const updated = await patient.save();
         // Include the patient's health package subscriptions
         if (patient.healthPackageSubscription && patient.healthPackageSubscription.length > 0) {
-            healthPackages.push(...patient.healthPackageSubscription.map(package1 => ({
-                name: package1.name,
-                status: package1.status,
-            })));
+            healthPackages.push(...patient.healthPackageSubscription.map(package1 => {
+                var _a, _b;
+                return ({
+                    name: package1.name,
+                    status: package1.status,
+                    startDate: (_a = package1.startdate) === null || _a === void 0 ? void 0 : _a.split("T")[0],
+                    endDate: (_b = package1.enddate) === null || _b === void 0 ? void 0 : _b.split("T")[0],
+                });
+            }));
         }
         if (familyMembersNames.length === 0) {
             res.status(200).json({ healthPackages });
@@ -304,12 +309,17 @@ const viewHealthPackageStatus = async (req, res) => {
                 });
                 const updated = await patient.save();
                 if (familyMember.healthPackageSubscription && familyMember.healthPackageSubscription.length > 0 && familyMember.healthPackageSubscription[0].payedBy === patient.username) {
-                    healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => ({
-                        patientName: patient.name,
-                        name: package1.name,
-                        familyMemberName: familyMember.name,
-                        status: package1.status,
-                    })));
+                    healthPackages.push(...familyMember.healthPackageSubscription.map((package1) => {
+                        var _a, _b;
+                        return ({
+                            patientName: patient.name,
+                            name: package1.name,
+                            familyMemberName: familyMember.name,
+                            status: package1.status,
+                            startDate: (_a = package1.startdate) === null || _a === void 0 ? void 0 : _a.split("T")[0],
+                            endDate: (_b = package1.enddate) === null || _b === void 0 ? void 0 : _b.split("T")[0],
+                        });
+                    }));
                 }
             }
             console.log(healthPackages);

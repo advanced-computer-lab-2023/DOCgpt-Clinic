@@ -48,6 +48,9 @@ function HealthRecordForm(){
     const queryParams = new URLSearchParams(location.search);
     const username = queryParams.get('patient');
     const [openSnackbar, setOpenSnackbar] = useState(false);
+ const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
+
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const handleCloseSnackbar = () => {
         setOpenSnackbar(false);
@@ -142,15 +145,17 @@ function HealthRecordForm(){
             !height &&
             !weight
           ) {
-            alert("Please fill at least one form field.");
-            return; // Do not submit the form if none of the fields are filled
+            setOpenErrorSnackbar(true);
           }
-    
-        // Handle form submission, e.g., send formValues to the server
-        await createHealthRequest();
-        navigate(`/doctor/patients`);
-
-    };
+          else {
+            // At least one field is filled, show success snackbar
+            setOpenSuccessSnackbar(true);
+        
+            // Handle form submission, e.g., send formValues to the server
+            await createHealthRequest();
+            navigate(`/doctor/patients`);
+          }
+        };
 
     const createHealthRequest = async () => {
         try {
@@ -176,7 +181,7 @@ function HealthRecordForm(){
                 },
                 // Add other key-value pairs as needed
             });
-            alert("Health Record Created Successfully!");
+         
             console.log('Response:', response.data);
             } catch (error) {
             console.error('Error:', error);
@@ -212,18 +217,33 @@ function HealthRecordForm(){
         Medical History Form
     </Typography>
     <Snackbar
-          open={openSnackbar}
-          autoHideDuration={3000} // Adjust the duration as needed
-          onClose={handleCloseSnackbar}
-        >
-          <Alert
-            onClose={handleCloseSnackbar}
-            severity="success"
-            sx={{ width: '100%' }}
-          >
-            {snackbarMessage}
-          </Alert>
-        </Snackbar>
+  open={openSuccessSnackbar}
+  autoHideDuration={3000}
+  onClose={() => setOpenSuccessSnackbar(false)}
+>
+  <Alert
+    onClose={() => setOpenSuccessSnackbar(false)}
+    severity="success"
+    sx={{ width: '100%' }}
+  >
+    Health Record Submitted Successfully
+  </Alert>
+</Snackbar>
+
+<Snackbar
+  open={openErrorSnackbar}
+  autoHideDuration={3000}
+  onClose={() => setOpenErrorSnackbar(false)}
+>
+  <Alert
+    onClose={() => setOpenErrorSnackbar(false)}
+    severity="error"
+    sx={{ width: '100%' }}
+  >
+    Fail to Submit
+  </Alert>
+</Snackbar>
+
             <form onSubmit={handleSubmit}>
             <Grid container spacing={2}>
                 {/* Medical History Section */}
