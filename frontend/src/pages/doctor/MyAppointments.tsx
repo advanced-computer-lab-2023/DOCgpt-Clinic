@@ -22,6 +22,7 @@ import DrawerAppBar from "../../components/Doctor bar/doctorBar";
 import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
 
+
 function MyAppointments() {
 //THE LOGIC OF VIEWING A DOCTOR'S APPOINTMENTS
 //THW LINK TO BACK

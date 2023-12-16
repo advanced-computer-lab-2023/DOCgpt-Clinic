@@ -52,11 +52,13 @@ if (!process.env.STRIPE_SECRET_KEY)
       if (!sessionUrl) {
         return res.status(500).json({ error: 'Failed to create payment session' });
       }
-
-      patient.healthPackageSubscription.push({
+      const newDate = new Date();
+      const endDate = new Date(newDate);
+      endDate.setFullYear(newDate.getFullYear() + 1);
+        patient.healthPackageSubscription.push({
         name: packageName,
-        startdate: '',
-        enddate: '',
+        startdate: newDate.toISOString(),
+        enddate: endDate.toISOString(),
         status: "subscribed with renewal date",
         payedBy: username,
         
@@ -71,11 +73,13 @@ if (!process.env.STRIPE_SECRET_KEY)
       if (patient.walletBalance < subscriptionCost) {
         return res.status(400).json({ error: 'Insufficient funds in the wallet' });
       } else {
+      const newDate = new Date();
+      const endDate = new Date(newDate);
         patient.walletBalance -= subscriptionCost;
         patient.healthPackageSubscription.push({
           name: packageName,
-          startdate: '',
-          enddate: '',
+         startdate: newDate.toISOString(),
+         enddate: endDate.toISOString(),
           status: "subscribed with renewal date",
           payedBy: username,
         });
@@ -127,10 +131,12 @@ export const subscribeFamAsPatient = async (username: string, packageName: strin
       patient.healthPackageSubscription = [];
     }
     // Add the health package to the subscription array
+    const newDate = new Date();
+      const endDate = new Date(newDate);
     patient.healthPackageSubscription.push({
       name: packageName,
-      startdate: '',
-      enddate: '',
+      startdate: newDate.toISOString(),
+        enddate: endDate.toISOString(),
       status: 'subscribed with renewal date',
       payedBy: username,
     });
@@ -200,10 +206,12 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
         if (!sessionUrl) {
           return res.status(500).json({ error: 'Failed to create payment session' });
         }
+        const newDate = new Date();
+      const endDate = new Date(newDate);
         familyMember.healthPackageSubscription.push({
           name: packageName,
-          startdate: '',
-          enddate: '',
+          startdate: newDate.toISOString(),
+        enddate: endDate.toISOString(),
           status: "subscribed with renewal date" ,
           payedBy: username, 
         });
@@ -222,10 +230,12 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
         else {
           // Deduct the cost from the wallet balance
         patient.walletBalance -= subscriptionCost;
+        const newDate = new Date();
+      const endDate = new Date(newDate);
         familyMember.healthPackageSubscription.push({
           name: packageName,
-          startdate: '',
-          enddate: '',
+          startdate: newDate.toISOString(),
+        enddate: endDate.toISOString(),
           status: "subscribed with renewal date",
           payedBy: username,   
         });
