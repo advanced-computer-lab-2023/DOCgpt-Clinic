@@ -40,7 +40,7 @@ const subscribedPage = () => {
       
       <SubscribedHealthPackages />
       <div style={{ margin: '30px' }}>
-        <ViewFamilyMembersAndPackages />
+        {/* <ViewFamilyMembersAndPackages /> */}
       </div>
 
       {/* Other content for the My Packages page if needed */}

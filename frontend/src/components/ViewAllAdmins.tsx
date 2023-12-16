@@ -26,7 +26,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import DeleteIcon from "@mui/icons-material/Delete"; // Import DeleteIcon
 import PersonAddTwoToneIcon from '@mui/icons-material/PersonAddTwoTone'; // Import the add person icon
 import CreateAdminButton from './addAdmin'; // Update the path as necessary
-import El7a2niInfo from "./El7a2ni-info";
+import El7a2niAdminInfo from "./El7a2niAdmin-info";
 
 interface Admin {
   _id: string;
@@ -163,7 +163,7 @@ const AdminList: React.FC = () => {
         </DialogActions>
       </Dialog>
     </Container>
-    <El7a2niInfo/>
+    <El7a2niAdminInfo/>
     </>
   );
 };

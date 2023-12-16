@@ -15,7 +15,7 @@ import Patient from "../../components/Patient";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niDocInfo from "../../components/El7a2niDoc-info";
 
 
 function MyPatients() {
@@ -202,7 +202,7 @@ function MyPatients() {
           </Paper>
         </div>
       </Container>
-      <El7a2niInfo />
+      <El7a2niDocInfo />
       
     </>
   );

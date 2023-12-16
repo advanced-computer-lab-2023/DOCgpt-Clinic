@@ -25,7 +25,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 import SearchIcon from "@mui/icons-material/Search";
 import AdminBar from "./admin Bar/adminBar";
-import El7a2niInfo from "./El7a2ni-info";
+import El7a2niAdminInfo from "./El7a2niAdmin-info";
 interface Patient {
   _id: string;
   username: string;
@@ -238,7 +238,7 @@ const PatientList1: React.FC = () => {
         </DialogActions>
       </Dialog>
     </Container>
-    <El7a2niInfo/>
+    <El7a2niAdminInfo/>
     </>
   );
 };

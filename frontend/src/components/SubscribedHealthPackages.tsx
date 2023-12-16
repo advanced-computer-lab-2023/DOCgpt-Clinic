@@ -94,50 +94,52 @@ const SubscribedHealthPackages = () => {
 
   return (
     <Container>
-      <Typography
+      {/* <Typography
         color="primary"
         style={{ textAlign: "center" }}
         variant="h4"
         gutterBottom
       >
         My Subscribed Packages
-      </Typography>
-      <Grid container spacing={2}>
-        {Array.isArray(subscribedPackages) &&
-          subscribedPackages.map((pkg, index) => (
-            <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-              <Paper
-                style={{
-                  padding: "20px",
-                  height: "250px",
-                  transition: "box-shadow 0.3s",
-                  width: "100%", // Set the width to 100%
-                  overflow: "hidden",
-                }}
-                sx={{
-                  "&:hover": {
-                    boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
-                  },
-                }}
-              >
-                <Typography variant="h6" gutterBottom>
-                  {pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  Status: {pkg.status}
-                </Typography>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => handleRemoveSubscription(pkg.name)}
-                  style={{ marginTop: "15px" }}
-                >
-                  Unsubscribe
-                </Button>
-              </Paper>
-            </Grid>
-          ))}
+      </Typography> */}
+     <Grid container spacing={2} justifyContent="center" alignItems="center">
+  {Array.isArray(subscribedPackages) &&
+    subscribedPackages.map((pkg, index) => (
+      <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+        <Paper
+          style={{
+            padding: "20px",
+            height: "250px",
+            transition: "box-shadow 0.3s",
+            width: "100%", // Set the width to 100%
+            overflow: "hidden",
+          }}
+          sx={{
+            "&:hover": {
+              boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)",
+            },
+          }}
+        >
+          <Typography variant="h5" gutterBottom    component="div"
+          sx={{ fontWeight: "bold" }}>
+            {pkg.name.charAt(0).toUpperCase() + pkg.name.slice(1)}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            Status: {pkg.status}
+          </Typography>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleRemoveSubscription(pkg.name)}
+            style={{ marginTop: "15px" }}
+          >
+            Unsubscribe
+          </Button>
+        </Paper>
       </Grid>
+    ))}
+</Grid>
+
 
       {/* Confirmation Dialog */}
       <Dialog

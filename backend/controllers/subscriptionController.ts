@@ -242,10 +242,10 @@ export const subscribeToHealthPackageForFamily = async (req: Request, res: Respo
     } else {
       return res.status(404).json({ error: 'No family members found for this patient' });
     }
-  } catch (error) {
-    console.error('Error subscribing to health package for family member:', error);
-    return res.status(500).json({ error: 'Internal server error' });
-  }
+  }catch (error) {
+  console.error('Error subscribing to health package for family member:', error);
+  return res.status(500).json({ error: 'Internal server error'});
+}
 };
 
 export const viewSubscribedPackages = async (req: Request, res: Response) => {
