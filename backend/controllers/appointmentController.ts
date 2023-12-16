@@ -573,10 +573,14 @@ export const payWithCredit = async (req: Request, res: Response, sessionPrice: a
               name: 'Appointment',
             },
             unit_amount: sessionPrice * 100,
+
           },
           quantity: 1,
         },
       ],
+      shipping_address_collection: {
+        allowed_countries: ['US', 'CA', 'EG'], // List of allowed countries
+      },
       success_url: 'http://localhost:3000/success', // Update with your success URL
       cancel_url: 'http://localhost:3000/cancel', // Update with your cancel URL
     });
