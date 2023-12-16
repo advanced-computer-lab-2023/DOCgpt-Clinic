@@ -11,10 +11,13 @@ import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
 import ScaleIcon from '@mui/icons-material/Scale';
 import Back from "../../components/backButton";
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert from '@mui/material/Alert';
 
 import Dialog from "@mui/material/Dialog";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
+import React from "react";
 
 interface HealthRecord{
     MedicalHistory:{
@@ -69,6 +72,9 @@ function ViewMyHealthRecord(){
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isCommentsExpanded, setIsCommentsExpanded] = useState(false);
   const [showNoHealthRecordMessage, setShowNoHealthRecordMessage] = useState<boolean>(false);
+  const [openAlert, setOpenAlert] = React.useState(false);
+  const [alertMessage, setAlertMessage] = React.useState('');
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
     useEffect(() => {
         async function fetchHealthRecord() {
@@ -92,7 +98,7 @@ function ViewMyHealthRecord(){
         }
         }
         fetchHealthRecord();
-      }, []); // An empty dependency array means this effect runs once on component mount.
+      }, [submittedDocuments]); // An empty dependency array means this effect runs once on component mount.
 
       useEffect(() => {
         if (!healthRecord) {
@@ -111,61 +117,66 @@ function ViewMyHealthRecord(){
      
       const handleSubmit = (section: string, subsection: string) => async () => {
         try {
-            if (!selectedFiles) {
-                setErrorMessage('Please fill in all the required fields.');
-                return;
-              }
+          if (!selectedFiles) {
+            setErrorMessage('Please fill in all the required fields.');
+
+           setSnackbarOpen(true);
+            return; 
+          }
+          if(!healthRecord){
+            setSnackbarOpen(true);
+          }
       
           const formData = new FormData();
-        //   const fileName = `${documentName.replace(/\s+/g, '')}_${selectedFiles[0].name}`;
           formData.append('documents', selectedFiles[0]);
-          const token=localStorage.getItem("authToken")
+          const token = localStorage.getItem("authToken");
           const response = await axios.patch(`/routes/patient/uploadDocs?section=${section}&subsection=${subsection}`, formData, {
-            headers:{
-                Authorization:`Bearer ${token}`
+            headers: {
+              Authorization: `Bearer ${token}`
             }
           });
       
           if (response.status === 200) {
-            alert("Submitted Successfully!")
-            console.log(response);
+            const newDocument = selectedFiles[0].name;
+            setSubmittedDocuments([...submittedDocuments, newDocument]); // Add the new document to the list
             setErrorMessage(null);
+            setOpenAlert(true); // Show the Snackbar
           } else {
             console.error('Error submitting document:', response.statusText);
             setErrorMessage('Error submitting document. Please try again.');
           }
-        } catch (error:any) {
+        } catch (error: any) {
           console.error('Error submitting document:', error.message);
           setErrorMessage('Error submitting document. Please try again.');
         }
       };
+      
 
       const handleRemove = (section: string, subsection: string, path: String) => async () => {
         try {
-              const token=localStorage.getItem("authToken")
-             const response = await axios.patch(`/routes/patient/deleteDocs?section=${section}&subsection=${subsection}`, {
-               path : path
-             }, {
-                headers:{
-                    Authorization:`Bearer ${token}`
-                }
-             });
-
-             if (response.status === 200) {
-                alert("Removed Successfully!")
-                console.log(response);
-                setErrorMessage(null);
-              } else {
-                console.error('Error removing document:', response.statusText);
-                setErrorMessage('Error removing document. Please try again.');
-              }
-
-        } catch (error:any) {
+          const token = localStorage.getItem("authToken");
+          const response = await axios.patch(`/routes/patient/deleteDocs?section=${section}&subsection=${subsection}`, {
+            path: path
+          }, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+      
+          if (response.status === 200) {
+            setAlertMessage('Document removed successfully');
+            setOpenAlert(true);
+            setErrorMessage(null);
+          } else {
+            console.error('Error removing document:', response.statusText);
+            setErrorMessage('Error removing document. Please try again.');
+          }
+        } catch (error: any) {
           console.error('Error removing document:', error.message);
           setErrorMessage('Error removing document. Please try again.');
         }
       };
-    
+      
      
       return (
         <>
@@ -274,6 +285,18 @@ function ViewMyHealthRecord(){
 </CardContent>
 
 </Card>
+<Snackbar
+  open={snackbarOpen}
+  autoHideDuration={2000}
+  onClose={() => setSnackbarOpen(false)}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+>
+  <MuiAlert severity="error" sx={{ width: '100%', fontSize: '1.5rem' }}>
+    Please choose a file
+  </MuiAlert>
+</Snackbar>
+
+
 
               {/* Medical History Section */}
              
@@ -423,28 +446,41 @@ function ViewMyHealthRecord(){
       ))}
     </Grid>
     <div style={{ marginTop: '30px' }}></div> 
-    <Grid item xs={6}>
-      <input
-        type="file"
-        accept=".pdf, .jpg, .jpeg, .png"
-        onChange={handleFileChange}
-      />
-      <Button
-        variant="contained"
-        onClick={handleSubmit("Laboratory", "BloodTests")}
-        style={{
-          backgroundColor: "grey", // Grey background color
-          color: "#fff", // Text color
-          transition: "background-color 0.3s ease", // Smooth transition on hover
-          marginTop: "10px", // Adjust the margin-top here
-          marginLeft:"56px"
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
-      >
-        Submit Document
-      </Button>
-    </Grid>
+   <Grid item xs={6}>
+  <input
+    type="file"
+    accept=".pdf, .jpg, .jpeg, .png"
+    onChange={handleFileChange}
+  />
+  <Button
+    variant="contained"
+    onClick={handleSubmit("Laboratory", "BloodTests")}
+    style={{
+      backgroundColor: "grey", // Grey background color
+      color: "#fff", // Text color
+      transition: "background-color 0.3s ease", // Smooth transition on hover
+      marginTop: "10px", // Adjust the margin-top here
+      marginLeft: "56px"
+    }}
+    onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
+    onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
+  >
+    Submit Document
+  </Button>
+
+  {/* Display submitted documents */}
+  {/* {submittedDocuments.length > 0 && (
+    <div>
+      <p>Submitted Documents:</p>
+      <ul>
+        {submittedDocuments.map((document, index) => (
+          <li key={index}>{document}</li>
+        ))}
+      </ul>
+    </div>
+  )} */}
+</Grid>
+
 
     {/* XRays Upload Section */}
     <Grid item xs={6}>
@@ -803,21 +839,23 @@ function ViewMyHealthRecord(){
         accept=".pdf, .jpg, .jpeg, .png"
         onChange={handleFileChange}
       />
-      <Button
-        variant="contained"
-        onClick={handleSubmit("Laboratory", "BloodTests")}
-        style={{
-          backgroundColor: "grey", // Grey background color
-          color: "#fff", // Text color
-          transition: "background-color 0.3s ease", // Smooth transition on hover
-          marginTop: "10px", // Adjust the margin-top here
-          marginLeft:"56px"
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
-      >
-        Submit Document
-      </Button>
+     <Button
+  variant="contained"
+  onClick={handleSubmit('Laboratory', 'BloodTests')}
+  style={{
+    backgroundColor: 'grey',
+    color: '#fff',
+    transition: 'background-color 0.3s ease',
+    marginTop: '10px',
+    marginLeft: '56px',
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4285f4')}
+  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'grey')}
+  disabled={!healthRecord} // Disable the button when healthRecord is false
+>
+  Submit Document
+</Button>
+
     </Grid>
 
     {/* XRays Upload Section */}
@@ -833,20 +871,22 @@ function ViewMyHealthRecord(){
         onChange={handleFileChange}
       />
       <Button
-        variant="contained"
-        onClick={handleSubmit("Laboratory", "XRays")}
-        style={{
-          backgroundColor: "grey", // Grey background color
-          color: "#fff", // Text color
-          transition: "background-color 0.3s ease", // Smooth transition on hover
-          marginTop: "10px", // Adjust the margin-top here
-          marginLeft:"56px"
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
-      >
-        Submit Document
-      </Button>
+  variant="contained"
+  onClick={handleSubmit('Laboratory', 'XRays')}
+  style={{
+    backgroundColor: 'grey',
+    color: '#fff',
+    transition: 'background-color 0.3s ease',
+    marginTop: '10px',
+    marginLeft: '56px',
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4285f4')}
+  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'grey')}
+  disabled={!healthRecord} // Disable the button when healthRecord is false
+>
+  Submit Document
+</Button>
+
     </Grid>
 
     {/* Medication List Documents Upload Section */}
@@ -863,22 +903,23 @@ function ViewMyHealthRecord(){
         onChange={handleFileChange}
       />
      
-      <Button
-        variant="contained"
-        onClick={handleSubmit("MedicationList", "CurrentMedications")}
-        style={{
-          backgroundColor: "grey", // Grey background color
-          color: "#fff", // Text color
-          transition: "background-color 0.3s ease", // Smooth transition on hover
-          marginTop: "10px", // Adjust the margin-top here
-          marginLeft:"56px"
-        
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
-      >
-        Submit Document
-      </Button>
+     <Button
+  variant="contained"
+  onClick={handleSubmit('MedicationList', 'CurrentMedications')}
+  style={{
+    backgroundColor: 'grey',
+    color: '#fff',
+    transition: 'background-color 0.3s ease',
+    marginTop: '10px',
+    marginLeft: '56px',
+  }}
+  onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4285f4')}
+  onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'grey')}
+  disabled={!healthRecord} // Disable the button when healthRecord is false
+>
+  Submit Document
+</Button>
+
     </Grid>
   
     <Grid item xs={6}>
@@ -894,21 +935,22 @@ function ViewMyHealthRecord(){
         accept=".pdf, .jpg, .jpeg, .png"
         onChange={handleFileChange}
       />
-      <Button
-        variant="contained"
-        onClick={handleSubmit("MedicationList", "PastMedications")}
-        style={{
-          backgroundColor: "grey", // Grey background color
-          color: "#fff", // Text color
-          transition: "background-color 0.3s ease", // Smooth transition on hover
-          marginTop: "10px", // Adjust the margin-top here
-          marginLeft:"56px"
-        }}
-        onMouseOver={(e) => (e.currentTarget.style.backgroundColor = "#4285f4")} // Hover style
-        onMouseOut={(e) => (e.currentTarget.style.backgroundColor = "grey")} // Revert to grey on mouse out
-      >
-        Submit Document
-      </Button>
+       <Button
+          variant="contained"
+          onClick={handleSubmit('Laboratory', 'BloodTests')}
+          style={{
+            backgroundColor: 'grey',
+            color: '#fff',
+            transition: 'background-color 0.3s ease',
+            marginTop: '10px',
+            marginLeft: '56px',
+          }}
+          onMouseOver={(e) => (e.currentTarget.style.backgroundColor = '#4285f4')}
+          onMouseOut={(e) => (e.currentTarget.style.backgroundColor = 'grey')}
+          disabled={!healthRecord} // Disable the button when healthRecord is false
+        >
+          Submit Document
+        </Button>
     </Grid>
   </CardContent>
 </Card>
@@ -932,9 +974,10 @@ function ViewMyHealthRecord(){
             </Accordion>
           </Container>
         )}
-        </div>
+
+       </>
       );
-      
+
       
       
       
@@ -945,3 +988,7 @@ function ViewMyHealthRecord(){
 
 }
 export default ViewMyHealthRecord;
+
+function setSnackbarOpen(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
