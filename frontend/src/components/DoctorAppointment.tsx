@@ -28,6 +28,8 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
     }
     const {status, patient, date, type, _id, doctor, scheduledBy} = appointment;
     const appointmentDate = new Date(date).toISOString().split('T')[0];
+    const appointmentt = new Date(date);
+  const isPastAppointment = appointmentt < new Date();
 
     const handleAppointmentReschedule = () => {
         localStorage.setItem("selectedAppointmentId", _id);
@@ -148,7 +150,7 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
   <Button
     onClick={handleAppointmentReschedule}
     variant="contained"
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     color="primary"
     style={{ marginRight: "10px", borderRadius: "25px" }}
   >
@@ -157,7 +159,7 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
   <Button
     onClick={handleFollowUpClicked}
     variant="outlined"
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     color="primary"
     style={{ marginRight: "10px", borderRadius: "25px" }}
   >
@@ -165,7 +167,7 @@ const DoctorAppointment = ({ appointment }: AppointmentProps) => {
   </Button>
   <Button
     onClick={handleCancel}
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     variant="contained"
     style={{
       backgroundColor: status === "cancelled" ? "#CCCCCC" : "#FF5252",

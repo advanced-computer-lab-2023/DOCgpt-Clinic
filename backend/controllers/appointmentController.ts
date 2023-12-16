@@ -224,8 +224,8 @@ export const createAppointment = async (req: Request, res: Response) => {
 
     console.log("im hereree");
     // Create a notification for the patient
-     const nn= await createNotificationWithCurrentDate(username,emailSubject,msgSubject);
-     const nnn= await createNotificationWithCurrentDate(doctorUsername,emailSubject,msgSubject);
+     const nn= await createNotificationWithCurrentDate(username,msgSubject,msg);
+     const nnn= await createNotificationWithCurrentDate(doctorUsername,msgSubject,msg1);
 
      return appointment ;
     
