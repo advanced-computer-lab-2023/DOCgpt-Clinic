@@ -116,7 +116,7 @@ function SignUpPatient() {
       // Handle errors, e.g., display an error message to the user.
     }
   };
-
+  
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">

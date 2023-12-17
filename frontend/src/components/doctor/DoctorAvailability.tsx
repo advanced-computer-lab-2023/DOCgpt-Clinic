@@ -21,7 +21,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import InputLabel from '@mui/material/InputLabel';
 import InputAdornment from '@mui/material/InputAdornment';
 import TimePicker from '@mui/lab/TimePicker';
-
+import MuiAlert from '@mui/material/Alert';
 import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
 import DoctorTimeSlot from './DoctorTimeSlot';
 import Background from '../../Appointments.jpeg';
@@ -42,6 +42,8 @@ const DoctorAvailability: React.FC = () => {
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [disableAdd, setDisableAdd] = useState(true);
   const [disableSubmit, setDisableSubmit] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
   const [isLoading, setIsLoading] = useState(true);
 
 
@@ -61,7 +63,7 @@ const DoctorAvailability: React.FC = () => {
       );
 
       console.log('Time slots added successfully:', response.data);
-      setSuccessDialogOpen(true);
+      setSnackbarOpen(true);
     } catch (error) {
       console.error('Error adding time slots:', error);
     }
@@ -138,7 +140,16 @@ fetchData();
     window.location.reload();
 
   };
-  
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <>
     <DrawerAppBar/>
@@ -184,6 +195,16 @@ fetchData();
 
        
           
+    <Snackbar
+  open={snackbarOpen}
+  autoHideDuration={2000}
+  onClose={() => setSnackbarOpen(false)}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+>
+  <MuiAlert severity="success" sx={{ width: '100%', fontSize: '1.5rem' }}>
+    Time Slots Added Successfully
+  </MuiAlert>
+</Snackbar>
 
 
         <Grid container alignItems="center" >
