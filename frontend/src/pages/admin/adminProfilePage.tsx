@@ -16,12 +16,13 @@ import man from "../../man.jpg";
 import PatientAppBar from "../../components/patientBar/patientBar";
 import AdminAppBar from "../../components/admin Bar/adminBar";
 import { margin } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
 const AdminProfilePage = () => {
   const [patient, setPatient] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchPatient = async () => {
       try {
@@ -104,6 +105,9 @@ const AdminProfilePage = () => {
       mr: 1,
     },
   };
+  const handleChangePasswordClick = () => {
+    navigate("/changepasswordadmin");
+  };
 
   return (
     <>
@@ -133,6 +137,7 @@ const AdminProfilePage = () => {
                 color="primary"
                 startIcon={<LockResetIcon />}
                 sx={{ mt: 3 }}
+                onClick={handleChangePasswordClick}
               >
                 Change Password
               </Button>

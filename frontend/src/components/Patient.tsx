@@ -153,7 +153,7 @@ const Patient = ({ patient, doctor }: PatientProps) => {
       // Append prescriptionId to the URL
      
       const newWindow = window.open(
-        ` http://localhost:3001/doctormed/${prescriptionId}`,
+       ` http://localhost:3001/doctormed/${prescriptionId}`,
         "_blank"
       );
 
