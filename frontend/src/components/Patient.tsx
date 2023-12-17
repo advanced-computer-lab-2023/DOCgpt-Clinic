@@ -133,7 +133,6 @@ const Patient = ({ patient, doctor }: PatientProps) => {
   };
 
   const addPresc = async () => {
-    
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(

@@ -505,27 +505,35 @@ export const updateMedicineInPrescription = async (req: Request, res: Response) 
  // Update prescription medicines
  export const updatePrescriptionMed = async (req: Request, res: Response) => {
   try {
-    const { prescriptionId } = req.params;
+    const { id } = req.params;
     const { medicineId, quantity, dosage } = req.body;
+        console.log(id);
+        console.log(medicineId);
+
 
     // Ensure that medicineId is provided
     if (!medicineId) {
       return res.status(400).send({ message: 'Medicine ID is required.' });
     }
 
+    // Find the prescription and update the specific medicine's quantity and dosage
     const updatedPrescription = await Prescription.findOneAndUpdate(
-      { _id: prescriptionId, 'Medicines._id': medicineId },
+      { _id: id, 'Medicines._id': medicineId },
       { $set: { 'Medicines.$.quantity': quantity, 'Medicines.$.dosage': dosage } },
       { new: true }
     );
 
+    // Handle cases where the prescription or medicine is not found
     if (!updatedPrescription) {
       return res.status(404).send({ message: 'Prescription not found or medicine not in prescription.' });
     }
 
+    // Return the updated prescription
     res.status(200).json({ message: 'Medicine updated in prescription successfully.', updatedPrescription });
   } catch (error) {
+    // Handle potential server errors
     res.status(500).json({ message: 'Error updating medicine in prescription', error });
   }
 };
+
 
