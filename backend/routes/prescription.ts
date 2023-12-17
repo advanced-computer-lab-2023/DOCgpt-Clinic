@@ -26,7 +26,7 @@ router.get('/prescriptions', getAllPrescriptions);
 
 // Update a prescription
 router.put('/prescriptions/:id', updatePrescription);
-//router.put('/updatePrescMed/:id' , updatePrescriptionMedicines);
+router.post('/updatePresc/:id' , updatePrescriptionMed);
 router.get('/viewMedicineNamesInPrescription', viewMedicineNamesInPrescription);
 router.get('/getAllPrescriptionsPatient', getAllPrescriptionsPatient);
 router.get('/getPrescriptionDetails',getPrescriptionDetails);
@@ -35,12 +35,12 @@ router.post('/addMedTopresc/:prescriptionId', addMedtoPresc);
 router.post('/addToCart',  addPrescriptionToCart);
 router.post('/changeStatus',  changeStatus);
 router.delete('/deleteMedPresc/:prescriptionId', deleteMedPresc);
-router.put('updatePrescMed/:prescriptionId', updatePrescriptionMed);
+//router.put('updatePrescMed/:prescriptionId', updatePrescriptionMed);
 
 
 
 router.post('/checkmedicineexists',checkifexists);
 router.delete('/removeMedFromPresc', deleteMedicineFromPresc);
-router.put('/updateMedicineInPrescription/:id', updateMedicineInPrescription);
+router.post('/updateMedicineInPrescription/:id', updateMedicineInPrescription);
 
 export default router;

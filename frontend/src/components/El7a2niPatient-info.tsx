@@ -15,6 +15,9 @@ const El7a2niPatientInfo = () => {
   const handlePackagesClick = () => {
     navigate("/patient/healthPackages");
   };
+  const handleAppointmentsClick = () => {
+    navigate("/patient/viewDoctors");
+  };
 
   return (
     <div
@@ -84,7 +87,28 @@ const El7a2niPatientInfo = () => {
                 "1px solid transparent")
             }
           >
-            Schedule Appointment
+            My Appointment
+          </span>
+        </p>
+        <p>
+          <span
+            style={{
+              color: "#fff",
+              cursor: "pointer",
+              textDecoration: "none",
+              borderBottom: "1px solid transparent",
+              transition: "border-bottom 0.3s",
+            }}
+            onClick={handleAppointmentsClick}
+            onMouseEnter={(e) =>
+              ((e.target as HTMLElement).style.borderBottom = "1px solid #fff")
+            }
+            onMouseLeave={(e) =>
+              ((e.target as HTMLElement).style.borderBottom =
+                "1px solid transparent")
+            }
+          >
+            Schedule Appointments
           </span>
         </p>
         <p>

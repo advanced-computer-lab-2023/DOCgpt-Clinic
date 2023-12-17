@@ -6,6 +6,9 @@ import DoctorBar from "../../components/Doctor bar/doctorBar";
 import Background from '../../HealthRec.jpg';
 import Back from "../../components/backButton";
 
+import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niDocInfo from "../../components/El7a2niDoc-info";
+
 function HealthRecordEmpty(){
     //Take the Patient username
     const location = useLocation();
@@ -97,7 +100,8 @@ function HealthRecordEmpty(){
               </Typography>
             </Paper>
           </div>
-          </>
+        <El7a2niDocInfo />
+        </>
       );
       
       

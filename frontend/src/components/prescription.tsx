@@ -44,7 +44,16 @@ const navigate=useNavigate();  const [cart, setCart] = useState<Prescription | n
     navigate(`/selectedPres/${id}`);
   };
   const formattedDate = prescription && new Date(prescription.date).toISOString().split('T')[0];
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div style={{margin:'left', justifyContent: 'center', alignItems: 'center' }}>
       <Card  style={{ borderRadius: '8px', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', height: '300px', width: '500px' }}>

@@ -47,7 +47,7 @@ const HealthPackageComp = ({
       if (Array.isArray(healthPackages)) {
         const isSubscribed = healthPackages.some((p) => p.name === packageName);
         if (isSubscribed) {
-          setOpenAlert(true);
+          setOpenAlert(true); 
         } else {
           navigate(`/health-package-subscription/${packageName}`);
         }

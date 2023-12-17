@@ -56,6 +56,8 @@ const DoctorAvailability: React.FC = () => {
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [disableAdd, setDisableAdd] = useState(true);
   const [disableSubmit, setDisableSubmit] = useState(true);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+
   const [openAlert, setOpenAlert] = useState(false);
 
 
@@ -74,8 +76,8 @@ const DoctorAvailability: React.FC = () => {
         }
       );
 
-      console.log("Time slots added successfully:", response.data);
-      setSuccessDialogOpen(true);
+      console.log('Time slots added successfully:', response.data);
+      setSnackbarOpen(true);
     } catch (error) {
       console.error("Error adding time slots:", error);
     }
@@ -168,7 +170,16 @@ const DoctorAvailability: React.FC = () => {
     setSuccessDialogOpen(false);
     window.location.reload();
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <>
       <DrawerAppBar />
@@ -212,26 +223,28 @@ const DoctorAvailability: React.FC = () => {
         </div>
       </div>
 
-      <Grid container alignItems="center">
-        <Grid item xs={6}>
-          <Grid
-            container
-            justifyContent="center"
-            alignItems="center"
-            style={styles.container}
-          >
-            <Paper elevation={5} style={styles.paper}>
-              <Grid
-                container
-                spacing={2}
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Grid item xs={7}>
-                  <Typography variant="h1" style={{ marginBottom: "50px" }}>
-                    When are you free?
-                  </Typography>
-                </Grid>
+       
+          
+    <Snackbar
+  open={snackbarOpen}
+  autoHideDuration={2000}
+  onClose={() => setSnackbarOpen(false)}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+>
+  <MuiAlert severity="success" sx={{ width: '100%', fontSize: '1.5rem' }}>
+    Time Slots Added Successfully
+  </MuiAlert>
+</Snackbar>
+
+
+        <Grid container alignItems="center" >
+          <Grid item xs={6} >
+          <Grid container justifyContent="center" alignItems="center" style={styles.container} >
+              <Paper elevation={5} style={styles.paper}>
+                <Grid container spacing={2} justifyContent="center" alignItems="center">
+                  <Grid item xs={7}>
+                    <Typography variant="h1" style={{marginBottom : '50px'}}>When are you free?</Typography>  
+                  </Grid>          
 
                 <Grid container spacing={2} justifyContent="center">
                   <Grid item xs={7}>

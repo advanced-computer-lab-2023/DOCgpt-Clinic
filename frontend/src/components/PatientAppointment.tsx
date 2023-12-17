@@ -105,7 +105,16 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
     month: "long",
     day: "numeric",
   }).format(new Date(appointment.date));
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <Card style={{padding:"10px", margin: "10px" , height: '250px', width: '600px'}}>
       <Container style={{display: "flex", justifyContent: "center"}}>

@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material';
 import React, { useState, ChangeEvent } from 'react';
 
 interface Package {
@@ -69,7 +70,16 @@ const PackageList: React.FC = () => {
     };
     setEditedPackages(editedCopy);
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div>
       <h2>Package List</h2>
