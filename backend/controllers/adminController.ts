@@ -91,13 +91,6 @@ export const createAdmin = async (req: Request, res: Response) => {
           res.status(200).json(admin);
       };
       
-
-
-           
-
-
-
-      //delete Doctor
     export const deleteDoctorByUsername = async (req: Request, res: Response) => {
         try {
           const { username } = req.body;
