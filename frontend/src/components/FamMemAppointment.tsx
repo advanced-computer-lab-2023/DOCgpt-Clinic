@@ -122,8 +122,6 @@ const formattedDate = new Intl.DateTimeFormat("en-US", {
     year: "numeric",
     month: "long",
     day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
 }).format(new Date(appointment.date));
 const token = localStorage.getItem("authToken");
   if (!token) {
@@ -183,6 +181,32 @@ return (
                 gutterBottom
             >
                 {formattedDate}
+                {" "}
+                <span style={{ fontWeight: "bold" }}>
+                          {new Date(appointment.date).getHours() === 14
+                            ? new Date(appointment.date).getHours() - 2
+                            : new Date(appointment.date).getHours() === 13 
+                            ? new Date(appointment.date).getHours() - 2
+                            : new Date(appointment.date).getHours() > 12 
+                            ? new Date(appointment.date).getHours() - 14
+                            : new Date(appointment.date).getHours() === 0
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() === 1
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() === 2
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() - 2}
+                          {":"}
+                          {new Date(appointment.date).getMinutes() < 10
+                            ? new Date(appointment.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(appointment.date).getMinutes()}{" "}
+                          {new Date(appointment.date).getHours() === 0? "PM"
+                          :new Date(appointment.date).getHours() === 1? "PM"
+                          :new Date(appointment.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
             </Typography>
             </div>
             <Typography style={{ fontWeight: "bold", textAlign: "center" }}>
@@ -229,16 +253,16 @@ return (
             Request Follow up
             </Button>
             <Button
-            onClick={handleCancel}
-            disabled={status === "cancelled"}
-            variant="contained"
-            style={{
-                backgroundColor: status === "cancelled" ? "#CCCCCC" : "#FF5252",
-                borderRadius: "25px",
-            }}
-            >
-              {status === "cancelled" || isPastAppointment ? "Cancelled" : "Cancel"}
-            </Button>
+    onClick={handleCancel}
+    disabled={status === "cancelled" || isPastAppointment}
+    variant="contained"
+    style={{
+      backgroundColor: status === "cancelled" ? "#CCCCCC" : "#FF5252",
+      borderRadius: "25px",
+    }}
+  >
+    {status === "cancelled" ? "Cancelled" : "Cancel"}
+  </Button>
         </Container>
         </Stack>
     </Container>

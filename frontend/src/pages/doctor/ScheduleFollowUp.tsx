@@ -47,7 +47,19 @@ const ViewMyTimeSlots: React.FC = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setTimeslots(response.data.timeslots);
+            const data = await response.data.timeslots;
+            const sortedSlots = data.sort((a: any, b: any) => {
+              const dateA = new Date(a.date.toLocaleString("en-US",  "Africa/Cairo" ));
+              const dateB = new Date(b.date.toLocaleString("en-US",  "Africa/Cairo" ));
+      
+              if (dateA > dateB) return -1;
+              if (dateA < dateB) return 1;
+              // If dates are equal, compare times
+              const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+              const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+              return timeB - timeA;
+            });
+            setTimeslots(sortedSlots);
         } catch (error) {
             console.error('Error fetching timeslots:', error);
         }
@@ -130,24 +142,47 @@ const ViewMyTimeSlots: React.FC = () => {
           gutterBottom
           style={{ fontWeight: "bold" }}
           >
-        for the old appointment: 
+        For the old appointment: 
 
           </Typography>
           {appointment && 
           <div>
-            <Typography variant="body1"><span style={{fontWeight:'bold'}}>On : </span> {` ${new Date(appointment.date).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-            })}, ${new Date(appointment.date).toLocaleString("en-US", {
+            <Typography variant="body1"><span style={{fontWeight:'bold'}}>On : </span> {` ${new Date(appointment.date).toLocaleString("en-US", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
                 year: "numeric",
-            })}`} </Typography>
-            <Typography variant="body1"> <span style={{fontWeight:'bold'}}>Status : </span> {appointment && appointment.status} </Typography>
+            })}`} 
+            {" "}
+            <span style={{ fontWeight: "bold" }}>
+                          {new Date(appointment.date).getHours() === 14
+                            ? new Date(appointment.date).getHours() - 2
+                            : new Date(appointment.date).getHours() === 13 
+                            ? new Date(appointment.date).getHours() - 2
+                            : new Date(appointment.date).getHours() > 12 
+                            ? new Date(appointment.date).getHours() - 14
+                            : new Date(appointment.date).getHours() === 0
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() === 1
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() === 2
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() - 2}
+                          {":"}
+                          {new Date(appointment.date).getMinutes() < 10
+                            ? new Date(appointment.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(appointment.date).getMinutes()}{" "}
+                          {new Date(appointment.date).getHours() === 0? "PM"
+                          :new Date(appointment.date).getHours() === 1? "PM"
+                          :new Date(appointment.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span></Typography>
+            <Typography variant="body1"gutterBottom> <span style={{fontWeight:'bold'}}>Status : </span> {appointment && appointment.status} </Typography>
           </div>
 
-          
+
           }
             <Typography
             variant="h3"
@@ -157,6 +192,7 @@ const ViewMyTimeSlots: React.FC = () => {
           Pick a new date from your available slots: 
 
             </Typography>
+
     {timeslots.length === 0 ? (
       <Typography variant="body1">You don't have any available time slots</Typography>
     ) : (
@@ -177,15 +213,38 @@ const ViewMyTimeSlots: React.FC = () => {
            <EventIcon style={{ marginRight: "8px" }} />{" "}
            {/* Calendar Icon */}
            <Typography variant="body1">
-           {` ${new Date(timeslot.date).toLocaleTimeString([], {
-               hour: "2-digit",
-               minute: "2-digit",
-           })}, ${new Date(timeslot.date).toLocaleString("en-US", {
+           {` ${new Date(timeslot.date).toLocaleString("en-US", {
                weekday: "short",
                month: "short",
                day: "numeric",
                year: "numeric",
            })}`}
+           {" "}
+           <span style={{ fontWeight: "bold" }}>
+                          {new Date(timeslot.date).getHours() === 14
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() === 13 
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() > 12 
+                            ? new Date(timeslot.date).getHours() - 14
+                            : new Date(timeslot.date).getHours() === 0
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 1
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 2
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() - 2}
+                          {":"}
+                          {new Date(timeslot.date).getMinutes() < 10
+                            ? new Date(timeslot.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(timeslot.date).getMinutes()}{" "}
+                          {new Date(timeslot.date).getHours() === 0? "PM"
+                          :new Date(timeslot.date).getHours() === 1? "PM"
+                          :new Date(timeslot.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
            </Typography>
        </ListItem>
           ))}
@@ -202,15 +261,38 @@ const ViewMyTimeSlots: React.FC = () => {
             Selected Timeslot
             </Typography>
             <Typography variant="body1">
-            {` ${new Date(selectedTimeslot.date).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}, ${new Date(selectedTimeslot.date).toLocaleString("en-US", {
+            {` ${new Date(selectedTimeslot.date).toLocaleString("en-US", {
                         weekday: "short",
                         month: "short",
                         day: "numeric",
                         year: "numeric",
                     })}`}
+                    {" "}
+                    <span style={{ fontWeight: "bold" }}>
+                          {new Date(selectedTimeslot.date).getHours() === 14
+                            ? new Date(selectedTimeslot.date).getHours() - 2
+                            : new Date(selectedTimeslot.date).getHours() === 13 
+                            ? new Date(selectedTimeslot.date).getHours() - 2
+                            : new Date(selectedTimeslot.date).getHours() > 12 
+                            ? new Date(selectedTimeslot.date).getHours() - 14
+                            : new Date(selectedTimeslot.date).getHours() === 0
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() === 1
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() === 2
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() - 2}
+                          {":"}
+                          {new Date(selectedTimeslot.date).getMinutes() < 10
+                            ? new Date(selectedTimeslot.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(selectedTimeslot.date).getMinutes()}{" "}
+                          {new Date(selectedTimeslot.date).getHours() === 0? "PM"
+                          :new Date(selectedTimeslot.date).getHours() === 1? "PM"
+                          :new Date(selectedTimeslot.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
             {/* Add other details of the selected timeslot as needed */}
             </Typography>
         </Paper>
@@ -226,7 +308,7 @@ const ViewMyTimeSlots: React.FC = () => {
     style={{ borderRadius: "25px" }}
     disabled={!selectedTimeslot}
   >
-    Send Request
+    Schedule
   </Button>
 </DialogActions>
  {/* Alert component */}

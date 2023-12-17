@@ -39,6 +39,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
     localStorage.setItem("selectedAppointmentId", _id);
     localStorage.setItem("selectedDoctor", doctor);
     localStorage.setItem("oldDate", date);
+    localStorage.setItem("rescheduled", "false");
     // create a route in app && a page in patient folder
     navigate("/patient/reschedule");
   };
@@ -103,8 +104,6 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
     year: "numeric",
     month: "long",
     day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
   }).format(new Date(appointment.date));
   const token = localStorage.getItem("authToken");
   if (!token) {
@@ -135,6 +134,32 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
               )}
             <Typography variant="h3" style={{ fontWeight: "bold" }} gutterBottom>
             {formattedDate}
+            {" "}
+            <span style={{ fontWeight: "bold" }}>
+                          {new Date(appointment.date).getHours() === 14
+                            ? new Date(appointment.date).getHours() - 2
+                            : new Date(appointment.date).getHours() === 13 
+                            ? new Date(appointment.date).getHours() - 2
+                            : new Date(appointment.date).getHours() > 12 
+                            ? new Date(appointment.date).getHours() - 14
+                            : new Date(appointment.date).getHours() === 0
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() === 1
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() === 2
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() - 2}
+                          {":"}
+                          {new Date(appointment.date).getMinutes() < 10
+                            ? new Date(appointment.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(appointment.date).getMinutes()}{" "}
+                          {new Date(appointment.date).getHours() === 0? "PM"
+                          :new Date(appointment.date).getHours() === 1? "PM"
+                          :new Date(appointment.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
                 </Typography>
             </div>
               <Typography style={{ fontWeight: "bold" , textAlign: "center"}}> With Dr. {doctor}</Typography>
@@ -185,14 +210,14 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   </Button>
   <Button
     onClick={handleCancel}
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     variant="contained"
     style={{
       backgroundColor: status === "cancelled" ? "#CCCCCC" : "#FF5252",
       borderRadius: "25px",
     }}
   >
-    {status === "cancelled" || isPastAppointment ? "Cancelled" : "Cancel"}
+    {status === "cancelled" ? "Cancelled" : "Cancel"}
   </Button>
           </Container>
 

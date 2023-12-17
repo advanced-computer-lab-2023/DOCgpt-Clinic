@@ -46,7 +46,19 @@ useEffect(() => {
         `/routes/doctors/getDoctorByUsername?doctorUsername=${selectedDoctor}`
         );
         console.log(response.data.doctor[0]);
-        setTimeslots(response.data.doctor[0].timeslots);
+        const data = await response.data.doctor[0].timeslots;
+        const sortedSlots = data.sort((a: any, b: any) => {
+          const dateA = new Date(a.date.toLocaleString("en-US",  "Africa/Cairo" ));
+          const dateB = new Date(b.date.toLocaleString("en-US",  "Africa/Cairo" ));
+  
+          if (dateA > dateB) return -1;
+          if (dateA < dateB) return 1;
+          // If dates are equal, compare times
+          const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+          const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+          return timeB - timeA;
+        });
+        setTimeslots(sortedSlots);
         console.log(response.data.doctor[0].timeslots);
     } catch (error) {
         console.error("Error fetching doctor data:", error);
@@ -154,15 +166,38 @@ return (
             style={{ textAlign: "center", fontWeight: "bold" }}
             >
            old appointment: {" "}
-            {` ${new Date(oldDate).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-            })}, ${new Date(oldDate).toLocaleString("en-US", {
+            {` ${new Date(oldDate).toLocaleString("en-US", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
                 year: "numeric",
             })}`}
+            {" "}
+            <span style={{ fontWeight: "bold" }}>
+                          {new Date(oldDate).getHours() === 14
+                            ? new Date(oldDate).getHours() - 2
+                            : new Date(oldDate).getHours() === 13 
+                            ? new Date(oldDate).getHours() - 2
+                            : new Date(oldDate).getHours() > 12 
+                            ? new Date(oldDate).getHours() - 14
+                            : new Date(oldDate).getHours() === 0
+                            ? new Date(oldDate).getHours() + 10
+                            : new Date(oldDate).getHours() === 1
+                            ? new Date(oldDate).getHours() + 10
+                            : new Date(oldDate).getHours() === 2
+                            ? new Date(oldDate).getHours() + 10
+                            : new Date(oldDate).getHours() - 2}
+                          {":"}
+                          {new Date(oldDate).getMinutes() < 10
+                            ? new Date(oldDate)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(oldDate).getMinutes()}{" "}
+                          {new Date(oldDate).getHours() === 0? "PM"
+                          :new Date(oldDate).getHours() === 1? "PM"
+                          :new Date(oldDate).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
             {/* Add other details of the selected timeslot as needed */}
             </Typography>
         )}
@@ -206,15 +241,38 @@ return (
                 <EventIcon style={{ marginRight: "8px" }} />{" "}
                 {/* Calendar Icon */}
                 <Typography variant="body1">
-                    {` ${new Date(timeslot.date).toLocaleTimeString([], {
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    })}, ${new Date(timeslot.date).toLocaleString("en-US", {
+                    {` ${new Date(timeslot.date).toLocaleString("en-US", {
                     weekday: "short",
                     month: "short",
                     day: "numeric",
                     year: "numeric",
                     })}`}
+                    {" "}
+                    <span style={{ fontWeight: "bold" }}>
+                          {new Date(timeslot.date).getHours() === 14
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() === 13 
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() > 12 
+                            ? new Date(timeslot.date).getHours() - 14
+                            : new Date(timeslot.date).getHours() === 0
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 1
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 2
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() - 2}
+                          {":"}
+                          {new Date(timeslot.date).getMinutes() < 10
+                            ? new Date(timeslot.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(timeslot.date).getMinutes()}{" "}
+                          {new Date(timeslot.date).getHours() === 0? "PM"
+                          :new Date(timeslot.date).getHours() === 1? "PM"
+                          :new Date(timeslot.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
                 </Typography>
                 </ListItem>
             ))}
@@ -230,15 +288,38 @@ return (
                 Selected Timeslot
             </Typography>
             <Typography variant="body1">
-                {` ${new Date(selectedTimeslot.date).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-                })}, ${new Date(selectedTimeslot.date).toLocaleString("en-US", {
+                {` ${new Date(selectedTimeslot.date).toLocaleString("en-US", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
                 year: "numeric",
                 })}`}
+                {" "}
+                <span style={{ fontWeight: "bold" }}>
+                          {new Date(selectedTimeslot.date).getHours() === 14
+                            ? new Date(selectedTimeslot.date).getHours() - 2
+                            : new Date(selectedTimeslot.date).getHours() === 13 
+                            ? new Date(selectedTimeslot.date).getHours() - 2
+                            : new Date(selectedTimeslot.date).getHours() > 12 
+                            ? new Date(selectedTimeslot.date).getHours() - 14
+                            : new Date(selectedTimeslot.date).getHours() === 0
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() === 1
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() === 2
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() - 2}
+                          {":"}
+                          {new Date(selectedTimeslot.date).getMinutes() < 10
+                            ? new Date(selectedTimeslot.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(selectedTimeslot.date).getMinutes()}{" "}
+                          {new Date(selectedTimeslot.date).getHours() === 0? "PM"
+                          :new Date(selectedTimeslot.date).getHours() === 1? "PM"
+                          :new Date(selectedTimeslot.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
                 {/* Add other details of the selected timeslot as needed */}
             </Typography>
             </Paper>

@@ -137,25 +137,27 @@ function ViewFamMemAppointments() {
 
   useEffect(() => {
     if (upcoming) {
+      const today = new Date();
       const filtered = appointments.filter(
-        (appointment: any) => appointment.status.toLowerCase() === "upcoming"
+        (appointment: any) => new Date(appointment.date) >= today
       );
       setFilteredAppointments(filtered);
     } else {
       setFilteredAppointments(appointments);
     }
-  }, [upcoming]);
-
+  }, [upcoming, appointments]);
+  
   useEffect(() => {
     if (past) {
+      const today = new Date();
       const filtered = appointments.filter(
-        (appointment: any) => appointment.status.toLowerCase() !== "upcoming"
+        (appointment: any) => new Date(appointment.date) < today
       );
       setFilteredAppointments(filtered);
     } else {
       setFilteredAppointments(appointments);
     }
-  }, [past]);
+  }, [past, appointments]);
   const token = localStorage.getItem("authToken");
   if (!token) {
     return (
@@ -280,6 +282,11 @@ function ViewFamMemAppointments() {
           </Grid>
           <Grid item xs={12} md={8}>
             <Container>
+            { appointments.length === 0 && (
+    <Typography variant="h6" align="center" style={{ marginTop: '20px' }}>
+      Your Family currently do not have any appointments.
+    </Typography>
+  )}
               {appointments &&
                 !filteredAppointments &&
                 appointments.map((appointment) => (
