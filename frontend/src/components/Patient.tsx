@@ -132,13 +132,13 @@ const Patient = ({ patient, doctor }: PatientProps) => {
     window.open(`mailto:${email}`);
   };
 
-  const addPresc = async (name: any) => {
+  const addPresc = async () => {
     try {
       const token = localStorage.getItem("authToken");
       const response = await axios.post(
         "/routes/prescriptions",
         {
-          patientUsername: name,
+          patientUsername: username,
         },
         {
           headers: {

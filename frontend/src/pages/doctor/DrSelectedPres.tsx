@@ -25,7 +25,11 @@ interface Prescription {
   Medicines: Medicine[];
   _id: string;
 }
-
+interface Medicine {
+  medicineName: string;
+  dosage: string;
+  quantity: number;
+}
 const DrSelectedPrescription = () => {
   const { id } = useParams();
   const [prescription, setPrescription] = useState<Prescription>();
@@ -37,6 +41,8 @@ const DrSelectedPrescription = () => {
   const [editedDosages, setEditedDosages] = useState<{ [key: string]: string }>({});
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [medicineToDelete, setMedicineToDelete] = useState<string | null>(null);
+  const [editedMedicines, setEditedMedicines] = useState<{ [name: string]: { quantity: number, dosage: string } }>({});
+ 
 
   
 // Define the fetchPrescriptionDetails function
@@ -164,61 +170,62 @@ useEffect(() => {
     setEditedDosages(initialDosages);
   };
 
-  // const handleDone = async () => {
-  //   try {
-  //     const token = localStorage.getItem('authToken');
+  const handleDone = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
 
-  //     // Iterate over the editedQuantities and editedDosages
-  //     for (const medicineId in editedQuantities) {
-  //       const response = await axios.put(
-  //         `/updatePrescMed/${id}`,
-  //         {
-  //           medicineId,
-  //           quantity: editedQuantities[medicineId],
-  //           dosage: editedDosages[medicineId],
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
+      // Iterate over the editedQuantities and editedDosages
+      for (const medicineId in editedQuantities) {
+        console.log(medicineId);
+        const response = await axios.post(
+          `/routes/updatePresc/${id}`,
+          {
+            medicineId,
+            quantity: editedQuantities[medicineId],
+            dosage: editedDosages[medicineId],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         
-  //       // Handle the response if needed
-  //       console.log(response.data);
-  //     }
-
-  //     // Notify the parent component or handle success
-  //   } catch (error) {
-  //     console.error('Error updating medicines:', error);
-  //   }
-  // };
-  
-  
-  const handleDone = () => {
-    // Call an API or update your state with the edited values
-    console.log('Edited Quantities:', editedQuantities);
-    console.log('Edited Dosages:', editedDosages);
-  
-    // Update the prescription with the edited values
-    setPrescription((prevPrescription) => {
-      if (prevPrescription) {
-        const updatedMedicines = prevPrescription.Medicines.map((medicine) => ({
-          ...medicine,
-          dosage: editedDosages[medicine._id] || medicine.dosage,
-          quantity: editedQuantities[medicine._id] || medicine.quantity,
-        }));
-        return {
-          ...prevPrescription,
-          Medicines: updatedMedicines,
-        };
+        // Handle the response if needed
+        console.log(response.data);
       }
-      return prevPrescription;
-    });
-  
-    // Reset the state and exit the editable mode
-    setEditable(false);
+
+      // Notify the parent component or handle success
+    } catch (error) {
+      console.error('Error updating medicines:', error);
+    }
   };
+  
+  
+  // const handleDone = () => {
+  //   // Call an API or update your state with the edited values
+  //   console.log('Edited Quantities:', editedQuantities);
+  //   console.log('Edited Dosages:', editedDosages);
+  
+  //   // Update the prescription with the edited values
+  //   setPrescription((prevPrescription) => {
+  //     if (prevPrescription) {
+  //       const updatedMedicines = prevPrescription.Medicines.map((medicine) => ({
+  //         ...medicine,
+  //         dosage: editedDosages[medicine._id] || medicine.dosage,
+  //         quantity: editedQuantities[medicine._id] || medicine.quantity,
+  //       }));
+  //       return {
+  //         ...prevPrescription,
+  //         Medicines: updatedMedicines,
+  //       };
+  //     }
+  //     return prevPrescription;
+  //   });
+  
+  //   // Reset the state and exit the editable mode
+  //   setEditable(false);
+  // };
   
 
 // Frontend: Handle "done" button click
