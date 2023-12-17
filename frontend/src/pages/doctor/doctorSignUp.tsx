@@ -119,7 +119,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
     localStorage.setItem("doctorUsername", String(formData.get("username")));
     
     console.log("doctor registered successfully:", response);
-    navigate("/landing");
+    navigate("/");
 
     // Handle file uploads
     const fileInput = document.getElementById("fileInput") as HTMLInputElement;
@@ -313,6 +313,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
             >
               Sign up
             </Button>
+
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="/login" variant="body2">
