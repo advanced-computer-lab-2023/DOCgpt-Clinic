@@ -107,9 +107,14 @@ const appRoutes: RouteType[] = [
         state: "Appointments",
       },
       {
-        path: "/family-packages",
-        state: "Packages",
+        path: "/patient/subscribedfam",
+        state: "Subscribed Packages",
       },
+      {
+        path: "/family-packages",
+        state: "Packages's History",
+      },
+   
      
     ],
   },

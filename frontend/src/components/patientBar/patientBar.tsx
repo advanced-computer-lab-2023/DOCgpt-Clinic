@@ -9,6 +9,10 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PersonIcon from "@mui/icons-material/Person";
 
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
+import WalletTwoToneIcon from "@mui/icons-material/WalletTwoTone";
+import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import {
   AppBar,
   Box,
@@ -16,6 +20,7 @@ import {
   CssBaseline,
   Divider,
   Drawer,
+  Icon,
   IconButton,
   List,
   ListItem,
@@ -269,7 +274,7 @@ export default function DrawerAppBar() {
   };
   const handleMyProfileClick = () => {
     // Redirect to the My Profile page ("/doctor/home")
-    navigate("/");
+    navigate("/patient/profile");
   };
   <IconButton
     color="primary"
@@ -387,9 +392,39 @@ export default function DrawerAppBar() {
         open={Boolean(anchorEl)}
         onClose={handleCloseMenu}
       >
-        <MenuItem onClick={handleMywallet}>My Wallet</MenuItem>
-        <MenuItem onClick={handlechangepassword}>Change password</MenuItem>
-        <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        <MenuItem onClick={handleMyProfileClick}>
+          <span style={{ color: "black", marginRight: "5px" }}>
+            <Icon>
+              <AccountCircleRoundedIcon />
+            </Icon>
+          </span>
+          My Profile
+        </MenuItem>
+        <MenuItem onClick={handleMywallet}>
+          <span style={{ color: "black", marginRight: "5px" }}>
+            <Icon>
+              <WalletTwoToneIcon />
+            </Icon>
+          </span>
+          My Wallet
+        </MenuItem>{" "}
+        {/* Add onClick here */}
+        <MenuItem onClick={handlechangepassword}>
+          <span style={{ color: "black", marginRight: "5px" }}>
+            <Icon>
+              <SettingsRoundedIcon />
+            </Icon>
+          </span>
+          Change password
+        </MenuItem>
+        <MenuItem onClick={handleLogout}>
+          <span style={{ color: "black", marginRight: "5px" }}>
+            <Icon>
+              <LogoutRoundedIcon />
+            </Icon>
+          </span>
+          Logout
+        </MenuItem>
       </Menu>
     </Box>
   );

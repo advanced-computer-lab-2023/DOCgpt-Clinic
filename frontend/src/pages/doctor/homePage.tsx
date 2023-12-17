@@ -6,7 +6,7 @@ import DoctorMain from "./doctorMain";
 import Carousel from "react-material-ui-carousel";
 import MyCarousel from "../../components/Carousel";
 import TodayAppointmentsComponent from "./todaysappDOC";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niDocInfo from "../../components/El7a2niDoc-info";
 import HealthcareServices from "./DoctorHealthCarServices";
 import AskPatientBanner from "./askPatientBanner";
 
@@ -21,7 +21,7 @@ function HomePage() {
       <TodayAppointmentsComponent />
       <HealthcareServices />
       <AskPatientBanner />
-      <El7a2niInfo />
+      <El7a2niDocInfo />
     </>
   );
 }

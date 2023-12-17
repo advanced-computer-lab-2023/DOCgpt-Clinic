@@ -70,23 +70,27 @@ const HealthPackageComp = ({
     setHoveredOption(option);
   };
 
+  // const boxColors = ["#ffc107", "#bdbdbd", "#4caf50", "#ff9800"];
+
+
   return (
     <Card
-    sx={{
-      maxWidth: 345,
-      m: 2,
-      boxShadow: 3,
-      minHeight: 280,
-      "&:hover": {
-        boxShadow: 5,
-        borderColor: "blue",
-      },
-    }}
-    onMouseLeave={() => {
-      setAnchorEl(null);
-      setHoveredOption(null);
-    }}
-  >
+      sx={{
+        maxWidth: 345,
+        m: 2,
+        boxShadow: 3,
+        minHeight: 280,
+        "&:hover": {
+          boxShadow: 5,
+          borderColor: "blue",
+        },
+        // backgroundColor: boxColors[healthPackage.name.length % boxColors.length], // Set background color based on the length of the package name
+      }}
+      onMouseLeave={() => {
+        setAnchorEl(null);
+        setHoveredOption(null);
+      }}
+    >
     <Box
       sx={{
         p: 2,

@@ -281,20 +281,13 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
              
               <Grid item xs={12}>
                 <Typography variant="h6">Submit Documents</Typography>
-                <TextField
-                  label="Document Name"
-                  value={documentName}
-                  onChange={(e) => handleDocumentNameChange(e.target.value)}
-                  fullWidth
-                  required
-                  margin="normal"
-                />
                  {fileInputs.map((input) => (
   <div key={input.file?.name || input.id}>
   <input
       type="file"
       accept=".pdf, .jpg, .jpeg, .png, .docx"
       onChange={(e) => handleFileChange(input.id, e)}
+      multiple
     />
     {input.file && <Typography>{input.file.name}</Typography>}
   </div>
@@ -303,21 +296,6 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
 <Button variant="contained" onClick={addFileInput}>
   Add Another File
 </Button>
-                {/* <Button variant="contained" onClick={handleDisplayDocuments}>
-                  Display Documents
-                </Button> */}
-
-                {/* {errorMessage && <Typography color="error">{errorMessage}</Typography>}
-                {displayDocuments && (
-                  <div>
-                    <Typography variant="h6">Submitted Documents</Typography>
-                    <ul>
-                      {submittedDocuments.map((doc, index) => (
-                        <li key={index}>{doc}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )} */}
 
               </Grid>
             </Grid>

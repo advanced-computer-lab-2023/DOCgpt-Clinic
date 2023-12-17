@@ -27,14 +27,19 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   if (!appointment) {
     return null; // Or render an empty state or error message
   }
+
+
   const { status, doctor, date, _id, scheduledBy, type, paid, patient } = appointment;
   const appointmentDate = new Date(date).toISOString().split("T")[0];
   const isPaid = paid ? "Paid" : "Not Paid";
+  const appointmentt = new Date(date);
+  const isPastAppointment = appointmentt < new Date();
   
   const handleAppointmentReschedule = () => {
     localStorage.setItem("selectedAppointmentId", _id);
     localStorage.setItem("selectedDoctor", doctor);
     localStorage.setItem("oldDate", date);
+    localStorage.setItem("rescheduled", "false");
     // create a route in app && a page in patient folder
     navigate("/patient/reschedule");
   };
@@ -99,8 +104,6 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
     year: "numeric",
     month: "long",
     day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
   }).format(new Date(appointment.date));
 
   return (
@@ -122,6 +125,32 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
               )}
             <Typography variant="h3" style={{ fontWeight: "bold" }} gutterBottom>
             {formattedDate}
+            {" "}
+            <span style={{ fontWeight: "bold" }}>
+                          {new Date(appointment.date).getHours() === 14
+                            ? new Date(appointment.date).getHours() - 2
+                            : new Date(appointment.date).getHours() === 13 
+                            ? new Date(appointment.date).getHours() - 2
+                            : new Date(appointment.date).getHours() > 12 
+                            ? new Date(appointment.date).getHours() - 14
+                            : new Date(appointment.date).getHours() === 0
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() === 1
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() === 2
+                            ? new Date(appointment.date).getHours() + 10
+                            : new Date(appointment.date).getHours() - 2}
+                          {":"}
+                          {new Date(appointment.date).getMinutes() < 10
+                            ? new Date(appointment.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(appointment.date).getMinutes()}{" "}
+                          {new Date(appointment.date).getHours() === 0? "PM"
+                          :new Date(appointment.date).getHours() === 1? "PM"
+                          :new Date(appointment.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
                 </Typography>
             </div>
               <Typography style={{ fontWeight: "bold" , textAlign: "center"}}> With Dr. {doctor}</Typography>
@@ -155,7 +184,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   <Button
     onClick={handleAppointmentReschedule}
     variant="contained"
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     color="primary"
     style={{ marginRight: "10px", borderRadius: "25px" }}
   >
@@ -164,7 +193,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   <Button
     onClick={handleFollowUpClicked}
     variant="outlined"
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     color="primary"
     style={{ marginRight: "10px", borderRadius: "25px" }}
   >
@@ -172,7 +201,7 @@ const PatientAppointment = ({ appointment, onStartChat }: AppointmentProps) => {
   </Button>
   <Button
     onClick={handleCancel}
-    disabled={status === "cancelled"}
+    disabled={status === "cancelled" || isPastAppointment}
     variant="contained"
     style={{
       backgroundColor: status === "cancelled" ? "#CCCCCC" : "#FF5252",

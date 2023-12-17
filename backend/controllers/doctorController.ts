@@ -516,10 +516,11 @@ function validatePassword(password: string) {
     }
   
     // Regular expression pattern to check for at least one capital letter and one number
-    const pattern = /^(?=.[A-Z])(?=.\d)/;
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
   
     // Use the test method to check if the password matches the pattern
     if (!pattern.test(password)) {
+      console.log("here")
       return false;
     }
   
@@ -601,7 +602,7 @@ export const changePassword = async (req: Request, res: Response) => {
         if (!isPasswordValid) {
           return res.status(400).json({ message: 'Current password is incorrect' });
         }
-  
+  console.log(newPassword);
         // Validate the new password using the validatePassword function
         if (!validatePassword(newPassword)) {
           return res.status(400).json({ message: 'Invalid new password' });
@@ -788,7 +789,7 @@ export const  calculateSessionPrice = async (req: Request, res: Response ) => {
     }
 
     const subscribedPackage = patient.healthPackageSubscription.find(
-      (subscription) => subscription.status === 'subscribed with renewal date'
+      (subscription) => subscription.status === 'subscribed'
     );
 
     if (!subscribedPackage) {

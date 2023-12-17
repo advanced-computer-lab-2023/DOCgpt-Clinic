@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import FollowUpRequest from "../../components/FollowUpRequest";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niDocInfo from "../../components/El7a2niDoc-info";
 import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
 
@@ -89,17 +89,37 @@ function ViewFollowUpRequests(){
             </Typography>
           ) : (
             <Grid container direction="row" spacing={-20}>
-              {requests.map((request, index) => (
-                <Grid item xs={6} key={index}>
-                  <FollowUpRequest request={request} />
-                </Grid>
-              ))}
+             {requests
+  .slice() // Create a shallow copy to avoid mutating the original array
+  .sort((a, b) => {
+    // Custom sorting logic based on status and date
+    if (a.status === "pending" && b.status !== "pending") {
+      return -1; // "pending" comes first
+    } else if (a.status !== "pending" && b.status === "pending") {
+      return 1; // "pending" comes first
+    } else {
+      // For pending requests, sort by date
+      if (a.status === "pending" && b.status === "pending") {
+        return new Date(b.followUpDate).getTime() - new Date(a.followUpDate).getTime();
+      }
+
+      // For non-pending requests, also sort by followUpDate
+      return new Date(b.followUpDate).getTime() - new Date(a.followUpDate).getTime();
+    }
+  })
+  .map((request, index) => (
+    <Grid item xs={6} key={index}>
+      <FollowUpRequest request={request} />
+    </Grid>
+  ))}
+
+
             </Grid>
           )}
         </div>
             
         </Container>
-      <El7a2niInfo />
+        <El7a2niDocInfo />
       
     </>
 

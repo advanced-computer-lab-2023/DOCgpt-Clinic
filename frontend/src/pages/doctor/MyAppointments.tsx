@@ -17,7 +17,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DoctorAppointment from "../../components/DoctorAppointment";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niDocInfo from "../../components/El7a2niDoc-info";
 import DrawerAppBar from "../../components/Doctor bar/doctorBar";
 import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
@@ -115,26 +115,28 @@ useEffect(() => {
 }, [selectedDate]);
 
 useEffect(() => {
-    if (upcoming) {
+  if (upcoming) {
+    const today = new Date();
     const filtered = appointments.filter(
-        (appointment: any) => appointment.status.toLowerCase() === "upcoming"
+      (appointment: any) => new Date(appointment.date) >= today
     );
     setFilteredAppointments(filtered);
-    } else {
+  } else {
     setFilteredAppointments(appointments);
-    }
-}, [upcoming]);
+  }
+}, [upcoming, appointments]);
 
 useEffect(() => {
-    if (past) {
+  if (past) {
+    const today = new Date();
     const filtered = appointments.filter(
-        (appointment: any) => appointment.status.toLowerCase() !== "upcoming"
+      (appointment: any) => new Date(appointment.date) < today
     );
     setFilteredAppointments(filtered);
-    } else {
+  } else {
     setFilteredAppointments(appointments);
-    }
-}, [past]);
+  }
+}, [past, appointments]);
 
 //return
 //THE VIEWING (THE COMPONENTS)
@@ -283,7 +285,8 @@ return (
         </Grid>
 
     </Container>
-    <El7a2niInfo />
+    <El7a2niDocInfo />
+      
     </>
 );
 }

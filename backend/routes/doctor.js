@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -92,26 +83,26 @@ const upload = (0, multer_1.default)({ storage });
 //     res.status(400).json({ error: 'File or username not provided' });
 //   }
 // });
-router.post('/upload', upload.array('file', 5), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/upload', upload.array('file', 5), async (req, res) => {
     try {
         const uploadedFiles = req.files;
         if (uploadedFiles && req.body.username) {
             // Process each uploaded file
-            const promises = uploadedFiles.map((file) => __awaiter(void 0, void 0, void 0, function* () {
+            const promises = uploadedFiles.map(async (file) => {
                 const { originalname, filename } = file;
                 const filePath = path_1.default.join('uploads', filename);
                 // Save document to documentModel
-                const documentResult = yield documentModel_1.default.create({
+                const documentResult = await documentModel_1.default.create({
                     username: req.body.username,
                     document: filename,
                     filePath,
                 });
                 // Update doctor's documents array
-                const doctor = yield doctorModel_1.default.findOneAndUpdate({ username: req.body.username }, { $push: { documents: { filename, path: filePath } } }, { new: true });
+                const doctor = await doctorModel_1.default.findOneAndUpdate({ username: req.body.username }, { $push: { documents: { filename, path: filePath } } }, { new: true });
                 return { document: documentResult, doctor };
-            }));
+            });
             // Wait for all promises to resolve
-            const results = yield Promise.all(promises);
+            const results = await Promise.all(promises);
             res.json(results);
         }
         else {
@@ -122,18 +113,18 @@ router.post('/upload', upload.array('file', 5), (req, res) => __awaiter(void 0, 
         console.error('Error in /upload request:', error);
         res.status(500).json({ error: 'Failed to store in the database' });
     }
-}));
+});
 //router.post('/uploadAndSubmitReqDocs', upload.array('documents', 3), uploadAndSubmitReqDocs);
 // // Add a route to get the list of uploaded documents
 // router.get('/doctorDocuments', getDoctorDocuments);
 // // // Add a route to serve the actual document file
 //  router.get('/doctorDocuments/:filename', serveDoctorDocument);
 /// Endpoint to get a doctor's documents by username
-router.post("/getDoctorDocuments", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post("/getDoctorDocuments", async (req, res) => {
     try {
         const { username } = req.body;
         // Fetch documents based on the doctor's username
-        const documents = yield documentModel_1.default.find({ username });
+        const documents = await documentModel_1.default.find({ username });
         // Map the documents to include doctorUsername in the response
         const responseDocuments = documents.map(doc => ({
             doctorUsername: doc.username,
@@ -146,9 +137,9 @@ router.post("/getDoctorDocuments", (req, res) => __awaiter(void 0, void 0, void 
         console.error("Error fetching doctor's documents:", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
-}));
+});
 // Endpoint to download a document
-router.post('/downloadDocument', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+router.post('/downloadDocument', async (req, res) => {
     try {
         const { document } = req.body;
         // Construct the full path to the document
@@ -168,7 +159,7 @@ router.post('/downloadDocument', (req, res) => __awaiter(void 0, void 0, void 0,
         console.error('Error downloading document:', error);
         res.status(500).send('Internal Server Error');
     }
-}));
+});
 router.post('/rescheduleApp', doctorController_1.rescheduleAppointments);
 router.patch('/acceptFollowUpRequest', doctorController_1.acceptFollowUpRequest);
 router.patch('/rejectFollowUpRequest', doctorController_1.rejectFollowUpRequest);

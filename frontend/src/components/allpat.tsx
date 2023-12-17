@@ -23,11 +23,12 @@ import {
 import PersonIcon from "@mui/icons-material/Person";
 import DeleteIcon from "@mui/icons-material/Delete";
 
+
 import SearchIcon from "@mui/icons-material/Search";
 import AdminBar from "./admin Bar/adminBar";
-import El7a2niInfo from "./El7a2ni-info";
+import El7a2niAdminInfo from "./El7a2niAdmin-info";
 import Background from '../patient.jpeg';
-import Back from "./backButton";
+import Back from './backButton';
 
 interface Patient {
   _id: string;
@@ -51,6 +52,7 @@ const PatientList1: React.FC = () => {
   const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">(
     "success"
   );
+  
   const [openDialog, setOpenDialog] = React.useState(false);
   const [selectedUsername, setSelectedUsername] = useState<string | null>(null);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -142,6 +144,9 @@ const PatientList1: React.FC = () => {
         });
 
         setPatients(response.data);
+        setSnackbarMessage("Patient deleted successfully");
+        setSnackbarSeverity("success");
+        setOpenSnackbar(true);
       } catch (error) {
         console.error("Error fetching pharmacists:", error);
       }
@@ -186,7 +191,7 @@ const PatientList1: React.FC = () => {
         }}
       ></div>
 
-      <Back />
+      <Back/>
       <div
         style={{
           position: 'absolute',
@@ -293,8 +298,9 @@ const PatientList1: React.FC = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      
     </Container>
-    <El7a2niInfo/>
+    <El7a2niAdminInfo/>
     </>
   );
 };

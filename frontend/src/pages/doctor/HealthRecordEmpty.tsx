@@ -2,8 +2,10 @@ import { IconButton, Paper, Stack, Typography } from "@mui/material";
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import { useLocation, useNavigate } from "react-router-dom";
 import DroctorBar from "../../components/Doctor bar/doctorBar";
-import Background from '../../Background.jpeg';
 import DoctorBar from "../../components/Doctor bar/doctorBar";
+import Background from '../../HealthRec.jpg';
+import Back from "../../components/backButton";
+
 function HealthRecordEmpty(){
     //Take the Patient username
     const location = useLocation();
@@ -25,16 +27,47 @@ function HealthRecordEmpty(){
     //THE VIEW 
     //A SIMPLE MESSEGE IN THE MIDDLE OF THE SCREEN AND A PLUS BUTTON THAT REDIRECT TO THE (HEALTH RECORD FORM) PAGE
     return (
-        <div
-          style={{
-            backgroundImage: `url(${Background})`,
-            backgroundSize: 'cover',
-            minHeight: '100vh',
-            backgroundPosition: 'center',
-            boxShadow: '0 8px 16px rgba(0, 0, 0, 0.2)', // Increased shadow values
-          }}
-        >    
+          <>
           <DoctorBar />
+          <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>EMPTY HEALTH RECORD</strong>
+        </h1>
+      </div>
+    </div>
           <div
             style={{
               display: 'flex',
@@ -64,7 +97,7 @@ function HealthRecordEmpty(){
               </Typography>
             </Paper>
           </div>
-        </div>
+          </>
       );
       
       

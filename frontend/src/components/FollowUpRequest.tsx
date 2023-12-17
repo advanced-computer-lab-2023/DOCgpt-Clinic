@@ -44,12 +44,10 @@ const FollowUpRequest = ({ request }: RequestProps) => {
 
   
   const oldAppointmentDate = new Date(AppointmentDate)
-    .toISOString()
-    .split("T")[0];
+    .toISOString();
 
   const requestedfollowUpDate = new Date(followUpDate)
-    .toISOString()
-    .split("T")[0];
+    .toISOString();
 
   
   
@@ -85,10 +83,15 @@ const FollowUpRequest = ({ request }: RequestProps) => {
   };
   const handleConfirmationDialogClose = () => {
     setConfirmationDialogOpen(false);
+    window.location.reload();
+
+    
   };
 
   const handleConfirmation = async () => {
     setConfirmationDialogOpen(false);
+    window.location.reload();
+
 
     if (actionType === "accept") {
       // Call accept doctors backend
@@ -142,15 +145,37 @@ const FollowUpRequest = ({ request }: RequestProps) => {
               <div style={styles.space}></div>
 
               <Typography variant="body1">
-                <strong> On: </strong> {` ${new Date(requestedfollowUpDate).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-            })}, ${new Date(requestedfollowUpDate).toLocaleString("en-US", {
+                <strong> On: </strong> {` ${new Date(requestedfollowUpDate).toLocaleString("en-US", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
                 year: "numeric",
             })}`} {" "}
+            <span style={{ fontWeight: "bold" }}>
+                          {new Date(requestedfollowUpDate).getHours() === 14
+                            ? new Date(requestedfollowUpDate).getHours() - 2
+                            : new Date(requestedfollowUpDate).getHours() === 13 
+                            ? new Date(requestedfollowUpDate).getHours() - 2
+                            : new Date(requestedfollowUpDate).getHours() > 12 
+                            ? new Date(requestedfollowUpDate).getHours() - 14
+                            : new Date(requestedfollowUpDate).getHours() === 0
+                            ? new Date(requestedfollowUpDate).getHours() + 10
+                            : new Date(requestedfollowUpDate).getHours() === 1
+                            ? new Date(requestedfollowUpDate).getHours() + 10
+                            : new Date(requestedfollowUpDate).getHours() === 2
+                            ? new Date(requestedfollowUpDate).getHours() + 10
+                            : new Date(requestedfollowUpDate).getHours() - 2}
+                          {":"}
+                          {new Date(requestedfollowUpDate).getMinutes() < 10
+                            ? new Date(requestedfollowUpDate)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(requestedfollowUpDate).getMinutes()}{" "}
+                          {new Date(requestedfollowUpDate).getHours() === 0? "PM"
+                          :new Date(requestedfollowUpDate).getHours() === 1? "PM"
+                          :new Date(requestedfollowUpDate).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
               </Typography>
               <Typography variant="body1" gutterBottom>
                 <strong>Status: </strong> {status}
@@ -166,15 +191,38 @@ const FollowUpRequest = ({ request }: RequestProps) => {
               <Typography variant="body1" color="text.secondary">
                 {" "}
                 <strong> was on: </strong>
-                {` ${new Date(oldAppointmentDate).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-            })}, ${new Date(oldAppointmentDate).toLocaleString("en-US", {
+                {` ${new Date(oldAppointmentDate).toLocaleString("en-US", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
                 year: "numeric",
             })}`} 
+            {" "}
+            <span style={{ fontWeight: "bold" }}>
+                          {new Date(oldAppointmentDate).getHours() === 14
+                            ? new Date(oldAppointmentDate).getHours() - 2
+                            : new Date(oldAppointmentDate).getHours() === 13 
+                            ? new Date(oldAppointmentDate).getHours() - 2
+                            : new Date(oldAppointmentDate).getHours() > 12 
+                            ? new Date(oldAppointmentDate).getHours() - 14
+                            : new Date(oldAppointmentDate).getHours() === 0
+                            ? new Date(oldAppointmentDate).getHours() + 10
+                            : new Date(oldAppointmentDate).getHours() === 1
+                            ? new Date(oldAppointmentDate).getHours() + 10
+                            : new Date(oldAppointmentDate).getHours() === 2
+                            ? new Date(oldAppointmentDate).getHours() + 10
+                            : new Date(oldAppointmentDate).getHours() - 2}
+                          {":"}
+                          {new Date(oldAppointmentDate).getMinutes() < 10
+                            ? new Date(oldAppointmentDate)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(oldAppointmentDate).getMinutes()}{" "}
+                          {new Date(oldAppointmentDate).getHours() === 0? "PM"
+                          :new Date(oldAppointmentDate).getHours() === 1? "PM"
+                          :new Date(oldAppointmentDate).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
               </Typography>
               <Typography variant="body1" color="text.secondary">
                 {" "}

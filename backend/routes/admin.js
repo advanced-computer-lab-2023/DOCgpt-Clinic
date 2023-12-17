@@ -30,6 +30,7 @@ router.patch('/updatePackage', adminController_2.updatePackage);
 router.get('/getpack', adminController_2.getPackage);
 router.get('/getpackname', adminController_1.getPackageNAME);
 router.get('/getdoc', adminController_2.getdoctorsR);
+router.get('/getadmin', adminController_1.getAdmin);
 //get patients
 router.get('/getpati', adminController_2.getPatients);
 router.delete('/logoutAdmin', adminController_2.logout);

@@ -25,7 +25,7 @@ import { Link, useNavigate } from "react-router-dom";
 import DoneIcon from "@mui/icons-material/Done";
 import ClearIcon from "@mui/icons-material/Clear";
 import MuiAlert from "@mui/material/Alert";
-import El7a2niInfo from "../El7a2ni-info";
+import El7a2niAdminInfo from "../El7a2niAdmin-info";
 import Background from '../../doctorss.jpeg';
 import Back from "../backButton";
 
@@ -236,7 +236,7 @@ const handleReject = async (doctorUsername: string) => {
                   </TableCell>
                   <TableCell align="center" color="#2196f3">
   <Link
-    to="/view-doctor-documents"
+    to="/view-doctor-documents/:username"
     
     className="link-hover-effect"
 
@@ -244,6 +244,7 @@ const handleReject = async (doctorUsername: string) => {
   >
     View Uploaded Documents
   </Link>
+  
 </TableCell>
 
                 </TableRow>
@@ -280,7 +281,7 @@ const handleReject = async (doctorUsername: string) => {
         open={openAlert}
         autoHideDuration={2000}
         onClose={() => setOpenAlert(false)}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
       >
         <MuiAlert severity={snackbarSeverity} sx={{ width: '100%', height: '50%', fontSize: '1.5rem' }}>
           {snackbarMessage}
@@ -288,7 +289,7 @@ const handleReject = async (doctorUsername: string) => {
       </Snackbar>
         </Paper>
       </Container>
-      <El7a2niInfo/>
+      <El7a2niAdminInfo/>
     </>
   );
 };

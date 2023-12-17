@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -80,28 +71,28 @@ mongoose_1.default.connect(process.env.MONGO_URI)
 const stripe = new stripe_1.default(process.env.STRIPE_SECRET_KEY);
 if (!process.env.STRIPE_SECRET_KEY)
     throw new Error('process.env.STRIPE_SECRET_KEY not found');
-const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const login = async (req, res) => {
     console.log("Received login request:", req.body);
     try {
         const { username, password } = req.body;
         if (!username || !password) {
             throw Error('all fields must be filled');
         }
-        const usernameExists = yield patientModel_1.default.findOne({ username });
-        const usernameExists2 = yield doctorModel_1.default.findOne({ username });
-        const usernameExists3 = yield adminModel_1.default.findOne({ username });
+        const usernameExists = await patientModel_1.default.findOne({ username });
+        const usernameExists2 = await doctorModel_1.default.findOne({ username });
+        const usernameExists3 = await adminModel_1.default.findOne({ username });
         var user;
         var role;
         if (usernameExists) {
-            user = yield patientModel_1.default.findOne({ username });
+            user = await patientModel_1.default.findOne({ username });
             role = 'patient';
         }
         if (usernameExists2) {
-            user = yield doctorModel_1.default.findOne({ username });
+            user = await doctorModel_1.default.findOne({ username });
             role = 'doctor';
         }
         if (usernameExists3) {
-            user = yield adminModel_1.default.findOne({ username });
+            user = await adminModel_1.default.findOne({ username });
             role = 'admin';
         }
         if (user == null) {
@@ -113,12 +104,12 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         if (role == 'doctor' && (usernameExists2 === null || usernameExists2 === void 0 ? void 0 : usernameExists2.status) == "rejected") {
             throw Error('your request to join the platform is rejected from the adminstrator');
         }
-        const match = yield bcrypt_1.default.compare(password, user.password);
+        const match = await bcrypt_1.default.compare(password, user.password);
         if (!match) {
             throw Error('incorrect password');
         }
         const token = (0, patientController_1.createToken)(user.id);
-        const tokenn = yield tokenModel_1.default.create({ token, username, role: role });
+        const tokenn = await tokenModel_1.default.create({ token, username, role: role });
         console.log("Received login succes");
         req.app.locals.username = username;
         res.status(200).json({ user, username, token, role });
@@ -127,7 +118,7 @@ const login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const err = error;
         res.status(400).json({ error: err.message });
     }
-});
+};
 exports.login = login;
 const storeItems = new Map([
     [1, { priceInCents: 1000, name: "Appointment" }],

@@ -4,7 +4,11 @@ import Button from "@mui/material/Button";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import PatientBar from "../../components/patientBar/patientBar";
-import { Card, CardContent, Grid, Snackbar } from "@mui/material";
+import { Card, CardContent, Grid, Paper, Snackbar } from "@mui/material";
+import WalletIcon from "@mui/icons-material/Wallet";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
+import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
+import image from "../../paygirl.jpg"
 
 const PayMedicines: React.FC = () => {
   const navigate = useNavigate();
@@ -39,7 +43,7 @@ const PayMedicines: React.FC = () => {
       if (paymentMethod === "card" && data.sessionUrl) {
         window.location.href = data.sessionUrl;
       } else if (paymentMethod === "Wallet") {
-        setMessage("Order placed succesfully");
+        setMessage("Appointment scheduled succesfully");
         setSnackbarOpen(true);
       }
     } catch (error) {
@@ -59,31 +63,91 @@ const PayMedicines: React.FC = () => {
     label: string;
   }) => (
     <Grid item xs={12}>
-      <Card variant="outlined">
-        <CardContent>
-          <Button
-            fullWidth
-            variant="contained"
-            color="primary"
-            onClick={() => handlePayment(paymentMethod)}
-            disabled={loading}
-          >
-            {label}
-          </Button>
-        </CardContent>
-      </Card>
+      <Paper
+        elevation={3}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          padding: "10px",
+          width: "30%",
+          height: "60%",
+          marginTop: "20px",
+          cursor: "pointer",
+          backgroundColor: "#eee",
+          boxShadow: "0 0 5px 0 rgba(0, 0, 0, 0.1)",
+        }}
+        onClick={() => handlePayment(paymentMethod)}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.border = "2px solid #2196F3";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.border = "2px solid transparent";
+        }}
+      >
+        <Typography
+          variant="h6"
+          style={{
+            textAlign: "left",
+            marginBottom: "10px",
+            color: "#000",
+            fontSize: "1.2rem",
+          }}
+        >
+          {label}
+        </Typography>
+        {/* Add conditionally rendering icons based on paymentMethod */}
+        {paymentMethod === "card" && (
+          <CreditCardIcon sx={{ fontSize: "2rem" }} />
+        )}
+        {paymentMethod === "Wallet" && <WalletIcon sx={{ fontSize: "2rem" }} />}
+      </Paper>
     </Grid>
   );
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
-    <React.Fragment>
-      <PatientBar />
-      <Typography variant="h4" gutterBottom>
+    <div
+    style={{
+      backgroundImage: `url(${image})`,
+      backgroundSize: "710px 710px",
+      backgroundRepeat: "no-repeat",
+      backgroundPosition: "right center",
+      height: "100vh",
+      position: "relative",
+      marginTop: "50px",
+      zIndex: 0,
+    }}
+  >
+    <PatientBar />
+    <div
+      style={{
+        marginLeft: "150px",
+        paddingTop: "64px",
+        position: "relative",
+        zIndex: 2,
+      }}
+    >
+      <Typography
+        variant="h4"
+        gutterBottom
+        style={{ textAlign: "left", color: "#000", marginLeft: "-8px" }}
+      >
         Choose Payment Method
       </Typography>
-      <Grid container spacing={2} justifyContent="center">
-        <PaymentCard paymentMethod="wallet" label="wallet" />
-        <PaymentCard paymentMethod="card" label="card" />
+      <Grid container spacing={0.0001}>
+      <PaymentCard paymentMethod="wallet" label="Wallet" />
+      <PaymentCard paymentMethod="card" label="Credit Card" />
       </Grid>
+    </div>
       {message ? (
         <Snackbar
           open={snackbarOpen}
@@ -94,7 +158,7 @@ const PayMedicines: React.FC = () => {
       ) : (
         <></>
       )}
-    </React.Fragment>
+    </div>
   );
 };
 export default PayMedicines;

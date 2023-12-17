@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import PatientAppBar from "../../components/patientBar/patientBar";
 import HealthPackageComp from "../../components/healthPackageComp";
-import El7a2niInfo from "../../components/El7a2ni-info";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import Background from '../../HealthPack.jpeg';
 import Back from "../../components/backButton";
 
@@ -60,7 +60,16 @@ function HealthPackages() {
     };
     fetchHealthPackages();
   }, []);
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
 
       <>
@@ -122,7 +131,7 @@ function HealthPackages() {
               ))}
           </Box>
         </Container>
-        <El7a2niInfo />
+        <El7a2niPatientInfo />
       </>
 
   );

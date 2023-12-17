@@ -97,71 +97,59 @@ const TodayAppointmentsComponent: React.FC = () => {
   };
   return (
     <>
-    <div>
-      <DoctorBar />
-      {/* <MyCarousel/> */}
-      <Typography variant="h5" gutterBottom style={{ textAlign: "center" }}>
-        Today's Appointments - {formatDate(new Date().toString())}
-      </Typography>
+      <div>
+        <DoctorBar />
+        {/* <MyCarousel/> */}
+        <Typography variant="h5" gutterBottom style={{ textAlign: "center" }}>
+          Today's Appointments - {formatDate(new Date().toString())}
+        </Typography>
 
-      {doctorHasAppointments ? (
-        <TableContainer
-          component={Paper}
-          sx={{
-            maxWidth: "800px",
-            margin: "auto",
-            marginTop: "16px",
-          }}
-        >
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell>Patient</TableCell>
-                <TableCell>Patient's Age</TableCell>
-                <TableCell>Action</TableCell>
-                <TableCell>Health Record</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {appointments.map((appointment: Appointment) => (
-                <TableRow key={appointment._id}>
-                  <TableCell>{appointment.patient}</TableCell>
-                  <TableCell>{appointment.age}</TableCell>
-                  <TableCell>
-                    <Button onClick={() => handleStartMeeting()}>
-                      Start Meeting
-                    </Button>
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() =>
-                        handleViewHealthRecord(appointment.patient)
-                      }
-                    >
-                      View {appointment.patient}'s Health Record
-                    </Button>
-                  </TableCell>
+        {doctorHasAppointments ? (
+          <TableContainer
+            component={Paper}
+            sx={{
+              maxWidth: "800px",
+              margin: "auto",
+              marginTop: "16px",
+            }}
+          >
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Patient</TableCell>
+                  <TableCell>Patient's Age</TableCell>
+                  <TableCell>Action</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : (
-        <div style={{ textAlign: "center", marginTop: "16px" }}>
-          <Typography variant="body1" style={{ marginBottom: "8px" }}>
-            You have no appointments today. Do you want to add timeslots?
-          </Typography>
+              </TableHead>
+              <TableBody>
+                {appointments.map((appointment: Appointment) => (
+                  <TableRow key={appointment._id}>
+                    <TableCell>{appointment.patient}</TableCell>
+                    <TableCell>{appointment.age}</TableCell>
+                    <TableCell>
+                      <Button onClick={() => handleStartMeeting()}>
+                        Start Meeting
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        ) : (
+          <div style={{ textAlign: "center", marginTop: "16px" }}>
+            <Typography variant="body1" style={{ marginBottom: "8px" }}>
+              You have no appointments today. Do you want to add timeslots?
+            </Typography>
 
-          <Button variant="contained" onClick={handleAddTimeSlots}>
-            Add Time Slots
-          </Button>
-        </div>
-
-      )}
-    
-    </div>
+            <Button variant="contained" onClick={handleAddTimeSlots}>
+              Add Time Slots
+            </Button>
+          </div>
+        )}
+      </div>
       {/* <El7a2niInfo/> */}
-</>
+    </>
   );
 };
 
