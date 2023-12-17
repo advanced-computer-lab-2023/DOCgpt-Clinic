@@ -487,9 +487,10 @@ function validatePassword(password) {
         return false;
     }
     // Regular expression pattern to check for at least one capital letter and one number
-    const pattern = /^(?=.[A-Z])(?=.\d)/;
+    const pattern = /^(?=.*[A-Z])(?=.*\d)/;
     // Use the test method to check if the password matches the pattern
     if (!pattern.test(password)) {
+        console.log("here");
         return false;
     }
     // All requirements are met
@@ -557,6 +558,7 @@ const changePassword = async (req, res) => {
             if (!isPasswordValid) {
                 return res.status(400).json({ message: 'Current password is incorrect' });
             }
+            console.log(newPassword);
             // Validate the new password using the validatePassword function
             if (!validatePassword(newPassword)) {
                 return res.status(400).json({ message: 'Invalid new password' });

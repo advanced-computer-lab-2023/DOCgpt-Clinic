@@ -82,11 +82,28 @@ function ViewFamMemAppointments() {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log(data);
-          setAppointments(data.appointments);
+            if (response) {
+            console.log("Response:", response);
+      
+            // Sort the appointments based on date and time
+            const sortedAppointments = data.appointments.sort((a : any, b : any) => {
+              const dateA = new Date(a.date.toLocaleString("en-US",  "Africa/Cairo" ));
+              const dateB = new Date(b.date.toLocaleString("en-US",  "Africa/Cairo" ));
+      
+              if (dateA > dateB) return -1;
+              if (dateA < dateB) return 1;
+              // If dates are equal, compare times
+              const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+              const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+              return timeB - timeA;
+            });
+      
+            setAppointments(sortedAppointments);
+      
         } else {
           console.error("Failed to fetch doctor data");
         }
+      }
       } catch (error) {
         console.error("Error:", error);
       }

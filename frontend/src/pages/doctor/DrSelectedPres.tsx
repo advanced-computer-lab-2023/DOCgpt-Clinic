@@ -25,7 +25,11 @@ interface Prescription {
   Medicines: Medicine[];
   _id: string;
 }
-
+interface Medicine {
+  medicineName: string;
+  dosage: string;
+  quantity: number;
+}
 const DrSelectedPrescription = () => {
   const { id } = useParams();
   const [prescription, setPrescription] = useState<Prescription>();
@@ -37,6 +41,8 @@ const DrSelectedPrescription = () => {
   const [editedDosages, setEditedDosages] = useState<{ [key: string]: string }>({});
   const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
   const [medicineToDelete, setMedicineToDelete] = useState<string | null>(null);
+  const [editedMedicines, setEditedMedicines] = useState<{ [name: string]: { quantity: number, dosage: string } }>({});
+ 
 
   
 // Define the fetchPrescriptionDetails function
@@ -164,118 +170,39 @@ useEffect(() => {
     setEditedDosages(initialDosages);
   };
 
-  // const handleDone = async () => {
-  //   try {
-  //     const token = localStorage.getItem('authToken');
+  const handleDone = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
 
-  //     // Iterate over the editedQuantities and editedDosages
-  //     for (const medicineId in editedQuantities) {
-  //       const response = await axios.put(
-  //         `/updatePrescMed/${id}`,
-  //         {
-  //           medicineId,
-  //           quantity: editedQuantities[medicineId],
-  //           dosage: editedDosages[medicineId],
-  //         },
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${token}`,
-  //           },
-  //         }
-  //       );
+      // Iterate over the editedQuantities and editedDosages
+      for (const medicineId in editedQuantities) {
+        console.log(medicineId);
+        const response = await axios.post(
+          `/routes/updatePresc/${id}`,
+          {
+            medicineId,
+            quantity: editedQuantities[medicineId],
+            dosage: editedDosages[medicineId],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         
-  //       // Handle the response if needed
-  //       console.log(response.data);
-  //     }
-
-  //     // Notify the parent component or handle success
-  //   } catch (error) {
-  //     console.error('Error updating medicines:', error);
-  //   }
-  // };
-  
-  
-  const handleDone = () => {
-    // Call an API or update your state with the edited values
-    console.log('Edited Quantities:', editedQuantities);
-    console.log('Edited Dosages:', editedDosages);
-  
-    // Update the prescription with the edited values
-    setPrescription((prevPrescription) => {
-      if (prevPrescription) {
-        const updatedMedicines = prevPrescription.Medicines.map((medicine) => ({
-          ...medicine,
-          dosage: editedDosages[medicine._id] || medicine.dosage,
-          quantity: editedQuantities[medicine._id] || medicine.quantity,
-        }));
-        return {
-          ...prevPrescription,
-          Medicines: updatedMedicines,
-        };
+        // Handle the response if needed
+        console.log(response.data);
       }
-      return prevPrescription;
-    });
-  
-    // Reset the state and exit the editable mode
-    setEditable(false);
+
+      // Notify the parent component or handle success
+    } catch (error) {
+      console.error('Error updating medicines:', error);
+    }
   };
   
-
-// Frontend: Handle "done" button click
-// const handleDone = async () => {
-//   try {
-//     if (!prescription) {
-//       console.error('Prescription not available');
-//       return;
-//     }
-
-//     // Use Promise.all to wait for all asynchronous operations to complete
-//     const updatedMedicines = await Promise.all(
-//       prescription.Medicines.map(async (medicine) => {
-//         try {
-//           const response = await axios.put(`/routes/updateMedicineDetails/${id}`, {
-//             medicineId: medicine._id,
-//             quantity: editedQuantities[medicine._id] || medicine.quantity,
-//             dosage: editedDosages[medicine._id] || medicine.dosage,
-//           });
-
-//           // Ensure that the response format matches your expected format
-//           const updatedPrescription = response.data.updatedPrescription;
-//           const updatedMedicine = updatedPrescription.Medicines.find((m : any) => m._id === medicine._id);
-
-//           return updatedMedicine || null;
-//         } catch (error) {
-//           console.error('Error updating medicine on the backend:', error);
-//           return null; // or handle the error as appropriate
-//         }
-//       })
-//     );
-
-//     // Filter out any null values (failed updates) before updating the state
-//     const filteredUpdatedMedicines = updatedMedicines.filter((m) => m !== null);
-
-//     // Fetch prescription details after updating all medicines
-//     refreshPrescriptionDetails();
-
-//     // Update the prescription with the edited values on the frontend
-//     setPrescription((prevPrescription) => {
-//       if (prevPrescription) {
-//         return {
-//           ...prevPrescription,
-//           Medicines: filteredUpdatedMedicines,
-//         };
-//       }
-
-//       return prevPrescription;
-//     });
-
-//     // Reset the state and exit the editable mode
-//     setEditable(false);
-//   } catch (error) {
-//     console.error('Error updating medicines on the frontend:', error);
-//   }
-// };
-
+  
+ 
 
   const handleRemoveMedicine = (medicineId: string) => {
     setMedicineToDelete(medicineId);
