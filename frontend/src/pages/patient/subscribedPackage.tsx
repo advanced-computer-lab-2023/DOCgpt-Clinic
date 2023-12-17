@@ -19,6 +19,7 @@ const subscribedPage = () => {
       </div>
     );
   }
+  
   return (
     <>
     <PatientAppBar/>

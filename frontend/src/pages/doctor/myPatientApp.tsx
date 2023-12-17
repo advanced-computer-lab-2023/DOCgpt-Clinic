@@ -134,7 +134,16 @@ import MyPatients from "./MyPatients";
     //EACH APPOINTMENT COMPONENT SHOULD CONTAIN:
     //- A CHECK CIRCLE TO MARK COMPLETE(OPTIONAL)
     //- THE INFO OF THE APPOINTMENTS (DATE, STATUS, PATIENT NAME DON'T CONATIN THE DOCTOR NAME AND DISPLAY THE INFO IN A PROPER WAY)
-    
+    const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
     return (
         <>
         <DrawerAppBar />

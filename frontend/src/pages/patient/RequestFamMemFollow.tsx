@@ -108,7 +108,16 @@ const RequestFamMemFollow: React.FC = () => {
           setOpen(false);
           navigate("/patient/famMemAppointments");
       };
-
+      const token = localStorage.getItem("authToken");
+      if (!token) {
+        return (
+          <div>
+            <Typography component="h1" variant="h5">
+              access denied
+            </Typography>
+          </div>
+        );
+      }
   return (
     <div>
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth sx={{  zIndex: 1000}}>
