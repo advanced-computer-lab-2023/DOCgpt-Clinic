@@ -88,17 +88,31 @@ const DoctorTimeSlot = ({ timeslot }: DoctorTimeSlotProps) => {
             {" "}
 
                     </span>
-                    <span style={{fontWeight:'bold'}}>
-            {(new Date(timeslot.date).getHours() > 12)? new Date(timeslot.date).getHours() - 14
-            : (new Date(timeslot.date).getHours() === 2 )? new Date(timeslot.date).getHours() + 10
-            : new Date(timeslot.date).getHours() - 2
-            } 
-          {":"}
-          {(new Date(timeslot.date).getMinutes()<10)? new Date(timeslot.date).getMinutes().toString().padStart(2, '0') : new Date(timeslot.date).getMinutes()}
-          {" "}
-          {new Date(timeslot.date).getHours() >= 12 ? "PM" : "AM"}
-
-                    </span>
+                    <span style={{ fontWeight: "bold" }}>
+                          {new Date(timeslot.date).getHours() === 14
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() === 13 
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() > 12 
+                            ? new Date(timeslot.date).getHours() - 14
+                            : new Date(timeslot.date).getHours() === 0
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 1
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 2
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() - 2}
+                          {":"}
+                          {new Date(timeslot.date).getMinutes() < 10
+                            ? new Date(timeslot.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(timeslot.date).getMinutes()}{" "}
+                          {new Date(timeslot.date).getHours() === 0? "PM"
+                          :new Date(timeslot.date).getHours() === 1? "PM"
+                          :new Date(timeslot.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
                 
                     </Typography>
                   </Grid>

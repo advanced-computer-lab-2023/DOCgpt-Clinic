@@ -82,22 +82,24 @@ function ViewFollowUpRequests(){
       </div>
     </div>
         <Container>
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {requests.length === 0 ? (
+            <Typography variant="h6" align="center" style={{ marginTop: '20px' }}>
+              You currently do not have any follow-up requests.
+            </Typography>
+          ) : (
+            <Grid container direction="row" spacing={-20}>
+              {requests.map((request, index) => (
+                <Grid item xs={6} key={index}>
+                  <FollowUpRequest request={request} />
+                </Grid>
+              ))}
+            </Grid>
+          )}
         </div>
-        
-            <Grid container direction="row">
-            {requests && requests.map((request, index) => (
-            <Grid item xs={6}>
-
-            <FollowUpRequest key={index} request={request} />
-            </Grid>
-            ))}
-
-            </Grid>
-
             
         </Container>
-        <El7a2niInfo />
+      <El7a2niInfo />
       
     </>
 

@@ -262,17 +262,23 @@ return (
         </Grid>
 
         <Grid item xs={12} md={8}>
-                <Container>
-                {appointments &&
-                    !filteredAppointments &&
-                    appointments.map((appointment) => (
-                    <DoctorAppointment appointment={appointment} />
-                    ))}
-                {filteredAppointments &&
-                    filteredAppointments.map((appointment: any, index: number) => (
-                    <DoctorAppointment appointment={appointment} />
-                    ))}
-                </Container>
+        <Container>
+  { appointments.length === 0 && (
+    <Typography variant="h6" align="center" style={{ marginTop: '20px' }}>
+      You currently do not have any appointments.
+    </Typography>
+  )}
+  {appointments &&
+    !filteredAppointments &&
+    appointments.map((appointment) => (
+      <DoctorAppointment appointment={appointment} />
+    ))}
+  {filteredAppointments &&
+    filteredAppointments.map((appointment: any, index: number) => (
+      <DoctorAppointment appointment={appointment} key={index} />
+    ))}
+</Container>
+
         </Grid>
         </Grid>
 

@@ -120,7 +120,7 @@ const ViewMyTimeSlots: React.FC = () => {
           gutterBottom
           style={{ fontWeight: "bold" }}
           >
-        for the old appointment: 
+        For the old appointment: 
 
           </Typography>
           {appointment && 
@@ -134,10 +134,10 @@ const ViewMyTimeSlots: React.FC = () => {
                 day: "numeric",
                 year: "numeric",
             })}`} </Typography>
-            <Typography variant="body1"> <span style={{fontWeight:'bold'}}>Status : </span> {appointment && appointment.status} </Typography>
+            <Typography variant="body1"gutterBottom> <span style={{fontWeight:'bold'}}>Status : </span> {appointment && appointment.status} </Typography>
           </div>
 
-          
+
           }
             <Typography
             variant="h3"
@@ -147,6 +147,7 @@ const ViewMyTimeSlots: React.FC = () => {
           Pick a new date from your available slots: 
 
             </Typography>
+
     {timeslots.length === 0 ? (
       <Typography variant="body1">You don't have any available time slots</Typography>
     ) : (
