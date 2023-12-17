@@ -71,7 +71,16 @@ const HealthPackageComp = ({
   };
 
   // const boxColors = ["#ffc107", "#bdbdbd", "#4caf50", "#ff9800"];
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <Card

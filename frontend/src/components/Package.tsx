@@ -34,7 +34,8 @@ const AddPackage = () => {
       setMessage('Internal server error');
     }
   };
-
+  const token = localStorage.getItem("authToken");
+ 
   return (
     <div>
       <h2>Add Package</h2>

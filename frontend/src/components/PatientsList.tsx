@@ -1,3 +1,4 @@
+import { Typography } from '@mui/material';
 import React, { useState, useEffect } from 'react';
 
 interface Patient {
@@ -38,7 +39,16 @@ const PatientList: React.FC = () => {
   useEffect(() => {
     // You can fetch data initially when the component mounts if needed
   }, []);
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div>
       <h2>Patient List</h2>
