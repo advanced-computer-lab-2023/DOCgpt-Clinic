@@ -160,8 +160,8 @@ const handleReject = async (doctorUsername: string) => {
           access denied
         </Typography>
       </div>
-    );
-  }
+    );
+  }
   return (
     <>
       <AdminBar />

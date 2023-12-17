@@ -50,7 +50,16 @@ const ViewStatusOfPackage = () => {
   // Filter out packages for the patient and family members
   const patientPackages = healthPackages.filter((pkg) => !pkg.familyMemberName);
   const familyMemberPackages = healthPackages.filter((pkg) => pkg.familyMemberName);
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     
     <Container maxWidth="lg">
