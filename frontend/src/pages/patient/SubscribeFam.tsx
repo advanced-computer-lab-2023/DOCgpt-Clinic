@@ -5,6 +5,9 @@ import axios from "axios";
 
 import PatientAppBar from '../../components/patientBar/patientBar';
 import SubscribeFamComp from "../../components/SubscribeFamComp";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
+import Background from '../../HealthPack.jpeg';
+import Back from "../../components/backButton";
 
 interface FamilyMember {
   name: string;
@@ -84,6 +87,46 @@ const fetchFamMembersSubscribed = async () =>{
 return (
     <>
       <PatientAppBar />
+      <div
+      style={{
+        position: 'relative',
+        backgroundImage: `url(${Background})`,
+        backgroundSize: 'cover',
+        minHeight: '50vh',
+        marginBottom: '100px',
+        backgroundPosition: 'center',
+        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
+      }}
+    >
+      {/* Transparent overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        }}
+      ></div>
+
+      <Back />
+      <div
+        style={{
+          position: 'absolute',
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          color: 'white',
+        }}
+      >
+        <h1>
+          <strong>SUBSCRIBE FOR FAMILY MEMBER</strong>
+        </h1>
+      </div>
+    </div>
+
       <Container>
         <Typography variant="h4" gutterBottom color="primary" style={{ textAlign: 'center'}}>
           Family Members
@@ -104,6 +147,7 @@ return (
           </Grid>
         )}
       </Container>
+      <El7a2niPatientInfo/>
     </>
   );
 }    
