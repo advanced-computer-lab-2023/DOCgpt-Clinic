@@ -401,7 +401,7 @@ export const addPrescriptionToCart = async (req: Request, res: Response) => {
 export const updateMedicineInPrescription = async (req: Request, res: Response) => {
   try {
     const prescriptionId = req.params.id;
-
+console.log("ana hena")
     // Check for valid ObjectId
     if (!mongoose.Types.ObjectId.isValid(prescriptionId)) {
       return res.status(400).send({ message: 'Invalid prescription ID.' });
