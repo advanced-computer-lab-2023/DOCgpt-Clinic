@@ -173,7 +173,7 @@ This project is licensed under the [Apache License 2.0](https://www.apache.org/l
 
 ## Contributing 
 Contributions are always welcome!
-See contributing.md for ways to get started.
+See [contributing.md](contributing.md) for ways to get started.
 Please adhere to this project's code of conduct.
 
 ## Installation
@@ -1083,3 +1083,244 @@ GET /routes/viewFamMemberPackages
 GET /routes/getdisc/:username
 
 </details>
+
+## Tests 
+
+Our websites have been thoroughly tested using Postman, a powerful API testing tool. 
+Postman allows us to ensure the functionality, reliability, and performance of our APIs. The collection of tests covers various scenarios to guarantee a smooth user experience.
+
+#### Testing Methodology
+1. Selecting the URL
+When initiating tests, the first crucial step is to identify and select the appropriate URL. This includes both production and development endpoints, depending on the scope and purpose of the test.
+
+2. Choosing HTTP Methods
+Postman supports a range of HTTP methods, including GET, POST, PATCH, and more. The selection of the appropriate method is contingent on the functionality being tested. For instance, use GET for retrieving data, POST for creating new resources, and PATCH for updating existing ones..etc.
+
+3. Handling Request Body
+Certain methods, such as POST and PATCH, require request bodies. Postman provides a user-friendly interface for including request bodies in different formats. When dealing with JSON data, it's essential to set the body type to "raw" and specify the data in the JSON format.
+
+4. Configuring Headers
+Headers play a crucial role in defining the behavior of the request and specifying any additional information required by the server. Postman allows for easy configuration of headers based on the specific requirements of your API.
+
+#### Examples from testing our Website :
+
+##### Testing payment method 
+
+---
+
+| Body        | Type     | Description                               |
+| :---------- | :------- | :---------------------------------------- |
+| doctorUsername | string | *Required*. The username of the doctor.    |
+| paymentMethod | string | *Required*. The payment method (e.g., "card").    |
+| price | number | *Required*. The price of the appointment.    |
+| date | date | *Required*. The date and time of the appointment in ISO 8601 format.    |
+
+| Headers         | Type     | Description                          |
+| :-------------- | :------- | :------------------------------------|
+| Authorization | string | *Required*. Token obtained during authentication. |
+
+<details>
+<summary>
+Response
+</summary>
+
+json
+
+{
+  "message": "Appointment done",
+  "app": {
+    "_id": "621f11a7a8b8a13f1028fc49",
+    "patientUsername": "john_doe",
+    "doctorUsername": "john_doe",
+    "date": "2023-12-16T14:30:00.000Z",
+    "status": "scheduled"
+  },
+  "sessionUrl": "https://example.com/payment-session"
+}
+
+
+</details>
+
+##### Testing logout method 
+
+---
+
+| Headers         | Type     | Description                          |
+| :-------------- | :------- | :------------------------------------|
+| Authorization | string | *Required*. Token obtained during authentication. |
+
+<details>
+<summary>
+Response
+</summary>
+
+json
+
+{
+  "_id": "60957a6e0dcaf34e54eabcde",
+  "username": "john_doe",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImpvaG5fZG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c",
+  "createdAt": "2022-01-01T12:00:00.000Z",
+  "updatedAt": "2022-01-01T12:15:00.000Z"
+}
+
+</details>
+
+##### Testing subscribe To Health Package For Family Member method 
+
+---
+
+| Body        | Type     | Description                               |
+| :---------- | :------- | :---------------------------------------- |
+| packageName | string | *Required*. The name of the health package to subscribe to.    |
+| familyMemberName | string | *Required*. The name of the family member to subscribe to the health package.    |
+| paymentMethod | string | *Required*. The payment method (e.g., "creditCard" or "wallet").    |
+
+
+| Headers         | Type     | Description                          |
+| :-------------- | :------- | :------------------------------------|
+| Authorization | string | *Required*. Token obtained during authentication. |
+
+<details>
+<summary>
+Response
+</summary>
+
+json
+
+{
+  "message": "Appointment done",
+  "app": {
+    "_id": "621f11a7a8b8a13f1028fc49",
+    "patientUsername": "john_doe",
+    "doctorUsername": "john_doe",
+    "date": "2023-12-16T14:30:00.000Z",
+    "status": "scheduled"
+  },
+  "sessionUrl": "https://example.com/payment-session"
+}
+
+</details>
+
+##### Testing get All Prescriptions as a Doctor method 
+
+---
+
+| Headers         | Type     | Description                          |
+| :-------------- | :------- | :------------------------------------|
+| Authorization | string | *Required*. Token obtained during authentication. |
+
+<details>
+<summary>
+Response
+</summary>
+
+json
+
+[
+  {
+    "PatientName": "John Doe",
+    "date": "2023-12-16T14:30:00.000Z",
+    "status": "Prescribed",
+    "medicines": [
+      {
+        "medicineName": "Medicine A",
+        "dosage": "10mg",
+        "quantity": 2,
+        "_id": "some_id"
+      },
+      {
+        "medicineName": "Medicine B",
+        "dosage": "5mg",
+        "quantity": 1,
+        "_id": "another_id"
+      }
+    ],
+    "_id": "prescription_id"
+  },
+]
+
+</details>
+
+##### Testing accept Follow-Up Request method 
+
+---
+
+| Body        | Type     | Description                               |
+| :---------- | :------- | :---------------------------------------- |
+| requestId | string | *Required*. ID of the follow-up request to accept.    |
+
+
+| Headers         | Type     | Description                          |
+| :-------------- | :------- | :------------------------------------|
+| Authorization | string | *Required*. Token obtained during authentication. |
+
+<details>
+<summary>
+Response
+</summary>
+
+json
+
+{
+  "appointment": {
+    "_id": "appointment_id",
+    "status": "upcoming",
+    "doctor": "doctor_username",
+    "patient": "patient_username",
+    "date": "2023-12-16T14:30:00.000Z",
+    "type": "Follow up",
+    "price": 0,
+    "paid": true,
+    "scheduledBy": "requester_username"
+  }
+}
+
+</details>
+
+##### Testing delete Patient Docs method 
+
+---
+
+| Body        | Type     | Description                               |
+| :---------- | :------- | :---------------------------------------- |
+| path | string | *Required*. Path of the document to delete.    |
+
+| Query Parameter        | Type     | Description                               |
+| :---------- | :------- | :---------------------------------------- |
+| section | string | *Required*. Section of health record.    |
+| subsection | string | *Required*. Subsection of health record.    |
+
+
+| Headers         | Type     | Description                          |
+| :-------------- | :------- | :------------------------------------|
+| Authorization | string | *Required*. Token obtained during authentication. |
+
+<details>
+<summary>
+Response
+</summary>
+
+json
+
+{
+  "message": "Document removed successfully."
+}
+
+
+</details>
+
+## Authors
+1. [Yasmin El-Diasty](https://github.com/yasmineldiasty)
+2. [Sama Samy](https://github.com/sama241)
+3. [Rawan Ehab](https://github.com/rawan-ehab2002)
+4. [Shahenda Maisara](https://github.com/ShahendaElsayed)
+5. [Rotana Ahmed](https://github.com/Rotanaahmeddd)
+6. [Farah Amr](https://github.com/farah-amr)
+7. [Sarah Salem](https://github.com/sarasalemx)
+8. [Amal Yasser](https://github.com/AmlYES)
+9. [Salma Moataz](https://github.com/Sall17)
+10.[Rowayda Khaled](https://github.com/rowaydaowais)
+
+
+
