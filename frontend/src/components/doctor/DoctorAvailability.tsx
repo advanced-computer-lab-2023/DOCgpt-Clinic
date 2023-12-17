@@ -3,6 +3,7 @@ import { Grid, Typography, Button, TextField, Container, Avatar,  Dialog,
   DialogTitle,
   DialogContent,
   DialogActions, useTheme, Paper, FormControl, List, ListItem, Alert, Snackbar } from '@mui/material';
+  import CircularProgress from '@mui/material/CircularProgress';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import isBefore from 'date-fns/isBefore';
@@ -41,7 +42,8 @@ const DoctorAvailability: React.FC = () => {
   const [successDialogOpen, setSuccessDialogOpen] = useState(false);
   const [disableAdd, setDisableAdd] = useState(true);
   const [disableSubmit, setDisableSubmit] = useState(true);
- 
+  const [isLoading, setIsLoading] = useState(true);
+
 
   const addTimeSlotsToDatabase = async () => {
     try {
@@ -65,8 +67,9 @@ const DoctorAvailability: React.FC = () => {
     }
   };
 
-  
   useEffect(() => {
+    setIsLoading(true); // Start loading
+  
     // Fetch timeslots from the backend
     const fetchData = async () => {
     try {
@@ -79,6 +82,9 @@ const DoctorAvailability: React.FC = () => {
         setTimeslots(response.data.timeslots);
     } catch (error) {
         console.error('Error fetching timeslots:', error);
+    }
+    finally {
+      setIsLoading(false); // Finish loading (whether successful or not)
     }
 };
 
@@ -288,27 +294,31 @@ fetchData();
           <Grid container justifyContent="center" alignItems="center" style={styles.container2}>
             <Paper elevation={5} style={styles.paper2}>
             <Typography variant="h1" style={{marginBottom : '30px'}}>Your available time slots</Typography>  
-
-
             {timeslots.length === 0 ? (
-              <div>
-                  <Typography variant="h3">You do not have any available timeslots yet</Typography>
-                  <Typography variant="h3" style={{display:'flex', alignItems: 'center', justifyContent:'center'}}>
-                  <ReplyRoundedIcon style={{ marginRight: "8px"}} />{" "}
-                    Add some!
-                  </Typography>
-              </div>
-        ) : (
-            <List>
-            {timeslots.map((timeslot, index) => (
-                <ListItem
-                key={index}
-                >
-            <DoctorTimeSlot timeslot={timeslot}></DoctorTimeSlot>
-                </ListItem>
-            ))}
-            </List>
-        )}
+  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <Typography variant="h3">
+      {isLoading ? "" : " "}
+    </Typography>
+    {isLoading ? (
+      <CircularProgress style={{ marginTop: '16px' }} color="primary" size={48} />
+    ) : (
+      <Typography variant="h3" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <ReplyRoundedIcon style={{ marginRight: "8px" }} />{" "}
+        Add some!
+      </Typography>
+    )}
+  </div>
+) : (
+  <List>
+    {timeslots.map((timeslot, index) => (
+      <ListItem key={index}>
+        <DoctorTimeSlot timeslot={timeslot}></DoctorTimeSlot>
+      </ListItem>
+    ))}
+  </List>
+)}
+
+           
             </Paper>
           </Grid>
           </Grid>
