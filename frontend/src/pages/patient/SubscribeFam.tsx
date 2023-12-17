@@ -9,7 +9,7 @@ import left from '../../left1.jpeg'
 import right from '../../right.jpeg'
 import El7a2niInfo from '../../components/El7a2ni-info';
 import AddFamilyMember from './addFam'
-import Background from '../../FamilyMembers.jpg';
+import Background from '../../HealthPack.jpeg';
 import Back from "../../components/backButton";
 
 import PatientAppBar from '../../components/patientBar/patientBar';
@@ -127,7 +127,7 @@ function SubscribeFam() {
         }}
       >
         <h1>
-          <strong>MY FAMILY MEMBERS</strong>
+          <strong>SUBSCRIBE FOR FAMILY MEMBER</strong>
         </h1>
       </div>
     </div>
