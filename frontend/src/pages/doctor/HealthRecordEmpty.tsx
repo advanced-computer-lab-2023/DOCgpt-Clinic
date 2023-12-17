@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import DroctorBar from "../../components/Doctor bar/doctorBar";
 import Background from '../../Background.jpeg';
 import DoctorBar from "../../components/Doctor bar/doctorBar";
+import El7a2niInfo from "../../components/El7a2ni-info";
 function HealthRecordEmpty(){
     //Take the Patient username
     const location = useLocation();
@@ -25,6 +26,7 @@ function HealthRecordEmpty(){
     //THE VIEW 
     //A SIMPLE MESSEGE IN THE MIDDLE OF THE SCREEN AND A PLUS BUTTON THAT REDIRECT TO THE (HEALTH RECORD FORM) PAGE
     return (
+      <>
         <div
           style={{
             backgroundImage: `url(${Background})`,
@@ -65,6 +67,8 @@ function HealthRecordEmpty(){
             </Paper>
           </div>
         </div>
+        <El7a2niInfo />
+        </>
       );
       
       
