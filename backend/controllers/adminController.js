@@ -89,7 +89,6 @@ const getAdmin = async (req, res) => {
     res.status(200).json(admin);
 };
 exports.getAdmin = getAdmin;
-//delete Doctor
 const deleteDoctorByUsername = async (req, res) => {
     try {
         const { username } = req.body;

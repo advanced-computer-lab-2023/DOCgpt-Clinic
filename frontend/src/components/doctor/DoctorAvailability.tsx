@@ -36,34 +36,13 @@ import ClearIcon from "@mui/icons-material/Clear";
 import InputLabel from "@mui/material/InputLabel";
 import InputAdornment from "@mui/material/InputAdornment";
 import TimePicker from "@mui/lab/TimePicker";
-
-import ReplyRoundedIcon from "@mui/icons-material/ReplyRounded";
-import DoctorTimeSlot from "./DoctorTimeSlot";
-import Background from "../../Appointments.jpeg";
-  DialogActions, useTheme, Paper, FormControl, List, ListItem, Alert, Snackbar } from '@mui/material';
-  import CircularProgress from '@mui/material/CircularProgress';
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import isBefore from 'date-fns/isBefore';
-import startOfDay from 'date-fns/startOfDay';
-import axios from 'axios';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded';
-import { CSSProperties } from '@mui/material/styles/createMixins';
-import theme from '../../theme';
+import CircularProgress from '@mui/material/CircularProgress';
 import El7a2niDocInfo from '../El7a2niDoc-info';
-import DrawerAppBar from '../Doctor bar/doctorBar';
-import { isSameDay } from 'date-fns';
-import IconButton from '@mui/material/IconButton';
-import ClearIcon from '@mui/icons-material/Clear';
-import InputLabel from '@mui/material/InputLabel';
-import InputAdornment from '@mui/material/InputAdornment';
-import TimePicker from '@mui/lab/TimePicker';
-import MuiAlert from '@mui/material/Alert';
-import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
-import DoctorTimeSlot from './DoctorTimeSlot';
 import Background from '../../Appointments.jpeg';
 import Back from "../../components/backButton";
+import ReplyRoundedIcon from '@mui/icons-material/ReplyRounded';
+import DoctorTimeSlot from './DoctorTimeSlot';
+
 
 interface Timeslot {
   date: Date;
@@ -397,37 +376,7 @@ const DoctorAvailability: React.FC = () => {
             style={styles.container2}
           >
             <Paper elevation={5} style={styles.paper2}>
-              <Typography variant="h1" style={{ marginBottom: "30px" }}>
-                Your available time slots
-              </Typography>
-
-              {timeslots.length === 0 ? (
-                <div>
-                  <Typography variant="h3">
-                    You do not have any available timeslots yet
-                  </Typography>
-                  <Typography
-                    variant="h3"
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                    }}
-                  >
-                    <ReplyRoundedIcon style={{ marginRight: "8px" }} /> Add
-                    some!
-                  </Typography>
-                </div>
-              ) : (
-                <List>
-                 {timeslots
-                .map((timeslot, index) => (
-                  <ListItem key={index}>
-                    <DoctorTimeSlot timeslot={timeslot}></DoctorTimeSlot>
-                  </ListItem>
-                ))}
-                </List>
-              )}
+              
             <Typography variant="h1" style={{marginBottom : '30px'}}>Your available time slots</Typography>  
             {timeslots.length === 0 ? (
   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
