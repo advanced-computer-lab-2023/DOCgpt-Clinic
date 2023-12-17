@@ -11,6 +11,7 @@ import WalletIcon from "@mui/icons-material/Wallet";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import image from "../../paygirl.jpg"
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 
 const PayMedicines: React.FC = () => {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ const PayMedicines: React.FC = () => {
       console.log(data);
       if (paymentMethod === "creditCard" && data.sessionUrl) {
         window.location.href = data.sessionUrl;
-      } else if (paymentMethod === "Wallet") {
+      } else if (paymentMethod === "wallet") {
         setMessage("Package subscribed succesfully");
         setSnackbarOpen(true);
       }
@@ -98,13 +99,23 @@ const PayMedicines: React.FC = () => {
         {paymentMethod === "creditCard" && (
           <CreditCardIcon sx={{ fontSize: "2rem" }} />
         )}
-        {paymentMethod === "Wallet" && <WalletIcon sx={{ fontSize: "2rem" }} />}
+        {paymentMethod === "wallet" && <WalletIcon sx={{ fontSize: "2rem" }} />}
       </Paper>
     </Grid>
   );
-  
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
- 
+<>
+<Back/>
     <div
     style={{
       backgroundImage: `url(${image})`,
@@ -134,7 +145,7 @@ const PayMedicines: React.FC = () => {
         Choose Payment Method
       </Typography>
       <Grid container spacing={0.0001}>
-        <PaymentCard paymentMethod="Wallet" label="Wallet" />
+        <PaymentCard paymentMethod="wallet" label="Wallet" />
         <PaymentCard paymentMethod="creditCard" label="Credit Card" />
       </Grid>
     </div>
@@ -149,6 +160,8 @@ const PayMedicines: React.FC = () => {
         <></>
       )}
     </div>
+    <El7a2niPatientInfo/>
+    </>
 
   );
 };
