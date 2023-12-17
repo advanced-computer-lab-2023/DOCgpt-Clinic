@@ -36,7 +36,7 @@ router.post('/addToCart',  addPrescriptionToCart);
 router.post('/changeStatus',  changeStatus);
 router.delete('/deleteMedPresc/:prescriptionId', deleteMedPresc);
 router.put('updatePrescMed/:prescriptionId', updatePrescriptionMed);
-
+updateMedicineInPrescription
 
 
 router.post('/checkmedicineexists',checkifexists);
