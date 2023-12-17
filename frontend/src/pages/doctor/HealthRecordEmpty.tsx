@@ -98,7 +98,7 @@ function HealthRecordEmpty(){
               </Typography>
             </Paper>
           </div>
-        </div>
+       
         <El7a2niInfo />
         </>
       );
