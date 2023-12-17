@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Typography } from "@mui/material";
 
 const PrescriptionDetailsPage: React.FC = () => {
   const [prescriptionData, setPrescriptionData] = useState<any | null>(null);
@@ -19,7 +20,16 @@ const PrescriptionDetailsPage: React.FC = () => {
     const prescriptionId = "123"; // Replace with the actual prescription ID
     fetchPrescriptionData();
   }, []);
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div>
       <h1>Prescription Details</h1>

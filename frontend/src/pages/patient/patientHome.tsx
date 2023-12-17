@@ -1,3 +1,4 @@
+import Typography from '@mui/material/Typography/Typography';
 import React, { useEffect, useState } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 
@@ -53,7 +54,16 @@ const PatientHome = () => {
 const handleViewWalletBalance = () => {
     navigate(`/patient/walletAmount/${username}`);
 };
-
+const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div style={{ textAlign: 'center' }}>
       <h2>Welcome, {username}!</h2>

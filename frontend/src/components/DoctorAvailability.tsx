@@ -72,7 +72,16 @@ const DoctorAvailability: React.FC<DoctorAvailabilityProps> = ({ doctorUsername 
     // Add time slots to the database
     addTimeSlotsToDatabase();
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <Grid container justifyContent="center" alignItems="center" style={styles.container}>
       <Paper elevation={20} style={styles.paper}>
