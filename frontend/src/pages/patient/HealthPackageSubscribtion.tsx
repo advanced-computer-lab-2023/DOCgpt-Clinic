@@ -115,7 +115,7 @@ const PayMedicines: React.FC = () => {
   }
   return (
 <>
-<Back/>
+
     <div
     style={{
       backgroundImage: `url(${image})`,

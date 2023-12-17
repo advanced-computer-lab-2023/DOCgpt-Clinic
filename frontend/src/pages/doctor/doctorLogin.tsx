@@ -27,6 +27,7 @@ const DoctorLogin = () => {
     };
 
     return (
+        
         <div style={styles.container}>
         <h2>Doctor Login</h2>
         <form onSubmit={handleSubmit}>

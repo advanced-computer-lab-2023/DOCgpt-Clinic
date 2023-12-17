@@ -134,6 +134,16 @@ export default function AdminAppBar() {
     navigate("/adminProfile");
   };
   const renderMenuItems = (items: RouteType[]) => {
+    const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
     return (
       <List>
         {items.map((item, index) => (

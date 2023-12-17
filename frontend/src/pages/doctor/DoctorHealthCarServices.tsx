@@ -49,6 +49,16 @@ const ServiceCard: React.FC<ServiceProps & { path: string }> = ({
   const handleClick = () => {
     navigate(path);
   };
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <Card
       sx={{

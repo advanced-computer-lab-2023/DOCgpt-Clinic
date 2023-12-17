@@ -194,7 +194,16 @@ const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
     //return
     //THE DISPLAY OF THE FORM
     //SIMPLE FORM, MAKE SURE IT INCLUDES ALL  THE QUESTIONS NEEDED TO GATHER THE INFO FOR CREATE HEALTH RECORD, GIVE SPACE FOR (NO ANSWER), INCLUDE BUTTONS TO UPLOAD IMAGES WHEN NEEDED, INCLUDE A GENERAL COMMENTS(NOTES) SECTION 
-   
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      return (
+        <div>
+          <Typography component="h1" variant="h5">
+            access denied
+          </Typography>
+        </div>
+      );
+    }
     return( 
         
 <>

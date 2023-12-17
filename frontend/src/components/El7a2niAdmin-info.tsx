@@ -38,7 +38,7 @@ const El7a2niAdminInfo = () => {
         <img
           src={logo}
           alt="Clinic Logo"
-          style={{ width: "300px", height: "100px", marginRight: "20px" }}
+          style={{ width: "300px", height: "150", marginRight: "20px" }}
         />
       </div>
       <div style={{ flex: 1, textAlign: "left" }}>

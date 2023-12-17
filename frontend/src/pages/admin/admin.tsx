@@ -10,7 +10,18 @@ import RemoveDoc from '../../components/RemoveDoc';
 import RemovePatient from '../../components/RemovePatient';
 import RemoveAdmin from '../../components/RemoveAdmin';
 import RemovePackages from '../../components/RemovePackages';
+import { Typography } from '@mui/material';
 function Admin() {
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div>
       <h1>Your App</h1>

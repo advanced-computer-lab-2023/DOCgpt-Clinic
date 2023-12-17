@@ -11,9 +11,10 @@ import CreditCardIcon from "@mui/icons-material/CreditCard";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
 import Alert from "@mui/material/Alert";
 import MuiAlert from '@mui/material/Alert';
-
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import image from "../../paygirl.jpg";
 import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
+
 
 const PayMedicines: React.FC = () => {
   const navigate = useNavigate();
@@ -21,6 +22,10 @@ const PayMedicines: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [message, setMessage] = useState("");
   const { packageName } = useParams<{ packageName: string }>();
+  const handleBack = () => {
+    // You can customize this logic based on your routing needs
+    navigate(-1); // Go back one step in the history
+  };
 
   const handlePayment = async (paymentMethod: string) => {
     try {
@@ -117,7 +122,7 @@ const PayMedicines: React.FC = () => {
 
   return (
     <>
-    <Back/>
+    
     <div
       style={{
         backgroundImage: `url(${image})`,
