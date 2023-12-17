@@ -6,7 +6,7 @@ import axios from "axios";
 import PatientBar from "../../components/patientBar/patientBar";
 import { Card, CardContent, Grid, Paper, Snackbar } from "@mui/material";
 import Background from '../../HealthPack.jpeg';
-import Back from "../../components/backButton";
+import Back from "../../components/buttonBlack";
 import WalletIcon from "@mui/icons-material/Wallet";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
@@ -114,21 +114,23 @@ const PayMedicines: React.FC = () => {
     );
   }
   return (
-<>
-<Back/>
-    <div
-    style={{
-      backgroundImage: `url(${image})`,
-      backgroundSize: "710px 710px",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "right center",
-      height: "100vh",
-      position: "relative",
-      marginTop: "50px",
-      zIndex: 0,
-    }}
-  >
+<> 
+      <div
+        style={{
+          backgroundImage: `url(${image})`,
+          backgroundSize: "710px 710px",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "right center",
+          height: "100vh",
+          position: "relative",
+          marginTop: "50px",
+          zIndex: 0,
+        }}
+      >
+        
     <PatientBar />
+    <Back/>
+
     <div
       style={{
         marginLeft: "150px",

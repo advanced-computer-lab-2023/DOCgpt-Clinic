@@ -131,7 +131,16 @@ const SelectedPrescription = () => {
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
       <DialogTitle>

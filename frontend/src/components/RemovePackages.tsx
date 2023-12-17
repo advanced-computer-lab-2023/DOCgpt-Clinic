@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Typography } from '@mui/material';
 
 const RemovePackages: React.FC = () => {
   const [name, setUsername] = useState('');
@@ -22,7 +23,16 @@ const RemovePackages: React.FC = () => {
       setMessage('Error deleting package');
     }
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div style={{ textAlign: 'center', marginLeft: '250px' }}>
       <h1>Remove Package</h1>

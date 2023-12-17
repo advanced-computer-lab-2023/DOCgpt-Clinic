@@ -250,7 +250,12 @@ export default function DrawerAppBar() {
         <img
           src={logo}
           alt="Clinic Logo"
-          style={{ width: "200px", height: "100px", marginRight: "5px" }}
+          style={{
+            width: "130px",
+            height: "120px",
+            margin: "-55px 0 0 60px", // Adjust the margins as needed (top, right, bottom, left)
+            transform: "scale(2.5)", // Adjust the scale factor as needed
+          }}
         />
       </div>
       <Divider />

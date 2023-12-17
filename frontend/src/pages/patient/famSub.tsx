@@ -5,7 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import PatientBar from "../../components/patientBar/patientBar";
 import { Card, CardContent, Grid, Paper, Snackbar } from "@mui/material";
-import Back from "../../components/backButton";
+import Back from "../../components/buttonBlack";
 import WalletIcon from "@mui/icons-material/Wallet";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
@@ -114,7 +114,16 @@ const PayMedicines: React.FC = () => {
       </Paper>
     </Grid>
   );
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <>
     <Back/>

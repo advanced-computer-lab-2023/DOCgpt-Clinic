@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import React, { useState } from "react";
 
 // Define the attributes that can be updated
@@ -54,7 +55,16 @@ const PackageUpdateForm: React.FC = () => {
         console.error("Error updating Package:", error);
       });
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div>
       <label>Package Name:</label>
