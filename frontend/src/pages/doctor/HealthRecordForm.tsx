@@ -8,6 +8,7 @@ import DoctorBar from "../../components/Doctor bar/doctorBar";
 import React from "react";
 import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import El7a2niInfo from "../../components/El7a2ni-info";
 interface FormValues {
     MedicalHistory: {
         Allergies: string[];
@@ -196,7 +197,7 @@ const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
    
     return( 
         
-
+<>
          <div
         style={{
           backgroundImage: `url(${Background})`,
@@ -335,10 +336,11 @@ const [openErrorSnackbar, setOpenErrorSnackbar] = useState(false);
             </form>
         </Paper>
     </Container>    
-    
+   
   
     </div>
-  
+    <El7a2niInfo />
+    </>
     );
 }
 
