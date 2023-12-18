@@ -31,6 +31,10 @@ const HealthPackages = () => {
   const [packageToDelete, setPackageToDelete] = useState<HealthPackage | null>(null);
   const [openAddPackageDialog, setOpenAddPackageDialog] = useState(false);
 
+  const handleSnackbarClose = () => {
+    setOpenAlert(false);
+  };
+  
   const navigate = useNavigate();
 
   const handleAddPackageClick = () => {
@@ -86,10 +90,13 @@ const HealthPackages = () => {
         const response = await axios.delete(`/routes/admins/deleteHealthPackage/${packageToDelete.name}`);
         if (response.status === 200) {
           // Assuming you want to do this only if the response is successful
-          setHealthPackages(currentPackages => 
+          setHealthPackages(currentPackages =>
             currentPackages.filter(p => p.name !== packageToDelete.name)
           );
           handleCloseConfirmDialog();
+  
+          // Display the Snackbar
+          setOpenAlert(true);
         } else {
           console.error('Failed to delete package:', response.data.message);
         }
@@ -98,8 +105,17 @@ const HealthPackages = () => {
       }
     }
   };
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   
-
   return (
     <>
 
@@ -258,6 +274,17 @@ const HealthPackages = () => {
     </Button>
   </DialogActions>
 </Dialog>
+<Snackbar
+  open={openAlert}
+  autoHideDuration={2000}
+  onClose={handleSnackbarClose}
+  anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+>
+  <Alert severity="success" sx={{ width: '100%', fontSize: '1.5rem' }}>
+    Package Deleted Successfully
+  </Alert>
+</Snackbar>
+
       </Container>
       <El7a2niAdminInfo/>
     </>

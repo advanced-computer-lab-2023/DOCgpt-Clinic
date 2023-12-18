@@ -702,8 +702,8 @@ export const creditPayment = async (req: Request, res: Response , sessionPrice :
           quantity: 1,
         
     }],
-      success_url: `http://localhost:3000`,
-      cancel_url: `http://localhost:3000/login`,
+      success_url: `http://localhost:3002/patient/home`,
+      cancel_url: `http://localhost:3002/patient/home`,
     },
     );
     return   session.url ;

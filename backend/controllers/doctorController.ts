@@ -1053,6 +1053,21 @@ export const getTodayAppointments = async (req: Request, res: Response) => {
 };
 
 
+function formatDateWithoutDay(dateString : any) {
+  const date = new Date(dateString);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  return date.toLocaleDateString(undefined, options as Intl.DateTimeFormatOptions);
+}
+
+function extractTime(dateString : any) {
+  const date = new Date(dateString);
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+  return time;
+}
+
+
 //accept/reject follow up request 
 
 export const acceptFollowUpRequest = async(req: Request, res: Response) => {
@@ -1091,8 +1106,9 @@ if(doctor){
   );
   }
    notificationSubject = "Follow Up Scheduled Successfully";
-   notificationMessage = `Your follow up appointment request has been accepted by Doctor: ${doctor.username}`;
+   notificationMessage = `=follow up accepted by Doctor: ${doctor.username}`;
   await doctor.save();
+ 
 }
 
     //Send Notificationss(system & mail)//username DOC & PATIENT
@@ -1159,7 +1175,7 @@ export const rejectFollowUpRequest = async(req: Request, res: Response) => {
 
     //Send Notificationss(system & mail)//username DOC & PATIENT
    const notificationSubject = "Follow Up Rejected";
-   const notificationMessage = `Your follow up request has been rejected by Doctor: ${username}`;
+   const notificationMessage = `follow up  rejected by Doctor: ${username}`;
     if(request.requestedBy!=request.patient){
       // send to request.patient and request.requestedBy
       const patientNotification= await createNotificationWithCurrentDate(request.patient, notificationSubject, notificationMessage);

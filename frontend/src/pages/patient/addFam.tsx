@@ -18,6 +18,7 @@ import {
   SelectChangeEvent,
   AlertColor,
   Alert,
+  Typography,
 } from '@mui/material';
 import { AddCircleOutline, Male, Female, Close } from '@mui/icons-material';
 import axios from 'axios';
@@ -87,7 +88,16 @@ const AddFamilyMemberForm: React.FC<AddFamilyMemberFormProps> = ({ open, setOpen
     window.location.reload();
 
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <Dialog open={open} onClose={() => setOpen(false)} fullWidth maxWidth="md">
       <DialogTitle>

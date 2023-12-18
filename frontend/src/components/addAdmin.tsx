@@ -10,6 +10,7 @@ import {
   TextField,
   Snackbar,
   Box,
+  Typography,
 } from "@mui/material";
 import PersonAddTwoToneIcon from '@mui/icons-material/PersonAddTwoTone'; // Import the add person icon
 import Alert from '@mui/material/Alert'; // Import Alert for displaying errors
@@ -75,7 +76,16 @@ const CreateAdminButton: React.FC = () => {
     }
   };
   
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <Box
       display="flex"

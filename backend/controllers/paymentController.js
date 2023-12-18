@@ -86,8 +86,8 @@ const payWithCredit = async (req, res, sessionPrice) => {
                     quantity: 1,
                 }
             ],
-            success_url: `http://localhost:3000/login`,
-            cancel_url: `http://localhost:3000/login`,
+            success_url: `http://localhost:3002/patient/home`,
+            cancel_url: `http://localhost:3002/patient/home`,
         });
         res.json({ url: session.url });
     }

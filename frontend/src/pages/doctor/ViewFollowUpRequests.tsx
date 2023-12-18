@@ -36,7 +36,16 @@ function ViewFollowUpRequests(){
         fetchRequests();
     }, []);
 
-
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      return (
+        <div>
+          <Typography component="h1" variant="h5">
+            access denied
+          </Typography>
+        </div>
+      );
+    }
     //VIEW
     return(
    
@@ -82,19 +91,41 @@ function ViewFollowUpRequests(){
       </div>
     </div>
         <Container>
-        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          {requests.length === 0 ? (
+            <Typography variant="h6" align="center" style={{ marginTop: '20px' }}>
+              You currently do not have any follow-up requests.
+            </Typography>
+          ) : (
+            <Grid container direction="row" spacing={-20}>
+             {requests
+  .slice() // Create a shallow copy to avoid mutating the original array
+  .sort((a, b) => {
+    // Custom sorting logic based on status and date
+    if (a.status === "pending" && b.status !== "pending") {
+      return -1; // "pending" comes first
+    } else if (a.status !== "pending" && b.status === "pending") {
+      return 1; // "pending" comes first
+    } else {
+      // For pending requests, sort by date
+      if (a.status === "pending" && b.status === "pending") {
+        return new Date(b.followUpDate).getTime() - new Date(a.followUpDate).getTime();
+      }
+
+      // For non-pending requests, also sort by followUpDate
+      return new Date(b.followUpDate).getTime() - new Date(a.followUpDate).getTime();
+    }
+  })
+  .map((request, index) => (
+    <Grid item xs={6} key={index}>
+      <FollowUpRequest request={request} />
+    </Grid>
+  ))}
+
+
+            </Grid>
+          )}
         </div>
-        
-            <Grid container direction="row">
-            {requests && requests.map((request, index) => (
-            <Grid item xs={6}>
-
-            <FollowUpRequest key={index} request={request} />
-            </Grid>
-            ))}
-
-            </Grid>
-
             
         </Container>
         <El7a2niDocInfo />

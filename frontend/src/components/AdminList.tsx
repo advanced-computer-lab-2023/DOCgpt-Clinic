@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import El7a2niInfo from './El7a2ni-info';
+import { Typography } from "@mui/material";
+
 
 interface Admin {
   _id: string;
@@ -28,7 +29,16 @@ const AdminList: React.FC = () => {
   useEffect(() => {
     // You can fetch data initially when the component mounts if needed
   }, []);
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     
     <div>

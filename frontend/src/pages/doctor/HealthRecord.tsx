@@ -12,6 +12,7 @@ import MonitorHeartIcon from '@mui/icons-material/MonitorHeart';
 import OpacityIcon from '@mui/icons-material/Opacity';
 import Back from "../../components/backButton";
 import MuiAlert from '@mui/material/Alert';
+import El7a2niInfo from "../../components/El7a2ni-info";
 
 interface HealthRecord{
     patient: string,
@@ -123,7 +124,16 @@ function HealthRecord(){
       }
     };
     
-        
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      return (
+        <div>
+          <Typography component="h1" variant="h5">
+            access denied
+          </Typography>
+        </div>
+      );
+    }
     //return
     //THE VIEW 
     //DISPLAYING SECTIONS OF THE HEALTH RECORD IN A PROPER WAY AND DIPLAYING IMAGES AND NOTES 
@@ -527,7 +537,7 @@ function HealthRecord(){
 
                 <Card
    style={{
-    height: '200px', // Set a fixed height
+    height: '170px', // Set a fixed height
     overflowY: 'auto', // Add scrollbar if needed
     width: '99%',
     display: 'flex',
@@ -575,6 +585,8 @@ function HealthRecord(){
               </Container>
             )}
           </Container>
+          <El7a2niInfo />
+          
 </>
       );
       

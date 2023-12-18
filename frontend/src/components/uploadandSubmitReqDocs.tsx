@@ -141,7 +141,16 @@ const UploadAndSubmitReqDocs: React.FC = () => {
       setFile(e.target.files[0]);
     }
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <div>
       <input type="file" onChange={handleFileChange} />

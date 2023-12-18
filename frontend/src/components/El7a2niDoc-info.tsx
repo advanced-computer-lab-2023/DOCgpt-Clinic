@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../logo.jpeg";
+import logo from "../Logoo.png";
 import { useNavigate } from "react-router-dom";
 
 const El7a2niDocInfo = () => {
@@ -30,7 +30,7 @@ const El7a2niDocInfo = () => {
         <img
           src={logo}
           alt="Clinic Logo"
-          style={{ width: "300px", height: "100px", marginRight: "20px" }}
+          style={{ width: "300px", height: "150", marginRight: "20px" }}
         />
       </div>
       <div style={{ flex: 1, textAlign: "left" }}>

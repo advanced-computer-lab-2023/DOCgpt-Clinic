@@ -80,7 +80,16 @@ const customTypographyStyles = {
       console.error('Error fetching doctor information:', error);
     }
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <>
       <AdminBar />

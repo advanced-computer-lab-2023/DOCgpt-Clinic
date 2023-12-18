@@ -1,16 +1,17 @@
 import {
-Box,
-Container,
-FormControl,
-Grid,
-InputLabel,
-MenuItem,
-Select,
-SelectChangeEvent,
-Stack,
-Switch,
-TextField,
-Typography,
+  Box,
+  Container,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Stack,
+  Switch,
+  TextField,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -19,268 +20,294 @@ import DoctorAppointment from "../../components/DoctorAppointment";
 import DoctorBar from "../../components/Doctor bar/doctorBar";
 import El7a2niDocInfo from "../../components/El7a2niDoc-info";
 import DrawerAppBar from "../../components/Doctor bar/doctorBar";
-import Background from '../../Appointments.jpeg';
+import Background from "../../Appointments.jpeg";
 import Back from "../../components/backButton";
 
-
 function MyAppointments() {
-//THE LOGIC OF VIEWING A DOCTOR'S APPOINTMENTS
-//THW LINK TO BACK
-// const location = useLocation();
-// const queryParams = new URLSearchParams(location.search);
-// const doctorUsername = queryParams.get('doctorUsername');
+  //THE LOGIC OF VIEWING A DOCTOR'S APPOINTMENTS
+  //THW LINK TO BACK
+  // const location = useLocation();
+  // const queryParams = new URLSearchParams(location.search);
+  // const doctorUsername = queryParams.get('doctorUsername');
+  const [isLoading, setIsLoading] = useState(true); // Add isLoading state
 
-const [appointments, setAppointments] = useState<any[]>([]);
-const [filteredAppointments, setFilteredAppointments] = useState<any[]>([]);
-const [status, setstatus] = useState("");
-const [selectedDate, setSelectedDate] = useState("");
-const [upcoming, setupcoming] = useState(false);
-const [past, setPast] = useState(false);
+  const [appointments, setAppointments] = useState<any[]>([]);
+  const [filteredAppointments, setFilteredAppointments] = useState<any[]>([]);
+  const [status, setstatus] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
+  const [upcoming, setupcoming] = useState(false);
+  const [past, setPast] = useState(false);
 
-const chooseStatus = (event: SelectChangeEvent) => {
+  const chooseStatus = (event: SelectChangeEvent) => {
     setstatus(event.target.value);
-};
-const handleDateChange = (event: any) => {
+  };
+  const handleDateChange = (event: any) => {
     const newDate = event.target.value;
     setSelectedDate(newDate);
-};
-const handleUpcomingSwitch = () => {
+  };
+  const handleUpcomingSwitch = () => {
     setupcoming((prevSwitchState) => !prevSwitchState);
-};
-const handlePastSwitch = () => {
+  };
+  const handlePastSwitch = () => {
     setPast((prevSwitchState) => !prevSwitchState);
-};
-useEffect(() => {
+  };
+  useEffect(() => {
     const fetchAppointments = async () => {
-        console.log("Fetching appointments...");
-        try {
-          const token = localStorage.getItem("authToken");
-          const response = await axios.get<any[]>("/routes/appointments", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-      
-          if (response) {
-            console.log("Response:", response);
-            const data = await response.data;
-      
-            // Sort the appointments based on date and time
-            const sortedAppointments = data.sort((a, b) => {
-              const dateA = new Date(a.date.toLocaleString("en-US",  "Africa/Cairo" ));
-              const dateB = new Date(b.date.toLocaleString("en-US",  "Africa/Cairo" ));
-      
-              if (dateA > dateB) return -1;
-              if (dateA < dateB) return 1;
-              // If dates are equal, compare times
-              const timeA = dateA.getHours() * 60 + dateA.getMinutes();
-              const timeB = dateB.getHours() * 60 + dateB.getMinutes();
-              return timeB - timeA;
-            });
-      
-            setAppointments(sortedAppointments);
-          } else {
-            console.error("Failed to fetch doctor data");
-          }
-        } catch (error) {
-          console.error("Error:", error);
-        }
-      };
-      
-    fetchAppointments();
-}, []);
+      console.log("Fetching appointments...");
+      setIsLoading(true); // Start loading
 
-useEffect(() => {
+      try {
+        const token = localStorage.getItem("authToken");
+        const response = await axios.get<any[]>("/routes/appointments", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response) {
+          console.log("Response:", response);
+          const data = await response.data;
+
+          // Sort the appointments based on date and time
+          const sortedAppointments = data.sort((a, b) => {
+            const dateA = new Date(
+              a.date.toLocaleString("en-US", "Africa/Cairo")
+            );
+            const dateB = new Date(
+              b.date.toLocaleString("en-US", "Africa/Cairo")
+            );
+
+            if (dateA > dateB) return -1;
+            if (dateA < dateB) return 1;
+            // If dates are equal, compare times
+            const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+            const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+            return timeB - timeA;
+          });
+
+          setAppointments(sortedAppointments);
+        } else {
+          console.error("Failed to fetch doctor data");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      } finally {
+        setIsLoading(false); // Finish loading (whether successful or not)
+      }
+    };
+
+    fetchAppointments();
+  }, []);
+
+  useEffect(() => {
     // Filter medicines based on the search value
     const filtered = appointments.filter((appointment: any) =>
-    appointment.status.toLowerCase().includes(status.toLowerCase())
+      appointment.status.toLowerCase().includes(status.toLowerCase())
     );
     setFilteredAppointments(filtered);
     if (status.toLowerCase() === "all") {
-    setFilteredAppointments(appointments);
+      setFilteredAppointments(appointments);
     }
-}, [status, appointments]);
+  }, [status, appointments]);
 
-useEffect(() => {
+  useEffect(() => {
     // Filter medicines based on the search value
     const filtered = appointments.filter((appointment) => {
-    // Convert the Mongoose date to "YYYY-MM-DD" format
-    const appointmentDate = new Date(appointment.date)
+      // Convert the Mongoose date to "YYYY-MM-DD" format
+      const appointmentDate = new Date(appointment.date)
         .toISOString()
         .split("T")[0];
-    // Compare the dates
-    return appointmentDate === selectedDate;
+      // Compare the dates
+      return appointmentDate === selectedDate;
     });
     setFilteredAppointments(filtered);
-}, [selectedDate]);
+  }, [selectedDate]);
 
-useEffect(() => {
+  useEffect(() => {
     if (upcoming) {
-    const filtered = appointments.filter(
-        (appointment: any) => appointment.status.toLowerCase() === "upcoming"
-    );
-    setFilteredAppointments(filtered);
+      const today = new Date();
+      const filtered = appointments.filter(
+        (appointment: any) => new Date(appointment.date) >= today
+      );
+      setFilteredAppointments(filtered);
     } else {
-    setFilteredAppointments(appointments);
+      setFilteredAppointments(appointments);
     }
-}, [upcoming]);
+  }, [upcoming, appointments]);
 
-useEffect(() => {
+  useEffect(() => {
     if (past) {
-    const filtered = appointments.filter(
-        (appointment: any) => appointment.status.toLowerCase() !== "upcoming"
-    );
-    setFilteredAppointments(filtered);
+      const today = new Date();
+      const filtered = appointments.filter(
+        (appointment: any) => new Date(appointment.date) < today
+      );
+      setFilteredAppointments(filtered);
     } else {
-    setFilteredAppointments(appointments);
+      setFilteredAppointments(appointments);
     }
-}, [past]);
+  }, [past, appointments]);
 
-//return
-//THE VIEWING (THE COMPONENTS)
-//1- UPCOMING SWITCH
-//2- PAST SWITCH
-//3- DATE PICKER FILTER
-//4- STATUS DROP DOWN FILTER
-//5- LIST OF APPOINTMENTS COMPONENTS
+  //return
+  //THE VIEWING (THE COMPONENTS)
+  //1- UPCOMING SWITCH
+  //2- PAST SWITCH
+  //3- DATE PICKER FILTER
+  //4- STATUS DROP DOWN FILTER
+  //5- LIST OF APPOINTMENTS COMPONENTS
 
-//EACH APPOINTMENT COMPONENT SHOULD CONTAIN:
-//- A CHECK CIRCLE TO MARK COMPLETE(OPTIONAL)
-//- THE INFO OF THE APPOINTMENTS (DATE, STATUS, PATIENT NAME DON'T CONATIN THE DOCTOR NAME AND DISPLAY THE INFO IN A PROPER WAY)
-
-return (
+  //EACH APPOINTMENT COMPONENT SHOULD CONTAIN:
+  //- A CHECK CIRCLE TO MARK COMPLETE(OPTIONAL)
+  //- THE INFO OF THE APPOINTMENTS (DATE, STATUS, PATIENT NAME DON'T CONATIN THE DOCTOR NAME AND DISPLAY THE INFO IN A PROPER WAY)
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
+  return (
     <>
-    <DrawerAppBar />
-    <div
-      style={{
-        position: 'relative',
-        backgroundImage: `url(${Background})`,
-        backgroundSize: 'cover',
-        minHeight: '50vh',
-        marginBottom: '100px',
-        backgroundPosition: 'center',
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
-      }}
-    >
-      {/* Transparent overlay */}
+      <DrawerAppBar />
       <div
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        }}
-      ></div>
-
-      <Back />
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          textAlign: 'center',
-          color: 'white',
+          position: "relative",
+          backgroundImage: `url(${Background})`,
+          backgroundSize: "cover",
+          minHeight: "50vh",
+          marginBottom: "100px",
+          backgroundPosition: "center",
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.5)",
         }}
       >
-        <h1>
-          <strong>MY APPOINTMENTS</strong>
-        </h1>
-      </div>
-    </div>
-    <Container>
+        {/* Transparent overlay */}
         <div
-        style={{
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        ></div>
+
+        <Back />
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            color: "white",
+          }}
+        >
+          <h1>
+            <strong>MY APPOINTMENTS</strong>
+          </h1>
+        </div>
+      </div>
+      <Container>
+        <div
+          style={{
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             padding: "20px",
-        }}
-        >
-        </div>
+          }}
+        ></div>
 
         <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
+          <Grid item xs={12} md={4}>
             <Stack direction="column" style={{ position: "sticky", top: 100 }}>
-            <Stack>
+              <Stack>
                 <Typography>Past Appointments:</Typography>
                 <div>
-                <Switch
+                  <Switch
                     checked={past}
                     onChange={handlePastSwitch}
                     name="past-switch"
-                />
-                <span>{past ? "Past" : "All"}</span>
+                  />
+                  <span>{past ? "Past" : "All"}</span>
                 </div>
-            </Stack>
-            <Box sx={{ marginTop: "10px" }} />{" "}
-            <Stack>
+              </Stack>
+              <Box sx={{ marginTop: "10px" }} />{" "}
+              <Stack>
                 <Typography>Upcoming Appointments:</Typography>
                 <div>
-                <Switch
+                  <Switch
                     checked={upcoming}
                     onChange={handleUpcomingSwitch}
                     name="upcoming-switch"
-                />
-                <span>{upcoming ? "Upcoming" : "All"}</span>
+                  />
+                  <span>{upcoming ? "Upcoming" : "All"}</span>
                 </div>
-            </Stack>
-            <Box sx={{ marginTop: "10px" }} />{" "}
-            <FormControl fullWidth>
+              </Stack>
+              <Box sx={{ marginTop: "10px" }} />{" "}
+              <FormControl fullWidth>
                 <Typography>Pick a Date:</Typography>
                 <TextField
-                type="date"
-                value={selectedDate}
-                onChange={handleDateChange}
-                variant="outlined"
+                  type="date"
+                  value={selectedDate}
+                  onChange={handleDateChange}
+                  variant="outlined"
                 />
-            </FormControl>
-            <Box sx={{ marginTop: "10px" }} />{" "}
-            <Stack>
+              </FormControl>
+              <Box sx={{ marginTop: "10px" }} />{" "}
+              <Stack>
                 <Typography>Choose Appointment Status:</Typography>
                 <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Status</InputLabel>
-                <Select
+                  <InputLabel id="demo-simple-select-label">Status</InputLabel>
+                  <Select
                     labelId="demo-simple-select-label"
                     id="demo-simple-select"
                     value={status}
                     label="Status"
                     onChange={chooseStatus}
-                >
+                  >
                     <MenuItem value={"upcoming"}>UpComing</MenuItem>
                     <MenuItem value={"completed"}>Completed</MenuItem>
                     <MenuItem value={"cancelled"}>Cancelled</MenuItem>
                     <MenuItem value={"rescheduled"}>Rescheduled</MenuItem>
                     <MenuItem value={"all"}>All</MenuItem>
-                </Select>
+                  </Select>
                 </FormControl>
+              </Stack>
+              <Box sx={{ marginTop: "10px" }} />{" "}
             </Stack>
-            <Box sx={{ marginTop: "10px" }} />{" "}
-            </Stack>
-        </Grid>
+          </Grid>
 
-        <Grid item xs={12} md={8}>
-                <Container>
-                {appointments &&
+          <Grid item xs={12} md={8}>
+            <Container>
+              {isLoading ? ( // Display CircularProgress while loading
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <CircularProgress color="primary" size={48} />
+                </div>
+              ) : (
+                <div>
+                  {appointments &&
                     !filteredAppointments &&
                     appointments.map((appointment) => (
-                    <DoctorAppointment appointment={appointment} />
+                      <DoctorAppointment appointment={appointment} />
                     ))}
-                {filteredAppointments &&
-                    filteredAppointments.map((appointment: any, index: number) => (
-                    <DoctorAppointment appointment={appointment} />
-                    ))}
-                </Container>
+                  {filteredAppointments &&
+                    filteredAppointments.map(
+                      (appointment: any, index: number) => (
+                        <DoctorAppointment appointment={appointment} />
+                      )
+                    )}
+                </div>
+              )}
+            </Container>
+          </Grid>
         </Grid>
-        </Grid>
-
-    </Container>
-    <El7a2niDocInfo />
-      
+      </Container>
+      <El7a2niDocInfo />
     </>
-);
+  );
 }
 
 export default MyAppointments;

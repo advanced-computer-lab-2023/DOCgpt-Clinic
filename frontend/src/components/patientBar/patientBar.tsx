@@ -4,7 +4,7 @@ import { To, useNavigate, useParams } from "react-router-dom";
 import SearchIcon from "@mui/icons-material/Search";
 import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
 import ForumIcon from "@mui/icons-material/Forum";
-import logo from "../../logo.jpeg";
+import logo from "../../Logoo.png";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import PersonIcon from "@mui/icons-material/Person";
@@ -250,7 +250,12 @@ export default function DrawerAppBar() {
         <img
           src={logo}
           alt="Clinic Logo"
-          style={{ width: "200px", height: "100px", marginRight: "5px" }}
+          style={{
+            width: "130px",
+            height: "120px",
+            margin: "-55px 0 0 60px", // Adjust the margins as needed (top, right, bottom, left)
+            transform: "scale(2.5)", // Adjust the scale factor as needed
+          }}
         />
       </div>
       <Divider />

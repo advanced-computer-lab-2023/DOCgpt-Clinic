@@ -1,18 +1,18 @@
 import {
-Button,
-Card,
-CardContent,
-Container,
-Grid,
-Paper,
-Typography,
-Dialog,
-DialogContent,
-DialogTitle,
-DialogActions,
-CircularProgress,
-List,
-ListItem,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Grid,
+  Paper,
+  Typography,
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogActions,
+  CircularProgress,
+  List,
+  ListItem,
 } from "@mui/material";
 import EventIcon from "@mui/icons-material/Event";
 import axios from "axios";
@@ -22,73 +22,73 @@ import PersonSharpIcon from "@mui/icons-material/PersonSharp";
 import PeopleAltSharpIcon from "@mui/icons-material/PeopleAltSharp";
 
 interface Doctor {
-username: string;
-name: string;
-email: string;
-hourlyRate: number;
-speciality: string;
-timeslots: [{ date: Date }];
-educationalBackground: string;
+  username: string;
+  name: string;
+  email: string;
+  hourlyRate: number;
+  speciality: string;
+  timeslots: [{ date: Date }];
+  educationalBackground: string;
 }
 interface Timeslot {
-date: Date;
-// Add other properties as needed
+  date: Date;
+  // Add other properties as needed
 }
 function DoctorInfo() {
-//THE LOGIC OF GETTING A CERTAIN PATIENTS INFO UPON CLICK
-const location = useLocation();
-const queryParams = new URLSearchParams(location.search);
-const price = queryParams.get("price");
-const [doctor, setDoctor] = useState<Doctor | null>(null);
-const selectedDoctor = localStorage.getItem("selectedDoctor");
-const navigate = useNavigate();
-const [selectedTimeslot, setSelectedTimeslot] = useState<Timeslot>();
-const [open, setOpen] = useState(true);
+  //THE LOGIC OF GETTING A CERTAIN PATIENTS INFO UPON CLICK
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const price = queryParams.get("price");
+  const [doctor, setDoctor] = useState<Doctor | null>(null);
+  const selectedDoctor = localStorage.getItem("selectedDoctor");
+  const navigate = useNavigate();
+  const [selectedTimeslot, setSelectedTimeslot] = useState<Timeslot>();
+  const [open, setOpen] = useState(true);
 
-const fetchDoctor = async () => {
+  const fetchDoctor = async () => {
     console.log("Fetching Doctor...");
     try {
-    const response = await axios.get(
+      const response = await axios.get(
         `/routes/patient/doctors/select?username=${selectedDoctor}`
-    );
-    console.log("Response:", response);
-    setDoctor(response.data);
+      );
+      console.log("Response:", response);
+      setDoctor(response.data);
     } catch (error) {
-    console.error("Error:", error);
+      console.error("Error:", error);
     }
-};
+  };
 
-useEffect(() => {
+  useEffect(() => {
     fetchDoctor();
-}, []);
-const handleTimeslotSelect = (selectedTimeslot: Timeslot) => {
+  }, []);
+  const handleTimeslotSelect = (selectedTimeslot: Timeslot) => {
     // Handle the selected timeslot as needed
     setSelectedTimeslot(selectedTimeslot);
-};
+  };
 
-const ReserveAppointmentForMe = () => {
+  const ReserveAppointmentForMe = () => {
     //fel page de hangeb el doctor username mn local storage w neb3ato lel back f body w session price f body, w el token fel header
     //set doctorUsername fel local storage
     if (doctor && selectedTimeslot) {
-    localStorage.setItem("doctorUserName", doctor.username);
-    navigate(`/makeApp/${selectedTimeslot.date}/${price}`);
+      localStorage.setItem("doctorUserName", doctor.username);
+      navigate(`/makeApp/${selectedTimeslot.date}/${price}`);
     }
-};
-const ReserveAppointmentForFam = () => {
+  };
+  const ReserveAppointmentForFam = () => {
     if (doctor && selectedTimeslot) {
-    //fel page de hangeb el doctor username mn local storage w neb3ato lel back f body w session price f body, w el token fel header
-    localStorage.setItem("doctorUserName", doctor.username);
-    navigate(`/patient/ViewMyFam/${selectedTimeslot.date}/${price}`);
+      //fel page de hangeb el doctor username mn local storage w neb3ato lel back f body w session price f body, w el token fel header
+      localStorage.setItem("doctorUserName", doctor.username);
+      navigate(`/patient/ViewMyFam/${selectedTimeslot.date}/${price}`);
     }
-};
-const handleClose = () => {
+  };
+  const handleClose = () => {
     setOpen(false);
     navigate("/patient/viewDoctors");
-};
-//return
-//THE DISPLAY OF THAT INFO
-//JUST A LITTLE CARD IN THE MIDDLE OF THE PAGE CONTAINS ALL INFO OF THE PATIENT
-const token = localStorage.getItem("authToken");
+  };
+  //return
+  //THE DISPLAY OF THAT INFO
+  //JUST A LITTLE CARD IN THE MIDDLE OF THE PAGE CONTAINS ALL INFO OF THE PATIENT
+  const token = localStorage.getItem("authToken");
   if (!token) {
     return (
       <div>
@@ -98,136 +98,194 @@ const token = localStorage.getItem("authToken");
       </div>
     );
   }
-return (
+  return (
     <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
-    <DialogTitle>
+      <DialogTitle>
         <Typography
-        variant="h4"
-        gutterBottom
-        color="primary"
-        style={{ textAlign: "center" }}
+          variant="h4"
+          gutterBottom
+          color="primary"
+          style={{ textAlign: "center" }}
         >
-        Information Of Selected Doctor
+          Information Of Selected Doctor
         </Typography>
-    </DialogTitle>
-    <DialogContent>
+      </DialogTitle>
+      <DialogContent>
         {doctor && (
-        <Grid container spacing={2}>
+          <Grid container spacing={2}>
             <Grid item xs={12}>
-            <Typography>
+              <Typography>
                 <span style={{ fontWeight: "bold" }}>Name:</span> {doctor.name}
-            </Typography>
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-            <Typography>
+              <Typography>
                 <span style={{ fontWeight: "bold" }}>Email:</span>{" "}
                 {doctor.email}
-            </Typography>
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-            <Typography>
+              <Typography>
                 <span style={{ fontWeight: "bold" }}>Hourly Rate:</span>{" "}
                 {doctor.hourlyRate}
-            </Typography>
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-            <Typography>
+              <Typography>
                 <span style={{ fontWeight: "bold" }}>Speciality:</span>{" "}
                 {doctor.speciality}
-            </Typography>
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-            <Typography>
+              <Typography>
                 <span style={{ fontWeight: "bold" }}>
-                Educational Background:
+                  Educational Background:
                 </span>{" "}
                 {doctor.educationalBackground}
-            </Typography>
+              </Typography>
             </Grid>
             <Grid item xs={12}>
-            <Typography variant="body1" style={{ fontWeight: "bold" }}>
+              <Typography variant="body1" style={{ fontWeight: "bold" }}>
                 {" "}
                 Pick A Date:
-            </Typography>
-            <List>
-                {doctor.timeslots.map((timeslot, index) => (
-                <ListItem
-                    key={index}
-                    button
-                    onClick={() => handleTimeslotSelect(timeslot)}
-                    style={{ transition: "border-radius 0.3s ease-in-out" }}
-                    sx={{
-                    "&:hover": {
-                        borderRadius: "12px", // Set your desired border-radius value
-                    },
-                    }}
-                >
-                    <EventIcon style={{ marginRight: "8px" }} />{" "}
-                    {/* Calendar Icon */}
-                    <Typography variant="body1">
-                    {` ${new Date(timeslot.date).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}, ${new Date(timeslot.date).toLocaleString("en-US", {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                    })}`}
-                    </Typography>
-                </ListItem>
-                ))}
-            </List>
+              </Typography>
+              <List>
+                {!doctor.timeslots.length ? (
+                  <Typography variant="body1">
+                    No available timeslots for this doctor.
+                  </Typography>
+                ) : (
+                  doctor.timeslots.map((timeslot, index) => (
+                    <ListItem
+                      key={index}
+                      button
+                      onClick={() => handleTimeslotSelect(timeslot)}
+                      style={{ transition: "border-radius 0.3s ease-in-out" }}
+                      sx={{
+                        "&:hover": {
+                          borderRadius: "12px", // Set your desired border-radius value
+                        },
+                      }}
+                    >
+                      <EventIcon style={{ marginRight: "8px" }} />
+                      {/* Calendar Icon */}
+                      <Typography variant="body1">
+                        {` ${new Date(timeslot.date).toLocaleString("en-US", {
+                          weekday: "short",
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}`}{" "}
+                        <span style={{ fontWeight: "bold" }}>
+                          {new Date(timeslot.date).getHours() === 14
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() === 13
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() > 12
+                            ? new Date(timeslot.date).getHours() - 14
+                            : new Date(timeslot.date).getHours() === 0
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 1
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 2
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() - 2}
+                          {":"}
+                          {new Date(timeslot.date).getMinutes() < 10
+                            ? new Date(timeslot.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(timeslot.date).getMinutes()}{" "}
+                          {new Date(timeslot.date).getHours() === 0
+                            ? "PM"
+                            : new Date(timeslot.date).getHours() === 1
+                            ? "PM"
+                            : new Date(timeslot.date).getHours() >= 14
+                            ? "PM"
+                            : "AM"}
+                        </span>
+                      </Typography>
+                    </ListItem>
+                  ))
+                )}
+              </List>
             </Grid>
 
             {/* Add more patient information fields here */}
-        </Grid>
+          </Grid>
         )}
         {selectedTimeslot && (
-        <Paper
+          <Paper
             elevation={3}
             style={{ padding: "16px", marginBottom: "16px" }}
-        >
+          >
             <Typography variant="body1" style={{ fontWeight: "bold" }}>
-            Selected Timeslot
+              Selected Timeslot
             </Typography>
             <Typography variant="body1">
-            {` ${new Date(selectedTimeslot.date).toLocaleTimeString([], {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                    })}, ${new Date(selectedTimeslot.date).toLocaleString("en-US", {
-                        weekday: "short",
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                    })}`}
-            {/* Add other details of the selected timeslot as needed */}
+              {` ${new Date(selectedTimeslot.date).toLocaleString("en-US", {
+                weekday: "short",
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}`}{" "}
+              <span style={{ fontWeight: "bold" }}>
+                {new Date(selectedTimeslot.date).getHours() === 14
+                  ? new Date(selectedTimeslot.date).getHours() - 2
+                  : new Date(selectedTimeslot.date).getHours() === 13
+                  ? new Date(selectedTimeslot.date).getHours() - 2
+                  : new Date(selectedTimeslot.date).getHours() > 12
+                  ? new Date(selectedTimeslot.date).getHours() - 14
+                  : new Date(selectedTimeslot.date).getHours() === 0
+                  ? new Date(selectedTimeslot.date).getHours() + 10
+                  : new Date(selectedTimeslot.date).getHours() === 1
+                  ? new Date(selectedTimeslot.date).getHours() + 10
+                  : new Date(selectedTimeslot.date).getHours() === 2
+                  ? new Date(selectedTimeslot.date).getHours() + 10
+                  : new Date(selectedTimeslot.date).getHours() - 2}
+                {":"}
+                {new Date(selectedTimeslot.date).getMinutes() < 10
+                  ? new Date(selectedTimeslot.date)
+                      .getMinutes()
+                      .toString()
+                      .padStart(2, "0")
+                  : new Date(selectedTimeslot.date).getMinutes()}{" "}
+                {new Date(selectedTimeslot.date).getHours() === 0
+                  ? "PM"
+                  : new Date(selectedTimeslot.date).getHours() === 1
+                  ? "PM"
+                  : new Date(selectedTimeslot.date).getHours() >= 14
+                  ? "PM"
+                  : "AM"}
+              </span>
+              {/* Add other details of the selected timeslot as needed */}
             </Typography>
-        </Paper>
+          </Paper>
         )}
         <DialogActions>
-        <Button
+          <Button
             variant="outlined"
             color="secondary"
             onClick={ReserveAppointmentForMe}
             startIcon={<PersonSharpIcon />}
             disabled={!selectedTimeslot} // Disable the button if no timeslot is selected
-        >
+          >
             Reserve For Me
-        </Button>
-        <Button
+          </Button>
+          <Button
             variant="outlined"
             color="primary"
             onClick={ReserveAppointmentForFam}
             startIcon={<PeopleAltSharpIcon />}
             disabled={!selectedTimeslot} // Disable the button if no timeslot is selected
-        >
+          >
             Reserve For A Fam Mem
-        </Button>
+          </Button>
         </DialogActions>
-    </DialogContent>
+      </DialogContent>
     </Dialog>
-);
+  );
 }
 
 export default DoctorInfo;

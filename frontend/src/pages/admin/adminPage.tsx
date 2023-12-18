@@ -5,8 +5,20 @@ import AdminBar from "../../components/admin Bar/adminBar";
 import RemoveAdmin from "../../components/RemoveAdmin";
 import Background from '../../admin.jpeg';
 import Back from "../../components/backButton";
+import { Typography } from "@mui/material";
 
 const adminPage = () => {
+  const token = localStorage.getItem("authToken");
+if (!token) {
+  return (
+    <div>
+      <Typography component="h1" variant="h5">
+        access denied
+      </Typography>
+    </div>
+    );
+  }
+
     return (
         <div>
             <AdminBar/>

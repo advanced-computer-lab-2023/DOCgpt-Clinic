@@ -938,6 +938,18 @@ const getTodayAppointments = async (req, res) => {
     res.status(200).json(appointments);
 };
 exports.getTodayAppointments = getTodayAppointments;
+function formatDateWithoutDay(dateString) {
+    const date = new Date(dateString);
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString(undefined, options);
+}
+function extractTime(dateString) {
+    const date = new Date(dateString);
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const time = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    return time;
+}
 //accept/reject follow up request 
 const acceptFollowUpRequest = async (req, res) => {
     try {
@@ -965,7 +977,7 @@ const acceptFollowUpRequest = async (req, res) => {
                     doctor.timeslots = doctor.timeslots.filter((timeslot) => timeslot.date.getTime() !== newDate.getTime());
                 }
                 notificationSubject = "Follow Up Scheduled Successfully";
-                notificationMessage = `Your follow up appointment request has been accepted by Doctor: ${doctor.username}`;
+                notificationMessage = `=follow up accepted by Doctor: ${doctor.username}`;
                 await doctor.save();
             }
             //Send Notificationss(system & mail)//username DOC & PATIENT
@@ -1020,7 +1032,7 @@ const rejectFollowUpRequest = async (req, res) => {
             await request.save();
             //Send Notificationss(system & mail)//username DOC & PATIENT
             const notificationSubject = "Follow Up Rejected";
-            const notificationMessage = `Your follow up request has been rejected by Doctor: ${username}`;
+            const notificationMessage = `follow up  rejected by Doctor: ${username}`;
             if (request.requestedBy != request.patient) {
                 // send to request.patient and request.requestedBy
                 const patientNotification = await (0, appointmentController_1.createNotificationWithCurrentDate)(request.patient, notificationSubject, notificationMessage);

@@ -4,13 +4,23 @@ import Button from "@mui/material/Button";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import PatientBar from "../../components/patientBar/patientBar";
-import { Card, CardContent, Grid, Paper, Snackbar } from "@mui/material";
-import Background from '../../HealthPack.jpeg';
-import Back from "../../components/backButton";
+import {
+  Alert,
+  AlertColor,
+  Card,
+  CardContent,
+  CircularProgress,
+  Grid,
+  Paper,
+  Snackbar,
+} from "@mui/material";
+import Background from "../../HealthPack.jpeg";
+import Back from "../../components/buttonBlack";
 import WalletIcon from "@mui/icons-material/Wallet";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-import image from "../../paygirl.jpg"
+import image from "../../paygirl.jpg";
+import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 
 const PayMedicines: React.FC = () => {
   const navigate = useNavigate();
@@ -18,40 +28,64 @@ const PayMedicines: React.FC = () => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [message, setMessage] = useState("");
   const { packageName } = useParams<{ packageName: string }>(); // Get packageName from URL params
-
+  const [snackbarMessage, setSnackbarMessage] = useState<string>("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<
+    AlertColor | undefined
+  >("error");
+  const [isWalletLoading, setWalletLoading] = useState(false);
+  const [isCardLoading, setCardLoading] = useState(false);
   const handlePayment = async (paymentMethod: string) => {
     try {
-        const token = localStorage.getItem('authToken');
-        const response = await fetch('/routes/subscribeToHealthPackage', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            packageName,
-            paymentMethod,
-          }),
-        });
+      setLoading(true);
+      if (paymentMethod === "wallet") {
+        setWalletLoading(true);
+      } else if (paymentMethod === "card") {
+        setCardLoading(true);
+      }
+      const token = localStorage.getItem("authToken");
+      const response = await fetch("/routes/subscribeToHealthPackage", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          packageName,
+          paymentMethod,
+        }),
+      });
 
       const data = await response.json();
       console.log(data);
 
       console.log(data);
-      if (paymentMethod === "creditCard" && data.sessionUrl) {
-        window.location.href = data.sessionUrl;
-      } else if (paymentMethod === "Wallet") {
-        setMessage("Package subscribed succesfully");
+
+      if (response.status >= 200 && response.status < 300) {
+        if (paymentMethod === "creditCard" && data.sessionUrl) {
+          window.location.href = data.sessionUrl;
+        } else if (paymentMethod === "wallet") {
+          setSnackbarSeverity("success");
+          setSnackbarMessage("package subscribed succefully");
+          setSnackbarOpen(true);
+        }
+      } else {
+        setSnackbarSeverity("error");
+        setSnackbarMessage('"Insufficient balance in your wallet');
         setSnackbarOpen(true);
       }
-    } catch (error) {
-      console.error("Error:", error);
+    } catch (error: any) {
+      setSnackbarSeverity("error");
+      setSnackbarMessage("Error " + error.message);
+      setSnackbarOpen(true);
     } finally {
       setLoading(false);
+      setWalletLoading(false);
+      setCardLoading(false);
     }
   };
   const handleClose = () => {
     setSnackbarOpen(false);
+    navigate("/patient/home");
   };
   const PaymentCard = ({
     paymentMethod,
@@ -94,62 +128,90 @@ const PayMedicines: React.FC = () => {
         >
           {label}
         </Typography>
-        {/* Add conditionally rendering icons based on paymentMethod */}
-        {paymentMethod === "creditCard" && (
+        {paymentMethod === "card" ? (
           <CreditCardIcon sx={{ fontSize: "2rem" }} />
-        )}
-        {paymentMethod === "Wallet" && <WalletIcon sx={{ fontSize: "2rem" }} />}
+        ) : null}
+        {paymentMethod === "wallet" ? (
+          <WalletIcon sx={{ fontSize: "2rem" }} />
+        ) : null}
+        {paymentMethod === "wallet" && isWalletLoading ? (
+          <CircularProgress size={24} />
+        ) : null}
+        {paymentMethod === "card" && isCardLoading ? (
+          <CircularProgress size={24} />
+        ) : null}
       </Paper>
     </Grid>
   );
-  
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
- 
-    <div
-    style={{
-      backgroundImage: `url(${image})`,
-      backgroundSize: "710px 710px",
-      backgroundRepeat: "no-repeat",
-      backgroundPosition: "right center",
-      height: "100vh",
-      position: "relative",
-      marginTop: "50px",
-      zIndex: 0,
-    }}
-  >
-    <PatientBar />
-    <div
-      style={{
-        marginLeft: "150px",
-        paddingTop: "64px",
-        position: "relative",
-        zIndex: 2,
-      }}
-    >
-      <Typography
-        variant="h4"
-        gutterBottom
-        style={{ textAlign: "left", color: "#000", marginLeft: "-8px" }}
+    <>
+      <div
+        style={{
+          backgroundImage: `url(${image})`,
+          backgroundSize: "710px 710px",
+          backgroundRepeat: "no-repeat",
+          backgroundPosition: "right center",
+          height: "100vh",
+          position: "relative",
+          marginTop: "50px",
+          zIndex: 0,
+        }}
       >
-        Choose Payment Method
-      </Typography>
-      <Grid container spacing={0.0001}>
-        <PaymentCard paymentMethod="Wallet" label="Wallet" />
-        <PaymentCard paymentMethod="creditCard" label="Credit Card" />
-      </Grid>
-    </div>
-      {message ? (
-        <Snackbar
-          open={snackbarOpen}
-          autoHideDuration={6000}
-          onClose={handleClose}
-          message={message}
-        />
-      ) : (
-        <></>
-      )}
-    </div>
+        <PatientBar />
+        <Back />
 
+        <div
+          style={{
+            marginLeft: "150px",
+            paddingTop: "64px",
+            position: "relative",
+            zIndex: 2,
+          }}
+        >
+          <Typography
+            variant="h4"
+            gutterBottom
+            style={{ textAlign: "left", color: "#000", marginLeft: "-8px" }}
+          >
+            Choose Payment Method
+          </Typography>
+          <Grid container spacing={0.0001}>
+            <PaymentCard paymentMethod="wallet" label="Wallet" />
+            <PaymentCard paymentMethod="creditCard" label="Credit Card" />
+          </Grid>
+        </div>
+        {message ? (
+          <Snackbar
+            open={snackbarOpen}
+            autoHideDuration={6000}
+            onClose={handleClose}
+            message={message}
+          />
+        ) : (
+          <></>
+        )}
+      </div>
+      <El7a2niPatientInfo />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={6000}
+        onClose={handleClose}
+      >
+        <Alert severity={snackbarSeverity} onClose={handleClose}>
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 export default PayMedicines;

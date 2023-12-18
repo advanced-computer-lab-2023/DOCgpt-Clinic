@@ -331,6 +331,7 @@ exports.addPrescriptionToCart = addPrescriptionToCart;
 const updateMedicineInPrescription = async (req, res) => {
     try {
         const prescriptionId = req.params.id;
+        console.log("ana hena");
         // Check for valid ObjectId
         if (!mongoose_1.default.Types.ObjectId.isValid(prescriptionId)) {
             return res.status(400).send({ message: 'Invalid prescription ID.' });
@@ -411,19 +412,25 @@ exports.deleteMedPresc = deleteMedPresc;
 // Update prescription medicines
 const updatePrescriptionMed = async (req, res) => {
     try {
-        const { prescriptionId } = req.params;
+        const { id } = req.params;
         const { medicineId, quantity, dosage } = req.body;
+        console.log(id);
+        console.log(medicineId);
         // Ensure that medicineId is provided
         if (!medicineId) {
             return res.status(400).send({ message: 'Medicine ID is required.' });
         }
-        const updatedPrescription = await perscriptionModel_1.default.findOneAndUpdate({ _id: prescriptionId, 'Medicines._id': medicineId }, { $set: { 'Medicines.$.quantity': quantity, 'Medicines.$.dosage': dosage } }, { new: true });
+        // Find the prescription and update the specific medicine's quantity and dosage
+        const updatedPrescription = await perscriptionModel_1.default.findOneAndUpdate({ _id: id, 'Medicines._id': medicineId }, { $set: { 'Medicines.$.quantity': quantity, 'Medicines.$.dosage': dosage } }, { new: true });
+        // Handle cases where the prescription or medicine is not found
         if (!updatedPrescription) {
             return res.status(404).send({ message: 'Prescription not found or medicine not in prescription.' });
         }
+        // Return the updated prescription
         res.status(200).json({ message: 'Medicine updated in prescription successfully.', updatedPrescription });
     }
     catch (error) {
+        // Handle potential server errors
         res.status(500).json({ message: 'Error updating medicine in prescription', error });
     }
 };

@@ -94,9 +94,9 @@ const UnsubscribePackageForMember: React.FC = () => {
 
   return (
     <Container>
-   
       <Grid container spacing={2}>
         {Array.isArray(familyMembersAndPackages) &&
+        familyMembersAndPackages.length > 0 ? (
           familyMembersAndPackages.map(
             (item: FamilyMemberPackage, index: number) => (
               <Grid item key={index} xs={12} sm={6} md={4} lg={3}>
@@ -107,18 +107,42 @@ const UnsubscribePackageForMember: React.FC = () => {
                       boxShadow: "0 0 10px rgba(0, 0, 0, 0.3)", // Add an outline on hover
                     },
                   }}
-                >  
-                  <Typography variant="h2" color="text.secondary"> <strong>{item.package.name.charAt(0).toUpperCase() + item.package.name.slice(1)} </strong></Typography>
-                  <Typography color="text.secondary"> <strong>{item.familyMemberName.charAt(0).toUpperCase() + item.familyMemberName.slice(1)}</strong></Typography>
-                  <Typography variant="body1" color="text.secondary" gutterBottom>
-                <strong>Status:</strong> {item.package.status}
-              </Typography>
-                  <Typography variant="body1" color="text.secondary" gutterBottom>
-                <strong>Start Date:</strong> {item.package.startdate.split('T')[0]}
-              </Typography>
-              <Typography variant="body1" color="text.secondary" gutterBottom>
-                <strong>End Date:</strong> {item.package.enddate.split('T')[0]}
-              </Typography>
+                >
+                  <Typography variant="h2" color="text.secondary">
+                    <strong>
+                      {item.package.name.charAt(0).toUpperCase() +
+                        item.package.name.slice(1)}
+                    </strong>
+                  </Typography>
+                  <Typography color="text.secondary">
+                    <strong>
+                      {item.familyMemberName.charAt(0).toUpperCase() +
+                        item.familyMemberName.slice(1)}
+                    </strong>
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    <strong>Status:</strong> {item.package.status}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    <strong>Start Date:</strong>{" "}
+                    {item.package.startdate.split("T")[0]}
+                  </Typography>
+                  <Typography
+                    variant="body1"
+                    color="text.secondary"
+                    gutterBottom
+                  >
+                    <strong>End Date:</strong>{" "}
+                    {item.package.enddate.split("T")[0]}
+                  </Typography>
                   <Button
                     variant="contained"
                     color="secondary"
@@ -132,7 +156,16 @@ const UnsubscribePackageForMember: React.FC = () => {
                 </Paper>
               </Grid>
             )
-          )}
+          )
+        ) : (
+          <Grid item xs={12}>
+            <Paper style={{ padding: "20px", textAlign: "center" }}>
+              <Typography variant="h6" color="text.secondary">
+                No packages available.
+              </Typography>
+            </Paper>
+          </Grid>
+        )}
       </Grid>
 
       {/* Confirmation Dialog */}
@@ -148,9 +181,6 @@ const UnsubscribePackageForMember: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setConfirmationDialogOpen(false)}>
-            Cancel
-          </Button>
           <Button
             onClick={() => {
               handleUnsubscribe(selectedPackage);
@@ -159,6 +189,9 @@ const UnsubscribePackageForMember: React.FC = () => {
             color="secondary"
           >
             Unsubscribe
+          </Button>
+          <Button onClick={() => setConfirmationDialogOpen(false)}>
+            Cancel
           </Button>
         </DialogActions>
       </Dialog>

@@ -24,7 +24,8 @@ const ViewMyTimeSlots: React.FC = () => {
       "success"
     ); // or 'error' for example
     const [alertMessage, setAlertMessage] = React.useState("");
-  
+    const rescheduled = localStorage.getItem("rescheduled");
+
     useEffect(() => {
         // Fetch timeslots from the backend
         const fetchData = async () => {
@@ -35,7 +36,19 @@ const ViewMyTimeSlots: React.FC = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            setTimeslots(response.data.timeslots);
+            const data = await response.data.timeslots;
+        const sortedSlots = data.sort((a: any, b: any) => {
+          const dateA = new Date(a.date.toLocaleString("en-US",  "Africa/Cairo" ));
+          const dateB = new Date(b.date.toLocaleString("en-US",  "Africa/Cairo" ));
+  
+          if (dateA > dateB) return -1;
+          if (dateA < dateB) return 1;
+          // If dates are equal, compare times
+          const timeA = dateA.getHours() * 60 + dateA.getMinutes();
+          const timeB = dateB.getHours() * 60 + dateB.getMinutes();
+          return timeB - timeA;
+        });
+        setTimeslots(sortedSlots);
         } catch (error) {
             console.error('Error fetching timeslots:', error);
         }
@@ -51,6 +64,7 @@ const ViewMyTimeSlots: React.FC = () => {
   const handleCloseAlert = () => {
     setAlertOpen(false);
     window.location.reload();
+    localStorage.setItem("rescheduled", "true");
   };
   const handleClose = () => {
     setOpen(false);
@@ -87,7 +101,16 @@ const ViewMyTimeSlots: React.FC = () => {
                 console.error('Error fetching timeslots:', error);
             }
     };
-
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      return (
+        <div>
+          <Typography component="h1" variant="h5">
+            access denied
+          </Typography>
+        </div>
+      );
+    }
 
   return (
 
@@ -101,42 +124,89 @@ const ViewMyTimeSlots: React.FC = () => {
       >
 
       <DialogTitle>
-      <Typography
+      {(rescheduled==="true")? (
+            <Typography
             variant="h2"
-            gutterBottom
-            color="primary"
-            style={{ textAlign: "center", fontWeight: "bold" }}
-          >
-            When would you like to reschedule?
-      </Typography>
-      {oldDate && (
+                gutterBottom
+                color="primary"
+                style={{ textAlign: "center", fontWeight: "bold" }}
+            >
+                Appointment Rescheduled 
+          </Typography>
+        ): (
+            <Typography
+                variant="h2"
+                gutterBottom
+                color="primary"
+                style={{ textAlign: "center", fontWeight: "bold" }}
+            >
+                When would you like to reschedule?
+            </Typography>
+        )}
+
+      {((rescheduled==="false") && oldDate) && (
             <Typography
               variant="body1"
               style={{ textAlign: "center", fontWeight: "bold" }}
             >
               The old appointment was on{" "}
-              {` ${new Date(oldDate).toLocaleTimeString([], {
-                hour: "2-digit",
-                minute: "2-digit",
-              })}, ${new Date(oldDate).toLocaleString("en-US", {
+              {` ${new Date(oldDate).toLocaleString("en-US", {
                 weekday: "short",
                 month: "short",
                 day: "numeric",
                 year: "numeric",
               })}`}
+              {" "}
+              <span style={{ fontWeight: "bold" }}>
+                          {new Date(oldDate).getHours() === 14
+                            ? new Date(oldDate).getHours() - 2
+                            : new Date(oldDate).getHours() === 13 
+                            ? new Date(oldDate).getHours() - 2
+                            : new Date(oldDate).getHours() > 12 
+                            ? new Date(oldDate).getHours() - 14
+                            : new Date(oldDate).getHours() === 0
+                            ? new Date(oldDate).getHours() + 10
+                            : new Date(oldDate).getHours() === 1
+                            ? new Date(oldDate).getHours() + 10
+                            : new Date(oldDate).getHours() === 2
+                            ? new Date(oldDate).getHours() + 10
+                            : new Date(oldDate).getHours() - 2}
+                          {":"}
+                          {new Date(oldDate).getMinutes() < 10
+                            ? new Date(oldDate)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(oldDate).getMinutes()}{" "}
+                          {new Date(oldDate).getHours() === 0? "PM"
+                          :new Date(oldDate).getHours() === 1? "PM"
+                          :new Date(oldDate).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
               {/* Add other details of the selected timeslot as needed */}
             </Typography>
           )}
       </DialogTitle>
 
       <DialogContent>
-      <Typography
-            variant="h3"
-            gutterBottom
-            style={{ textAlign: "center", fontWeight: "bold" }}
-          >
-            You Are Available at
-          </Typography>
+      {(rescheduled === "true")? (
+                <Typography
+                variant="h3"
+                gutterBottom
+                style={{ textAlign: "center", fontWeight: "bold" }}
+            >
+                You Are Now Available At
+            </Typography>
+            ): (
+            <Typography
+                variant="h3"
+                gutterBottom
+                style={{ textAlign: "center", fontWeight: "bold" }}
+            >
+                You Are Available At
+            </Typography>
+
+            )}
+
           {timeslots.length === 0 ? (
             <Typography variant="body1">No timeslots available</Typography>
           ) : (
@@ -156,22 +226,45 @@ const ViewMyTimeSlots: React.FC = () => {
                   <EventIcon style={{ marginRight: "8px" }} />{" "}
                   {/* Calendar Icon */}
                   <Typography variant="body1">
-                    {` ${new Date(timeslot.date).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}, ${new Date(timeslot.date).toLocaleString("en-US", {
+                    {` ${new Date(timeslot.date).toLocaleString("en-US", {
                       weekday: "short",
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}`}
+                    {" "}
+                    <span style={{ fontWeight: "bold" }}>
+                          {new Date(timeslot.date).getHours() === 14
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() === 13 
+                            ? new Date(timeslot.date).getHours() - 2
+                            : new Date(timeslot.date).getHours() > 12 
+                            ? new Date(timeslot.date).getHours() - 14
+                            : new Date(timeslot.date).getHours() === 0
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 1
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() === 2
+                            ? new Date(timeslot.date).getHours() + 10
+                            : new Date(timeslot.date).getHours() - 2}
+                          {":"}
+                          {new Date(timeslot.date).getMinutes() < 10
+                            ? new Date(timeslot.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(timeslot.date).getMinutes()}{" "}
+                          {new Date(timeslot.date).getHours() === 0? "PM"
+                          :new Date(timeslot.date).getHours() === 1? "PM"
+                          :new Date(timeslot.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
                   </Typography>
                 </ListItem>
               ))}
             </List>
           )}
 
-{selectedTimeslot && (
+{selectedTimeslot && rescheduled==="false" && (
             <Paper
               elevation={3}
               style={{ padding: "16px", marginBottom: "16px" }}
@@ -180,15 +273,38 @@ const ViewMyTimeSlots: React.FC = () => {
                 Selected Timeslot
               </Typography>
               <Typography variant="body1">
-                {` ${new Date(selectedTimeslot.date).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}, ${new Date(selectedTimeslot.date).toLocaleString("en-US", {
+                {` ${new Date(selectedTimeslot.date).toLocaleString("en-US", {
                   weekday: "short",
                   month: "short",
                   day: "numeric",
                   year: "numeric",
                 })}`}
+                {" "}
+                <span style={{ fontWeight: "bold" }}>
+                          {new Date(selectedTimeslot.date).getHours() === 14
+                            ? new Date(selectedTimeslot.date).getHours() - 2
+                            : new Date(selectedTimeslot.date).getHours() === 13 
+                            ? new Date(selectedTimeslot.date).getHours() - 2
+                            : new Date(selectedTimeslot.date).getHours() > 12 
+                            ? new Date(selectedTimeslot.date).getHours() - 14
+                            : new Date(selectedTimeslot.date).getHours() === 0
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() === 1
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() === 2
+                            ? new Date(selectedTimeslot.date).getHours() + 10
+                            : new Date(selectedTimeslot.date).getHours() - 2}
+                          {":"}
+                          {new Date(selectedTimeslot.date).getMinutes() < 10
+                            ? new Date(selectedTimeslot.date)
+                                .getMinutes()
+                                .toString()
+                                .padStart(2, "0")
+                            : new Date(selectedTimeslot.date).getMinutes()}{" "}
+                          {new Date(selectedTimeslot.date).getHours() === 0? "PM"
+                          :new Date(selectedTimeslot.date).getHours() === 1? "PM"
+                          :new Date(selectedTimeslot.date).getHours() >= 14 ? "PM" : "AM"}
+                        </span>
                 {/* Add other details of the selected timeslot as needed */}
               </Typography>
             </Paper>
@@ -199,16 +315,29 @@ const ViewMyTimeSlots: React.FC = () => {
       <DialogActions
           style={{ justifyContent: "center", paddingBottom: "20px" }}
         >
-          <Button
+          {(rescheduled ==="true")? (
+            <Button
+            onClick={submitTimeSlot}
+            variant="contained"
+            color="primary"
+            size="large"
+            style={{ borderRadius: "25px" }}
+            disabled={rescheduled === "true"}
+        >
+            Rescheduled
+        </Button>
+        ) : (
+            <Button
             onClick={submitTimeSlot}
             variant="contained"
             color="primary"
             size="large"
             style={{ borderRadius: "25px" }}
             disabled={!selectedTimeslot}
-          >
-            Submit
-          </Button>
+        >
+            Reschedule
+        </Button>
+        )}
         </DialogActions>
 
       </Dialog>

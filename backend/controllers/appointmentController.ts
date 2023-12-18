@@ -677,6 +677,15 @@ console.log(timeDifference);
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
+    const time = extractTime(date);
+    const formattedDateWithoutDay = formatDateWithoutDay(date);
+
+    const msgSubject = ` ${type} Appointment cancelled`;
+    const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+    patient: ${username}`
+    const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+    Doctor: ${doctor.username} `
+    ;
     const patientEmail = patient.email; 
     const emailSubject = 'Appointment cancelled ';
     const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
@@ -694,8 +703,8 @@ const emailText1 = `Your appointment with this date   ${new Date(date)} has been
 
     console.log("im hereree");
     // Create a notification for the patient
-     const patientNotification= await createNotificationWithCurrentDate(username,emailSubject,emailText);
-     const doctorNotification= await createNotificationWithCurrentDate(doctorUsername,emailSubject,emailText1);
+     const patientNotification= await createNotificationWithCurrentDate(username,msgSubject,msg);
+     const doctorNotification= await createNotificationWithCurrentDate(doctorUsername,msgSubject,msg1);
 
      return res.status(201).json({ message: 'Appointment Cancelled' });
     
@@ -769,6 +778,16 @@ console.log(timeDifference);
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
+
+    const time = extractTime(date);
+    const formattedDateWithoutDay = formatDateWithoutDay(date);
+    const msgSubject = ` ${type} Appointment cancelled`;
+
+    const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+    patient: ${username}`
+    const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+    Doctor: ${doctor.username} `
+    ;
     const patientEmail = patient.email; 
     const emailSubject = 'Appointment cancelled ';
     const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
@@ -786,8 +805,8 @@ const emailText1 = `Your appointment with this date   ${new Date(date)} has been
 
     console.log("im hereree");
     // Create a notification for the patient
-     const patientNotification= await createNotificationWithCurrentDate(patientUsername,emailSubject,emailText);
-     const doctorNotification= await createNotificationWithCurrentDate(username,emailSubject,emailText1);
+     const patientNotification= await createNotificationWithCurrentDate(patientUsername,msgSubject,msg);
+     const doctorNotification= await createNotificationWithCurrentDate(username,msgSubject,msg1);
 
      return res.status(201).json({ message: 'Appointment Cancelled' });
     
@@ -868,6 +887,16 @@ console.log(timeDifference);
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
+
+    const time = extractTime(date);
+    const formattedDateWithoutDay = formatDateWithoutDay(date);
+    const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+    Doctor: ${doctor.username} `
+    ;
+    const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+    patient: ${username}`
+    const msgSubject = ` ${type} Appointment cancelled`;
+
     const patientEmail = fam.email; 
     const emailSubject = 'Appointment cancelled ';
     const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
@@ -885,8 +914,8 @@ const emailText1 = `Your appointment with this date   ${new Date(date)} has been
 
     console.log("im hereree");
     // Create a notification for the patient
-     const patientNotification= await createNotificationWithCurrentDate(username,emailSubject,emailText);
-     const doctorNotification= await createNotificationWithCurrentDate(doctorUsername,emailSubject,emailText1);
+     const patientNotification= await createNotificationWithCurrentDate(username,msgSubject,msg);
+     const doctorNotification= await createNotificationWithCurrentDate(doctorUsername,msgSubject,msg1);
 
      return res.status(201).json({ message: 'Appointment Cancelled' });
     

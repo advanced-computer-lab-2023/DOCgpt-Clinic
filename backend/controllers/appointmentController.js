@@ -532,6 +532,13 @@ const cancelAppointment = async (req, res) => {
         if (!existingAppointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
+        const time = extractTime(date);
+        const formattedDateWithoutDay = formatDateWithoutDay(date);
+        const msgSubject = ` ${type} Appointment cancelled`;
+        const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+    patient: ${username}`;
+        const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+    Doctor: ${doctor.username} `;
         const patientEmail = patient.email;
         const emailSubject = 'Appointment cancelled ';
         const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
@@ -547,8 +554,8 @@ const cancelAppointment = async (req, res) => {
         const docMail = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText);
-        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, emailText1);
+        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(username, msgSubject, msg);
+        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, msgSubject, msg1);
         return res.status(201).json({ message: 'Appointment Cancelled' });
     }
     catch (error) {
@@ -606,6 +613,13 @@ const cancelAppointmentDoc = async (req, res) => {
         if (!existingAppointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
+        const time = extractTime(date);
+        const formattedDateWithoutDay = formatDateWithoutDay(date);
+        const msgSubject = ` ${type} Appointment cancelled`;
+        const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+    patient: ${username}`;
+        const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+    Doctor: ${doctor.username} `;
         const patientEmail = patient.email;
         const emailSubject = 'Appointment cancelled ';
         const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
@@ -621,8 +635,8 @@ const cancelAppointmentDoc = async (req, res) => {
         const docMail = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(patientUsername, emailSubject, emailText);
-        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText1);
+        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(patientUsername, msgSubject, msg);
+        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(username, msgSubject, msg1);
         return res.status(201).json({ message: 'Appointment Cancelled' });
     }
     catch (error) {
@@ -685,6 +699,13 @@ const cancelAppointmentFam = async (req, res) => {
         if (!existingAppointment) {
             return res.status(404).json({ message: 'Appointment not found' });
         }
+        const time = extractTime(date);
+        const formattedDateWithoutDay = formatDateWithoutDay(date);
+        const msg = ` Date : ${formattedDateWithoutDay} , ${time}
+    Doctor: ${doctor.username} `;
+        const msg1 = `Date : ${formattedDateWithoutDay} , ${time}. 
+    patient: ${username}`;
+        const msgSubject = ` ${type} Appointment cancelled`;
         const patientEmail = fam.email;
         const emailSubject = 'Appointment cancelled ';
         const emailText = `Your appointment with this date   ${new Date(date)} has been cancelled. 
@@ -700,8 +721,8 @@ const cancelAppointmentFam = async (req, res) => {
         const docMail = await (0, nodemailer_1.sendAnEmail)(doctorEmail, emailSubject, emailText1);
         console.log("im hereree");
         // Create a notification for the patient
-        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(username, emailSubject, emailText);
-        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, emailSubject, emailText1);
+        const patientNotification = await (0, exports.createNotificationWithCurrentDate)(username, msgSubject, msg);
+        const doctorNotification = await (0, exports.createNotificationWithCurrentDate)(doctorUsername, msgSubject, msg1);
         return res.status(201).json({ message: 'Appointment Cancelled' });
     }
     catch (error) {

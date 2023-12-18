@@ -71,7 +71,16 @@ const HealthPackageComp = ({
   };
 
   // const boxColors = ["#ffc107", "#bdbdbd", "#4caf50", "#ff9800"];
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <Card
@@ -91,20 +100,20 @@ const HealthPackageComp = ({
         setHoveredOption(null);
       }}
     >
-    <Box
-      sx={{
-        p: 2,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "space-between",
-        height: "100%",
-        border: `2px solid transparent`,
-        "&:hover": {
-          border: `2px solid blue`,
-        },
-      }}
-    >
+      <Box
+        sx={{
+          p: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "space-between",
+          height: "100%",
+          border: `2px solid transparent`,
+          "&:hover": {
+            border: `2px solid blue`,
+          },
+        }}
+      >
         <Typography
           gutterBottom
           variant="h5"
@@ -127,8 +136,8 @@ const HealthPackageComp = ({
             Family Subscription Discount:{" "}
             <b>{healthPackage.familysubscribtionDiscount}%</b>
           </Typography>
-          </Box>
-          <Button
+        </Box>
+        <Button
           variant="contained"
           onMouseEnter={handleOpenMenu}
           sx={{ mt: 2 }}
@@ -140,25 +149,25 @@ const HealthPackageComp = ({
           open={openAlert}
           autoHideDuration={6000}
           onClose={() => setOpenAlert(false)}
-          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          // anchorOrigin={{ vertical: "top", horizontal: "center" }}
         >
           <MuiAlert
             severity="warning"
-            sx={{ width: "100%", fontSize: "1.5rem" }}
+            // sx={{ width: "100%", fontSize: "1.5rem" }}
           >
             Package Already Subscribed
           </MuiAlert>
         </Snackbar>
         <Menu
-  anchorEl={anchorEl}
-  open={Boolean(anchorEl)}
-  onClose={() => handleCloseMenu("", "")}
-  onMouseLeave={() => {
-    setAnchorEl(null);
-    setHoveredOption(null);
-    handleCloseMenu("","")
-  }}
->
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={() => handleCloseMenu("", "")}
+          onMouseLeave={() => {
+            setAnchorEl(null);
+            setHoveredOption(null);
+            handleCloseMenu("", "");
+          }}
+        >
           <MenuItem
             onClick={() => handleCloseMenu("myself", healthPackage.name)}
             onMouseOver={() => handleHoverOption("myself")}

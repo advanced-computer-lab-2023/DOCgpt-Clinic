@@ -63,7 +63,16 @@ const handleClick = () => {
     localStorage.setItem("selectedDoctor", username);
     navigate(`/patient/doctorinfo?price=${sessionPrice}`);
 };
-
+const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
 return (
     <Card
     onClick={handleClick}

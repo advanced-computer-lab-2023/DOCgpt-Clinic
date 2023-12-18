@@ -47,6 +47,16 @@ const Contract: React.FC = () => {
       // Handle errors, e.g., display an error message to the user.
     }
   };
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
 
   return (
     <Grid

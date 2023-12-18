@@ -10,6 +10,7 @@ import {
   TextField,
   Snackbar,
   Box,
+  Typography,
 } from '@mui/material';
 
 const DeleteDoctor: React.FC = () => {
@@ -49,7 +50,16 @@ const DeleteDoctor: React.FC = () => {
       setSnackbarOpen(true);
     }
   };
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <Box display="flex" justifyContent="center" alignItems="center" height="10vh">
       <Button

@@ -28,7 +28,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import AdminBar from "./admin Bar/adminBar";
 import El7a2niAdminInfo from "./El7a2niAdmin-info";
 import SearchIcon from "@mui/icons-material/Search";
-import Background from '../doctorss.jpeg';
+import Background from "../doctorss.jpeg";
 import Back from "./backButton";
 
 interface Doctor {
@@ -43,7 +43,7 @@ const DocList1: React.FC = () => {
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
   const [openDialog, setOpenDialog] = useState(false);
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [searchTerm, setSearchTerm] = useState<string>("");
 
   const handleOpenDeleteDialog = (doctor: Doctor) => {
     setSelectedDoctor(doctor);
@@ -59,7 +59,7 @@ const DocList1: React.FC = () => {
       // Perform the deletion operation here with axios
       try {
         const token = localStorage.getItem("authToken");
-        await axios.patch("/routes/doctors/removedoc", {
+        await axios.delete("/routes/admins/deletedoc", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -92,7 +92,7 @@ const DocList1: React.FC = () => {
         console.error("Error fetching accepted doctors:", error);
       }
     };
-  
+
     fetchDoctors();
   }, []);
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -101,51 +101,65 @@ const DocList1: React.FC = () => {
   const filteredPharmacists = doctors.filter((doctor) =>
     doctor.username.toLowerCase().startsWith(searchTerm.toLowerCase())
   );
-
+  const token = localStorage.getItem("authToken");
+  if (!token) {
+    return (
+      <div>
+        <Typography component="h1" variant="h5">
+          access denied
+        </Typography>
+      </div>
+    );
+  }
   return (
     <>
       <AdminBar />
       <div
-      style={{
-        position: 'relative',
-        backgroundImage: `url(${Background})`,
-        backgroundSize: 'cover',
-        minHeight: '50vh',
-        marginBottom: '100px',
-        backgroundPosition: 'center',
-        boxShadow: '0 8px 16px rgba(0, 0, 0, 0.5)',
-      }}
-    >
-      {/* Transparent overlay */}
-      <div
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-        }}
-      ></div>
-
-      <Back />
-      <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)',
-          textAlign: 'center',
-          color: 'white',
+          position: "relative",
+          backgroundImage: `url(${Background})`,
+          backgroundSize: "cover",
+          minHeight: "50vh",
+          marginBottom: "100px",
+          backgroundPosition: "center",
+          boxShadow: "0 8px 16px rgba(0, 0, 0, 0.5)",
         }}
       >
-        <h1>
-          <strong>DOCTORS LIST</strong>
-        </h1>
+        {/* Transparent overlay */}
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+          }}
+        ></div>
+
+        <Back />
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            textAlign: "center",
+            color: "white",
+          }}
+        >
+          <h1>
+            <strong>DOCTORS LIST</strong>
+          </h1>
+        </div>
       </div>
-    </div>
       <Container maxWidth="sm">
-        <Box display="flex" justifyContent="space-between" alignItems="center" marginBottom={2}>
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          marginBottom={2}
+        >
           <TextField
             size="small"
             variant="outlined"
@@ -153,9 +167,9 @@ const DocList1: React.FC = () => {
             value={searchTerm}
             onChange={handleSearchChange}
             style={{
-              width: '250px',
-              borderRadius: '20px',
-              backgroundColor: '#fff',
+              width: "250px",
+              borderRadius: "20px",
+              backgroundColor: "#fff",
             }}
             InputProps={{
               endAdornment: (
@@ -169,37 +183,42 @@ const DocList1: React.FC = () => {
           />
         </Box>
         <List>
-        <Grid container spacing={2}>
-          {filteredPharmacists.map((doctor) => (
-             <Grid item xs={42} sm={16} md={13} key={doctor._id}>
-             <Paper elevation={14} style={{ marginBottom: 18, width: '100%' }}>
-                <ListItem alignItems="flex-start">
-                  <ListItemIcon>
-                    <Avatar><PersonIcon /></Avatar>
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={doctor.username}
-                    secondary={`Email: ${doctor.email}`}
-                  />
-                  <Button
-                    onClick={() => handleOpenDeleteDialog(doctor)}
-                    variant="contained"
-                    size="small"
-                    style={{
-                      marginLeft: "auto",
-                      bottom:-12,
-                      marginRight: 2,
-                      backgroundColor: "#primary",
-                      color: "#primary" 
-                    }}
-                  >
-                    <DeleteIcon style={{ color: "#primary" }} /> 
-                  </Button>
-                </ListItem>
-              </Paper>
-            </Grid>
-          ))}
-        </Grid>
+          <Grid container spacing={2}>
+            {filteredPharmacists.map((doctor) => (
+              <Grid item xs={42} sm={16} md={13} key={doctor._id}>
+                <Paper
+                  elevation={14}
+                  style={{ marginBottom: 18, width: "100%" }}
+                >
+                  <ListItem alignItems="flex-start">
+                    <ListItemIcon>
+                      <Avatar>
+                        <PersonIcon />
+                      </Avatar>
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={doctor.username}
+                      secondary={`Email: ${doctor.email}`}
+                    />
+                    <Button
+                      onClick={() => handleOpenDeleteDialog(doctor)}
+                      variant="contained"
+                      size="small"
+                      style={{
+                        marginLeft: "auto",
+                        bottom: -12,
+                        marginRight: 2,
+                        backgroundColor: "#primary",
+                        color: "#primary",
+                      }}
+                    >
+                      <DeleteIcon style={{ color: "#primary" }} />
+                    </Button>
+                  </ListItem>
+                </Paper>
+              </Grid>
+            ))}
+          </Grid>
         </List>
         {/* Confirmation Dialog */}
         <Dialog open={openDialog} onClose={handleCloseDialog}>
@@ -219,7 +238,7 @@ const DocList1: React.FC = () => {
           </DialogActions>
         </Dialog>
       </Container>
-      <El7a2niAdminInfo/>
+      <El7a2niAdminInfo />
     </>
   );
 };

@@ -8,6 +8,7 @@ import logo from "../../logo.jpeg";
 import El7a2niPatientInfo from "../../components/El7a2niPatient-info";
 import Background from '../../Prescriptions.jpeg';
 import Back from "../../components/backButton";
+import CircularProgress from "@mui/material/CircularProgress";
 
 interface Medicine {
   medicineName: string;
@@ -24,6 +25,9 @@ interface Prescription {
 }
 const PatientPrescriptions = () => {
   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  
 
   useEffect(() => {
     const fetchPrescriptions = async () => {
@@ -39,6 +43,10 @@ const PatientPrescriptions = () => {
         setPrescriptions(response.data);
       } catch (error) {
         console.error("Error fetching prescriptions:", error);
+      }
+      finally{
+        setIsLoading(false);
+
       }
     };
 
@@ -97,20 +105,22 @@ const PatientPrescriptions = () => {
       </div>
     </div>
       <Grid container spacing={2} justifyContent="center" alignItems="center">
-        {prescriptions.length > 0 ? (
-          prescriptions.map((prescription, index) => (
-            <Grid item key={index}>
-              <PrescriptionCard prescription={prescription} />
-            </Grid>
-          ))
-        ) : (
-          <Typography
-            variant="h6"
-            style={{ textAlign: "center", margin: "20px" }}
-          >
-            You currently have no prescriptions.
-          </Typography>
-        )}
+      {isLoading ? (
+        <CircularProgress />
+      ) : prescriptions.length > 0 ? (
+        prescriptions.map((prescription, index) => (
+          <Grid item key={index}>
+            <PrescriptionCard prescription={prescription} />
+          </Grid>
+        ))
+      ) : (
+        <Typography
+          variant="h6"
+          style={{ textAlign: "center", margin: "20px" }}
+        >
+          You currently have no prescriptions.
+        </Typography>
+      )}
       </Grid>
       <El7a2niPatientInfo />
     </>

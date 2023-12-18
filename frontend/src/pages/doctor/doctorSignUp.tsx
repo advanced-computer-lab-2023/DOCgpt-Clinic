@@ -36,10 +36,8 @@ function Copyright(props: any) {
   );
 }
 
-
 // TODO remove, this demo shouldn't need to reset the theme.
 const defaultTheme = createTheme();
-
 
 function SignUpDoctor() {
   const navigate = useNavigate();
@@ -47,11 +45,13 @@ function SignUpDoctor() {
   const [file, setFile] = React.useState<File[]>([]);
   const [documentName, setDocumentName] = React.useState<string>("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const [submittedDocuments, setSubmittedDocuments] = React.useState<string[]>([]);
+  const [submittedDocuments, setSubmittedDocuments] = React.useState<string[]>(
+    []
+  );
   // const [displayDocuments, setDisplayDocuments] = React.useState(false);
-  const [fileInputs, setFileInputs] = React.useState<{ id: number; file: File | null }[]>([
-    { id: 1, file: null }
-  ]);
+  const [fileInputs, setFileInputs] = React.useState<
+    { id: number; file: File | null }[]
+  >([{ id: 1, file: null }]);
 
   function handleDocumentNameChange(value: string): void {
     setDocumentName(value);
@@ -59,9 +59,12 @@ function SignUpDoctor() {
 
   // const handleDisplayDocuments = () => {
   //   setDisplayDocuments((prevDisplay) => !prevDisplay);
-  // };  
+  // };
 
-  const handleFileChange = (id: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (
+    id: number,
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     if (e.target.files && e.target.files.length > 0) {
       setFileInputs((prevInputs) =>
         prevInputs.map((input) =>
@@ -70,90 +73,97 @@ function SignUpDoctor() {
       );
     }
   };
-  
 
+  // Function to add a new file input
+  const addFileInput = () => {
+    const newId = fileInputs.length + 1;
+    setFileInputs([...fileInputs, { id: newId, file: null }]);
+  };
 
-// Function to add a new file input
-const addFileInput = () => {
-  const newId = fileInputs.length + 1;
-  setFileInputs([...fileInputs, { id: newId, file: null }]);
-};
+  const handleSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ): Promise<void> => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
 
-
-const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
-  event.preventDefault();
-  const formData = new FormData(event.currentTarget);
-
-  if (
-    !formData.get("username") ||
-    !formData.get("name") ||
-    !formData.get("email") ||
-    !formData.get("password") ||
-    !formData.get("dateofbirth") ||
-    !formData.get("hourlyrate") ||
-    !formData.get("affiliation") ||
-    !formData.get("speciality") ||
-    !formData.get("educationalBackground")
-  ) {
-    setFormErrors("Please fill out all fields");
-    return;
-  }
-
-  try {
-    setFormErrors(null);
-
-    // Post doctor information to create a new doctor
-    const response = await axios.post("/routes/doctors/postDoctor", {
-      username: String(formData.get("username")),
-      name: formData.get("name"),
-      email: formData.get("email"),
-      password: formData.get("password"),
-      dateOfBirth: formData.get("dateofbirth"),
-      hourlyRate: formData.get("hourlyrate"),
-      affiliation: formData.get("affiliation"),
-      speciality: formData.get("speciality"),
-      educationalBackground: formData.get("educationalBackground"),
-    });
-
-    // Store the username in local storage
-    localStorage.setItem("doctorUsername", String(formData.get("username")));
-    
-    console.log("doctor registered successfully:", response);
-    navigate("/landing");
-
-    // Handle file uploads
-    const fileInput = document.getElementById("fileInput") as HTMLInputElement;
-   // const files = fileInput?.files;
-   const selectedFiles = fileInputs.map((input) => input.file!).filter(Boolean);
-
-
-    if (selectedFiles.length > 0 && localStorage.getItem("doctorUsername")) {
-      const uploadPromises = selectedFiles.map(async (file) => {
-        const fileFormData = new FormData();
-        fileFormData.append("file", file, file.name); // Add the file name here
-        fileFormData.append("username", localStorage.getItem("doctorUsername") || "");
-
-        // Upload the file and update doctor's documents array
-        await axios.post("http://localhost:9000/routes/doctors/upload", fileFormData);
-
-        return file.name; // Return the name of the uploaded file
-      });
-
-      // Wait for all files to be uploaded
-      const uploadedFiles = await Promise.all(uploadPromises);
-
-      // Update state with submitted document names
-      setSubmittedDocuments(uploadedFiles);
+    if (
+      !formData.get("username") ||
+      !formData.get("name") ||
+      !formData.get("email") ||
+      !formData.get("password") ||
+      !formData.get("dateofbirth") ||
+      !formData.get("hourlyrate") ||
+      !formData.get("affiliation") ||
+      !formData.get("speciality") ||
+      !formData.get("educationalBackground")
+    ) {
+      setFormErrors("Please fill out all fields");
+      return;
     }
 
-    console.log("after contract");
-  } catch (error: any) {
-    console.error("Request failed:", error);
-    console.log("Error details:", error.response);
-    // Handle errors, e.g., display an error message to the user.
-  }
-};
+    try {
+      setFormErrors(null);
 
+      // Post doctor information to create a new doctor
+      const response = await axios.post("/routes/doctors/postDoctor", {
+        username: String(formData.get("username")),
+        name: formData.get("name"),
+        email: formData.get("email"),
+        password: formData.get("password"),
+        dateOfBirth: formData.get("dateofbirth"),
+        hourlyRate: formData.get("hourlyrate"),
+        affiliation: formData.get("affiliation"),
+        speciality: formData.get("speciality"),
+        educationalBackground: formData.get("educationalBackground"),
+      });
+
+      // Store the username in local storage
+      localStorage.setItem("doctorUsername", String(formData.get("username")));
+
+      console.log("doctor registered successfully:", response);
+      navigate("/");
+
+      // Handle file uploads
+      const fileInput = document.getElementById(
+        "fileInput"
+      ) as HTMLInputElement;
+      // const files = fileInput?.files;
+      const selectedFiles = fileInputs
+        .map((input) => input.file!)
+        .filter(Boolean);
+
+      if (selectedFiles.length > 0 && localStorage.getItem("doctorUsername")) {
+        const uploadPromises = selectedFiles.map(async (file) => {
+          const fileFormData = new FormData();
+          fileFormData.append("file", file, file.name); // Add the file name here
+          fileFormData.append(
+            "username",
+            localStorage.getItem("doctorUsername") || ""
+          );
+
+          // Upload the file and update doctor's documents array
+          await axios.post(
+            "http://localhost:9000/routes/doctors/upload",
+            fileFormData
+          );
+
+          return file.name; // Return the name of the uploaded file
+        });
+
+        // Wait for all files to be uploaded
+        const uploadedFiles = await Promise.all(uploadPromises);
+
+        // Update state with submitted document names
+        setSubmittedDocuments(uploadedFiles);
+      }
+
+      console.log("after contract");
+    } catch (error: any) {
+      console.error("Request failed:", error);
+      console.log("Error details:", error.response);
+      // Handle errors, e.g., display an error message to the user.
+    }
+  };
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -180,7 +190,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-            <Grid item xs={12} sm={6}>
+              <Grid item xs={12} sm={6}>
                 <TextField
                   autoComplete="given-name"
                   name="username"
@@ -278,28 +288,28 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
                   autoComplete="educationalBackground"
                 />
               </Grid>
-             
+
               <Grid item xs={12}>
                 <Typography variant="h6">Submit Documents</Typography>
-                 {fileInputs.map((input) => (
-  <div key={input.file?.name || input.id}>
-  <input
-      type="file"
-      accept=".pdf, .jpg, .jpeg, .png, .docx"
-      onChange={(e) => handleFileChange(input.id, e)}
-      multiple
-    />
-    {input.file && <Typography>{input.file.name}</Typography>}
-  </div>
-))}
+                {fileInputs.map((input) => (
+                  <div key={input.file?.name || input.id}>
+                    <input
+                      type="file"
+                      accept=".pdf, .jpg, .jpeg, .png, .docx"
+                      onChange={(e) => handleFileChange(input.id, e)}
+                      multiple
+                      required
+                    />
+                    {input.file && <Typography>{input.file.name}</Typography>}
+                  </div>
+                ))}
 
-<Button variant="contained" onClick={addFileInput}>
-  Add Another File
-</Button>
-
+                <Button variant="contained" onClick={addFileInput}>
+                  Add Another File
+                </Button>
               </Grid>
             </Grid>
-            
+
             {formErrors && (
               <Typography color="error" align="center">
                 {formErrors}
@@ -313,6 +323,7 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
             >
               Sign up
             </Button>
+
             <Grid container justifyContent="flex-end">
               <Grid item>
                 <Link href="/login" variant="body2">
@@ -328,5 +339,3 @@ const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<vo
   );
 }
 export default SignUpDoctor;
-
-
